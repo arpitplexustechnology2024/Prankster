@@ -8,22 +8,43 @@
 import UIKit
 
 class PremiumVC: UIViewController {
-
+    
+    var selectedImageURL: String?
+    var selectedImageName: String?
+    
+    var selectedAudioURL: String?
+    var selectedAudioName: String?
+    
+    var selectedCoverImageURL: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        if let imageURL = selectedImageURL, let coverImageURL = selectedCoverImageURL, let imageName = selectedImageName {
+            print("=== Received Data in Next ViewController ===")
+            print("Cover Image URL: \(coverImageURL)")
+            print("Image URL: \(imageURL)")
+            print("Image Name: \(imageName)")
+            print("=========================================")
+        }
+        
+        if let audioFile = selectedAudioURL, let coverImageURL = selectedCoverImageURL, let imageName = selectedAudioName {
+            print("=== Received Data in Next ViewController ===")
+            print("Cover Image URL: \(coverImageURL)")
+            print("Audio File: \(audioFile)")
+            print("Audiio Name: \(imageName)")
+            print("=========================================")
+        }
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.revealViewController()?.gestureEnabled = false
     }
-    */
-
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.revealViewController()?.gestureEnabled = true
+    }
+    
 }

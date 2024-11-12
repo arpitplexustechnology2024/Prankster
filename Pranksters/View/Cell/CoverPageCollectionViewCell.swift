@@ -26,7 +26,6 @@ class AddCoverPageCollectionCell: UICollectionViewCell {
 // MARK: - CoverPage1CollectionCell
 class CoverPage1CollectionCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var favoriteButton: UIButton!
     
     var onFavoriteButtonTapped: (() -> Void)?
     
@@ -36,17 +35,10 @@ class CoverPage1CollectionCell: UICollectionViewCell {
         layer.masksToBounds = false
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
-        
-        favoriteButton.addTarget(self, action: #selector(favoriteButtonTapped), for: .touchUpInside)
     }
     
     @objc private func favoriteButtonTapped() {
         onFavoriteButtonTapped?()
-    }
-    
-    func updateFavoriteButton(isFavorite: Bool) {
-        let imageName = isFavorite ? "Heart_Fill" : "Heart"
-        favoriteButton.setImage(UIImage(named: imageName), for: .normal)
     }
     
     override var isSelected: Bool {

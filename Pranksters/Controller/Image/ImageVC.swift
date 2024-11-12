@@ -18,6 +18,7 @@ class ImageVC: UIViewController {
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
     @IBOutlet weak var bottomView: UIView!
+    @IBOutlet weak var oneTimeBlurView: UIView!
     @IBOutlet weak var AudioShowView: UIView!
     @IBOutlet weak var floatingButton: UIButton!
     @IBOutlet var floatingCollectionButton: [UIButton]!
@@ -40,9 +41,6 @@ class ImageVC: UIViewController {
     private var selectedImageURL: String?
     private var selectedImageName: String?
     
-    var favoriteCustomImages: [Bool] = []
-    var userSelectedImages: [UIImage] = []
-    
     let plusImage = UIImage(named: "Plus")
     let cancelImage = UIImage(named: "Cancel")
     
@@ -52,7 +50,7 @@ class ImageVC: UIViewController {
     var currentlySelectedCollectionView: UICollectionView?
     var currentlySelectedIndexPath: IndexPath?
     
-    var customImages: [(image: UIImage, isFavorite: Bool)] = []
+    var customImages: [UIImage] = []
     
     private var currentAudioIsFavorite: Bool = false {
         didSet {
@@ -111,8 +109,6 @@ class ImageVC: UIViewController {
         
         ImageImageView.loadGif(name: "CoverGIF")
         self.favouriteButton.isHidden = true
-        
-        
     }
     
     func checkInternetAndFetchData() {
@@ -122,6 +118,24 @@ class ImageVC: UIViewController {
         } else {
             self.showNoInternetView()
             self.hideSkeletonLoader()
+        }
+    }
+    
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        UIView.animate(withDuration: 0.3) {
+            self.oneTimeBlurView.alpha = 0
+        } completion: { _ in
+            self.oneTimeBlurView.isHidden = true
+        }
+    }
+    
+    func isFirstLaunch() -> Bool {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: "hasLaunchedImage") {
+            return false
+        } else {
+            defaults.set(true, forKey: "hasLaunchedImage")
+            return true
         }
     }
     
@@ -144,6 +158,17 @@ class ImageVC: UIViewController {
         imageCustomCollectionView.dataSource = self
         imageCharacterCollectionView.delegate = self
         imageCharacterCollectionView.dataSource = self
+        
+        self.oneTimeBlurView.isHidden = true
+        if isFirstLaunch() {
+            self.oneTimeBlurView.isHidden = false
+        } else {
+            self.oneTimeBlurView.isHidden = true
+        }
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        oneTimeBlurView.addGestureRecognizer(tapGesture)
+        oneTimeBlurView.isUserInteractionEnabled = true
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             coverImageViewHeightConstraint.constant = 280
@@ -309,15 +334,15 @@ class ImageVC: UIViewController {
     @IBAction func btnMoreAppTapped(_ sender: UIButton) {
         animate(toggel: false)
         floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppViewController") as! MoreAppViewController
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppVC") as! MoreAppVC
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnFavouriteTapped(_ sender: UIButton) {
         animate(toggel: false)
         floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteViewController") as! FavouriteViewController
-        self.navigationController?.pushViewController(vc, animated: true)
+        //        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteViewController") as! FavouriteViewController
+        //        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnPremiumTapped(_ sender: UIButton) {
@@ -344,41 +369,41 @@ class ImageVC: UIViewController {
     }
     
     @IBAction func btnDoneTapped(_ sender: UIButton) {
-            var imageURLToPass: String?
-            var imageNameToPass: String?
+        var imageURLToPass: String?
+        var imageNameToPass: String?
+        
+        if let selectedIndex = selectedAudioIndex {
             
-            if let selectedIndex = selectedAudioIndex {
-
-                let temporaryDirectory = NSTemporaryDirectory()
-                let fileName = "CustomImage_\(UUID().uuidString).jpg"
-                let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
-
-                if let imageData = customImages[selectedIndex].image.jpegData(compressionQuality: 1.0) {
-                    try? imageData.write(to: fileURL)
-                    imageURLToPass = fileURL.absoluteString
-                    imageNameToPass = "Custom Image \(selectedIndex + 1)"
-                }
-            }
-            else if let selectedData = selectedImageData {
-                imageURLToPass = selectedData.image
-                imageNameToPass = selectedData.name
-            }
-            if let imageURL = imageURLToPass {
-                let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumViewController") as? PremiumViewController {
-                    nextVC.selectedImageURL = imageURL
-                    nextVC.selectedImageName = imageNameToPass
-                    nextVC.selectedCoverImageURL = selectedCoverImageURL
-                    self.navigationController?.pushViewController(nextVC, animated: true)
-                }
-            } else {
-                let alert = UIAlertController(title: "No Image Selected",
-                                            message: "Please select an image before proceeding.",
-                                            preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.present(alert, animated: true)
+            let temporaryDirectory = NSTemporaryDirectory()
+            let fileName = "CustomImage_\(UUID().uuidString).jpg"
+            let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
+            
+            if let imageData = customImages[selectedIndex].jpegData(compressionQuality: 1.0) {
+                try? imageData.write(to: fileURL)
+                imageURLToPass = fileURL.absoluteString
+                imageNameToPass = "Custom Image \(selectedIndex + 1)"
             }
         }
+        else if let selectedData = selectedImageData {
+            imageURLToPass = selectedData.image
+            imageNameToPass = selectedData.name
+        }
+        if let imageURL = imageURLToPass {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
+                nextVC.selectedImageURL = imageURL
+                nextVC.selectedImageName = imageNameToPass
+                nextVC.selectedCoverImageURL = selectedCoverImageURL
+                self.navigationController?.pushViewController(nextVC, animated: true)
+            }
+        } else {
+            let alert = UIAlertController(title: "No Image Selected",
+                                          message: "Please select an image before proceeding.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true)
+        }
+    }
     
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
@@ -410,42 +435,35 @@ class ImageVC: UIViewController {
                     }
                 }
             }
-        } else {
-            guard let selectedIndex = selectedAudioIndex else { return }
-            currentAudioIsFavorite.toggle()
-            updateFavoriteButton(isFavorite: currentAudioIsFavorite)
-            customImages[selectedIndex].isFavorite = currentAudioIsFavorite
-            imageCustomCollectionView.reloadItems(at: [IndexPath(item: selectedIndex + 1, section: selectedIndex + 1)])
-            saveImages()
         }
     }
     
     func updateSelectedImage(with coverData: CharacterAllData) {
-            showLottieLoader()
-            selectedImageData = coverData
-            selectedImageURL = coverData.image
-            selectedImageName = coverData.name
-            
-            if let url = URL(string: coverData.image) {
-                ImageImageView.sd_setImage(with: url, completed: { [weak self] (image, error, cacheType, imageURL) in
-                    self?.hideLottieLoader()
-                    if let error = error {
-                        print("Error loading image: \(error.localizedDescription)")
-                    } else {
-                        print("=== Selected Image from Preview ===")
-                        print("Name: \(coverData.name)")
-                        print("Image URL: \(coverData.image)")
-                        print("Is Favorite: \(coverData.isFavorite)")
-                        print("Item ID: \(coverData.itemID)")
-                        print("Premium: \(coverData.premium)")
-                        print("=====================================")
-                        self?.favouriteButton.isHidden = false
-                        self?.currentAudioIsFavorite = coverData.isFavorite
-                        self?.updateFavoriteButton(isFavorite: coverData.isFavorite)
-                    }
-                })
-            }
+        showLottieLoader()
+        selectedImageData = coverData
+        selectedImageURL = coverData.image
+        selectedImageName = coverData.name
+        
+        if let url = URL(string: coverData.image) {
+            ImageImageView.sd_setImage(with: url, completed: { [weak self] (image, error, cacheType, imageURL) in
+                self?.hideLottieLoader()
+                if let error = error {
+                    print("Error loading image: \(error.localizedDescription)")
+                } else {
+                    print("=== Selected Image from Preview ===")
+                    print("Name: \(coverData.name)")
+                    print("Image URL: \(coverData.image)")
+                    print("Is Favorite: \(coverData.isFavorite)")
+                    print("Item ID: \(coverData.itemID)")
+                    print("Premium: \(coverData.premium)")
+                    print("=====================================")
+                    self?.favouriteButton.isHidden = false
+                    self?.currentAudioIsFavorite = coverData.isFavorite
+                    self?.updateFavoriteButton(isFavorite: coverData.isFavorite)
+                }
+            })
         }
+    }
 }
 
 extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -468,7 +486,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCustomCollectionViewCell", for: indexPath) as! ImageCustomCollectionViewCell
                 let customImage = customImages[indexPath.item - 1]
-                cell.imageView.image = customImage.image
+                cell.imageView.image = customImage
                 return cell
             }
         } else if collectionView == imageCharacterCollectionView {
@@ -489,49 +507,42 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-            if let previousCollectionView = currentlySelectedCollectionView,
-               let previousIndexPath = currentlySelectedIndexPath,
-               previousCollectionView != collectionView {
-                previousCollectionView.deselectItem(at: previousIndexPath, animated: true)
-            }
-            
-            currentlySelectedCollectionView = collectionView
-            currentlySelectedIndexPath = indexPath
-            
-            if collectionView == imageCustomCollectionView {
-                if indexPath.item == 0 {
-                    showImageOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
-                } else {
-                    showLottieLoader()
-                    let customImage = customImages[indexPath.item - 1]
-                    selectedAudioIndex = indexPath.item - 1
-                    ImageImageView.image = customImage.image
-                    currentAudioIsFavorite = customImage.isFavorite
-                    updateFavoriteButton(isFavorite: currentAudioIsFavorite)
-                    
-                    // Store name for custom image
-                    selectedImageName = "Custom Image \(indexPath.item)"
-                    
-                    let temporaryDirectory = NSTemporaryDirectory()
-                    let fileName = "CustomImage_\(UUID().uuidString).jpg"
-                    let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
-                    
-                    print("=== Selected Custom Image ===")
-                    print("Image Name: \(selectedImageName ?? "Unnamed")")
-                    print("Image URL: \(fileURL.absoluteString)")
-                    print("Is Favorite: \(customImage.isFavorite)")
-                    print("==============================")
-                    
-                    self.favouriteButton.isHidden = false
-                    hideLottieLoader()
-                }
-            } else if collectionView == imageCharacterCollectionView {
-                let character = viewModel.characters[indexPath.item]
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCharacterAllViewController") as! ImageCharacterAllViewController
-                vc.characterId = character.characterID
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
+        if let previousCollectionView = currentlySelectedCollectionView,
+           let previousIndexPath = currentlySelectedIndexPath,
+           previousCollectionView != collectionView {
+            previousCollectionView.deselectItem(at: previousIndexPath, animated: true)
         }
+        
+        currentlySelectedCollectionView = collectionView
+        currentlySelectedIndexPath = indexPath
+        
+        if collectionView == imageCustomCollectionView {
+            if indexPath.item == 0 {
+                showImageOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
+            } else {
+                showLottieLoader()
+                let customImage = customImages[indexPath.item - 1]
+                selectedAudioIndex = indexPath.item - 1
+                ImageImageView.image = customImage
+                
+                let temporaryDirectory = NSTemporaryDirectory()
+                let fileName = "\(UUID().uuidString).jpg"
+                let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
+                
+                print("=== Selected Custom Image ===")
+                print("Image URL: \(fileURL.absoluteString)")
+                print("==============================")
+                
+                hideLottieLoader()
+                self.favouriteButton.isHidden = true
+            }
+        } else if collectionView == imageCharacterCollectionView {
+            let character = viewModel.characters[indexPath.item]
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCharacterAllVC") as! ImageCharacterAllVC
+            vc.characterId = character.characterID
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 155 : 115
@@ -692,26 +703,19 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
                 print("=====================================")
             }
             
-            customImages.insert((image: selectedImage, isFavorite: false), at: 0)
-            
+            customImages.insert((selectedImage), at: 0)
             ImageImageView.image = selectedImage
-            self.favouriteButton.isHidden = false
-            
-            updateFavoriteButton(isFavorite: false)
-            currentAudioIsFavorite = false
             selectedAudioIndex = 0
-            
             saveImages()
             
             DispatchQueue.main.async {
                 self.imageCustomCollectionView.reloadData()
-                
                 let indexPath = IndexPath(item: 1, section: 0)
                 self.imageCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                 self.selectedCoverPage1Index = indexPath
-                
                 self.imageCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                 self.hideLottieLoader()
+                self.favouriteButton.isHidden = true
             }
         } else {
             hideLottieLoader()
@@ -721,32 +725,23 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
     
     func loadSavedImages() {
         showLottieLoader()
-        if let savedImagesData = UserDefaults.standard.object(forKey: "is_UserSelectedImages") as? Data,
-           let savedFavorites = UserDefaults.standard.array(forKey: "is_FavouriteImages") as? [Bool] {
+        if let savedImagesData = UserDefaults.standard.object(forKey: "is_UserSelectedImages") as? Data {
             do {
                 if let decodedImages = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [UIImage] {
-                    customImages = zip(decodedImages, savedFavorites).map { (image: $0, isFavorite: $1) }
+                    customImages = decodedImages
                     imageCustomCollectionView.reloadData()
-                    updateFavoriteButton(isFavorite: false)
                 }
             } catch {
                 print("Error decoding saved images: \(error)")
-                updateFavoriteButton(isFavorite: false)
             }
-        } else {
-            updateFavoriteButton(isFavorite: false)
         }
         selectedCoverPage1Index = nil
         hideLottieLoader()
     }
     
     func saveImages() {
-        let imagesToSave = customImages.map { $0.image }
-        let favoritesToSave = customImages.map { $0.isFavorite }
-        
-        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: imagesToSave, requiringSecureCoding: false) {
+        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customImages, requiringSecureCoding: false) {
             UserDefaults.standard.set(encodedData, forKey: "is_UserSelectedImages")
-            UserDefaults.standard.set(favoritesToSave, forKey: "is_FavouriteImages")
         }
     }
     

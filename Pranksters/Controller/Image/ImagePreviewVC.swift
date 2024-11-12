@@ -185,7 +185,7 @@ class ImagePreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
     }
     
     private func presentPremiumViewController() {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumViewController") as! PremiumViewController
+        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumVC") as! PremiumVC
         present(premiumVC, animated: true, completion: nil)
     }
 }

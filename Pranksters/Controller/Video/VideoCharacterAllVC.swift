@@ -233,7 +233,6 @@ extension VideoCharacterAllVC: UICollectionViewDelegate, UICollectionViewDataSou
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedData = viewModel.audioData[indexPath.row]
         
-        // Print all data of selected cell
         print("Selected Cell Data:")
         print("File: \(selectedData.file ?? "No file")")
         print("Name: \(selectedData.name)")
@@ -246,21 +245,18 @@ extension VideoCharacterAllVC: UICollectionViewDelegate, UICollectionViewDataSou
             presentPremiumViewController()
         } else {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(identifier: "VideoPreviewViewController") as! VideoPreviewViewController
+            let vc = storyboard.instantiateViewController(identifier: "VideoPreviewVC") as! VideoPreviewVC
             vc.modalTransitionStyle = .crossDissolve
             vc.modalPresentationStyle = .overCurrentContext
-            
-            // Create VideoCardModel array from the remaining data
             let remainingData = Array(viewModel.audioData[indexPath.row...])
             vc.imageData = remainingData
             vc.initialIndex = 0
-            
             self.present(vc, animated: true)
         }
     }
     
     private func presentPremiumViewController() {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumViewController") as! PremiumViewController
+        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumVC") as! PremiumVC
         present(premiumVC, animated: true, completion: nil)
     }
 }

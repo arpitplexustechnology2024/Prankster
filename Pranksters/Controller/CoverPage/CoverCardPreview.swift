@@ -90,8 +90,10 @@ class CoverCardView: SwipeCard {
         self.model = model
         if let customImage = customImage {
             imageView.image = customImage
+            favouriteButton.isHidden = true
         } else {
             imageView.sd_setImage(with: URL(string: model.imageURL))
+            favouriteButton.isHidden = false
         }
         updateFavoriteButton(isFavorited: model.isFavorited)
         
@@ -102,7 +104,6 @@ class CoverCardView: SwipeCard {
             premiumBlurView.alpha = 0
             premiumIconView.isHidden = true
         }
-        favouriteButton.isHidden = false
     }
     
     @objc private func favouriteButtonTapped() {
