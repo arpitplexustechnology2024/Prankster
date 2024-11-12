@@ -39,15 +39,18 @@ class VideoVC: UIViewController {
             updateFavoriteButton(isFavorite: currentAudioIsFavorite)
         }
     }
+    var currentlySelectedCollectionView: UICollectionView?
+    var currentlySelectedIndexPath: IndexPath?
     private let favoriteViewModel = FavoriteViewModel()
     private var selectedVideoData: CharacterAllData?
+    private var selectedCustomVideoCell: IndexPath?
     var selectedCoverImageURL: String?
     var shouldAutoPlayVideo = false
-    private let selectedVideosKey = "SelectedVideos"
     let plusImage = UIImage(named: "Plus")
     let cancelImage = UIImage(named: "Cancel")
-    var selectedVideoIndex: Int?
-    var selectedVideos: [URL] = []
+    var customVideos: [URL] = []
+    var selectedCustomVideoIndex: Int?
+    var selectedCoverPage1Index: IndexPath?
     var player: AVPlayer?
     var playerLayer: AVPlayerLayer?
     var isPlaying = false
@@ -70,6 +73,11 @@ class VideoVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.revealViewController()?.gestureEnabled = false
+        
+        // Restore the previous selection if it exists
+        if let selectedIndex = selectedCustomVideoCell {
+            videoCustomCollectionView.selectItem(at: selectedIndex, animated: false, scrollPosition: [])
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -87,6 +95,7 @@ class VideoVC: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupViewModel()
+        loadSavedImages()
         setupNoDataView()
         setupLottieLoader()
         showSkeletonLoader()
@@ -96,8 +105,6 @@ class VideoVC: UIViewController {
         addBottomShadow(to: navigationbarView)
         setupVideoImageView()
         setupAudioSession()
-        loadSavedVideos()
-        loadSavedVideosWithoutAutoPlay()
         
         if let imageURL = selectedCoverImageURL{
             print("=== Received Data in Cover Image ===")
@@ -109,18 +116,6 @@ class VideoVC: UIViewController {
         self.pauseImageView.isHidden = true
         videoImageView.loadGif(name: "CoverGIF")
         self.favouriteButton.isHidden = true
-    }
-    
-    private func loadSavedVideosWithoutAutoPlay() {
-        if let savedURLStrings = UserDefaults.standard.array(forKey: selectedVideosKey) as? [String] {
-            selectedVideos = savedURLStrings.compactMap { URL(string: $0) }
-            videoCustomCollectionView.reloadData()
-            
-            self.videoImageView.isHidden = true
-            self.favouriteButton.isHidden = true
-            selectedVideoIndex = nil
-            stopVideo()
-        }
     }
     
     private func stopVideo() {
@@ -405,8 +400,6 @@ class VideoVC: UIViewController {
     @IBAction func btnFavouriteTapped(_ sender: UIButton) {
         animate(toggel: false)
         floatingButton.setImage(plusImage, for: .normal)
-        //        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteViewController") as! FavouriteViewController
-        //        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnPremiumTapped(_ sender: UIButton) {
@@ -436,16 +429,25 @@ class VideoVC: UIViewController {
         var videoURLToPass: String?
         var videoNameToPass: String?
         
-        if let selectedData = selectedVideoData {
+        if let selectedIndex = selectedCustomVideoIndex {
+            
+            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileName = "\(UUID().uuidString).mp4"
+            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
+            
+            videoURLToPass = destinationURL.absoluteString
+            videoNameToPass = "Custom Video \(selectedIndex + 1)"
+        }
+        else if let selectedData = selectedVideoData {
             videoURLToPass = selectedData.file
             videoNameToPass = selectedData.name
         }
         if let imageURL = videoURLToPass {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
-                nextVC.selectedImageURL = imageURL
-                nextVC.selectedImageName = videoNameToPass
-                nextVC.selectedCoverImageURL = selectedCoverImageURL
+                nextVC.selectedURL = imageURL
+                nextVC.selectedName = videoNameToPass
+                nextVC.selectedCoverURL = selectedCoverImageURL
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
         } else {
@@ -498,7 +500,7 @@ class VideoVC: UIViewController {
 extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == videoCustomCollectionView {
-            return selectedVideos.count + 1
+            return customVideos.count + 1
         } else if collectionView == videoCharacterCollectionView {
             return isLoading ? 6 : viewModel.characters.count
         }
@@ -514,7 +516,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCustomCollectionViewCell", for: indexPath) as! VideoCustomCollectionViewCell
-                let videoURL = selectedVideos[indexPath.item - 1]
+                let videoURL = customVideos[indexPath.item - 1]
                 cell.setThumbnail(for: videoURL)
                 return cell
             }
@@ -536,14 +538,43 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if let previousCollectionView = currentlySelectedCollectionView,
+           let previousIndexPath = currentlySelectedIndexPath,
+           previousCollectionView != collectionView {
+            previousCollectionView.deselectItem(at: previousIndexPath, animated: true)
+        }
+        
+        currentlySelectedCollectionView = collectionView
+        currentlySelectedIndexPath = indexPath
+        
         if collectionView == videoCustomCollectionView {
             if indexPath.item == 0 {
+                // For the "Add Video" cell
+                collectionView.deselectItem(at: indexPath, animated: true)
                 showVideoOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
             } else {
+                // For video cells
+                if let previousSelection = selectedCustomVideoCell, previousSelection != indexPath {
+                    collectionView.deselectItem(at: previousSelection, animated: true)
+                }
+                selectedCustomVideoCell = indexPath
+                collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
                 
-                let videoURL = selectedVideos[indexPath.item - 1]
-                playVideo(url: videoURL, autoPlay: true)
-                selectedVideoIndex = indexPath.item - 1
+                showLottieLoader()
+                let videoURL = customVideos[indexPath.item - 1]
+                playCustomVideo(url: videoURL, autoPlay: true)
+                selectedCustomVideoIndex = indexPath.item - 1
+                
+                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                let fileName = "\(UUID().uuidString).mp4"
+                let destinationURL = documentsDirectory.appendingPathComponent(fileName)
+                
+                print("=== Selected Custom Video ===")
+                print("=====================================")
+                print("Video URL: \(destinationURL.absoluteString)")
+                print("=====================================")
+                
+                hideLottieLoader()
                 self.favouriteButton.isHidden = true
             }
         } else if collectionView == videoCharacterCollectionView {
@@ -552,6 +583,13 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             vc.characterId = character.characterID
             self.navigationController?.pushViewController(vc, animated: true)
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
+        if collectionView == videoCustomCollectionView && indexPath.item != 0 {
+            return false // Prevent deselection for video cells
+        }
+        return true // Allow deselection for other cells
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -693,44 +731,40 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        dismiss(animated: true, completion: nil)
+        showLottieLoader()
+        picker.dismiss(animated: true)
         
-        guard let mediaType = info[.mediaType] as? String,
-              mediaType == (kUTTypeMovie as String),
-              let url = info[.mediaURL] as? URL else {
-            return
-        }
+        guard let videoURL = info[.mediaURL] as? URL else { return }
         
-        guard let savedURL = saveVideoToDocuments(from: url) else { return }
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fileName = "\(UUID().uuidString).mp4"
+        let destinationURL = documentsDirectory.appendingPathComponent(fileName)
         
-        selectedVideos.append(savedURL)
-        saveVideos()
-        
-        let newIndex = selectedVideos.count
-        videoCustomCollectionView.reloadData()
-        
-        let indexPath = IndexPath(item: newIndex, section: 0)
-        videoCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-        
-        playVideo(url: savedURL, autoPlay: true)
-        selectedVideoIndex = newIndex - 1
-    }
-    
-    private func saveVideoToDocuments(from sourceURL: URL) -> URL? {
-        let fileManager = FileManager.default
-        let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let destinationURL = documentsPath.appendingPathComponent(UUID().uuidString + ".mp4")
+        print("📱 New Custom Video Added:")
+        print("=====================================")
+        print("Source: \(picker.sourceType == .camera ? "Camera" : "Gallery")")
+        print("Video URL: \(destinationURL.absoluteString)")
+        print("=====================================")
         
         do {
-            try fileManager.copyItem(at: sourceURL, to: destinationURL)
-            return destinationURL
+            try FileManager.default.copyItem(at: videoURL, to: destinationURL)
+            customVideos.append(destinationURL)
+            videoCustomCollectionView.reloadData()
+            saveImages()
+            let indexPath = IndexPath(item: 1, section: 0)
+            videoCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            self.selectedCoverPage1Index = indexPath
+            self.videoCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            selectedCustomVideoIndex = customVideos.count - 1
+            playCustomVideo(url: destinationURL, autoPlay: true)
+            self.hideLottieLoader()
+            self.favouriteButton.isHidden = true
         } catch {
-            print("Error saving video: \(error)")
-            return nil
+            print("Error copying video: \(error)")
         }
     }
     
-    func playVideo(url: URL, autoPlay: Bool = false) {
+    func playCustomVideo(url: URL, autoPlay: Bool = false) {
         showLottieLoader()
         playerLayer?.removeFromSuperlayer()
         
@@ -761,34 +795,37 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
         
-        if let index = selectedVideoIndex {
+        if let index = selectedCustomVideoIndex {
             let indexPath = IndexPath(item: index + 1, section: 0)
             videoCustomCollectionView.reloadItems(at: [indexPath])
+        }
+    }
+    
+    func loadSavedImages() {
+        showLottieLoader()
+        if let savedImagesData = UserDefaults.standard.object(forKey: "is_UserSelectedVideo") as? Data {
+            do {
+                if let decodedImages = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [URL] {
+                    customVideos = decodedImages
+                    videoCustomCollectionView.reloadData()
+                }
+            } catch {
+                print("Error decoding saved images: \(error)")
+            }
+        }
+        selectedCoverPage1Index = nil
+        hideLottieLoader()
+    }
+    
+    func saveImages() {
+        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customVideos, requiringSecureCoding: false) {
+            UserDefaults.standard.set(encodedData, forKey: "is_UserSelectedVideo")
         }
     }
     
     @objc func playerDidFinishPlaying(note: NSNotification) {
         player?.seek(to: CMTime.zero)
         playVideo()
-    }
-    
-    private func loadSavedVideos() {
-        if let savedURLStrings = UserDefaults.standard.array(forKey: selectedVideosKey) as? [String] {
-            selectedVideos = savedURLStrings.compactMap { URL(string: $0) }
-            videoCustomCollectionView.reloadData()
-            
-            if let firstVideo = selectedVideos.first {
-                self.videoImageView.isHidden = false
-                self.favouriteButton.isHidden = false
-                playVideo(url: firstVideo)
-                selectedVideoIndex = 0
-            }
-        }
-    }
-    
-    private func saveVideos() {
-        let urlStrings = selectedVideos.map { $0.absoluteString }
-        UserDefaults.standard.set(urlStrings, forKey: selectedVideosKey)
     }
     
     func updateSelectedVideo(with coverData: CharacterAllData) {

@@ -341,8 +341,6 @@ class ImageVC: UIViewController {
     @IBAction func btnFavouriteTapped(_ sender: UIButton) {
         animate(toggel: false)
         floatingButton.setImage(plusImage, for: .normal)
-        //        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteViewController") as! FavouriteViewController
-        //        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnPremiumTapped(_ sender: UIButton) {
@@ -391,9 +389,9 @@ class ImageVC: UIViewController {
         if let imageURL = imageURLToPass {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
-                nextVC.selectedImageURL = imageURL
-                nextVC.selectedImageName = imageNameToPass
-                nextVC.selectedCoverImageURL = selectedCoverImageURL
+                nextVC.selectedURL = imageURL
+                nextVC.selectedName = imageNameToPass
+                nextVC.selectedCoverURL = selectedCoverImageURL
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
         } else {

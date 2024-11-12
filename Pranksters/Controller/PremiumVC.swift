@@ -9,18 +9,18 @@ import UIKit
 
 class PremiumVC: UIViewController {
     
-    var selectedImageURL: String?
-    var selectedImageName: String?
+    var selectedURL: String?
+    var selectedName: String?
+    var selectedCoverURL: String?
     
-    var selectedAudioURL: String?
-    var selectedAudioName: String?
-    
-    var selectedCoverImageURL: String?
+    @IBOutlet weak var coverImageURL: UILabel!
+    @IBOutlet weak var URL: UILabel!
+    @IBOutlet weak var name: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let imageURL = selectedImageURL, let coverImageURL = selectedCoverImageURL, let imageName = selectedImageName {
+        if let imageURL = selectedURL, let coverImageURL = selectedCoverURL, let imageName = selectedName {
             print("=== Received Data in Next ViewController ===")
             print("Cover Image URL: \(coverImageURL)")
             print("Image URL: \(imageURL)")
@@ -28,13 +28,9 @@ class PremiumVC: UIViewController {
             print("=========================================")
         }
         
-        if let audioFile = selectedAudioURL, let coverImageURL = selectedCoverImageURL, let imageName = selectedAudioName {
-            print("=== Received Data in Next ViewController ===")
-            print("Cover Image URL: \(coverImageURL)")
-            print("Audio File: \(audioFile)")
-            print("Audiio Name: \(imageName)")
-            print("=========================================")
-        }
+        self.coverImageURL.text = selectedCoverURL
+        self.URL.text = selectedURL
+        self.name.text = selectedName
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,6 +41,11 @@ class PremiumVC: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         self.revealViewController()?.gestureEnabled = true
+    }
+    
+    
+    @IBAction func back(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
     }
     
 }

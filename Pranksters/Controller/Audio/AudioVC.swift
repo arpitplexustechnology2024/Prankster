@@ -431,9 +431,9 @@ class AudioVC: UIViewController {
         if let audioURL = audioURLToPass {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
-                nextVC.selectedAudioURL = audioURL
-                nextVC.selectedAudioName = audioNameToPass
-                nextVC.selectedCoverImageURL = selectedCoverImageURL
+                nextVC.selectedURL = audioURL
+                nextVC.selectedName = audioNameToPass
+                nextVC.selectedCoverURL = selectedCoverImageURL
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
         } else {
