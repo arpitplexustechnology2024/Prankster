@@ -23,7 +23,7 @@ class FavouriteVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollectionView()
-        addBottomShadow(to: navigationbarView)
+        navigationbarView.addBottomShadow()
         setupNoDataView()
         setupNoInternetView()
         setupSegmentControl()
@@ -61,18 +61,6 @@ class FavouriteVC: UIViewController {
         segment.insertSegment(withTitle: "Video", at: 2, animated: false)
         segment.insertSegment(withTitle: "Image", at: 3, animated: false)
         segment.selectedSegmentIndex = 0
-    }
-    
-    func addBottomShadow(to view: UIView) {
-        view.layer.masksToBounds = false
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 7)
-        view.layer.shadowRadius = 12
-        view.layer.shadowPath = UIBezierPath(rect: CGRect(x: 0,
-                                                          y: view.bounds.maxY - 4,
-                                                          width: view.bounds.width,
-                                                          height: 4)).cgPath
     }
     
     func checkInternetAndFetchData() {

@@ -118,12 +118,11 @@ extension MainVC: SideMenuVCDelegate {
         switch index {
         case 0:
             // Spinner View Controller
-                        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerViewController") /*as! SpinnerViewController*/
-                        self.navigationController?.pushViewController(vc, animated: true)
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerViewController") /*as! SpinnerViewController*/
+            self.navigationController?.pushViewController(vc, animated: true)
         case 1:
             // Favorite list
-            
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteViewController") /*as! FavouriteViewController*/
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteVC") as! FavouriteVC
             self.navigationController?.pushViewController(vc, animated: true)
             
         case 2: break

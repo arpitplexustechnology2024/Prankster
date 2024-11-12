@@ -43,7 +43,6 @@ class VideoVC: UIViewController {
     var currentlySelectedIndexPath: IndexPath?
     private let favoriteViewModel = FavoriteViewModel()
     private var selectedVideoData: CharacterAllData?
-    private var selectedCustomVideoCell: IndexPath?
     var selectedCoverImageURL: String?
     var shouldAutoPlayVideo = false
     let plusImage = UIImage(named: "Plus")
@@ -74,10 +73,10 @@ class VideoVC: UIViewController {
         super.viewWillAppear(animated)
         self.revealViewController()?.gestureEnabled = false
         
-        // Restore the previous selection if it exists
-        if let selectedIndex = selectedCustomVideoCell {
-            videoCustomCollectionView.selectItem(at: selectedIndex, animated: false, scrollPosition: [])
+        if let selectedIndexPath = videoCustomCollectionView.indexPathsForSelectedItems?.first {
+            videoCustomCollectionView.deselectItem(at: selectedIndexPath, animated: false)
         }
+        selectedCoverPage1Index = nil
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -400,6 +399,8 @@ class VideoVC: UIViewController {
     @IBAction func btnFavouriteTapped(_ sender: UIButton) {
         animate(toggel: false)
         floatingButton.setImage(plusImage, for: .normal)
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteVC") as! FavouriteVC
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnPremiumTapped(_ sender: UIButton) {
@@ -549,17 +550,8 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         
         if collectionView == videoCustomCollectionView {
             if indexPath.item == 0 {
-                // For the "Add Video" cell
-                collectionView.deselectItem(at: indexPath, animated: true)
                 showVideoOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
             } else {
-                // For video cells
-                if let previousSelection = selectedCustomVideoCell, previousSelection != indexPath {
-                    collectionView.deselectItem(at: previousSelection, animated: true)
-                }
-                selectedCustomVideoCell = indexPath
-                collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
-                
                 showLottieLoader()
                 let videoURL = customVideos[indexPath.item - 1]
                 playCustomVideo(url: videoURL, autoPlay: true)
@@ -583,13 +575,6 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             vc.characterId = character.characterID
             self.navigationController?.pushViewController(vc, animated: true)
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, shouldDeselectItemAt indexPath: IndexPath) -> Bool {
-        if collectionView == videoCustomCollectionView && indexPath.item != 0 {
-            return false // Prevent deselection for video cells
-        }
-        return true // Allow deselection for other cells
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -751,7 +736,7 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
             customVideos.append(destinationURL)
             videoCustomCollectionView.reloadData()
             saveImages()
-            let indexPath = IndexPath(item: 1, section: 0)
+            let indexPath = IndexPath(item: customVideos.count, section: 0)
             videoCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             self.selectedCoverPage1Index = indexPath
             self.videoCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)

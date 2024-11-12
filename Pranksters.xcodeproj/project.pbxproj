@@ -84,6 +84,8 @@
 		BDD8808A2CE27C7100376D6E /* SideMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD880892CE27C7100376D6E /* SideMenuVC.swift */; };
 		BDD8808C2CE27CA300376D6E /* MainVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD8808B2CE27CA300376D6E /* MainVC.swift */; };
 		BDD8808E2CE27D2700376D6E /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDD8808D2CE27D2700376D6E /* Color.xcassets */; };
+		BDE934642CE3E3E300DECD1F /* FavouriteVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE934632CE3E3E300DECD1F /* FavouriteVC.swift */; };
+		BDE934662CE3E45B00DECD1F /* FavouriteCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE934652CE3E45B00DECD1F /* FavouriteCollectionViewCell.swift */; };
 		D4176777E239C4C56858EE3A /* Pods_PrankstersTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEE3FE3546296A3E5F616CB6 /* Pods_PrankstersTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -191,6 +193,8 @@
 		BDD880892CE27C7100376D6E /* SideMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuVC.swift; sourceTree = "<group>"; };
 		BDD8808B2CE27CA300376D6E /* MainVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainVC.swift; sourceTree = "<group>"; };
 		BDD8808D2CE27D2700376D6E /* Color.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Color.xcassets; sourceTree = "<group>"; };
+		BDE934632CE3E3E300DECD1F /* FavouriteVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteVC.swift; sourceTree = "<group>"; };
+		BDE934652CE3E45B00DECD1F /* FavouriteCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteCollectionViewCell.swift; sourceTree = "<group>"; };
 		D13A1CF391469C63A82A089D /* Pods-Pranksters-PrankstersUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pranksters-PrankstersUITests.debug.xcconfig"; path = "Target Support Files/Pods-Pranksters-PrankstersUITests/Pods-Pranksters-PrankstersUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		FED93AD21F340AE56AB7A8D5 /* Pods_Pranksters_PrankstersUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pranksters_PrankstersUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -368,6 +372,7 @@
 				BD187BFA2CE27FBE007744B1 /* HomeVC.swift */,
 				BD187C102CE284FA007744B1 /* MoreAppVC.swift */,
 				BD187C582CE28E7E007744B1 /* PremiumVC.swift */,
+				BDE934632CE3E3E300DECD1F /* FavouriteVC.swift */,
 				BD187C2F2CE286FE007744B1 /* CoverPage */,
 				BD187C5A2CE2CC87007744B1 /* Audio */,
 				BD187C672CE2D839007744B1 /* Image */,
@@ -476,6 +481,7 @@
 				BD187C712CE2D870007744B1 /* ImageCharacterAllCollectionViewCell.swift */,
 				BD187C7D2CE2E8FA007744B1 /* VideoCollectionViewCell.swift */,
 				BD187C7E2CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift */,
+				BDE934652CE3E45B00DECD1F /* FavouriteCollectionViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -781,6 +787,7 @@
 				BDD880692CE27A3600376D6E /* SceneDelegate.swift in Sources */,
 				BD187C482CE287B8007744B1 /* FavouriteViewModel.swift in Sources */,
 				BD187C492CE287B8007744B1 /* CharacterViewModel.swift in Sources */,
+				BDE934642CE3E3E300DECD1F /* FavouriteVC.swift in Sources */,
 				BD187C4A2CE287B8007744B1 /* CoverPageViewModel.swift in Sources */,
 				BD187C4B2CE287B8007744B1 /* CharacterAllViewModel.swift in Sources */,
 				BD187BFD2CE281F9007744B1 /* Extension.swift in Sources */,
@@ -794,6 +801,7 @@
 				BDD880862CE27BD600376D6E /* RegistrationAPI.swift in Sources */,
 				BD187C2C2CE285D7007744B1 /* MoreAppAPI.swift in Sources */,
 				BD187C652CE2CD4E007744B1 /* AudioCharacterAllCollectionViewCell.swift in Sources */,
+				BDE934662CE3E45B00DECD1F /* FavouriteCollectionViewCell.swift in Sources */,
 				BD187C662CE2CD4E007744B1 /* AudioCollectionViewCell.swift in Sources */,
 				BDD880842CE27B9A00376D6E /* Model.swift in Sources */,
 				BD187C2A2CE285B0007744B1 /* MoreAppCollectionViewCell.swift in Sources */,
