@@ -2727,7 +2727,7 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JmF-fy-XZ1">
                                 <rect key="frame" x="94" y="119" width="205" height="240"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="MusicAudio05" translatesAutoresizingMaskIntoConstraints="NO" id="Mw5-92-Wc4">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Mw5-92-Wc4">
                                         <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
                                         <color key="backgroundColor" name="Icon"/>
                                     </imageView>
@@ -3606,7 +3606,6 @@
         <image name="More" width="240" height="240"/>
         <image name="MoreApp" width="922" height="926"/>
         <image name="MoreApp_Float" width="471" height="471"/>
-        <image name="MusicAudio05" width="258" height="258"/>
         <image name="Plus" width="700" height="700"/>
         <image name="Premium" width="1006" height="886"/>
         <image name="Premium_Float" width="471" height="471"/>
