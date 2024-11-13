@@ -38,8 +38,8 @@ class ImageVC: UIViewController {
     
     var selectedCoverImageURL: String?
     
-    private var selectedImageURL: String?
-    private var selectedImageName: String?
+    var selectedImageURL: String?
+    var selectedImageName: String?
     
     let plusImage = UIImage(named: "Plus")
     let cancelImage = UIImage(named: "Cancel")

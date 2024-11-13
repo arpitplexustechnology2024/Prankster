@@ -21,14 +21,9 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchBG-iPhone" translatesAutoresizingMaskIntoConstraints="NO" id="IbM-cK-JZI">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                             </imageView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="xsn-R1-Niz" customClass="LottieAnimationView" customModule="Lottie">
-                                <rect key="frame" x="146.66666666666666" y="728" width="100" height="100"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="BQM-m7-q2A"/>
-                                    <constraint firstAttribute="width" constant="100" id="fog-mi-3O8"/>
-                                </constraints>
-                            </view>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="CtZ-9G-MvZ">
+                                <rect key="frame" x="186.66666666666666" y="775" width="20" height="20"/>
+                            </activityIndicatorView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YTE-4J-SPR">
                                 <rect key="frame" x="171.66666666666666" y="760" width="50" height="50"/>
                                 <constraints>
@@ -45,20 +40,20 @@
                         <viewLayoutGuide key="safeArea" id="jTl-BB-LSF"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="jTl-BB-LSF" firstAttribute="bottom" secondItem="CtZ-9G-MvZ" secondAttribute="bottom" constant="23" id="3xu-2r-2A4"/>
                             <constraint firstItem="jTl-BB-LSF" firstAttribute="bottom" secondItem="YTE-4J-SPR" secondAttribute="bottom" constant="8" id="Ewn-3Y-Svn"/>
                             <constraint firstItem="IbM-cK-JZI" firstAttribute="leading" secondItem="jTl-BB-LSF" secondAttribute="leading" id="FB8-Ct-9v5"/>
+                            <constraint firstItem="CtZ-9G-MvZ" firstAttribute="centerX" secondItem="hSM-QT-LsA" secondAttribute="centerX" id="Kan-T5-SiA"/>
                             <constraint firstItem="IbM-cK-JZI" firstAttribute="top" secondItem="hSM-QT-LsA" secondAttribute="top" id="Lnn-Vc-7zU"/>
                             <constraint firstItem="YTE-4J-SPR" firstAttribute="centerX" secondItem="hSM-QT-LsA" secondAttribute="centerX" id="bhU-Mj-nAu"/>
                             <constraint firstItem="IbM-cK-JZI" firstAttribute="trailing" secondItem="jTl-BB-LSF" secondAttribute="trailing" id="dA7-u8-yEA"/>
-                            <constraint firstItem="xsn-R1-Niz" firstAttribute="centerX" secondItem="hSM-QT-LsA" secondAttribute="centerX" id="fRF-HV-JS0"/>
                             <constraint firstAttribute="bottom" secondItem="IbM-cK-JZI" secondAttribute="bottom" id="gY6-Ca-591"/>
-                            <constraint firstItem="jTl-BB-LSF" firstAttribute="bottom" secondItem="xsn-R1-Niz" secondAttribute="bottom" constant="-10" id="vfJ-52-FUY"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="DLU-5T-b3b"/>
                     <connections>
                         <outlet property="launchImageView" destination="IbM-cK-JZI" id="0zK-zV-e87"/>
-                        <outlet property="loadingView" destination="xsn-R1-Niz" id="aqB-OJ-8d3"/>
+                        <outlet property="loadingActivityIndicator" destination="CtZ-9G-MvZ" id="NGO-tr-aFb"/>
                         <outlet property="refreshButton" destination="YTE-4J-SPR" id="bKa-Dh-zCJ"/>
                     </connections>
                 </viewController>
@@ -4232,7 +4227,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4Co-ng-cfp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5187" y="631"/>
+            <point key="canvasLocation" x="4454" y="631"/>
         </scene>
     </scenes>
     <resources>

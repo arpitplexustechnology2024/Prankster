@@ -28,6 +28,10 @@ class FavCoverPageVC: UIViewController {
     var selectedCase: Int = 0
     var passedFile: String?
     var passedName: String?
+    var passedItemId: Int = 0
+    var passedIsFavourite: Bool = false
+    var passedImage: String = ""
+    var passedPremium: Bool = false
     var isLoading = true
     private var selectedCoverIndex: Int?
     let emojiViewModel = EmojiViewModel()
@@ -110,6 +114,7 @@ class FavCoverPageVC: UIViewController {
                 if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let rootViewController = scene.windows.first?.rootViewController as? UINavigationController {
                     let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioVC") as! AudioVC
+                    vc.selectedCoverImageURL = self.selectedCoverImageURL
                     rootViewController.pushViewController(vc, animated: true)
                 }
             }
@@ -118,6 +123,7 @@ class FavCoverPageVC: UIViewController {
                 if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let rootViewController = scene.windows.first?.rootViewController as? UINavigationController {
                     let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "VideoVC") as! VideoVC
+                    vc.selectedCoverImageURL = self.selectedCoverImageURL
                     rootViewController.pushViewController(vc, animated: true)
                 }
             }
@@ -126,13 +132,13 @@ class FavCoverPageVC: UIViewController {
                 if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                    let rootViewController = scene.windows.first?.rootViewController as? UINavigationController {
                     let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageVC") as! ImageVC
+                    vc.selectedCoverImageURL = self.selectedCoverImageURL
                     rootViewController.pushViewController(vc, animated: true)
                 }
             }
         default:
             return
         }
-        
     }
     
     func fetchEmojiCoverPages() {

@@ -28,9 +28,9 @@ class PremiumVC: UIViewController {
             print("=========================================")
         }
         
-        self.coverImageURL.text = selectedCoverURL
-        self.URL.text = selectedURL
-        self.name.text = selectedName
+        self.coverImageURL.text = "Cover Image :- \(selectedCoverURL ?? "N/A")"
+        self.URL.text = "URL :- \(selectedURL ?? "N/A")"
+        self.name.text = "Name :- \(selectedName ?? "N/A")"
     }
     
     override func viewWillAppear(_ animated: Bool) {

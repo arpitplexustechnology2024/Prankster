@@ -226,13 +226,18 @@ class FavouriteVC: UIViewController {
         case 1, 2, 3:
             if let item = selectedItem {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavCoverPageVC") as! FavCoverPageVC
+                // Pass all available data from the selected item
                 vc.passedFile = segment.selectedSegmentIndex == 3 ? item.image : item.file
                 vc.passedName = item.name
+                vc.passedItemId = item.itemID
+                vc.passedIsFavourite = item.isFavorite
+                vc.passedImage = item.image
+                vc.passedPremium = item.premium
                 vc.selectedCase = segment.selectedSegmentIndex
                 self.present(vc, animated: true)
             } else {
                 let messageType = segment.selectedSegmentIndex == 1 ? "Audio" :
-                                segment.selectedSegmentIndex == 2 ? "Video" : "Image"
+                segment.selectedSegmentIndex == 2 ? "Video" : "Image"
                 let alert = UIAlertController(title: "No \(messageType) Selected",
                                               message: "Please select a \(messageType.lowercased()) before proceeding.",
                                               preferredStyle: .alert)

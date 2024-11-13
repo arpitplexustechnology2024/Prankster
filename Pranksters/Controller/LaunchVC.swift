@@ -6,12 +6,11 @@
 //
 
 import UIKit
-import Lottie
 
 class LaunchVC: UIViewController {
     
     @IBOutlet weak var launchImageView: UIImageView!
-    @IBOutlet weak var loadingView: LottieAnimationView!
+    @IBOutlet weak var loadingActivityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var refreshButton: UIButton!
     
     let viewModel = RegistrationViewModel()
@@ -24,7 +23,8 @@ class LaunchVC: UIViewController {
     
     func registerUserIfNeeded() {
         self.refreshButton.isHidden = true
-        self.loadingView.isHidden = false
+        self.loadingActivityIndicator.isHidden = false
+        self.loadingActivityIndicator.startAnimating()
         
         viewModel.registerUserIfNeeded { [weak self] success in
             guard let self = self else { return }
@@ -53,16 +53,16 @@ class LaunchVC: UIViewController {
     }
     
     func handleFailure() {
-        self.loadingView.stop()
-        self.loadingView.isHidden = true
+        self.loadingActivityIndicator.stopAnimating()
+        self.loadingActivityIndicator.isHidden = true
         self.refreshButton.isHidden = false
         print("API call failed or status is not 1")
     }
     
     @IBAction func refreshButtonTapped(_ sender: UIButton) {
         self.refreshButton.isHidden = true
-        self.loadingView.isHidden = false
-        self.loadingView.play()
+        self.loadingActivityIndicator.isHidden = false
+        self.loadingActivityIndicator.startAnimating()
         
         DispatchQueue.main.async {
             self.registerUserIfNeeded()
@@ -71,8 +71,8 @@ class LaunchVC: UIViewController {
     
     func proceedToMainView() {
         Timer.scheduledTimer(withTimeInterval: 4, repeats: false) { _ in
-            self.loadingView.stop()
-            self.loadingView.isHidden = true
+            self.loadingActivityIndicator.stopAnimating()
+            self.loadingActivityIndicator.isHidden = true
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MainVC") as! MainVC
             self.navigationController?.pushViewController(vc, animated: true)
         }
@@ -85,11 +85,8 @@ class LaunchVC: UIViewController {
             launchImageView.image = UIImage(named: "LaunchBG-iPad")
         }
         
-        if let animation = LottieAnimation.named("Loading") {
-            loadingView.animation = animation
-            loadingView.contentMode = .scaleAspectFit
-            loadingView.loopMode = .loop
-            loadingView.play()
-        }
+        loadingActivityIndicator.style = .large
+        loadingActivityIndicator.color = .black
+        loadingActivityIndicator.hidesWhenStopped = true
     }
 }
