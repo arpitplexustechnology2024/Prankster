@@ -12,6 +12,7 @@ import CoreImage
 class FavouriteCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var nameLabel: UILabel!
     var premiumIconImageView: UIImageView!
     
     @IBOutlet weak var favouriteButton: UIButton!
@@ -68,6 +69,7 @@ class FavouriteCollectionViewCell: UICollectionViewCell {
                 }
             }
         }
+        nameLabel.text = favouriteAllData.name
         isFavorite = favouriteAllData.isFavorite
         updateFavoriteButton()
     }

@@ -88,9 +88,9 @@ class HomeVC: UIViewController {
     }
     
     @objc func btnVideoTapped(_ sender: UITapGestureRecognizer){
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
-                vc.viewType = .video
-                self.navigationController?.pushViewController(vc, animated: true)
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+        vc.viewType = .video
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func btnImageTapped(_ sender: UITapGestureRecognizer){

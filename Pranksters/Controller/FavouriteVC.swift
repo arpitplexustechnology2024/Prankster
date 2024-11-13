@@ -14,6 +14,8 @@ class FavouriteVC: UIViewController {
     @IBOutlet weak var favouriteAllCollectionView: UICollectionView!
     @IBOutlet weak var segment: UISegmentedControl!
     @IBOutlet weak var DoneButton: UIButton!
+    
+    private var selectedItem: FavouriteAllData?
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
     private var viewModel = FavoriteViewModel()
@@ -208,8 +210,38 @@ class FavouriteVC: UIViewController {
     }
     
     @IBAction func btnDoneTapped(_ sender: UIButton) {
+        switch segment.selectedSegmentIndex {
+        case 0:
+            if let item = selectedItem {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavCategoryVC") as! FavCategoryVC
+                vc.passedImage = item.image
+                self.present(vc, animated: true)
+            } else {
+                let alert = UIAlertController(title: "No Cover Selected",
+                                              message: "Please select a cover before proceeding.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
+            }
+        case 1, 2, 3:
+            if let item = selectedItem {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavCoverPageVC") as! FavCoverPageVC
+                vc.passedFile = segment.selectedSegmentIndex == 3 ? item.image : item.file
+                vc.passedName = item.name
+                vc.selectedCase = segment.selectedSegmentIndex
+                self.present(vc, animated: true)
+            } else {
+                let messageType = segment.selectedSegmentIndex == 1 ? "Audio" :
+                                segment.selectedSegmentIndex == 2 ? "Video" : "Image"
+                let alert = UIAlertController(title: "No \(messageType) Selected",
+                                              message: "Please select a \(messageType.lowercased()) before proceeding.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
+            }
+        default: break
+        }
     }
-    
 }
 
 // MARK: - CollectionView Delegate & DataSource
@@ -231,6 +263,35 @@ extension FavouriteVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                 self?.handleFavoriteButtonTapped(for: data, isFavorite: isFavorite)
             }
             return cell
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard !isLoading else { return }
+        
+        let item = viewModel.favourites[indexPath.item]
+        selectedItem = item
+        switch segment.selectedSegmentIndex {
+        case 0:
+            print("Selected Cover Image:")
+            print("Image: \(item.image)")
+            print("----------------")
+        case 1:
+            print("Selected Audio:")
+            print("Name: \(item.name ?? "N/A")")
+            print("File: \(item.file ?? "N/A")")
+            print("----------------")
+        case 2:
+            print("Selected Video:")
+            print("Name: \(item.name ?? "N/A")")
+            print("File: \(item.file ?? "N/A")")
+            print("----------------")
+        case 3:
+            print("Selected Image:")
+            print("Name: \(item.name ?? "N/A")")
+            print("Image: \(item.image)")
+            print("----------------")
+        default: break
         }
     }
     
