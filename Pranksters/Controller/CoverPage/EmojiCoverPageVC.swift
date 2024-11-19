@@ -16,19 +16,8 @@ class EmojiCoverPageVC: UIViewController {
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
     private let viewModel = EmojiViewModel()
-    private let favoriteViewModel = FavoriteViewModel()
     var isLoading = true
     private let categoryId: Int = 4
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -37,7 +26,7 @@ class EmojiCoverPageVC: UIViewController {
         setupNoInternetView()
         setupCollectionView()
         checkInternetAndFetchData()
-        addBottomShadow(to: navigationbarView)
+        self.navigationbarView.addBottomShadow()
         self.emojiCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
     }
     
@@ -52,23 +41,9 @@ class EmojiCoverPageVC: UIViewController {
         }
     }
     
-    func addBottomShadow(to view: UIView) {
-        view.layer.masksToBounds = false
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 7)
-        view.layer.shadowRadius = 12
-        view.layer.shadowPath = UIBezierPath(rect: CGRect(x: 0, y: view.bounds.maxY - 4, width: view.bounds.width, height: 4)).cgPath
-    }
-    
     private func setupCollectionView() {
         emojiCoverAllCollectionView.delegate = self
         emojiCoverAllCollectionView.dataSource = self
-        if let layout = emojiCoverAllCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.minimumInteritemSpacing = 16
-            layout.minimumLineSpacing = 16
-            layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        }
     }
     
     func fetchAllCoverPages() {
@@ -178,42 +153,29 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
             let coverPageData = viewModel.emojiCoverPages[indexPath.row]
             cell.configure(with: coverPageData)
-            cell.onFavoriteButtonTapped = { [weak self] isFavorite in
-                self?.handleFavoriteButtonTapped(for: coverPageData, isFavorite: isFavorite)
-            }
             return cell
         }
     }
     
-    private func handleFavoriteButtonTapped(for coverPageData: CoverPageData, isFavorite: Bool) {
-        favoriteViewModel.setFavorite(itemId: coverPageData.itemID, isFavorite: isFavorite, categoryId: categoryId) { [weak self] success, message in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                if success {
-                    if let index = self.viewModel.emojiCoverPages.firstIndex(where: { $0.itemID == coverPageData.itemID }) {
-                        self.viewModel.emojiCoverPages[index].isFavorite = isFavorite
-                    }
-                    print(message ?? "Favorite status updated successfully")
-                } else {
-                    print("Failed to update favorite status: \(message ?? "Unknown error")")
-                    if let cell = self.emojiCoverAllCollectionView.cellForItem(at: IndexPath(item: self.viewModel.emojiCoverPages.firstIndex(where: { $0.itemID == coverPageData.itemID }) ?? 0, section: 0)) as? EmojiCoverAllCollectionViewCell {
-                        cell.configure(with: coverPageData)
-                    }
-                }
-            }
-        }
-    }
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let layout = collectionViewLayout as! UICollectionViewFlowLayout
-        let paddingSpace = layout.sectionInset.left + layout.sectionInset.right + layout.minimumInteritemSpacing * (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1)
-        let availableWidth = collectionView.frame.width - paddingSpace
-        let widthPerItem = availableWidth / (UIDevice.current.userInterfaceIdiom == .pad ? 3 : 2)
-        let heightPerItem: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 287 : 187
+            let spacing: CGFloat = 16
+            let totalSpacing = spacing * 3
+            let width = collectionView.frame.width - totalSpacing
+            let height = (collectionView.frame.height - totalSpacing) / 2
+            return CGSize(width: width, height: height)
+        }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+            return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+        }
         
-        return CGSize(width: widthPerItem, height: heightPerItem)
-    }
+        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+            return 26
+        }
+        
+        func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+            return 26
+        }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.item == viewModel.emojiCoverPages.count - 1 && !viewModel.isLoading && viewModel.hasMorePages {
@@ -226,13 +188,7 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
         if coverPageData.coverPremium {
             presentPremiumViewController()
         } else {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let vc = storyboard.instantiateViewController(identifier: "CoverPagePreviewVC") as! CoverPagePreviewVC
-            vc.modalTransitionStyle = .crossDissolve
-            vc.modalPresentationStyle = .overCurrentContext
-            vc.coverPages = Array(viewModel.emojiCoverPages[indexPath.row...])
-            vc.initialIndex = 0
-            self.present(vc, animated: true)
+            
         }
     }
     

@@ -15,7 +15,6 @@ class ImageCharacterAllVC: UIViewController {
     private var viewModel: CharacterAllViewModel!
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
-    private let favoriteViewModel = FavoriteViewModel()
     
     var characterId: Int = 0
     private let categoryId: Int = 3
@@ -31,16 +30,6 @@ class ImageCharacterAllVC: UIViewController {
         self.viewModel = CharacterAllViewModel(apiService: CharacterAllAPIService.shared)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViewModel()
@@ -49,7 +38,7 @@ class ImageCharacterAllVC: UIViewController {
         setupNoInternetView()
         setupCollectionView()
         checkInternetAndFetchData()
-        addBottomShadow(to: navigationbarView)
+        navigationbarView.addBottomShadow()
         self.imageCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
     }
     
@@ -61,18 +50,6 @@ class ImageCharacterAllVC: UIViewController {
             self.showNoInternetView()
             self.hideSkeletonLoader()
         }
-    }
-    
-    func addBottomShadow(to view: UIView) {
-        view.layer.masksToBounds = false
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 7)
-        view.layer.shadowRadius = 12
-        view.layer.shadowPath = UIBezierPath(rect: CGRect(x: 0,
-                                                          y: view.bounds.maxY - 4,
-                                                          width: view.bounds.width,
-                                                          height: 4)).cgPath
     }
     
     private func setupCollectionView() {
@@ -194,30 +171,7 @@ extension ImageCharacterAllVC: UICollectionViewDelegate, UICollectionViewDataSou
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
             let audioData = viewModel.audioData[indexPath.item]
             cell.configure(with: audioData)
-            cell.onFavoriteButtonTapped = { [weak self] isFavorite in
-                self?.handleFavoriteButtonTapped(for: audioData, isFavorite: isFavorite)
-            }
             return cell
-        }
-    }
-    
-    private func handleFavoriteButtonTapped(for audioData: CharacterAllData, isFavorite: Bool) {
-        favoriteViewModel.setFavorite(itemId: audioData.itemID, isFavorite: isFavorite, categoryId: categoryId) { [weak self] success, message in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                if success {
-                    if let index = self.viewModel.audioData.firstIndex(where: { $0.itemID == audioData.itemID }) {
-                        self.viewModel.audioData[index].isFavorite = isFavorite
-                    }
-                    print(message ?? "Favorite status updated successfully")
-                } else {
-                    print("Failed to update favorite status: \(message ?? "Unknown error")")
-                    if let cell = self.imageCharacterAllCollectionView.cellForItem(at: IndexPath(item: self.viewModel.audioData.firstIndex(where: { $0.itemID == audioData.itemID }) ?? 0, section: 0)) as? ImageCharacterAllCollectionViewCell {
-                        cell.configure(with: audioData)
-                    }
-                }
-            }
         }
     }
     
@@ -232,8 +186,8 @@ extension ImageCharacterAllVC: UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let coverPageData = viewModel.audioData[indexPath.row]
-        if coverPageData.premium {
-            presentPremiumViewController()
+        if coverPageData.premium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
+            showPremiumOptions(for: coverPageData, at: indexPath)
         } else {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyboard.instantiateViewController(identifier: "ImagePreviewVC") as! ImagePreviewVC
@@ -248,5 +202,30 @@ extension ImageCharacterAllVC: UICollectionViewDelegate, UICollectionViewDataSou
     private func presentPremiumViewController() {
         let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumVC") as! PremiumVC
         present(premiumVC, animated: true, completion: nil)
+    }
+    
+    private func showPremiumOptions(for content: CharacterAllData, at indexPath: IndexPath) {
+        let alert = UIAlertController(
+            title: "Unlock Premium Content",
+            message: "Choose how you'd like to unlock this content",
+            preferredStyle: .actionSheet
+        )
+        
+        alert.addAction(UIAlertAction(title: "Watch Ad for One-Time Access", style: .default) { [weak self] _ in
+            
+            PremiumManager.shared.temporarilyUnlockContent(itemID: content.itemID)
+            self?.imageCharacterAllCollectionView.reloadData()
+            if let strongSelf = self {
+                let snackbar = CustomSnackbar(message: "Content unlocked for this session!", backgroundColor: .snackbar)
+                snackbar.show(in: strongSelf.view, duration: 3.0)
+            }
+        })
+        
+        alert.addAction(UIAlertAction(title: "Get Premium for Unlimited Access", style: .default) { [weak self] _ in
+            self?.presentPremiumViewController()
+        })
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        present(alert, animated: true)
     }
 }

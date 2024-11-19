@@ -14,21 +14,10 @@ class RealisticCoverPageVC: UIViewController {
     @IBOutlet weak var realisticCoverAllCollectionView: UICollectionView!
     
     private let viewModel = RealisticViewModel()
-    private let favoriteViewModel = FavoriteViewModel()
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
     var isLoading = true
     private let categoryId: Int = 4
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -169,31 +158,7 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RealisticCoverAllCollectionViewCell", for: indexPath) as! RealisticCoverAllCollectionViewCell
             let coverPageData = viewModel.realisticCoverPages[indexPath.row]
             cell.configure(with: coverPageData)
-            cell.onFavoriteButtonTapped = { [weak self] isFavorite in
-                self?.handleFavoriteButtonTapped(for: coverPageData, isFavorite: isFavorite)
-            }
             return cell
-        }
-    }
-    
-    private func handleFavoriteButtonTapped(for coverPageData: CoverPageData, isFavorite: Bool) {
-        favoriteViewModel.setFavorite(itemId: coverPageData.itemID, isFavorite: isFavorite, categoryId: categoryId) { [weak self] success, message in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                if success {
-                    if let index = self.viewModel.realisticCoverPages.firstIndex(where: { $0.itemID == coverPageData.itemID }) {
-                        self.viewModel.realisticCoverPages[index].isFavorite = isFavorite
-                    }
-                    print(message ?? "Favorite status updated successfully")
-                } else {
-                    print("Failed to update favorite status: \(message ?? "Unknown error")")
-                    
-                    if let cell = self.realisticCoverAllCollectionView.cellForItem(at: IndexPath(item: self.viewModel.realisticCoverPages.firstIndex(where: { $0.itemID == coverPageData.itemID }) ?? 0, section: 0)) as? RealisticCoverAllCollectionViewCell {
-                        cell.configure(with: coverPageData)
-                    }
-                }
-            }
         }
     }
     
@@ -218,12 +183,7 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
         if coverPageData.coverPremium {
             presentPremiumViewController()
         } else {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPagePreviewVC") as! CoverPagePreviewVC
-            vc.modalTransitionStyle = .crossDissolve
-            vc.modalPresentationStyle = .overCurrentContext
-            vc.coverPages = Array(viewModel.realisticCoverPages[indexPath.row...])
-            vc.initialIndex = 0
-            self.present(vc, animated: true)
+
         }
     }
     

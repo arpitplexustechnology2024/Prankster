@@ -21,20 +21,11 @@ class EmojiAPIService: EmojiAPIServiceProtocol {
     func fetchCoverPages(page: Int, completion: @escaping (Result<CoverPage, Error>) -> Void) {
         let url = "https://pslink.world/api/cover/emoji"
         
-        guard let token = UserDefaults.standard.string(forKey: "userToken") else {
-            completion(.failure(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Unauthorized: No token found"])))
-            return
-        }
-        
-        let headers: HTTPHeaders = [
-            "Authorization": "Bearer \(token)"
-        ]
-        
         let parameters: [String: Any] = [
             "page": page
         ]
         
-        AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default)
             .responseDecodable(of: CoverPage.self) { response in
                 switch response.result {
                 case .success(let coverPageResponse):
@@ -60,20 +51,11 @@ class RealisticAPIService: RealisticAPIServiceProtocol {
     func fetchRealisticCoverPages(page: Int, completion: @escaping (Result<CoverPage, any Error>) -> Void) {
         let url = "https://pslink.world/api/cover/realistic"
         
-        guard let token = UserDefaults.standard.string(forKey: "userToken") else {
-            completion(.failure(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Unauthorized: No token found"])))
-            return
-        }
-        
-        let headers: HTTPHeaders = [
-            "Authorization": "Bearer \(token)"
-        ]
-        
         let parameters: [String: Any] = [
             "page": page
         ]
         
-        AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default, headers: headers)
+        AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default)
             .responseDecodable(of: CoverPage.self) { response in
                 switch response.result {
                 case .success(let coverPageResponse):

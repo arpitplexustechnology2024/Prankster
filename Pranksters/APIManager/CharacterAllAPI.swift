@@ -21,25 +21,15 @@ class CharacterAllAPIService: ChracterAllAPIServiceProtocol {
     func fetchAudioData(categoryId: Int, characterId: Int, completion: @escaping (Result<CharacterAllResponse, Error>) -> Void) {
         let url = "https://pslink.world/api/character/all"
         
-        guard let token = UserDefaults.standard.string(forKey: "userToken") else {
-            completion(.failure(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Token not found"])))
-            return
-        }
-        
-        let headers: HTTPHeaders = [
-            "Authorization": "Bearer \(token)"
-        ]
-        
         let parameters: [String: Any] = [
             "CategoryId": categoryId,
             "CharacterId": characterId
         ]
         
         AF.request(url,
-                  method: .post,
-                  parameters: parameters,
-                  encoding: URLEncoding.default,
-                  headers: headers)
+                   method: .post,
+                   parameters: parameters,
+                   encoding: URLEncoding.default)
         .validate()
         .responseDecodable(of: CharacterAllResponse.self) { response in
             switch response.result {

@@ -12,15 +12,8 @@ import CoreImage
 class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
-    
     @IBOutlet weak var audioLabel: UILabel!
     var premiumIconImageView: UIImageView!
-    
-    @IBOutlet weak var favouriteButton: UIButton!
-    
-    var onFavoriteButtonTapped: ((Bool) -> Void)?
-    
-    private var isFavorite: Bool = false
     private var originalImage: UIImage?
     
     override func awakeFromNib() {
@@ -71,8 +64,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
             }
         }
         audioLabel.text = characterAllData.name
-        isFavorite = characterAllData.isFavorite
-        updateFavoriteButton()
     }
     
     func applyBlurEffect() {
@@ -115,17 +106,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
                 }
             }
         }
-    }
-    
-    private func updateFavoriteButton() {
-        let imageName = isFavorite ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: imageName), for: .normal)
-    }
-    
-    @IBAction func favoriteButtonTapped(_ sender: UIButton) {
-        isFavorite.toggle()
-        updateFavoriteButton()
-        onFavoriteButtonTapped?(isFavorite)
     }
 }
 

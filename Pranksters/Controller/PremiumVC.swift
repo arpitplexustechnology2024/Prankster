@@ -12,7 +12,7 @@ class PremiumVC: UIViewController {
     var selectedURL: String?
     var selectedName: String?
     var selectedCoverURL: String?
-    
+    @IBOutlet weak var unlockAllButton: UIButton!
     @IBOutlet weak var coverImageURL: UILabel!
     @IBOutlet weak var URL: UILabel!
     @IBOutlet weak var name: UILabel!
@@ -27,25 +27,30 @@ class PremiumVC: UIViewController {
             print("Image Name: \(imageName)")
             print("=========================================")
         }
-        
+        setupUnlockAllButton()
         self.coverImageURL.text = "Cover Image :- \(selectedCoverURL ?? "N/A")"
         self.URL.text = "URL :- \(selectedURL ?? "N/A")"
         self.name.text = "Name :- \(selectedName ?? "N/A")"
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
-    }
-    
-    
     @IBAction func back(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
     }
     
+    private func setupUnlockAllButton() {
+        unlockAllButton.addTarget(self, action: #selector(unlockAllButtonTapped), for: .touchUpInside)
+    }
+    
+    @objc private func unlockAllButtonTapped() {
+        PremiumManager.shared.unlockAllContent()
+        
+        NotificationCenter.default.post(name: NSNotification.Name("PremiumContentUnlocked"), object: nil)
+        
+        let snackbar = CustomSnackbar(message: "Premium access activated!", backgroundColor: .snackbar)
+        snackbar.show(in: view, duration: 2.0)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            self.dismiss(animated: true)
+        }
+    }
 }

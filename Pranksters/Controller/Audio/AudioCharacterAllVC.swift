@@ -16,7 +16,6 @@ class AudioCharacterAllVC: UIViewController {
     private var viewModel: CharacterAllViewModel!
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
-    private let favoriteViewModel = FavoriteViewModel()
     var characterId: Int = 0
     private let categoryId: Int = 1
     var isLoading = true
@@ -29,16 +28,6 @@ class AudioCharacterAllVC: UIViewController {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.viewModel = CharacterAllViewModel(apiService: CharacterAllAPIService.shared)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
     }
     
     override func viewDidLoad() {
@@ -191,30 +180,7 @@ extension AudioCharacterAllVC: UICollectionViewDelegate, UICollectionViewDataSou
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterAllCollectionViewCell", for: indexPath) as! AudioCharacterAllCollectionViewCell
             let audioData = viewModel.audioData[indexPath.item]
             cell.configure(with: audioData)
-            cell.onFavoriteButtonTapped = { [weak self] isFavorite in
-                self?.handleFavoriteButtonTapped(for: audioData, isFavorite: isFavorite)
-            }
             return cell
-        }
-    }
-    
-    private func handleFavoriteButtonTapped(for audioData: CharacterAllData, isFavorite: Bool) {
-        favoriteViewModel.setFavorite(itemId: audioData.itemID, isFavorite: isFavorite, categoryId: categoryId) { [weak self] success, message in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                if success {
-                    if let index = self.viewModel.audioData.firstIndex(where: { $0.itemID == audioData.itemID }) {
-                        self.viewModel.audioData[index].isFavorite = isFavorite
-                    }
-                    print(message ?? "Favorite status updated successfully")
-                } else {
-                    print("Failed to update favorite status: \(message ?? "Unknown error")")
-                    if let cell = self.audioCharacterAllCollectionView.cellForItem(at: IndexPath(item: self.viewModel.audioData.firstIndex(where: { $0.itemID == audioData.itemID }) ?? 0, section: 0)) as? AudioCharacterAllCollectionViewCell {
-                        cell.configure(with: audioData)
-                    }
-                }
-            }
         }
     }
     

@@ -20,11 +20,8 @@ class VideoVC: UIViewController {
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var AudioShowView: UIView!
     @IBOutlet weak var oneTimeBlurView: UIView!
-    @IBOutlet weak var floatingButton: UIButton!
-    @IBOutlet var floatingCollectionButton: [UIButton]!
     @IBOutlet weak var videoImageView: UIImageView!
     @IBOutlet weak var pauseImageView: UIImageView!
-    @IBOutlet weak var favouriteButton: UIButton!
     @IBOutlet weak var videoCustomCollectionView: UICollectionView!
     @IBOutlet weak var videoCharacterCollectionView: UICollectionView!
     @IBOutlet weak var lottieLoader: LottieAnimationView!
@@ -33,20 +30,11 @@ class VideoVC: UIViewController {
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var videoCustomHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var videoCharacterHeightConstraint: NSLayoutConstraint!
-    
-    private var currentAudioIsFavorite: Bool = false {
-        didSet {
-            updateFavoriteButton(isFavorite: currentAudioIsFavorite)
-        }
-    }
     var currentlySelectedCollectionView: UICollectionView?
     var currentlySelectedIndexPath: IndexPath?
-    private let favoriteViewModel = FavoriteViewModel()
     private var selectedVideoData: CharacterAllData?
     var selectedCoverImageURL: String?
     var shouldAutoPlayVideo = false
-    let plusImage = UIImage(named: "Plus")
-    let cancelImage = UIImage(named: "Cancel")
     var customVideos: [URL] = []
     var selectedCustomVideoIndex: Int?
     var selectedCoverPage1Index: IndexPath?
@@ -71,8 +59,6 @@ class VideoVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-        
         if let selectedIndexPath = videoCustomCollectionView.indexPathsForSelectedItems?.first {
             videoCustomCollectionView.deselectItem(at: selectedIndexPath, animated: false)
         }
@@ -81,7 +67,6 @@ class VideoVC: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
         stopVideo()
     }
     
@@ -99,9 +84,8 @@ class VideoVC: UIViewController {
         setupLottieLoader()
         showSkeletonLoader()
         setupNoInternetView()
-        setupFloatingButtons()
         checkInternetAndFetchData()
-        addBottomShadow(to: navigationbarView)
+        navigationbarView.addBottomShadow()
         setupVideoImageView()
         setupAudioSession()
         
@@ -114,7 +98,6 @@ class VideoVC: UIViewController {
         self.pauseImageView.image = UIImage(named: "pause")
         self.pauseImageView.isHidden = true
         videoImageView.loadGif(name: "CoverGIF")
-        self.favouriteButton.isHidden = true
     }
     
     private func stopVideo() {
@@ -202,8 +185,6 @@ class VideoVC: UIViewController {
         bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         bottomScrollView.layer.cornerRadius = 28
         bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        floatingButton.setImage(plusImage, for: .normal)
-        floatingButton.layer.cornerRadius = 19
         videoImageView.layer.cornerRadius = 8
         AudioShowView.layer.cornerRadius = 8
         self.videoCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
@@ -334,7 +315,6 @@ class VideoVC: UIViewController {
     func showLottieLoader() {
         lottieLoader.isHidden = false
         videoImageView.isHidden = true
-        favouriteButton.isHidden = true
         lottieLoader.play()
     }
     
@@ -342,7 +322,6 @@ class VideoVC: UIViewController {
         lottieLoader.stop()
         lottieLoader.isHidden = true
         videoImageView.isHidden = false
-        favouriteButton.isHidden = false
     }
     
     private func setupLottieLoader() {
@@ -350,80 +329,6 @@ class VideoVC: UIViewController {
         lottieLoader.loopMode = .loop
         lottieLoader.contentMode = .scaleAspectFill
         lottieLoader.animation = LottieAnimation.named("Loader")
-    }
-    
-    private func setupFloatingButtons() {
-        for button in floatingCollectionButton {
-            button.layer.cornerRadius = 19
-            button.clipsToBounds = true
-            button.layer.shadowColor = UIColor.black.cgColor
-            button.layer.shadowOpacity = 0.25
-            button.layer.shadowOffset = CGSize(width: 0, height: 2)
-            button.layer.shadowRadius = 4
-            button.layer.masksToBounds = false
-            button.isHidden = true
-            button.alpha = 0
-        }
-    }
-    
-    func addBottomShadow(to view: UIView) {
-        view.layer.masksToBounds = false
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 7)
-        view.layer.shadowRadius = 12
-        view.layer.shadowPath = UIBezierPath(rect: CGRect(x: 0, y: view.bounds.maxY - 4, width: view.bounds.width, height: 4)).cgPath
-    }
-    
-    @IBAction func btnFloatingTapped(_ sender: UIButton) {
-        floatingCollectionButton.forEach { btn in
-            UIView.animate(withDuration: 0.5) {
-                btn.isHidden = !btn.isHidden
-                btn.alpha = btn.alpha == 0 ? 1 : 0
-            }
-        }
-        if floatingButton.currentImage == plusImage {
-            floatingButton.setImage(cancelImage, for: .normal)
-        } else {
-            floatingButton.setImage(plusImage, for: .normal)
-        }
-    }
-    
-    @IBAction func btnMoreAppTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppVC") as! MoreAppVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @IBAction func btnFavouriteTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteVC") as! FavouriteVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @IBAction func btnPremiumTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-    }
-    
-    func animate(toggel: Bool) {
-        if toggel {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = false
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        } else {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = true
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        }
     }
     
     @IBAction func btnDoneTapped(_ sender: UIButton) {
@@ -463,38 +368,6 @@ class VideoVC: UIViewController {
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
-    
-    @IBAction func btnFavouriteSetTapped(_ sender: UIButton) {
-        if let selectedData = selectedVideoData {
-            let newFavoriteStatus = !selectedData.isFavorite
-            
-            favoriteViewModel.setFavorite(
-                itemId: selectedData.itemID,
-                isFavorite: newFavoriteStatus,
-                categoryId: 2
-            ) { [weak self] success, message in
-                guard let self = self else { return }
-                
-                DispatchQueue.main.async {
-                    if success {
-                        self.selectedVideoData?.isFavorite = newFavoriteStatus
-                        self.currentAudioIsFavorite = newFavoriteStatus
-                        self.updateFavoriteButton(isFavorite: newFavoriteStatus)
-                        
-                        print("=== Favorite Status Updated ===")
-                        print("Item ID: \(selectedData.itemID)")
-                        print("New Favorite Status: \(newFavoriteStatus)")
-                        print("\(message ?? "Success")")
-                        print("==============================")
-                        
-                    } else {
-                        print("Failed to update favorite status: \(message ?? "Unknown error")")
-                        self.updateFavoriteButton(isFavorite: selectedData.isFavorite)
-                    }
-                }
-            }
-        }
-    }
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
@@ -529,9 +402,9 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterCollectionViewCell", for: indexPath) as! VideoCharacterCollectionViewCell
                 let character = viewModel.characters[indexPath.item]
-                if let url = URL(string: character.characterImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
-                }
+//                if let url = URL(string: character.characterImage) {
+//                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+//                }
                 return cell
             }
         }
@@ -567,12 +440,11 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 print("=====================================")
                 
                 hideLottieLoader()
-                self.favouriteButton.isHidden = true
             }
         } else if collectionView == videoCharacterCollectionView {
             let character = viewModel.characters[indexPath.item]
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "VideoCharacterAllVC") as! VideoCharacterAllVC
-            vc.characterId = character.characterID
+                // vc.characterId = character.characterID
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -743,7 +615,6 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
             selectedCustomVideoIndex = customVideos.count - 1
             playCustomVideo(url: destinationURL, autoPlay: true)
             self.hideLottieLoader()
-            self.favouriteButton.isHidden = true
         } catch {
             print("Error copying video: \(error)")
         }
@@ -767,7 +638,6 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         player?.volume = 1.0
         
         self.videoImageView.isHidden = false
-        self.favouriteButton.isHidden = false
         
         hideLottieLoader()
         
@@ -816,7 +686,6 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
     func updateSelectedVideo(with coverData: CharacterAllData) {
         showLottieLoader()
         self.selectedVideoData = coverData
-        self.currentAudioIsFavorite = coverData.isFavorite
         print("=== Selected Video from Preview ===")
         print("Name: \(coverData.name)")
         print("File URL: \(coverData.file ?? "No URL")")
@@ -825,14 +694,11 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         print("Premium: \(coverData.premium)")
         print("=====================================")
         
-        updateFavoriteButton(isFavorite: coverData.isFavorite)
-        
         if let videoURLString = coverData.file,
            let videoURL = URL(string: videoURLString) {
             stopVideo()
             
             self.videoImageView.isHidden = false
-            self.favouriteButton.isHidden = false
             
             let playerItem = AVPlayerItem(url: videoURL)
             player = AVPlayer(playerItem: playerItem)
@@ -859,9 +725,5 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
             isPlaying = true
         }
         hideLottieLoader()
-    }
-    
-    private func updateFavoriteButton(isFavorite: Bool) {
-        favouriteButton.setImage(UIImage(named: isFavorite ? "Heart_Fill" : "Heart"), for: .normal)
     }
 }

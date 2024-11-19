@@ -15,12 +15,6 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var audioLabel: UILabel!
     var premiumIconImageView: UIImageView!
-    
-    @IBOutlet weak var favouriteButton: UIButton!
-    
-    var onFavoriteButtonTapped: ((Bool) -> Void)?
-    
-    private var isFavorite: Bool = false
     private var originalImage: UIImage?
     
     override func awakeFromNib() {
@@ -56,24 +50,22 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with characterAllData: CharacterAllData) {
-        if let imageURL = URL(string: characterAllData.image) {
-            imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
-                guard let self = self else { return }
-                self.originalImage = image
-                
-                if characterAllData.premium {
-                    self.applyBlurEffect()
-                    self.premiumIconImageView.isHidden = false
-                } else {
-                    self.removeBlurEffect()
-                    self.premiumIconImageView.isHidden = true
+            if let imageURL = URL(string: characterAllData.image) {
+                imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
+                    guard let self = self else { return }
+                    self.originalImage = image
+                    
+                    if characterAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: characterAllData.itemID) {
+                        self.applyBlurEffect()
+                        self.premiumIconImageView.isHidden = false
+                    } else {
+                        self.removeBlurEffect()
+                        self.premiumIconImageView.isHidden = true
+                    }
                 }
             }
+            audioLabel.text = characterAllData.name
         }
-        audioLabel.text = characterAllData.name
-        isFavorite = characterAllData.isFavorite
-        updateFavoriteButton()
-    }
     
     func applyBlurEffect() {
         guard let image = originalImage else { return }
@@ -115,16 +107,5 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
                 }
             }
         }
-    }
-    
-    private func updateFavoriteButton() {
-        let imageName = isFavorite ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: imageName), for: .normal)
-    }
-    
-    @IBAction func favoriteButtonTapped(_ sender: UIButton) {
-        isFavorite.toggle()
-        updateFavoriteButton()
-        onFavoriteButtonTapped?(isFavorite)
     }
 }

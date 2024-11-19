@@ -13,7 +13,6 @@ struct AudioCardModel {
     let file: String
     let name: String
     let image: String
-    var isFavorited: Bool
     let itemId: Int
     let categoryId: Int
     let Premium: Bool
@@ -28,7 +27,6 @@ class AudioCardPreview: SwipeCard {
         view.alpha = 0
         return view
     }()
-    private let favouriteButton = UIButton()
     private let premiumIconView = UIImageView()
     private let controlsBlurView = UIVisualEffectView(effect: UIBlurEffect(style: .prominent))
     private let titleLabel = UILabel()
@@ -37,7 +35,6 @@ class AudioCardPreview: SwipeCard {
     private let durationLabel = UILabel()
     
     var model: AudioCardModel?
-    var onFavoriteButtonTapped: ((Int, Bool, Int) -> Void)?
     var onPlayButtonTapped: (() -> Void)?
     var onSliderValueChanged: ((Float) -> Void)?
     
@@ -64,10 +61,6 @@ class AudioCardPreview: SwipeCard {
         premiumIconView.image = UIImage(named: "premiumIcon")
         premiumIconView.isHidden = true
         addSubview(premiumIconView)
-        
-        favouriteButton.setImage(UIImage(named: "Heart"), for: .normal)
-        favouriteButton.addTarget(self, action: #selector(favouriteButtonTapped), for: .touchUpInside)
-        addSubview(favouriteButton)
         
         controlsBlurView.layer.cornerRadius = 12
         controlsBlurView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -100,7 +93,7 @@ class AudioCardPreview: SwipeCard {
     }
     
     private func setupConstraints() {
-        [imageView, premiumBlurView, premiumIconView, favouriteButton, controlsBlurView, titleLabel, playButton, slider, durationLabel].forEach {
+        [imageView, premiumBlurView, premiumIconView, controlsBlurView, titleLabel, playButton, slider, durationLabel].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -119,11 +112,6 @@ class AudioCardPreview: SwipeCard {
             premiumIconView.centerYAnchor.constraint(equalTo: centerYAnchor),
             premiumIconView.widthAnchor.constraint(equalToConstant: 60),
             premiumIconView.heightAnchor.constraint(equalToConstant: 60),
-            
-            favouriteButton.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            favouriteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            favouriteButton.widthAnchor.constraint(equalToConstant: 22),
-            favouriteButton.heightAnchor.constraint(equalToConstant: 20),
             
             controlsBlurView.leadingAnchor.constraint(equalTo: leadingAnchor),
             controlsBlurView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -175,7 +163,6 @@ class AudioCardPreview: SwipeCard {
         self.model = model
         imageView.sd_setImage(with: URL(string: model.image))
         titleLabel.text = model.name
-        updateFavoriteButton(isFavorited: model.isFavorited)
         
         if model.Premium {
             premiumBlurView.alpha = 1
@@ -184,18 +171,5 @@ class AudioCardPreview: SwipeCard {
             premiumBlurView.alpha = 0
             premiumIconView.isHidden = true
         }
-        favouriteButton.isHidden = false
-    }
-    
-    @objc private func favouriteButtonTapped() {
-        guard let model = model else { return }
-        let newFavoriteStatus = !model.isFavorited
-        updateFavoriteButton(isFavorited: newFavoriteStatus)
-        onFavoriteButtonTapped?(model.itemId, newFavoriteStatus, model.categoryId)
-    }
-    
-    private func updateFavoriteButton(isFavorited: Bool) {
-        let heartImage = isFavorited ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: heartImage), for: .normal)
     }
 }

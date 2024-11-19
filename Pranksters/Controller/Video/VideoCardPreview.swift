@@ -15,7 +15,6 @@ import Lottie
 struct VideoCardModel {
     let file: String
     let name: String
-    var isFavorited: Bool
     let itemId: Int
     let categoryId: Int
     let Premium: Bool
@@ -27,7 +26,6 @@ class VideoCardPreview: SwipeCard {
     private let videoPlayer = AVPlayer()
     private let playerLayer = AVPlayerLayer()
     private let imageLabel = UILabel()
-    private let favouriteButton = UIButton()
     private let premiumIconView = UIImageView()
     private let pauseOverlayImageView = UIImageView()
     
@@ -39,7 +37,6 @@ class VideoCardPreview: SwipeCard {
     private var playerItemStatusObserver: NSKeyValueObservation?
     
     var model: VideoCardModel?
-    var onFavoriteButtonTapped: ((Int, Bool, Int) -> Void)?
     var onPremiumContentTapped: (() -> Void)?
     private var isPlaying = false
     
@@ -89,10 +86,6 @@ class VideoCardPreview: SwipeCard {
         premiumIconView.isHidden = true
         addSubview(premiumIconView)
         
-        favouriteButton.setImage(UIImage(named: "Heart"), for: .normal)
-        favouriteButton.addTarget(self, action: #selector(favouriteButtonTapped), for: .touchUpInside)
-        addSubview(favouriteButton)
-        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleVideoTap))
         videoContainer.addGestureRecognizer(tapGesture)
         
@@ -100,7 +93,7 @@ class VideoCardPreview: SwipeCard {
     }
     
     private func setupConstraints() {
-        [videoContainer, loadingAnimation, imageLabel, blurContainer, premiumIconView, favouriteButton, pauseOverlayImageView].forEach {
+        [videoContainer, loadingAnimation, imageLabel, blurContainer, premiumIconView, pauseOverlayImageView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -134,11 +127,6 @@ class VideoCardPreview: SwipeCard {
             
             imageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             imageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
-            
-            favouriteButton.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            favouriteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            favouriteButton.widthAnchor.constraint(equalToConstant: 22),
-            favouriteButton.heightAnchor.constraint(equalToConstant: 20),
             
             pauseOverlayImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
             pauseOverlayImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
@@ -181,8 +169,6 @@ class VideoCardPreview: SwipeCard {
                                                selector: #selector(playerDidFinishPlaying),
                                                name: .AVPlayerItemDidPlayToEndTime,
                                                object: playerItem)
-        
-        updateFavoriteButton(isFavorited: model.isFavorited)
         imageLabel.text = model.name
         
         if model.Premium {
@@ -199,8 +185,6 @@ class VideoCardPreview: SwipeCard {
             premiumIconView.isHidden = true
             pauseVideo()
         }
-        
-        favouriteButton.isHidden = false
     }
     
     private func handlePlayerItemStatusChange(_ playerItem: AVPlayerItem) {
@@ -256,18 +240,6 @@ class VideoCardPreview: SwipeCard {
     @objc private func playerDidFinishPlaying() {
         videoPlayer.seek(to: .zero)
         videoPlayer.play()
-    }
-    
-    @objc private func favouriteButtonTapped() {
-        guard let model = model else { return }
-        let newFavoriteStatus = !model.isFavorited
-        updateFavoriteButton(isFavorited: newFavoriteStatus)
-        onFavoriteButtonTapped?(model.itemId, newFavoriteStatus, model.categoryId)
-    }
-    
-    private func updateFavoriteButton(isFavorited: Bool) {
-        let heartImage = isFavorited ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: heartImage), for: .normal)
     }
     
     func playVideo() {

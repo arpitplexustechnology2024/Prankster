@@ -20,10 +20,7 @@ class ImageVC: UIViewController {
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var oneTimeBlurView: UIView!
     @IBOutlet weak var AudioShowView: UIView!
-    @IBOutlet weak var floatingButton: UIButton!
-    @IBOutlet var floatingCollectionButton: [UIButton]!
     @IBOutlet weak var ImageImageView: UIImageView!
-    @IBOutlet weak var favouriteButton: UIButton!
     @IBOutlet weak var imageCustomCollectionView: UICollectionView!
     @IBOutlet weak var imageCharacterCollectionView: UICollectionView!
     @IBOutlet weak var lottieLoader: LottieAnimationView!
@@ -33,16 +30,12 @@ class ImageVC: UIViewController {
     @IBOutlet weak var imageCustomHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageCharacterHeightConstraint: NSLayoutConstraint!
     
-    private let favoriteViewModel = FavoriteViewModel()
     private var selectedImageData: CharacterAllData?
     
     var selectedCoverImageURL: String?
     
     var selectedImageURL: String?
     var selectedImageName: String?
-    
-    let plusImage = UIImage(named: "Plus")
-    let cancelImage = UIImage(named: "Cancel")
     
     private var selectedAudioIndex: Int?
     var selectedCoverPage1Index: IndexPath?
@@ -51,12 +44,6 @@ class ImageVC: UIViewController {
     var currentlySelectedIndexPath: IndexPath?
     
     var customImages: [UIImage] = []
-    
-    private var currentAudioIsFavorite: Bool = false {
-        didSet {
-            updateFavoriteButton(isFavorite: currentAudioIsFavorite)
-        }
-    }
     
     private var viewModel: CharacterViewModel!
     var isLoading = true
@@ -75,17 +62,10 @@ class ImageVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-        
         if let selectedIndexPath = imageCustomCollectionView.indexPathsForSelectedItems?.first {
             imageCustomCollectionView.deselectItem(at: selectedIndexPath, animated: false)
         }
         selectedCoverPage1Index = nil
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
     }
     
     override func viewDidLoad() {
@@ -97,9 +77,8 @@ class ImageVC: UIViewController {
         setupLottieLoader()
         showSkeletonLoader()
         setupNoInternetView()
-        setupFloatingButtons()
         checkInternetAndFetchData()
-        addBottomShadow(to: navigationbarView)
+        navigationbarView.addBottomShadow()
         
         if let imageURL = selectedCoverImageURL{
             print("=== Received Data in Cover Image ===")
@@ -108,7 +87,6 @@ class ImageVC: UIViewController {
         }
         
         ImageImageView.loadGif(name: "CoverGIF")
-        self.favouriteButton.isHidden = true
     }
     
     func checkInternetAndFetchData() {
@@ -148,11 +126,8 @@ class ImageVC: UIViewController {
         bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         bottomScrollView.layer.cornerRadius = 28
         bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        floatingButton.setImage(plusImage, for: .normal)
-        floatingButton.layer.cornerRadius = 19
         ImageImageView.layer.cornerRadius = 8
         AudioShowView.layer.cornerRadius = 8
-        updateFavoriteButton(isFavorite: false)
         self.imageCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         imageCustomCollectionView.delegate = self
         imageCustomCollectionView.dataSource = self
@@ -276,7 +251,6 @@ class ImageVC: UIViewController {
     func showLottieLoader() {
         lottieLoader.isHidden = false
         ImageImageView.isHidden = true
-        favouriteButton.isHidden = true
         lottieLoader.play()
     }
     
@@ -284,7 +258,6 @@ class ImageVC: UIViewController {
         lottieLoader.stop()
         lottieLoader.isHidden = true
         ImageImageView.isHidden = false
-        favouriteButton.isHidden = false
     }
     
     private func setupLottieLoader() {
@@ -292,80 +265,6 @@ class ImageVC: UIViewController {
         lottieLoader.loopMode = .loop
         lottieLoader.contentMode = .scaleAspectFill
         lottieLoader.animation = LottieAnimation.named("Loader")
-    }
-    
-    private func setupFloatingButtons() {
-        for button in floatingCollectionButton {
-            button.layer.cornerRadius = 19
-            button.clipsToBounds = true
-            button.layer.shadowColor = UIColor.black.cgColor
-            button.layer.shadowOpacity = 0.25
-            button.layer.shadowOffset = CGSize(width: 0, height: 2)
-            button.layer.shadowRadius = 4
-            button.layer.masksToBounds = false
-            button.isHidden = true
-            button.alpha = 0
-        }
-    }
-    
-    func addBottomShadow(to view: UIView) {
-        view.layer.masksToBounds = false
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 7)
-        view.layer.shadowRadius = 12
-        view.layer.shadowPath = UIBezierPath(rect: CGRect(x: 0, y: view.bounds.maxY - 4, width: view.bounds.width, height: 4)).cgPath
-    }
-    
-    @IBAction func btnFloatingTapped(_ sender: UIButton) {
-        floatingCollectionButton.forEach { btn in
-            UIView.animate(withDuration: 0.5) {
-                btn.isHidden = !btn.isHidden
-                btn.alpha = btn.alpha == 0 ? 1 : 0
-            }
-        }
-        if floatingButton.currentImage == plusImage {
-            floatingButton.setImage(cancelImage, for: .normal)
-        } else {
-            floatingButton.setImage(plusImage, for: .normal)
-        }
-    }
-    
-    @IBAction func btnMoreAppTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppVC") as! MoreAppVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @IBAction func btnFavouriteTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteVC") as! FavouriteVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @IBAction func btnPremiumTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-    }
-    
-    func animate(toggel: Bool) {
-        if toggel {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = false
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        } else {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = true
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        }
     }
     
     @IBAction func btnDoneTapped(_ sender: UIButton) {
@@ -409,35 +308,6 @@ class ImageVC: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
-    @IBAction func btnFavouriteSetTapped(_ sender: UIButton) {
-        if let selectedData = selectedImageData {
-            let newFavoriteStatus = !currentAudioIsFavorite
-            
-            favoriteViewModel.setFavorite(itemId: selectedData.itemID,
-                                          isFavorite: newFavoriteStatus,
-                                          categoryId: 3) { [weak self] success, message in
-                guard let self = self else { return }
-                
-                DispatchQueue.main.async {
-                    if success {
-                        self.currentAudioIsFavorite = newFavoriteStatus
-                        self.updateFavoriteButton(isFavorite: newFavoriteStatus)
-                        self.selectedImageData?.isFavorite = newFavoriteStatus
-                        
-                        print("=== Favorite Status Updated ===")
-                        print("Item ID: \(selectedData.itemID)")
-                        print("New Favorite Status: \(newFavoriteStatus)")
-                        print("\(message ?? "Success")")
-                        print("==============================")
-                    } else {
-                        print("Failed to update favorite status: \(message ?? "Unknown error")")
-                        self.updateFavoriteButton(isFavorite: self.currentAudioIsFavorite)
-                    }
-                }
-            }
-        }
-    }
-    
     func updateSelectedImage(with coverData: CharacterAllData) {
         showLottieLoader()
         selectedImageData = coverData
@@ -457,9 +327,6 @@ class ImageVC: UIViewController {
                     print("Item ID: \(coverData.itemID)")
                     print("Premium: \(coverData.premium)")
                     print("=====================================")
-                    self?.favouriteButton.isHidden = false
-                    self?.currentAudioIsFavorite = coverData.isFavorite
-                    self?.updateFavoriteButton(isFavorite: coverData.isFavorite)
                 }
             })
         }
@@ -497,9 +364,9 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterCollectionViewCell", for: indexPath) as! ImageCharacterCollectionViewCell
                 let character = viewModel.characters[indexPath.item]
-                if let url = URL(string: character.characterImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
-                }
+//                if let url = URL(string: character.characterImage) {
+//                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+//                }
                 return cell
             }
         }
@@ -534,12 +401,11 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 print("==============================")
                 
                 hideLottieLoader()
-                self.favouriteButton.isHidden = true
             }
         } else if collectionView == imageCharacterCollectionView {
             let character = viewModel.characters[indexPath.item]
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCharacterAllVC") as! ImageCharacterAllVC
-            vc.characterId = character.characterID
+         //   vc.characterId = character.characterID
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -715,7 +581,6 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
                 self.selectedCoverPage1Index = indexPath
                 self.imageCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                 self.hideLottieLoader()
-                self.favouriteButton.isHidden = true
             }
         } else {
             hideLottieLoader()
@@ -743,10 +608,5 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customImages, requiringSecureCoding: false) {
             UserDefaults.standard.set(encodedData, forKey: "is_UserSelectedImages")
         }
-    }
-    
-    func updateFavoriteButton(isFavorite: Bool) {
-        let imageName = isFavorite ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: imageName), for: .normal)
     }
 }

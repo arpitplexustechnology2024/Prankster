@@ -15,7 +15,6 @@ class ImagePreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
     @IBOutlet weak var allSwipedImageView: UIImageView!
     
     private let cardStack = SwipeCardStack()
-    private let favoriteViewModel = FavoriteViewModel()
     var imageData: [CharacterAllData] = []
     var initialIndex: Int = 0
     
@@ -66,15 +65,11 @@ class ImagePreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
         let card = ImageCardPreview()
         let coverPageData = imageData[index]
         
-        let cardModel = ImageCardModel(name: coverPageData.name, image: coverPageData.image, isFavorited: coverPageData.isFavorite, itemId: coverPageData.itemID, categoryId: 3, Premium: coverPageData.premium)
+        let cardModel = ImageCardModel(name: coverPageData.name, image: coverPageData.image, itemId: coverPageData.itemID, categoryId: 3, Premium: coverPageData.premium)
         card.configure(withModel: cardModel)
         
         card.swipeDirections = [.left, .right]
         visibleCards.append(card)
-        
-        card.onFavoriteButtonTapped = { [weak self] itemId, isFavorite, categoryId in
-            self?.handleFavoriteButtonTapped(itemId: itemId, isFavorite: isFavorite, categoryId: categoryId)
-        }
         
         return card
     }
@@ -110,61 +105,12 @@ class ImagePreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
         selectButton.isEnabled = currentCardIndex < imageData.count
     }
     
-    // MARK: - Favorite Handling
-    private func handleFavoriteButtonTapped(itemId: Int, isFavorite: Bool, categoryId: Int) {
-        favoriteViewModel.setFavorite(itemId: itemId, isFavorite: isFavorite, categoryId: categoryId) { [weak self] success, message in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                if success {
-                    if let index = self.imageData.firstIndex(where: { $0.itemID == itemId }) {
-                        self.imageData[index].isFavorite = isFavorite
-                        
-                        if let visibleCard = self.visibleCards.first(where: { $0.model?.itemId == itemId }) {
-                            let updatedModel = ImageCardModel(
-                                name: self.imageData[index].name,
-                                image: self.imageData[index].image,
-                                isFavorited: isFavorite,
-                                itemId: itemId,
-                                categoryId: categoryId,
-                                Premium: self.imageData[index].premium
-                            )
-                            visibleCard.configure(withModel: updatedModel)
-                        }
-                    }
-                    print(message ?? "Favorite status updated successfully")
-                } else {
-                    print("Failed to update favorite status: \(message ?? "Unknown error")")
-                    self.revertFavoriteStatus(for: itemId)
-                }
-            }
-        }
-    }
-    
-    private func revertFavoriteStatus(for itemId: Int) {
-        if let index = imageData.firstIndex(where: { $0.itemID == itemId }) {
-            let currentStatus = imageData[index].isFavorite
-            imageData[index].isFavorite = !currentStatus
-            
-            if let cardToUpdate = visibleCards.first(where: { $0.model?.itemId == itemId }) {
-                let updatedModel = ImageCardModel(
-                    name: imageData[index].name,
-                    image: imageData[index].image,
-                    isFavorited: !currentStatus,
-                    itemId: itemId,
-                    categoryId: 3,
-                    Premium: imageData[index].premium
-                )
-                cardToUpdate.configure(withModel: updatedModel)
-            }
-        }
-    }
-    
     @IBAction func btnSelectTapped(_ sender: UIButton) {
         guard currentCardIndex < imageData.count else { return }
         
         let selectedCoverData = imageData[currentCardIndex]
         
-        if selectedCoverData.premium {
+        if selectedCoverData.premium && !PremiumManager.shared.isContentUnlocked(itemID: selectedCoverData.itemID) {
             presentPremiumViewController()
         } else {
             if let navigationController = self.presentingViewController as? UINavigationController {

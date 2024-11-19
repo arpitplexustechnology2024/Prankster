@@ -13,11 +13,6 @@ class RealisticCoverAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     var premiumIconImageView: UIImageView!
-    
-    @IBOutlet weak var favouriteButton: UIButton!
-    var onFavoriteButtonTapped: ((Bool) -> Void)?
-    
-    private var isFavorite: Bool = false
     private var originalImage: UIImage?
     
     override func awakeFromNib() {
@@ -64,9 +59,6 @@ class RealisticCoverAllCollectionViewCell: UICollectionViewCell {
                     self?.removeBlurEffect()
                     self?.premiumIconImageView.isHidden = true
                 }
-                
-                self?.isFavorite = coverPageData.isFavorite
-                self?.updateFavoriteButton()
             }
         }
     }
@@ -110,16 +102,5 @@ class RealisticCoverAllCollectionViewCell: UICollectionViewCell {
                 }
             }
         }
-    }
-    
-    private func updateFavoriteButton() {
-        let imageName = isFavorite ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: imageName), for: .normal)
-    }
-    
-    @IBAction func favoriteButtonTapped(_ sender: UIButton) {
-        isFavorite.toggle()
-        updateFavoriteButton()
-        onFavoriteButtonTapped?(isFavorite)
     }
 }

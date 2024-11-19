@@ -12,7 +12,6 @@ import SDWebImage
 struct ImageCardModel {
     let name: String
     let image: String
-    var isFavorited: Bool
     let itemId: Int
     let categoryId: Int
     let Premium: Bool
@@ -28,10 +27,8 @@ class ImageCardPreview: SwipeCard {
         view.alpha = 0
         return view
     }()
-    private let favouriteButton = UIButton()
     private let premiumIconView = UIImageView()
     var model: ImageCardModel?
-    var onFavoriteButtonTapped: ((Int, Bool, Int) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -63,11 +60,7 @@ class ImageCardPreview: SwipeCard {
         premiumIconView.isHidden = true
         addSubview(premiumIconView)
         
-        favouriteButton.setImage(UIImage(named: "Heart"), for: .normal)
-        favouriteButton.addTarget(self, action: #selector(favouriteButtonTapped), for: .touchUpInside)
-        addSubview(favouriteButton)
-        
-        [imageView, blurEffectView, imageLabel, premiumIconView, favouriteButton].forEach {
+        [imageView, blurEffectView, imageLabel, premiumIconView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
         
@@ -89,11 +82,6 @@ class ImageCardPreview: SwipeCard {
             premiumIconView.centerYAnchor.constraint(equalTo: centerYAnchor),
             premiumIconView.widthAnchor.constraint(equalToConstant: 60),
             premiumIconView.heightAnchor.constraint(equalToConstant: 60),
-            
-            favouriteButton.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            favouriteButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            favouriteButton.widthAnchor.constraint(equalToConstant: 22),
-            favouriteButton.heightAnchor.constraint(equalToConstant: 20)
         ])
     }
     
@@ -104,28 +92,14 @@ class ImageCardPreview: SwipeCard {
         } else {
             imageView.sd_setImage(with: URL(string: model.image))
         }
-        updateFavoriteButton(isFavorited: model.isFavorited)
         imageLabel.text = model.name
         
-        if model.Premium {
+        if model.Premium && !PremiumManager.shared.isContentUnlocked(itemID: model.itemId) {
             blurEffectView.alpha = 1
             premiumIconView.isHidden = false
         } else {
             blurEffectView.alpha = 0
             premiumIconView.isHidden = true
         }
-        favouriteButton.isHidden = false
-    }
-    
-    @objc private func favouriteButtonTapped() {
-        guard let model = model else { return }
-        let newFavoriteStatus = !model.isFavorited
-        updateFavoriteButton(isFavorited: newFavoriteStatus)
-        onFavoriteButtonTapped?(model.itemId, newFavoriteStatus, model.categoryId)
-    }
-    
-    private func updateFavoriteButton(isFavorited: Bool) {
-        let heartImage = isFavorited ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: heartImage), for: .normal)
     }
 }

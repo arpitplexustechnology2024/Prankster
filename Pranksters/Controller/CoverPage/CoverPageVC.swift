@@ -17,23 +17,19 @@ class CoverPageVC: UIViewController {
     @IBOutlet weak var coverView: UIView!
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var oneTimeBlurView: UIView!
-    @IBOutlet weak var floatingButton: UIButton!
     @IBOutlet weak var navigationbarView: UIView!
-    @IBOutlet weak var favouriteButton: UIButton!
     @IBOutlet weak var coverImageView: UIImageView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
-    @IBOutlet var floatingCollectionButton: [UIButton]!
     @IBOutlet weak var lottieLoader: LottieAnimationView!
-    @IBOutlet weak var coverPage1CollectionView: UICollectionView!
-    @IBOutlet weak var coverPage2CollectionView: UICollectionView!
-    @IBOutlet weak var coverPage3CollectionView: UICollectionView!
+    @IBOutlet weak var customCoverCollectionView: UICollectionView!
+    @IBOutlet weak var emojiCollectionView: UICollectionView!
+    @IBOutlet weak var realisticCollectionView: UICollectionView!
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var coverPage1HeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var coverPage2HeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var coverPage3HeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var customCoverHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var emojiHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var realisticHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var coverImageViewWidthConstraint: NSLayoutConstraint!
     @IBOutlet weak var coverImageViewHeightConstraint: NSLayoutConstraint!
-    
     
     // MARK: - variable
     var isLoading = true
@@ -41,35 +37,15 @@ class CoverPageVC: UIViewController {
     var viewType: CoverViewType = .audio
     private var selectedCoverIndex: Int?
     let emojiViewModel = EmojiViewModel()
-    let plusImage = UIImage(named: "Plus")
     var selectedEmojiCoverIndex: IndexPath?
     var selectedCustomCoverIndex: IndexPath?
-    let cancelImage = UIImage(named: "Cancel")
     var selectedCoverImageURL: String?
     var selectedRealisticCoverIndex: IndexPath?
     private var noDataView: NoDataBottomBarView!
     let realisticViewModel = RealisticViewModel()
     private var selectedCoverImageData: CoverPageData?
-    private let favoriteViewModel = FavoriteViewModel()
     private var noInternetView: NoInternetBottombarView!
     var customCoverImages: [UIImage] = []
-    private var currentCoverIsFavorite: Bool = false {
-        didSet {
-            updateFavoriteButton(isFavorite: currentCoverIsFavorite)
-        }
-    }
-    
-    // MARK: - viewWillAppear
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    // MARK: - viewWillDisappear
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
-    }
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {
@@ -80,10 +56,8 @@ class CoverPageVC: UIViewController {
         self.setupLottieLoader()
         self.showSkeletonLoader()
         self.setupNoInternetView()
-        self.setupFloatingButtons()
         self.checkInternetAndFetchData()
         self.navigationbarView.addBottomShadow()
-        self.favouriteButton.isHidden = true
     }
     
     @objc func handleTap(_ gesture: UITapGestureRecognizer) {
@@ -124,8 +98,6 @@ class CoverPageVC: UIViewController {
         bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         bottomScrollView.layer.cornerRadius = 28
         bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        floatingButton.setImage(plusImage, for: .normal)
-        floatingButton.layer.cornerRadius = 19
         
         coverImageView.layer.cornerRadius = 8
         coverView.layer.cornerRadius = 8
@@ -134,12 +106,12 @@ class CoverPageVC: UIViewController {
         coverView.layer.shadowOffset = CGSize(width: 0, height: 3)
         coverView.layer.shadowRadius = 12
         
-        coverPage1CollectionView.delegate = self
-        coverPage1CollectionView.dataSource = self
-        coverPage2CollectionView.delegate = self
-        coverPage2CollectionView.dataSource = self
-        coverPage3CollectionView.delegate = self
-        coverPage3CollectionView.dataSource = self
+        customCoverCollectionView.delegate = self
+        customCoverCollectionView.dataSource = self
+        emojiCollectionView.delegate = self
+        emojiCollectionView.dataSource = self
+        realisticCollectionView.delegate = self
+        realisticCollectionView.dataSource = self
         
         self.oneTimeBlurView.isHidden = true
         if isFirstLaunch() {
@@ -151,39 +123,25 @@ class CoverPageVC: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         oneTimeBlurView.addGestureRecognizer(tapGesture)
         oneTimeBlurView.isUserInteractionEnabled = true
-        self.coverPage2CollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.coverPage3CollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.emojiCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.realisticCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         coverImageView.loadGif(name: "CoverGIF")
         if UIDevice.current.userInterfaceIdiom == .pad {
             coverImageViewHeightConstraint.constant = 280
             coverImageViewWidthConstraint.constant = 245
             scrollViewHeightConstraint.constant = 750
-            coverPage1HeightConstraint.constant = 180
-            coverPage2HeightConstraint.constant = 180
-            coverPage3HeightConstraint.constant = 180
+            customCoverHeightConstraint.constant = 180
+            emojiHeightConstraint.constant = 180
+            realisticHeightConstraint.constant = 180
         } else {
             coverImageViewHeightConstraint.constant = 240
             coverImageViewWidthConstraint.constant = 205
             scrollViewHeightConstraint.constant = 600
-            coverPage1HeightConstraint.constant = 140
-            coverPage2HeightConstraint.constant = 140
-            coverPage3HeightConstraint.constant = 140
+            customCoverHeightConstraint.constant = 140
+            emojiHeightConstraint.constant = 140
+            realisticHeightConstraint.constant = 140
         }
         self.view.layoutIfNeeded()
-    }
-    
-    private func setupFloatingButtons() {
-        for button in floatingCollectionButton {
-            button.layer.cornerRadius = 19
-            button.clipsToBounds = true
-            button.layer.shadowColor = UIColor.black.cgColor
-            button.layer.shadowOpacity = 0.25
-            button.layer.shadowOffset = CGSize(width: 0, height: 2)
-            button.layer.shadowRadius = 4
-            button.layer.masksToBounds = false
-            button.isHidden = true
-            button.alpha = 0
-        }
     }
     
     private func setupLottieLoader() {
@@ -191,57 +149,6 @@ class CoverPageVC: UIViewController {
         lottieLoader.loopMode = .loop
         lottieLoader.contentMode = .scaleAspectFill
         lottieLoader.animation = LottieAnimation.named("Loader")
-    }
-    
-    @IBAction func btnFloatingTapped(_ sender: UIButton) {
-        floatingCollectionButton.forEach { btn in
-            UIView.animate(withDuration: 0.5) {
-                btn.isHidden = !btn.isHidden
-                btn.alpha = btn.alpha == 0 ? 1 : 0
-            }
-        }
-        if floatingButton.currentImage == plusImage {
-            floatingButton.setImage(cancelImage, for: .normal)
-        } else {
-            floatingButton.setImage(plusImage, for: .normal)
-        }
-    }
-    
-    @IBAction func btnMoreAppTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppVC") as! MoreAppVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @IBAction func btnFavouriteTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteVC") as! FavouriteVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    @IBAction func btnPremiumTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-    }
-    
-    func animate(toggel: Bool) {
-        if toggel {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = false
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        } else {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = true
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        }
     }
     
     @IBAction func btnDoneTapped(_ sender: UIButton) {
@@ -323,7 +230,7 @@ class CoverPageVC: UIViewController {
                 } else {
                     self.hideSkeletonLoader()
                     self.noDataView.isHidden = true
-                    self.coverPage2CollectionView.reloadData()
+                    self.emojiCollectionView.reloadData()
                 }
             } else if let errorMessage = self.emojiViewModel.errorMessage {
                 self.hideSkeletonLoader()
@@ -343,7 +250,7 @@ class CoverPageVC: UIViewController {
                 } else {
                     self.hideSkeletonLoader()
                     self.noDataView.isHidden = true
-                    self.coverPage3CollectionView.reloadData()
+                    self.realisticCollectionView.reloadData()
                 }
             } else if let errorMessage = self.emojiViewModel.errorMessage {
                 self.hideSkeletonLoader()
@@ -408,14 +315,14 @@ class CoverPageVC: UIViewController {
     
     func showSkeletonLoader() {
         isLoading = true
-        coverPage2CollectionView.reloadData()
-        coverPage3CollectionView.reloadData()
+        emojiCollectionView.reloadData()
+        realisticCollectionView.reloadData()
     }
     
     func hideSkeletonLoader() {
         isLoading = false
-        coverPage2CollectionView.reloadData()
-        coverPage3CollectionView.reloadData()
+        emojiCollectionView.reloadData()
+        realisticCollectionView.reloadData()
     }
     
     func showNoInternetView() {
@@ -430,7 +337,6 @@ class CoverPageVC: UIViewController {
     func showLottieLoader() {
         lottieLoader.isHidden = false
         coverImageView.isHidden = true
-        favouriteButton.isHidden = true
         lottieLoader.play()
     }
     
@@ -438,58 +344,6 @@ class CoverPageVC: UIViewController {
         lottieLoader.stop()
         lottieLoader.isHidden = true
         coverImageView.isHidden = false
-        favouriteButton.isHidden = false
-    }
-    
-    @IBAction func btnFavouriteSetTapped(_ sender: UIButton) {
-        if let selectedData = selectedCoverImageData {
-            let newFavoriteStatus = !currentCoverIsFavorite
-            
-            favoriteViewModel.setFavorite(itemId: selectedData.itemID,
-                                          isFavorite: newFavoriteStatus,
-                                          categoryId: 4) { [weak self] success, message in
-                guard let self = self else { return }
-                
-                DispatchQueue.main.async {
-                    if success {
-                        self.currentCoverIsFavorite = newFavoriteStatus
-                        self.updateFavoriteButton(isFavorite: newFavoriteStatus)
-                        self.selectedCoverImageData?.isFavorite = newFavoriteStatus
-                        
-                        print("=== Favorite Status Updated ===")
-                        print("Item ID: \(selectedData.itemID)")
-                        print("New Favorite Status: \(newFavoriteStatus)")
-                        print("\(message ?? "Success")")
-                        print("==============================")
-                    } else {
-                        print("Failed to update favorite status: \(message ?? "Unknown error")")
-                        self.updateFavoriteButton(isFavorite: self.currentCoverIsFavorite)
-                    }
-                }
-            }
-        } else if let selectedCoverPage = getSelectedCoverPage() {
-            
-            let favoriteViewModel = FavoriteViewModel()
-            let newFavoriteStatus = !selectedCoverPage.isFavorite
-            let categoryId: Int = 4
-            
-            favoriteViewModel.setFavorite(itemId: selectedCoverPage.itemID, isFavorite: newFavoriteStatus, categoryId: categoryId) { [weak self] success, message in
-                guard let self = self else { return }
-                
-                if success {
-                    self.updateFavoriteStatus(newStatus: newFavoriteStatus)
-                    print(message ?? "Favorite status updated successfully")
-                } else {
-                    print("Failed to update favorite status: \(message ?? "Unknown error")")
-                }
-            }
-        } else {
-            guard let selectedIndex = selectedCoverIndex else { return }
-            currentCoverIsFavorite.toggle()
-            updateFavoriteButton(isFavorite: currentCoverIsFavorite)
-            coverPage1CollectionView.reloadItems(at: [IndexPath(item: selectedIndex + 1, section: selectedIndex + 1)])
-            saveImages()
-        }
     }
     
     func updateSelectedImage(with coverData: CoverPageData, customImage: UIImage? = nil) {
@@ -498,11 +352,9 @@ class CoverPageVC: UIViewController {
         selectedCoverImageURL = coverData.coverURL
         
         if let customImage = customImage {
-            // Handle custom image
             self.coverImageView.image = customImage
             self.selectedCustomImage = customImage
             self.hideLottieLoader()
-            self.favouriteButton.isHidden = true
             
             let temporaryDirectory = NSTemporaryDirectory()
             let fileName = "\(UUID().uuidString).jpg"
@@ -527,13 +379,9 @@ class CoverPageVC: UIViewController {
                 } else {
                     print("=== Selected Image from Preview ===")
                     print("Cover URL: \(coverData.coverURL)")
-                    print("Is Favorite: \(coverData.isFavorite)")
                     print("Item ID: \(coverData.itemID)")
                     print("Premium: \(coverData.coverPremium)")
                     print("=====================================")
-                    self?.favouriteButton.isHidden = false
-                    self?.currentCoverIsFavorite = coverData.isFavorite
-                    self?.updateFavoriteButton(isFavorite: coverData.isFavorite)
                 }
             }
         }
@@ -547,37 +395,23 @@ class CoverPageVC: UIViewController {
         }
         return nil
     }
-    
-    private func updateFavoriteStatus(newStatus: Bool) {
-        if let selectedIndex = selectedEmojiCoverIndex {
-            emojiViewModel.emojiCoverPages[selectedIndex.item].isFavorite = newStatus
-        } else if let selectedIndex = selectedRealisticCoverIndex {
-            realisticViewModel.realisticCoverPages[selectedIndex.item].isFavorite = newStatus
-        }
-        updateFavoriteButton(isFavorite: newStatus)
-    }
-    
-    func updateFavoriteButton(isFavorite: Bool) {
-        let imageName = isFavorite ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: imageName), for: .normal)
-    }
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == coverPage1CollectionView {
+        if collectionView == customCoverCollectionView {
             return 1 + customCoverImages.count
-        } else if collectionView == coverPage2CollectionView {
+        } else if collectionView == emojiCollectionView {
             return isLoading ? 10 : emojiViewModel.emojiCoverPages.count
-        } else if collectionView == coverPage3CollectionView {
+        } else if collectionView == realisticCollectionView {
             return isLoading ? 10 : realisticViewModel.realisticCoverPages.count
         }
         return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == coverPage1CollectionView {
+        if collectionView == customCoverCollectionView {
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddCoverPageCollectionCell", for: indexPath) as! AddCoverPageCollectionCell
                 cell.imageView.image = UIImage(systemName: "plus")
@@ -588,7 +422,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                 cell.imageView.image = customCoverImages[indexPath.item - 1]
                 return cell
             }
-        } else if collectionView == coverPage2CollectionView {
+        } else if collectionView == emojiCollectionView {
             if isLoading {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
                 cell.isUserInteractionEnabled = false
@@ -599,7 +433,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                 cell.configure(with: coverPageData)
                 return cell
             }
-        } else if collectionView == coverPage3CollectionView {
+        } else if collectionView == realisticCollectionView {
             if isLoading {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
                 cell.isUserInteractionEnabled = false
@@ -616,7 +450,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard !isLoading else { return }
-        if collectionView == coverPage1CollectionView {
+        if collectionView == customCoverCollectionView {
             if let cell = collectionView.cellForItem(at: indexPath) {
                 if indexPath.item == 0 {
                     handleCoverPage1Selection(at: indexPath, sender: cell)
@@ -640,11 +474,10 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                         print("=====================================")
                     }
                     hideLottieLoader()
-                    self.favouriteButton.isHidden = true
                     handleCoverPage1Selection(at: indexPath, sender: cell)
                 }
             }
-        } else if collectionView == coverPage2CollectionView {
+        } else if collectionView == emojiCollectionView {
             let coverPageData = emojiViewModel.emojiCoverPages[indexPath.item]
             self.selectedCoverImageURL = coverPageData.coverURL
             
@@ -653,12 +486,10 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
             print("Cover URL: \(coverPageData.coverURL)")
             print("Item ID: \(coverPageData.itemID)")
             print("Is Premium: \(coverPageData.coverPremium)")
-            print("Is Favorite: \(coverPageData.isFavorite)")
             print("=====================================")
             
-            self.favouriteButton.isHidden = false
             handleCellSelection(coverPageData: coverPageData, collectionView: collectionView, indexPath: indexPath)
-        } else if collectionView == coverPage3CollectionView {
+        } else if collectionView == realisticCollectionView {
             let coverPageData = realisticViewModel.realisticCoverPages[indexPath.item]
             self.selectedCoverImageURL = coverPageData.coverURL
             
@@ -667,10 +498,8 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
             print("Cover URL: \(coverPageData.coverURL)")
             print("Item ID: \(coverPageData.itemID)")
             print("Is Premium: \(coverPageData.coverPremium)")
-            print("Is Favorite: \(coverPageData.isFavorite)")
             print("=====================================")
             
-            self.favouriteButton.isHidden = false
             handleCellSelection(coverPageData: coverPageData, collectionView: collectionView, indexPath: indexPath)
         }
     }
@@ -679,12 +508,11 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
         if indexPath.item == 0 {
             showImageOptionsActionSheet(sourceView: sender)
         } else {
-            self.favouriteButton.isHidden = true
             let imageIndex = indexPath.item - 1
             let selectedImage = customCoverImages[imageIndex]
             coverImageView.image = selectedImage
             selectedCustomCoverIndex = indexPath
-            deselectCellsInOtherCollectionViews(except: coverPage1CollectionView)
+            deselectCellsInOtherCollectionViews(except: customCoverCollectionView)
         }
     }
     
@@ -693,9 +521,9 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
             presentPremiumViewController()
             collectionView.deselectItem(at: indexPath, animated: false)
             
-            if collectionView == coverPage2CollectionView, let previousIndex = selectedEmojiCoverIndex {
+            if collectionView == emojiCollectionView, let previousIndex = selectedEmojiCoverIndex {
                 collectionView.selectItem(at: previousIndex, animated: false, scrollPosition: [])
-            } else if collectionView == coverPage3CollectionView, let previousIndex = selectedRealisticCoverIndex {
+            } else if collectionView == realisticCollectionView, let previousIndex = selectedRealisticCoverIndex {
                 collectionView.selectItem(at: previousIndex, animated: false, scrollPosition: [])
             }
         } else {
@@ -706,8 +534,6 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                     if error == nil {
                         self?.updateSelectionForCollectionView(collectionView, at: indexPath)
                         self?.deselectCellsInOtherCollectionViews(except: collectionView)
-                        
-                        self?.updateFavoriteButton(isFavorite: coverPageData.isFavorite)
                     } else {
                         print("Error loading image: \(error?.localizedDescription ?? "Unknown error")")
                     }
@@ -717,31 +543,31 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
     }
     
     private func updateSelectionForCollectionView(_ collectionView: UICollectionView, at indexPath: IndexPath) {
-        if collectionView == coverPage2CollectionView {
+        if collectionView == emojiCollectionView {
             selectedEmojiCoverIndex = indexPath
-        } else if collectionView == coverPage3CollectionView {
+        } else if collectionView == realisticCollectionView {
             selectedRealisticCoverIndex = indexPath
         }
     }
     
     private func deselectCellsInOtherCollectionViews(except currentCollectionView: UICollectionView) {
-        if currentCollectionView != coverPage1CollectionView {
+        if currentCollectionView != customCoverCollectionView {
             if let previousIndex = selectedCustomCoverIndex {
-                coverPage1CollectionView.deselectItem(at: previousIndex, animated: true)
+                customCoverCollectionView.deselectItem(at: previousIndex, animated: true)
                 selectedCustomCoverIndex = nil
             }
         }
         
-        if currentCollectionView != coverPage2CollectionView {
+        if currentCollectionView != emojiCollectionView {
             if let previousIndex = selectedEmojiCoverIndex {
-                coverPage2CollectionView.deselectItem(at: previousIndex, animated: true)
+                emojiCollectionView.deselectItem(at: previousIndex, animated: true)
                 selectedEmojiCoverIndex = nil
             }
         }
         
-        if currentCollectionView != coverPage3CollectionView {
+        if currentCollectionView != realisticCollectionView {
             if let previousIndex = selectedRealisticCoverIndex {
-                coverPage3CollectionView.deselectItem(at: previousIndex, animated: true)
+                realisticCollectionView.deselectItem(at: previousIndex, animated: true)
                 selectedRealisticCoverIndex = nil
             }
         }
@@ -756,14 +582,14 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
         let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 155 : 115
         let height: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 165 : 125
         
-        if collectionView == coverPage1CollectionView {
+        if collectionView == customCoverCollectionView {
             if indexPath.item == 0 {
                 return CGSize(width: width, height: height)
             }
             return CGSize(width: width, height: height)
-        } else if collectionView == coverPage2CollectionView {
+        } else if collectionView == emojiCollectionView {
             return CGSize(width: width, height: height)
-        } else if collectionView == coverPage3CollectionView {
+        } else if collectionView == realisticCollectionView {
             return CGSize(width: width, height: height)
         }
         return CGSize(width: width, height: height)
@@ -920,13 +746,12 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 
-                self.coverPage1CollectionView.reloadData()
+                self.customCoverCollectionView.reloadData()
                 let indexPath = IndexPath(item: 1, section: 0)
-                self.coverPage1CollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                self.customCoverCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                 self.selectedCustomCoverIndex = indexPath
-                self.coverPage1CollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                self.customCoverCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                 self.hideLottieLoader()
-                self.favouriteButton.isHidden = true
             }
         } else {
             hideLottieLoader()
@@ -944,7 +769,7 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
             do {
                 if let decodedImages = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [UIImage] {
                     customCoverImages = decodedImages
-                    coverPage1CollectionView.reloadData()
+                    customCoverCollectionView.reloadData()
                 }
             } catch {
                 print("Error decoding saved images: \(error)")

@@ -27,18 +27,12 @@ class AddCoverPageCollectionCell: UICollectionViewCell {
 class CoverPage1CollectionCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     
-    var onFavoriteButtonTapped: (() -> Void)?
-    
     override func awakeFromNib() {
         super.awakeFromNib()
         layer.cornerRadius = 10
         layer.masksToBounds = false
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
-    }
-    
-    @objc private func favoriteButtonTapped() {
-        onFavoriteButtonTapped?()
     }
     
     override var isSelected: Bool {

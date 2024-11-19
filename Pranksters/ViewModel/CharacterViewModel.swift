@@ -12,7 +12,7 @@ import UIKit
 class CharacterViewModel {
     private let apiService: CharacterAPIServiceProtocol
     
-    var characters: [CharacterData] = []
+    var characters: [CoverPage] = []
     var reloadData: (() -> Void)?
     var onError: ((String) -> Void)?
     
@@ -26,7 +26,7 @@ class CharacterViewModel {
             
             switch result {
             case .success(let response):
-                self.characters = response.data
+              //  self.characters = response.data
                 self.reloadData?()
                 
             case .failure(let error):

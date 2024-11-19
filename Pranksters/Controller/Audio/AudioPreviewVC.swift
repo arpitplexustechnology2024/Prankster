@@ -21,7 +21,6 @@ class AudioPreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
     var initialIndex: Int = 0
     private var currentCardIndex: Int = 0
     private var visibleCards: [AudioCardPreview] = []
-    private let favoriteViewModel = FavoriteViewModel()
     private var audioPlayer: AVAudioPlayer?
     private var timer: Timer?
     private var isPlaying = false
@@ -199,7 +198,6 @@ class AudioPreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
         let cardModel = AudioCardModel(file: audioPageData.file!,
                                        name: audioPageData.name,
                                        image: audioPageData.image,
-                                       isFavorited: audioPageData.isFavorite,
                                        itemId: audioPageData.itemID,
                                        categoryId: 1,
                                        Premium: audioPageData.premium)
@@ -224,10 +222,6 @@ class AudioPreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
         }
         
         card.swipeDirections = [.left, .right]
-        
-        card.onFavoriteButtonTapped = { [weak self] itemId, isFavorite, categoryId in
-            self?.handleFavoriteButtonTapped(itemId: itemId, isFavorite: isFavorite, categoryId: categoryId)
-        }
         
         return card
     }
@@ -283,57 +277,6 @@ class AudioPreviewVC: UIViewController, SwipeCardStackDataSource, SwipeCardStack
     
     private func updateSelectButtonState() {
         selectButton.isEnabled = currentCardIndex < audioData.count
-    }
-    
-    private func handleFavoriteButtonTapped(itemId: Int, isFavorite: Bool, categoryId: Int) {
-        favoriteViewModel.setFavorite(itemId: itemId, isFavorite: isFavorite, categoryId: categoryId) { [weak self] success, message in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                if success {
-                    if let index = self.audioData.firstIndex(where: { $0.itemID == itemId }) {
-                        self.audioData[index].isFavorite = isFavorite
-                        
-                        if let visibleCard = self.visibleCards.first(where: { $0.model?.itemId == itemId }) {
-                            let updatedModel = AudioCardModel(
-                                file: self.audioData[index].file!,
-                                name: self.audioData[index].name,
-                                image: self.audioData[index].image,
-                                isFavorited: isFavorite,
-                                itemId: itemId,
-                                categoryId: categoryId,
-                                Premium: self.audioData[index].premium
-                            )
-                            visibleCard.configure(withModel: updatedModel)
-                        }
-                    }
-                    print(message ?? "Favorite status updated successfully")
-                } else {
-                    print("Failed to update favorite status: \(message ?? "Unknown error")")
-                    self.revertFavoriteStatus(for: itemId)
-                }
-            }
-        }
-    }
-    
-    private func revertFavoriteStatus(for itemId: Int) {
-        if let index = audioData.firstIndex(where: { $0.itemID == itemId }) {
-            let currentStatus = audioData[index].isFavorite
-            audioData[index].isFavorite = !currentStatus
-            
-            if let cardToUpdate = visibleCards.first(where: { $0.model?.itemId == itemId }) {
-                let updatedModel = AudioCardModel(
-                    file: audioData[index].file!,
-                    name: audioData[index].name,
-                    image: audioData[index].image,
-                    isFavorited: !currentStatus,
-                    itemId: itemId,
-                    categoryId: 1,
-                    Premium: audioData[index].premium
-                )
-                cardToUpdate.configure(withModel: updatedModel)
-            }
-        }
     }
     
     @IBAction func btnSelectTapped(_ sender: UIButton) {

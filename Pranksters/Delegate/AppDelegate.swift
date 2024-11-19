@@ -13,9 +13,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // Override point for customization after application launch..
+        setupAppLifecycleObservers()
+       // PremiumManager.shared.clearTemporaryUnlocks()
         return true
     }
+    
+    private func setupAppLifecycleObservers() {
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(appDidEnterBackground),
+                name: UIApplication.didEnterBackgroundNotification,
+                object: nil
+            )
+            
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(appWillEnterForeground),
+                name: UIApplication.willEnterForegroundNotification,
+                object: nil
+            )
+        }
+        
+        @objc private func appDidEnterBackground() {
+            // Clear temporary unlocks when app goes to background
+            PremiumManager.shared.clearTemporaryUnlocks()
+        }
+        
+        @objc private func appWillEnterForeground() {
+            // Clear temporary unlocks when app comes back to foreground
+            PremiumManager.shared.clearTemporaryUnlocks()
+        }
+        
+        // Remove observers when app is terminated
+        deinit {
+            NotificationCenter.default.removeObserver(self)
+        }
 
     // MARK: UISceneSession Lifecycle
 

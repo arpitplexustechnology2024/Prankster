@@ -11,8 +11,6 @@ class CustomCoverPageVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var customeCoverAllCollectionView: UICollectionView!
-    
-    private var coverPages: [CoverPageData] = []
     var allCustomCovers: [UIImage] = []
     
     private var noDataView: NoDataView!
@@ -23,23 +21,6 @@ class CustomCoverPageVC: UIViewController {
         setupCollectionView()
         setupNoDataView()
         updateNoDataViewVisibility()
-        createCoverPageData()
-    }
-    
-    private func createCoverPageData() {
-        coverPages = allCustomCovers.enumerated().map { index, image in
-            CoverPageData(coverURL: "", coverPremium: false, itemID: index, isFavorite: false)
-        }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
     }
     
     private func setupCollectionView() {
@@ -95,15 +76,7 @@ extension CustomCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSourc
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(identifier: "CoverPagePreviewVC") as! CoverPagePreviewVC
-        vc.modalTransitionStyle = .crossDissolve
-        vc.modalPresentationStyle = .overCurrentContext
-        vc.coverPages = Array(coverPages[indexPath.row...])
-        vc.initialIndex = 0
-        vc.isCustomCover = true
-        vc.customImages = Array(allCustomCovers[indexPath.row...])
-        self.present(vc, animated: true)
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

@@ -29,16 +29,6 @@ class MoreAppVC: UIViewController {
         self.navigationbarView.addBottomShadow()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        self.revealViewController()?.gestureEnabled = true
-    }
-    
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
             self.fetchMoreData()

@@ -31,13 +31,10 @@ class AudioVC: UIViewController {
     @IBOutlet weak var AudioShowView: UIView!
     @IBOutlet weak var songProgress: UISlider!
     @IBOutlet weak var oneTimeBlurView: UIView!
-    @IBOutlet weak var floatingButton: UIButton!
-    @IBOutlet weak var favouriteButton: UIButton!
     @IBOutlet weak var playPauseButton: UIButton!
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var audioImageView: UIImageView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
-    @IBOutlet var floatingCollectionButton: [UIButton]!
     @IBOutlet weak var blureEffect: UIVisualEffectView!
     @IBOutlet weak var lottieLoader: LottieAnimationView!
     @IBOutlet weak var audioCustomCollectionView: UICollectionView!
@@ -54,26 +51,18 @@ class AudioVC: UIViewController {
     private var isPlaying = false
     var selectedCoverImageURL: String?
     private var selectedAudioIndex: Int?
-    let plusImage = UIImage(named: "Plus")
     private var audioPlayer: AVAudioPlayer?
-    let cancelImage = UIImage(named: "Cancel")
     var initialAudioData: CharacterAllData?
     private var viewModel: CharacterViewModel!
     private var noDataView: NoDataBottomBarView!
     private var selectedAudioCustomCell: IndexPath?
     private var selectedAudioData: CharacterAllData?
     private var selectedAudioCharacterCell: IndexPath?
-    private let favoriteViewModel = FavoriteViewModel()
     private var noInternetView: NoInternetBottombarView!
     private let defaultImages = ["MusicAudio01", "MusicAudio02", "MusicAudio03", "MusicAudio04", "MusicAudio05"]
     private var customAudios: [(url: URL, image: UIImage?)] = [] {
         didSet {
             saveAudios()
-        }
-    }
-    private var currentAudioIsFavorite: Bool = false {
-        didSet {
-            updateFavoriteButtonImage()
         }
     }
     
@@ -87,19 +76,12 @@ class AudioVC: UIViewController {
         self.viewModel = CharacterViewModel(apiService: CharacterAPIService.shared)
     }
     
-    // MARK: - viewWillAppear
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.revealViewController()?.gestureEnabled = false
-    }
-    
     // MARK: - viewWillDisappear
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         audioPlayer?.stop()
         timer?.invalidate()
         timer = nil
-        self.revealViewController()?.gestureEnabled = true
     }
     
     // MARK: - viewDidLoad
@@ -114,14 +96,12 @@ class AudioVC: UIViewController {
         setupLottieLoader()
         showSkeletonLoader()
         setupNoInternetView()
-        setupFloatingButtons()
         checkInternetAndFetchData()
         self.navigationbarView.addBottomShadow()
         self.songMinit.isHidden = true
         self.songName.isHidden = true
         self.blureEffect.isHidden = true
         self.songProgress.isHidden = true
-        self.favouriteButton.isHidden = true
         self.playPauseButton.isHidden = true
         
         if let audioData = initialAudioData {
@@ -174,8 +154,6 @@ class AudioVC: UIViewController {
         bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         bottomScrollView.layer.cornerRadius = 28
         bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        floatingButton.setImage(plusImage, for: .normal)
-        floatingButton.layer.cornerRadius = 19
         audioImageView.layer.cornerRadius = 8
         AudioShowView.layer.cornerRadius = 8
         AudioShowView.layer.shadowColor = UIColor.black.cgColor
@@ -319,7 +297,6 @@ class AudioVC: UIViewController {
         songMinit.isHidden = true
         lottieLoader.isHidden = false
         audioImageView.isHidden = true
-        favouriteButton.isHidden = true
         lottieLoader.play()
     }
     
@@ -332,7 +309,6 @@ class AudioVC: UIViewController {
         songMinit.isHidden = false
         lottieLoader.isHidden = true
         audioImageView.isHidden = false
-        favouriteButton.isHidden = false
     }
     
     // MARK: - setupLottieLoader
@@ -341,76 +317,6 @@ class AudioVC: UIViewController {
         lottieLoader.loopMode = .loop
         lottieLoader.contentMode = .scaleAspectFill
         lottieLoader.animation = LottieAnimation.named("Loader")
-    }
-    
-    // MARK: - setupFloatingButtons
-    private func setupFloatingButtons() {
-        for button in floatingCollectionButton {
-            button.layer.cornerRadius = 19
-            button.clipsToBounds = true
-            button.layer.shadowColor = UIColor.black.cgColor
-            button.layer.shadowOpacity = 0.25
-            button.layer.shadowOffset = CGSize(width: 0, height: 2)
-            button.layer.shadowRadius = 4
-            button.layer.masksToBounds = false
-            button.isHidden = true
-            button.alpha = 0
-        }
-    }
-    
-    // MARK: - btnFloatingTapped
-    @IBAction func btnFloatingTapped(_ sender: UIButton) {
-        floatingCollectionButton.forEach { btn in
-            UIView.animate(withDuration: 0.5) {
-                btn.isHidden = !btn.isHidden
-                btn.alpha = btn.alpha == 0 ? 1 : 0
-            }
-        }
-        if floatingButton.currentImage == plusImage {
-            floatingButton.setImage(cancelImage, for: .normal)
-        } else {
-            floatingButton.setImage(plusImage, for: .normal)
-        }
-    }
-    
-    // MARK: - btnMoreAppTapped
-    @IBAction func btnMoreAppTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppVC") as! MoreAppVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    // MARK: - btnFavouriteTapped
-    @IBAction func btnFavouriteTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "FavouriteVC") as! FavouriteVC
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    // MARK: - btnPremiumTapped
-    @IBAction func btnPremiumTapped(_ sender: UIButton) {
-        animate(toggel: false)
-        floatingButton.setImage(plusImage, for: .normal)
-    }
-    
-    func animate(toggel: Bool) {
-        if toggel {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = false
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        } else {
-            floatingCollectionButton.forEach { btn in
-                UIView.animate(withDuration: 0.5) {
-                    btn.isHidden = true
-                    btn.alpha = btn.alpha == 0 ? 1 : 0
-                }
-            }
-        }
     }
     
     // MARK: - btnDoneTapped
@@ -448,34 +354,6 @@ class AudioVC: UIViewController {
     // MARK: - btnBackTapped
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
-    }
-    
-    // MARK: - btnFavouriteSetTapped
-    @IBAction func btnFavouriteSetTapped(_ sender: UIButton) {
-        if let customAudioIndex = selectedAudioIndex {
-            currentAudioIsFavorite.toggle()
-            saveAudios()
-            audioCustomCollectionView.reloadItems(at: [IndexPath(item: customAudioIndex + 1, section: customAudioIndex + 1)])
-        } else if let audioData = selectedAudioData {
-            let newFavoriteStatus = !currentAudioIsFavorite
-            favoriteViewModel.setFavorite(itemId: audioData.itemID, isFavorite: newFavoriteStatus, categoryId: 1) { [weak self] success, message in
-                guard let self = self else { return }
-                
-                DispatchQueue.main.async {
-                    if success {
-                        self.currentAudioIsFavorite = newFavoriteStatus
-                        self.selectedAudioData?.isFavorite = newFavoriteStatus
-                        self.updateFavoriteButtonImage()
-                        print("\(message ?? "Favorite status updated successfully")")
-                    } else {
-                        print("Failed to update favorite status: \(message ?? "Unknown error")")
-                        self.currentAudioIsFavorite = !newFavoriteStatus
-                        self.updateFavoriteButtonImage()
-                    }
-                }
-            }
-        }
-        updateFavoriteButtonImage()
     }
     
     // MARK: - playPauseButtonTapped
@@ -538,9 +416,9 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterCollectionCell", for: indexPath) as! AudioCharacterCollectionCell
                 let character = viewModel.characters[indexPath.item]
-                if let url = URL(string: character.characterImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
-                }
+//                if let url = URL(string: character.characterImage) {
+//                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+//                }
                 return cell
             }
         }
@@ -574,9 +452,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 audioPlayer?.play()
                 isPlaying = true
                 playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-                updateFavoriteButtonImage()
                 setupTimer()
-                self.favouriteButton.isHidden = true
                 self.playPauseButton.isHidden = false
                 self.songMinit.isHidden = false
                 self.songName.isHidden = false
@@ -592,7 +468,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             selectedAudioCharacterCell = indexPath
             let character = viewModel.characters[indexPath.item]
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioCharacterAllVC") as! AudioCharacterAllVC
-            vc.characterId = character.characterID
+          //  vc.characterId = character.characterID
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -754,11 +630,6 @@ extension AudioVC {
         return String(format: "%02d:%02d", minutes, seconds)
     }
     
-    private func updateFavoriteButtonImage() {
-        let imageName = currentAudioIsFavorite ? "Heart_Fill" : "Heart"
-        favouriteButton.setImage(UIImage(named: imageName), for: .normal)
-    }
-    
     private func setupAudioPlayerFromURL(_ url: URL) {
         URLSession.shared.dataTask(with: url) { [weak self] (data, response, error) in
             guard let self = self,
@@ -822,8 +693,6 @@ extension AudioVC {
             }
         }
         songName.text = audioData.name
-        currentAudioIsFavorite = audioData.isFavorite
-        updateFavoriteButtonImage()
         if let audioUrl = URL(string: audioData.file!) {
             showLottieLoader()
             setupAudioPlayerFromURL(audioUrl)
@@ -856,7 +725,6 @@ extension AudioVC: UIDocumentPickerDelegate {
                 DispatchQueue.main.async {
                     self.audioCustomCollectionView.reloadData()
                     self.hideLottieLoader()
-                    self.favouriteButton.isHidden = true
                     self.playPauseButton.isHidden = false
                     self.songMinit.isHidden = false
                     self.songName.isHidden = false
@@ -869,7 +737,6 @@ extension AudioVC: UIDocumentPickerDelegate {
             } catch {
                 print("Error copying file: \(error)")
                 self.hideLottieLoader()
-                self.favouriteButton.isHidden = true
             }
         }
     }
