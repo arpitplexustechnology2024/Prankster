@@ -11,7 +11,7 @@
           "value" : "light"
         }
       ],
-      "filename" : "SideMenu.Light.png",
+      "filename" : "MoreApp.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
@@ -22,7 +22,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "SideMenu.Dark.png",
+      "filename" : "Component 8.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
