@@ -17,29 +17,23 @@ class CustomCoverPageVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationbarView.addBottomShadow()
-        setupCollectionView()
-        setupNoDataView()
-        updateNoDataViewVisibility()
+        self.setupNoDataView()
+        self.setupSwipeGesture()
+        self.setupCollectionView()
+        self.updateNoDataViewVisibility()
+        self.navigationbarView.addBottomShadow()
     }
     
     private func setupCollectionView() {
-        customeCoverAllCollectionView.delegate = self
-        customeCoverAllCollectionView.dataSource = self
-        if let layout = customeCoverAllCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.minimumInteritemSpacing = 16
-            layout.minimumLineSpacing = 16
-            layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        }
+        self.customeCoverAllCollectionView.delegate = self
+        self.customeCoverAllCollectionView.dataSource = self
     }
     
     private func setupNoDataView() {
         noDataView = NoDataView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
         noDataView.isHidden = true
         self.view.addSubview(noDataView)
-        
         noDataView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -47,11 +41,6 @@ class CustomCoverPageVC: UIViewController {
             noDataView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor, constant: 30),
             noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        
-        noDataView.layer.cornerRadius = 28
-        noDataView.layer.masksToBounds = true
-        
-        noDataView.layoutIfNeeded()
     }
     
     private func updateNoDataViewVisibility() {
@@ -62,6 +51,18 @@ class CustomCoverPageVC: UIViewController {
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
+    
+    private func setupSwipeGesture() {
+        let swipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeGesture.edges = .left
+        self.view.addGestureRecognizer(swipeGesture)
+    }
+    
+    @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        if gesture.state == .recognized {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
 }
 
 extension CustomCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -70,23 +71,49 @@ extension CustomCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSourc
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CoverPage1CollectionCell", for: indexPath) as! CoverPage1CollectionCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCoverAllCollectionViewCell", for: indexPath) as! CustomCoverAllCollectionViewCell
         cell.imageView.image = allCustomCovers[indexPath.item]
+        cell.blurredImageView.image = allCustomCovers[indexPath.item]
+        cell.delegate = self
         return cell
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let spacing: CGFloat = 16
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let totalSpacing = spacing * 4
+            let width = (collectionView.frame.width - totalSpacing) / 2
+            let height = (collectionView.frame.height - spacing * 3) / 2
+            return CGSize(width: width, height: height)
+        } else {
+            let totalSpacing = spacing * 3
+            let width = collectionView.frame.width - totalSpacing
+            let height = (collectionView.frame.height - totalSpacing) / 2
+            return CGSize(width: width, height: height)
+        }
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let layout = collectionViewLayout as! UICollectionViewFlowLayout
-        let paddingSpace = layout.sectionInset.left + layout.sectionInset.right + layout.minimumInteritemSpacing * (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1)
-        let availableWidth = collectionView.frame.width - paddingSpace
-        let widthPerItem = availableWidth / (UIDevice.current.userInterfaceIdiom == .pad ? 3 : 2)
-        let heightPerItem: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 287 : 187
-        
-        return CGSize(width: widthPerItem, height: heightPerItem)
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 26
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 26
     }
 }
 
+extension CustomCoverPageVC: CustomCoverAllCollectionViewCellDelegate {
+    func didTapDoneButton(with image: UIImage) {
+        if let navigationController = self.navigationController {
+            if let coverPageVC = navigationController.viewControllers.first(where: { $0 is CoverPageVC }) as? CoverPageVC {
+                let coverData = CoverPageData( coverURL: "", coverName: "", tagName: [""], coverPremium: false, itemID: 0)
+                coverPageVC.updateSelectedImage(with: coverData, customImage: image)
+                navigationController.popToViewController(coverPageVC, animated: true)
+            }
+        }
+    }
+}

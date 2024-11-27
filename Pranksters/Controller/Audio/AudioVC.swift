@@ -25,17 +25,13 @@ struct CustomAudio: Codable {
 class AudioVC: UIViewController {
     
     // MARK: - outlet
-    @IBOutlet weak var songName: UILabel!
     @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var songMinit: UILabel!
-    @IBOutlet weak var AudioShowView: UIView!
-    @IBOutlet weak var songProgress: UISlider!
+    @IBOutlet weak var audioShowView: UIView!
     @IBOutlet weak var oneTimeBlurView: UIView!
-    @IBOutlet weak var playPauseButton: UIButton!
+    @IBOutlet weak var PauseImageView: UIImageView!
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var audioImageView: UIImageView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
-    @IBOutlet weak var blureEffect: UIVisualEffectView!
     @IBOutlet weak var lottieLoader: LottieAnimationView!
     @IBOutlet weak var audioCustomCollectionView: UICollectionView!
     @IBOutlet weak var audioCharacterCollectionView: UICollectionView!
@@ -46,17 +42,17 @@ class AudioVC: UIViewController {
     @IBOutlet weak var audioCharacterHeightConstraint: NSLayoutConstraint!
     
     // MARK: - variable
-    var isLoading = true
     private var timer: Timer?
+    private var isLoading = true
     private var isPlaying = false
     var selectedCoverImageURL: String?
     private var selectedAudioIndex: Int?
     private var audioPlayer: AVAudioPlayer?
-    var initialAudioData: CharacterAllData?
-    private var viewModel: CharacterViewModel!
+    var initialAudioData: CategoryAllData?
+    private var viewModel: CategoryViewModel!
     private var noDataView: NoDataBottomBarView!
     private var selectedAudioCustomCell: IndexPath?
-    private var selectedAudioData: CharacterAllData?
+    private var selectedAudioData: CategoryAllData?
     private var selectedAudioCharacterCell: IndexPath?
     private var noInternetView: NoInternetBottombarView!
     private let defaultImages = ["MusicAudio01", "MusicAudio02", "MusicAudio03", "MusicAudio04", "MusicAudio05"]
@@ -66,14 +62,14 @@ class AudioVC: UIViewController {
         }
     }
     
-    init(viewModel: CharacterViewModel) {
+    init(viewModel: CategoryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.viewModel = CharacterViewModel(apiService: CharacterAPIService.shared)
+        self.viewModel = CategoryViewModel(apiService: CategoryAPIService.shared)
     }
     
     // MARK: - viewWillDisappear
@@ -88,37 +84,30 @@ class AudioVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupSlider()
         setupViewModel()
         setupNoDataView()
         loadSavedAudios()
         setupAudioSession()
         setupLottieLoader()
+        setupSwipeGesture()
         showSkeletonLoader()
         setupNoInternetView()
         checkInternetAndFetchData()
+        setupAudioImageViewGesture()
         self.navigationbarView.addBottomShadow()
-        self.songMinit.isHidden = true
-        self.songName.isHidden = true
-        self.blureEffect.isHidden = true
-        self.songProgress.isHidden = true
-        self.playPauseButton.isHidden = true
-        
+        self.PauseImageView.isHidden = true
         if let audioData = initialAudioData {
             playSelectedAudio(audioData)
         }
-        
         if let imageURL = selectedCoverImageURL{
-            print("=== Received Data in Cover Image ===")
-            print("Image URL: \(imageURL)")
-            print("=========================================")
+            print("Cover Image URL: \(imageURL)")
         }
     }
     
     // MARK: - checkInternetAndFetchData
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
-            viewModel.fetchCharacters(categoryId: 1)
+            viewModel.fetchCategorys(typeId: 1)
             self.noInternetView?.isHidden = true
         } else {
             self.showNoInternetView()
@@ -126,51 +115,37 @@ class AudioVC: UIViewController {
         }
     }
     
-    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.3) {
-            self.oneTimeBlurView.alpha = 0
-        } completion: { _ in
-            self.oneTimeBlurView.isHidden = true
-        }
-    }
-    
-    func isFirstLaunch() -> Bool {
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: "hasLaunchedAudio") {
-            return false
-        } else {
-            defaults.set(true, forKey: "hasLaunchedAudio")
-            return true
-        }
-    }
-    
     // MARK: - setupUI
     func setupUI() {
-        bottomView.layer.shadowColor = UIColor.black.cgColor
-        bottomView.layer.shadowOpacity = 0.5
-        bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
-        bottomView.layer.shadowRadius = 12
-        bottomView.layer.cornerRadius = 28
-        bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        bottomScrollView.layer.cornerRadius = 28
-        bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        audioImageView.layer.cornerRadius = 8
-        AudioShowView.layer.cornerRadius = 8
-        AudioShowView.layer.shadowColor = UIColor.black.cgColor
-        AudioShowView.layer.shadowOpacity = 0.1
-        AudioShowView.layer.shadowOffset = CGSize(width: 0, height: 3)
-        AudioShowView.layer.shadowRadius = 12
+        self.bottomView.layer.shadowColor = UIColor.black.cgColor
+        self.bottomView.layer.shadowOpacity = 0.5
+        self.bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
+        self.bottomView.layer.shadowRadius = 12
+        self.bottomView.layer.cornerRadius = 28
+        self.bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        blureEffect.layer.cornerRadius = 8
-        blureEffect.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMinXMaxYCorner]
-        blureEffect.layer.masksToBounds = true
+        self.bottomScrollView.layer.cornerRadius = 28
+        self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
+        self.audioImageView.loadGif(name: "CoverGIF")
+        self.audioImageView.layer.cornerRadius = 8
+        
+        self.audioShowView.layer.cornerRadius = 8
+        self.audioShowView.layer.shadowColor = UIColor.black.cgColor
+        self.audioShowView.layer.shadowOpacity = 0.1
+        self.audioShowView.layer.shadowOffset = CGSize(width: 0, height: 3)
+        self.audioShowView.layer.shadowRadius = 12
+        
         self.audioCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        audioCustomCollectionView.delegate = self
-        audioCustomCollectionView.dataSource = self
-        audioCharacterCollectionView.delegate = self
-        audioCharacterCollectionView.dataSource = self
-        audioImageView.loadGif(name: "CoverGIF")
+        self.audioCustomCollectionView.delegate = self
+        self.audioCustomCollectionView.dataSource = self
+        self.audioCharacterCollectionView.delegate = self
+        self.audioCharacterCollectionView.dataSource = self
+
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        self.oneTimeBlurView.addGestureRecognizer(tapGesture)
+        self.oneTimeBlurView.isUserInteractionEnabled = true
         self.oneTimeBlurView.isHidden = true
         if isFirstLaunch() {
             self.oneTimeBlurView.isHidden = false
@@ -178,22 +153,18 @@ class AudioVC: UIViewController {
             self.oneTimeBlurView.isHidden = true
         }
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        oneTimeBlurView.addGestureRecognizer(tapGesture)
-        oneTimeBlurView.isUserInteractionEnabled = true
-        
         if UIDevice.current.userInterfaceIdiom == .pad {
-            coverImageViewHeightConstraint.constant = 280
-            coverImageViewWidthConstraint.constant = 245
-            scrollViewHeightConstraint.constant = 680
-            audioCustomHeightConstraint.constant = 180
-            audioCharacterHeightConstraint.constant = 360
+            self.coverImageViewHeightConstraint.constant = 280
+            self.coverImageViewWidthConstraint.constant = 245
+            self.scrollViewHeightConstraint.constant = 680
+            self.audioCustomHeightConstraint.constant = 180
+            self.audioCharacterHeightConstraint.constant = 360
         } else {
-            coverImageViewHeightConstraint.constant = 240
-            coverImageViewWidthConstraint.constant = 205
-            scrollViewHeightConstraint.constant = 530
-            audioCustomHeightConstraint.constant = 140
-            audioCharacterHeightConstraint.constant = 280
+            self.coverImageViewHeightConstraint.constant = 240
+            self.coverImageViewWidthConstraint.constant = 205
+            self.scrollViewHeightConstraint.constant = 530
+            self.audioCustomHeightConstraint.constant = 140
+            self.audioCharacterHeightConstraint.constant = 280
         }
         self.view.layoutIfNeeded()
     }
@@ -202,7 +173,7 @@ class AudioVC: UIViewController {
     func setupViewModel() {
         viewModel.reloadData = { [weak self] in
             DispatchQueue.main.async {
-                if self?.viewModel.characters.isEmpty ?? true {
+                if self?.viewModel.categorys.isEmpty ?? true {
                     self?.noDataView.isHidden = false
                 } else {
                     self?.hideSkeletonLoader()
@@ -222,10 +193,8 @@ class AudioVC: UIViewController {
     private func setupNoDataView() {
         noDataView = NoDataBottomBarView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
         noDataView.isHidden = true
         self.view.addSubview(noDataView)
-        
         noDataView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -242,10 +211,8 @@ class AudioVC: UIViewController {
     func setupNoInternetView() {
         noInternetView = NoInternetBottombarView()
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
-        
         noInternetView.isHidden = true
         self.view.addSubview(noInternetView)
-        
         noInternetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -270,17 +237,17 @@ class AudioVC: UIViewController {
         }
     }
     
-    func showSkeletonLoader() {
+    private func showSkeletonLoader() {
         isLoading = true
         audioCharacterCollectionView.reloadData()
     }
     
-    func hideSkeletonLoader() {
+    private func hideSkeletonLoader() {
         isLoading = false
         audioCharacterCollectionView.reloadData()
     }
     
-    func showNoInternetView() {
+    private func showNoInternetView() {
         self.noInternetView.isHidden = false
     }
     
@@ -290,23 +257,15 @@ class AudioVC: UIViewController {
     }
     
     // MARK: - showLottieLoader
-    func showLottieLoader() {
-        blureEffect.isHidden = true
-        songProgress.isHidden = true
-        songName.isHidden = true
-        songMinit.isHidden = true
+    private func showLottieLoader() {
         lottieLoader.isHidden = false
         audioImageView.isHidden = true
         lottieLoader.play()
     }
     
     // MARK: - hideLottieLoader
-    func hideLottieLoader() {
+    private func hideLottieLoader() {
         lottieLoader.stop()
-        blureEffect.isHidden = false
-        songProgress.isHidden = false
-        songName.isHidden = false
-        songMinit.isHidden = false
         lottieLoader.isHidden = true
         audioImageView.isHidden = false
     }
@@ -356,15 +315,21 @@ class AudioVC: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
-    // MARK: - playPauseButtonTapped
-    @IBAction func playPauseButtonTapped(_ sender: UIButton) {
+    private func setupAudioImageViewGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(audioImageViewTapped))
+        audioImageView.isUserInteractionEnabled = true
+        audioImageView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc private func audioImageViewTapped() {
         if let player = audioPlayer {
             if player.isPlaying {
                 player.pause()
-                timer?.invalidate()
-                playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+                PauseImageView.image = UIImage(named:"PlayButton")
+                PauseImageView.isHidden = false
             } else {
                 startAudioPlayback()
+                PauseImageView.isHidden = true
             }
             isPlaying = player.isPlaying
         }
@@ -372,15 +337,22 @@ class AudioVC: UIViewController {
     
     private func startAudioPlayback() {
         guard let player = audioPlayer else { return }
-        
         if player.currentTime >= player.duration {
             player.currentTime = 0
-            songProgress.value = 0
         }
-        
         player.play()
-        playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-        setupTimer()
+    }
+    
+    private func setupSwipeGesture() {
+        let swipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeGesture.edges = .left
+        self.view.addGestureRecognizer(swipeGesture)
+    }
+    
+    @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        if gesture.state == .recognized {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }
 
@@ -390,7 +362,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         if collectionView == audioCustomCollectionView {
             return 1 + customAudios.count
         } else if collectionView == audioCharacterCollectionView {
-            return isLoading ? 6 : viewModel.characters.count
+            return isLoading ? 6 : viewModel.categorys.count
         }
         return 0
     }
@@ -415,10 +387,10 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterCollectionCell", for: indexPath) as! AudioCharacterCollectionCell
-                let character = viewModel.characters[indexPath.item]
-//                if let url = URL(string: character.characterImage) {
-//                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
-//                }
+                let category = viewModel.categorys[indexPath.item]
+                if let url = URL(string: category.categoryImage) {
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+                }
                 return cell
             }
         }
@@ -438,10 +410,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 selectedAudioCustomCell = indexPath
                 let audioData = customAudios[indexPath.item - 1]
                 selectedAudioIndex = indexPath.item - 1
-                
-                print("=== Audio Custom Collection Cell Clicked ===")
-                print("Audio File URL:", audioData.url)
-                print("=====================================")
+                print("Custom Audio File URL:", audioData.url)
                 
                 if let player = audioPlayer, player.isPlaying {
                     player.stop()
@@ -451,13 +420,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 setupAudioPlayer(with: audioData.url)
                 audioPlayer?.play()
                 isPlaying = true
-                playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-                setupTimer()
-                self.playPauseButton.isHidden = false
-                self.songMinit.isHidden = false
-                self.songName.isHidden = false
-                self.blureEffect.isHidden = false
-                self.songProgress.isHidden = false
+                self.PauseImageView.isHidden = true
             }
         } else if collectionView == audioCharacterCollectionView {
             if let previousCustomCell = selectedAudioCustomCell {
@@ -466,9 +429,9 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             }
             
             selectedAudioCharacterCell = indexPath
-            let character = viewModel.characters[indexPath.item]
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioCharacterAllVC") as! AudioCharacterAllVC
-          //  vc.characterId = character.characterID
+            let category = viewModel.categorys[indexPath.item]
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioCategoryAllVC") as! AudioCategoryAllVC
+            vc.categoryId = category.categoryID
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -497,7 +460,13 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         alertController.setValue(titleString, forKey: "attributedTitle")
         
         let recorderAction = UIAlertAction(title: "Recorder", style: .default) { [weak self] _ in
-            // Handle recorder action
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CustomRecoderVC") as! CustomRecoderVC
+            vc.delegate = self
+            if let sheet = vc.sheetPresentationController {
+                sheet.detents = [.large()]
+                sheet.prefersGrabberVisible = true
+            }
+            self?.present(vc, animated: true)
         }
         
         let mediaPlayerAction = UIAlertAction(title: "Media player", style: .default) { [weak self] _ in
@@ -528,16 +497,15 @@ extension AudioVC {
         }
         
         if let encoded = try? JSONEncoder().encode(audioData) {
-            UserDefaults.standard.set(encoded, forKey: "is_UserSelectedAudios")
+            UserDefaults.standard.set(encoded, forKey: ConstantValue.is_UserAudios)
         }
     }
     
     private func loadSavedAudios() {
-        guard let data = UserDefaults.standard.data(forKey: "is_UserSelectedAudios"),
+        guard let data = UserDefaults.standard.data(forKey: ConstantValue.is_UserAudios),
               let savedAudios = try? JSONDecoder().decode([CustomAudio].self, from: data) else {
             return
         }
-        
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         
         customAudios = savedAudios.compactMap { savedAudio in
@@ -551,19 +519,9 @@ extension AudioVC {
                 return nil
             }
         }
-        
         DispatchQueue.main.async {
             self.audioCustomCollectionView.reloadData()
         }
-    }
-    
-    private func setupSlider() {
-        songProgress.addTarget(self, action: #selector(sliderValueChanged(_:)), for: .valueChanged)
-    }
-    
-    @objc private func sliderValueChanged(_ slider: UISlider) {
-        audioPlayer?.currentTime = TimeInterval(slider.value)
-        updateSongDuration()
     }
     
     private func setupAudioSession() {
@@ -587,41 +545,14 @@ extension AudioVC {
             if let player = audioPlayer, player.isPlaying {
                 player.stop()
             }
-            
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer?.delegate = self
             audioPlayer?.prepareToPlay()
-            songName.text = url.lastPathComponent
-            songProgress.maximumValue = Float(audioPlayer?.duration ?? 0)
-            songProgress.value = 0
             audioPlayer?.play()
             isPlaying = true
-            playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-            
-            updateSongDuration()
-            setupTimer()
         } catch {
             print("Error setting up audio player: \(error)")
         }
-    }
-    
-    private func setupTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            self?.updateSongProgress()
-        }
-    }
-    
-    private func updateSongProgress() {
-        guard let player = audioPlayer else { return }
-        songProgress.value = Float(player.currentTime)
-        updateSongDuration()
-    }
-    
-    private func updateSongDuration() {
-        _ = Int(audioPlayer?.currentTime ?? 0)
-        let duration = Int(audioPlayer?.duration ?? 0)
-        songMinit.text = "\(timeString(from: duration))"
     }
     
     private func timeString(from timeInterval: Int) -> String {
@@ -646,20 +577,11 @@ extension AudioVC {
                 do {
                     self.audioPlayer?.stop()
                     self.timer?.invalidate()
-                    
                     self.audioPlayer = try AVAudioPlayer(data: audioData)
                     self.audioPlayer?.delegate = self
                     self.audioPlayer?.prepareToPlay()
-                    
-                    self.songProgress.maximumValue = Float(self.audioPlayer?.duration ?? 0)
-                    self.songProgress.value = 0
-                    self.updateSongDuration()
-                    
                     self.audioPlayer?.play()
                     self.isPlaying = true
-                    self.playPauseButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
-                    self.setupTimer()
-                    
                     self.hideLottieLoader()
                 } catch {
                     self.hideLottieLoader()
@@ -669,30 +591,22 @@ extension AudioVC {
         }.resume()
     }
     
-    func playSelectedAudio(_ audioData: CharacterAllData) {
-        print("=== Selected Audio from Preview ===")
+    func playSelectedAudio(_ audioData: CategoryAllData) {
+        if let previousCustomCell = selectedAudioCustomCell {
+            audioCustomCollectionView.deselectItem(at: previousCustomCell, animated: false)
+            selectedAudioCustomCell = nil
+        }
+        selectedAudioIndex = nil
+        self.selectedAudioData = audioData
         print("Audio Name:", audioData.name)
         print("Audio File:", audioData.file ?? "No File")
-        print("Audio Image URL:", audioData.image)
-        print("Audio Item ID:", audioData.itemID)
-        print("Audio favourite:", audioData.isFavorite)
-        print("Audio premium:", audioData.premium)
-        print("=====================================")
-        
-        self.selectedAudioData = audioData
-        
         showLottieLoader()
         if let url = URL(string: audioData.image) {
             audioImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder")) { [weak self] _, _, _, _ in
                 self?.hideLottieLoader()
-                self?.playPauseButton.isHidden = false
-                self?.songMinit.isHidden = false
-                self?.songName.isHidden = false
-                self?.blureEffect.isHidden = false
-                self?.songProgress.isHidden = false
+                self?.PauseImageView.isHidden = true
             }
         }
-        songName.text = audioData.name
         if let audioUrl = URL(string: audioData.file!) {
             showLottieLoader()
             setupAudioPlayerFromURL(audioUrl)
@@ -725,11 +639,6 @@ extension AudioVC: UIDocumentPickerDelegate {
                 DispatchQueue.main.async {
                     self.audioCustomCollectionView.reloadData()
                     self.hideLottieLoader()
-                    self.playPauseButton.isHidden = false
-                    self.songMinit.isHidden = false
-                    self.songName.isHidden = false
-                    self.blureEffect.isHidden = false
-                    self.songProgress.isHidden = false
                     let indexPath = IndexPath(item: 1, section: 0)
                     self.audioCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                     self.collectionView(self.audioCustomCollectionView, didSelectItemAt: indexPath)
@@ -745,25 +654,65 @@ extension AudioVC: UIDocumentPickerDelegate {
     private func getRandomDefaultImage() -> UIImage? {
         let randomIndex = Int.random(in: 0..<defaultImages.count)
         let imageName = defaultImages[randomIndex]
-        
         let image = UIImage(named: imageName)
         image?.accessibilityIdentifier = imageName
-        
         return image
     }
 }
 
-//MARK: - AVAudioPlayerDelegate
 extension AudioVC: AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.isPlaying = false
-            self.playPauseButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            self.PauseImageView.image = UIImage(named:"PlayButton")
+            self.PauseImageView.isHidden = false
             self.timer?.invalidate()
-            self.songProgress.value = Float(player.duration)
-            self.songProgress.value = 0
-            self.updateSongDuration()
+        }
+    }
+}
+
+extension AudioVC: SaveRecordingDelegate {
+    func didSaveRecording(audioURL: URL, name: String) {
+        self.showLottieLoader()
+        let randomImage = getRandomDefaultImage()
+        self.customAudios.insert((url: audioURL, image: randomImage), at: 0)
+        
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to setup audio session: \(error)")
+        }
+        
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.audioCustomCollectionView.reloadData()
+            self.hideLottieLoader()
+            let indexPath = IndexPath(item: 1, section: 0)
+            self.audioCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            self.collectionView(self.audioCustomCollectionView, didSelectItemAt: indexPath)
+        }
+    }
+}
+
+// MARK: - One time Black View Show
+extension AudioVC  {
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        UIView.animate(withDuration: 0.3) {
+            self.oneTimeBlurView.alpha = 0
+        } completion: { _ in
+            self.oneTimeBlurView.isHidden = true
+        }
+    }
+    
+    func isFirstLaunch() -> Bool {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: ConstantValue.hasLaunchedAudio) {
+            return false
+        } else {
+            defaults.set(true, forKey: ConstantValue.hasLaunchedAudio)
+            return true
         }
     }
 }

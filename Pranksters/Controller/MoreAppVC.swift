@@ -23,6 +23,7 @@ class MoreAppVC: UIViewController {
         super.viewDidLoad()
         self.setupUI()
         self.setupNoDataView()
+        self.setupSwipeGesture()
         self.showSkeletonLoader()
         self.setupNoInternetView()
         self.checkInternetAndFetchData()
@@ -145,6 +146,18 @@ class MoreAppVC: UIViewController {
     
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
+    }
+    
+    private func setupSwipeGesture() {
+        let swipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeGesture.edges = .left
+        self.view.addGestureRecognizer(swipeGesture)
+    }
+    
+    @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        if gesture.state == .recognized {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }
 

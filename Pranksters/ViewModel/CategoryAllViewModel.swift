@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-// MARK: - Audio ViewModel
+// MARK: - CategoryAll ViewModel
 class CategoryAllViewModel {
     private let apiService: CategoryAllAPIServiceProtocol
     var audioData: [CategoryAllData] = []

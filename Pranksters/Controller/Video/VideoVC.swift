@@ -15,10 +15,11 @@ import Photos
 
 class VideoVC: UIViewController {
     
+    // MARK: - IBOutlet
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
     @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var AudioShowView: UIView!
+    @IBOutlet weak var videoShowView: UIView!
     @IBOutlet weak var oneTimeBlurView: UIView!
     @IBOutlet weak var videoImageView: UIImageView!
     @IBOutlet weak var pauseImageView: UIImageView!
@@ -30,41 +31,34 @@ class VideoVC: UIViewController {
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var videoCustomHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var videoCharacterHeightConstraint: NSLayoutConstraint!
-    var currentlySelectedCollectionView: UICollectionView?
-    var currentlySelectedIndexPath: IndexPath?
-    private var selectedVideoData: CharacterAllData?
+    
+    // MARK: - Properties
+    private var isLoading = true
+    private var isPlaying = false
+    private var player: AVPlayer?
     var selectedCoverImageURL: String?
-    var shouldAutoPlayVideo = false
-    var customVideos: [URL] = []
-    var selectedCustomVideoIndex: Int?
-    var selectedCoverPage1Index: IndexPath?
-    var player: AVPlayer?
-    var playerLayer: AVPlayerLayer?
-    var isPlaying = false
-    var audioSession: AVAudioSession?
-    private var viewModel: CharacterViewModel!
-    var isLoading = true
+    private var selectedVideoIndex: Int?
+    private var customVideos: [URL] = []
+    private var shouldAutoPlayVideo = false
+    private var playerLayer: AVPlayerLayer?
+    private var audioSession: AVAudioSession?
+    private var viewModel: CategoryViewModel!
     private var noDataView: NoDataBottomBarView!
+    private var selectedVideoData: CategoryAllData?
+    private var selectedVideoCustomCell: IndexPath?
+    private var selectedVideoCategoryCell: IndexPath?
     private var noInternetView: NoInternetBottombarView!
     
-    init(viewModel: CharacterViewModel) {
+    init(viewModel: CategoryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.viewModel = CharacterViewModel(apiService: CharacterAPIService.shared)
+        self.viewModel = CategoryViewModel(apiService: CategoryAPIService.shared)
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let selectedIndexPath = videoCustomCollectionView.indexPathsForSelectedItems?.first {
-            videoCustomCollectionView.deselectItem(at: selectedIndexPath, animated: false)
-        }
-        selectedCoverPage1Index = nil
-    }
-    
+        
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopVideo()
@@ -75,29 +69,240 @@ class VideoVC: UIViewController {
         stopVideo()
     }
     
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-        setupViewModel()
-        loadSavedImages()
-        setupNoDataView()
-        setupLottieLoader()
-        showSkeletonLoader()
-        setupNoInternetView()
-        checkInternetAndFetchData()
-        navigationbarView.addBottomShadow()
-        setupVideoImageView()
-        setupAudioSession()
-        
+        self.setupUI()
+        self.setupViewModel()
+        self.setupNoDataView()
+        self.setupSwipeGesture()
+        self.setupAudioSession()
+        self.setupLottieLoader()
+        self.showSkeletonLoader()
+        self.setupNoInternetView()
+        self.setupVideoImageView()
+        self.loadCustomVideoURLs()
+        self.checkInternetAndFetchData()
+        self.navigationbarView.addBottomShadow()
+        self.videoCustomCollectionView.reloadData()
+        self.pauseImageView.isHidden = true
+        self.pauseImageView.image = UIImage(named: "PlayButton")
         if let imageURL = selectedCoverImageURL{
-            print("=== Received Data in Cover Image ===")
             print("Image URL: \(imageURL)")
-            print("=========================================")
+        }
+    }
+    
+    // MARK: - checkInternetAndFetchData
+    func checkInternetAndFetchData() {
+        if isConnectedToInternet() {
+            viewModel.fetchCategorys(typeId: 2)
+            self.noInternetView?.isHidden = true
+        } else {
+            self.showNoInternetView()
+            self.hideSkeletonLoader()
+        }
+    }
+    
+    // MARK: - setupUI
+    func setupUI() {
+        self.bottomView.layer.shadowColor = UIColor.black.cgColor
+        self.bottomView.layer.shadowOpacity = 0.5
+        self.bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
+        self.bottomView.layer.shadowRadius = 12
+        self.bottomView.layer.cornerRadius = 28
+        self.bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        self.bottomScrollView.layer.cornerRadius = 28
+        self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
+        self.videoImageView.loadGif(name: "CoverGIF")
+        self.videoImageView.layer.cornerRadius = 8
+        self.videoShowView.layer.cornerRadius = 8
+        self.videoShowView.layer.shadowColor = UIColor.black.cgColor
+        self.videoShowView.layer.shadowOpacity = 0.1
+        self.videoShowView.layer.shadowOffset = CGSize(width: 0, height: 3)
+        self.videoShowView.layer.shadowRadius = 12
+        
+        self.videoCustomCollectionView.delegate = self
+        self.videoCustomCollectionView.dataSource = self
+        self.videoCharacterCollectionView.delegate = self
+        self.videoCharacterCollectionView.dataSource = self
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        self.oneTimeBlurView.addGestureRecognizer(tapGesture)
+        self.oneTimeBlurView.isUserInteractionEnabled = true
+        self.oneTimeBlurView.isHidden = true
+        if isFirstLaunch() {
+            self.oneTimeBlurView.isHidden = false
+        } else {
+            self.oneTimeBlurView.isHidden = true
         }
         
-        self.pauseImageView.image = UIImage(named: "pause")
-        self.pauseImageView.isHidden = true
-        videoImageView.loadGif(name: "CoverGIF")
+        self.videoCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            self.coverImageViewHeightConstraint.constant = 280
+            self.coverImageViewWidthConstraint.constant = 245
+            self.scrollViewHeightConstraint.constant = 680
+            self.videoCustomHeightConstraint.constant = 180
+            self.videoCharacterHeightConstraint.constant = 360
+        } else {
+            self.coverImageViewHeightConstraint.constant = 240
+            self.coverImageViewWidthConstraint.constant = 205
+            self.scrollViewHeightConstraint.constant = 530
+            self.videoCustomHeightConstraint.constant = 140
+            self.videoCharacterHeightConstraint.constant = 280
+        }
+        self.view.layoutIfNeeded()
+    }
+    
+    // MARK: - setupViewModel
+    func setupViewModel() {
+        viewModel.reloadData = { [weak self] in
+            DispatchQueue.main.async {
+                if self?.viewModel.categorys.isEmpty ?? true {
+                    self?.noDataView.isHidden = false
+                } else {
+                    self?.hideSkeletonLoader()
+                    self?.noDataView.isHidden = true
+                    self?.videoCharacterCollectionView.reloadData()
+                }
+            }
+        }
+        
+        viewModel.onError = { error in
+            self.hideSkeletonLoader()
+            self.noDataView.isHidden = false
+            print("Error fetching cover pages: \(error)")
+        }
+    }
+    
+    // MARK: - setupNoDataView
+    private func setupNoDataView() {
+        noDataView = NoDataBottomBarView()
+        noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        noDataView.isHidden = true
+        self.view.addSubview(noDataView)
+        noDataView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noDataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noDataView.topAnchor.constraint(equalTo: videoImageView.bottomAnchor, constant: 16),
+            noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        noDataView.layer.cornerRadius = 28
+        noDataView.layer.masksToBounds = true
+        noDataView.layoutIfNeeded()
+    }
+    
+    // MARK: - setupNoInternetView
+    func setupNoInternetView() {
+        noInternetView = NoInternetBottombarView()
+        noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
+        noInternetView.isHidden = true
+        self.view.addSubview(noInternetView)
+        noInternetView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noInternetView.topAnchor.constraint(equalTo: videoImageView.bottomAnchor, constant: 16),
+            noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        noInternetView.layer.cornerRadius = 28
+        noInternetView.layer.masksToBounds = true
+        noInternetView.layoutIfNeeded()
+    }
+    
+    // MARK: - retryButtonTapped
+    @objc func retryButtonTapped() {
+        if isConnectedToInternet() {
+            noInternetView.isHidden = true
+            noDataView.isHidden = true
+            checkInternetAndFetchData()
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    private func showSkeletonLoader() {
+        isLoading = true
+        videoCharacterCollectionView.reloadData()
+    }
+    
+    private func hideSkeletonLoader() {
+        isLoading = false
+        videoCharacterCollectionView.reloadData()
+    }
+    
+    private func showNoInternetView() {
+        self.noInternetView.isHidden = false
+    }
+    
+    private func isConnectedToInternet() -> Bool {
+        let networkManager = NetworkReachabilityManager()
+        return networkManager?.isReachable ?? false
+    }
+    
+    // MARK: - showLottieLoader
+    private func showLottieLoader() {
+        lottieLoader.isHidden = false
+        lottieLoader.play()
+    }
+    
+    // MARK: - hideLottieLoader
+    private func hideLottieLoader() {
+        lottieLoader.stop()
+        lottieLoader.isHidden = true
+    }
+    
+    // MARK: - setupLottieLoader
+    private func setupLottieLoader() {
+        lottieLoader.isHidden = true
+        lottieLoader.loopMode = .loop
+        lottieLoader.contentMode = .scaleAspectFill
+        lottieLoader.animation = LottieAnimation.named("Loader")
+    }
+    
+    // MARK: - btnDoneTapped
+    @IBAction func btnDoneTapped(_ sender: UIButton) {
+        var videoURLToPass: String?
+        var videoNameToPass: String?
+        
+        if let selectedIndex = selectedVideoIndex {
+            
+            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let fileName = "\(UUID().uuidString).mp4"
+            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
+            
+            videoURLToPass = destinationURL.absoluteString
+            videoNameToPass = "Custom Video \(selectedIndex + 1)"
+        }
+        else if let selectedData = selectedVideoData {
+            videoURLToPass = selectedData.file
+            videoNameToPass = selectedData.name
+        }
+        if let imageURL = videoURLToPass {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
+                nextVC.selectedURL = imageURL
+                nextVC.selectedName = videoNameToPass
+                nextVC.selectedCoverURL = selectedCoverImageURL
+                self.navigationController?.pushViewController(nextVC, animated: true)
+                self.videoImageView.isHidden = false
+                self.pauseImageView.isHidden = true
+            }
+        } else {
+            let alert = UIAlertController(title: "No Image Selected",
+                                          message: "Please select an image before proceeding.",
+                                          preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            self.present(alert, animated: true)
+        }
+    }
+    
+    // MARK: - btnBackTapped
+    @IBAction func btnBackTapped(_ sender: UIButton) {
+        self.navigationController?.popViewController(animated: true)
     }
     
     private func stopVideo() {
@@ -114,8 +319,8 @@ class VideoVC: UIViewController {
     
     private func setupVideoImageView() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(videoImageViewTapped))
-        videoImageView.addGestureRecognizer(tapGesture)
-        videoImageView.isUserInteractionEnabled = true
+        videoShowView.addGestureRecognizer(tapGesture)
+        videoShowView.isUserInteractionEnabled = true
     }
     
     @objc private func videoImageViewTapped() {
@@ -148,225 +353,58 @@ class VideoVC: UIViewController {
         }
     }
     
-    func checkInternetAndFetchData() {
-        if isConnectedToInternet() {
-            viewModel.fetchCharacters(categoryId: 2)
-            self.noInternetView?.isHidden = true
-        } else {
-            self.showNoInternetView()
-            self.hideSkeletonLoader()
+    // MARK: - updateSelectedVideo
+    func updateSelectedVideo(with coverData: CategoryAllData) {
+        selectedVideoIndex = nil
+        if let previousCustomCell = selectedVideoCustomCell {
+            videoCustomCollectionView.deselectItem(at: previousCustomCell, animated: false)
+            selectedVideoCustomCell = nil
         }
-    }
-    
-    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.3) {
-            self.oneTimeBlurView.alpha = 0
-        } completion: { _ in
-            self.oneTimeBlurView.isHidden = true
-        }
-    }
-    
-    func isFirstLaunch() -> Bool {
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: "hasLaunchedVideo") {
-            return false
-        } else {
-            defaults.set(true, forKey: "hasLaunchedVideo")
-            return true
-        }
-    }
-    
-    func setupUI() {
-        bottomView.layer.shadowColor = UIColor.black.cgColor
-        bottomView.layer.shadowOpacity = 0.5
-        bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
-        bottomView.layer.shadowRadius = 12
-        bottomView.layer.cornerRadius = 28
-        bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        bottomScrollView.layer.cornerRadius = 28
-        bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        videoImageView.layer.cornerRadius = 8
-        AudioShowView.layer.cornerRadius = 8
-        self.videoCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        videoCustomCollectionView.delegate = self
-        videoCustomCollectionView.dataSource = self
-        videoCharacterCollectionView.delegate = self
-        videoCharacterCollectionView.dataSource = self
-        
-        self.oneTimeBlurView.isHidden = true
-        if isFirstLaunch() {
-            self.oneTimeBlurView.isHidden = false
-        } else {
-            self.oneTimeBlurView.isHidden = true
-        }
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        oneTimeBlurView.addGestureRecognizer(tapGesture)
-        oneTimeBlurView.isUserInteractionEnabled = true
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            coverImageViewHeightConstraint.constant = 280
-            coverImageViewWidthConstraint.constant = 245
-            scrollViewHeightConstraint.constant = 680
-            videoCustomHeightConstraint.constant = 180
-            videoCharacterHeightConstraint.constant = 360
-        } else {
-            coverImageViewHeightConstraint.constant = 240
-            coverImageViewWidthConstraint.constant = 205
-            scrollViewHeightConstraint.constant = 530
-            videoCustomHeightConstraint.constant = 140
-            videoCharacterHeightConstraint.constant = 280
-        }
-        self.view.layoutIfNeeded()
-    }
-    
-    func setupViewModel() {
-        viewModel.reloadData = { [weak self] in
-            DispatchQueue.main.async {
-                if self?.viewModel.characters.isEmpty ?? true {
-                    self?.noDataView.isHidden = false
-                } else {
-                    self?.hideSkeletonLoader()
-                    self?.noDataView.isHidden = true
-                    self?.videoCharacterCollectionView.reloadData()
-                }
-            }
-        }
-        
-        viewModel.onError = { error in
-            self.hideSkeletonLoader()
-            self.noDataView.isHidden = false
-            print("Error fetching cover pages: \(error)")
-        }
-    }
-    
-    private func setupNoDataView() {
-        noDataView = NoDataBottomBarView()
-        noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        noDataView.isHidden = true
-        self.view.addSubview(noDataView)
-        
-        noDataView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            noDataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noDataView.topAnchor.constraint(equalTo: videoImageView.bottomAnchor, constant: 16),
-            noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        noDataView.layer.cornerRadius = 28
-        noDataView.layer.masksToBounds = true
-        
-        noDataView.layoutIfNeeded()
-    }
-    
-    func setupNoInternetView() {
-        noInternetView = NoInternetBottombarView()
-        noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
-        
-        noInternetView.isHidden = true
-        self.view.addSubview(noInternetView)
-        
-        noInternetView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noInternetView.topAnchor.constraint(equalTo: videoImageView.bottomAnchor, constant: 16),
-            noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        noInternetView.layer.cornerRadius = 28
-        noInternetView.layer.masksToBounds = true
-        
-        noInternetView.layoutIfNeeded()
-    }
-    
-    @objc func retryButtonTapped() {
-        if isConnectedToInternet() {
-            noInternetView.isHidden = true
-            noDataView.isHidden = true
-            checkInternetAndFetchData()
-        } else {
-            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
-        }
-    }
-    
-    func showSkeletonLoader() {
-        isLoading = true
-        videoCharacterCollectionView.reloadData()
-    }
-    
-    func hideSkeletonLoader() {
-        isLoading = false
-        videoCharacterCollectionView.reloadData()
-    }
-    
-    func showNoInternetView() {
-        self.noInternetView.isHidden = false
-    }
-    
-    private func isConnectedToInternet() -> Bool {
-        let networkManager = NetworkReachabilityManager()
-        return networkManager?.isReachable ?? false
-    }
-    
-    func showLottieLoader() {
-        lottieLoader.isHidden = false
         videoImageView.isHidden = true
-        lottieLoader.play()
-    }
-    
-    func hideLottieLoader() {
-        lottieLoader.stop()
-        lottieLoader.isHidden = true
-        videoImageView.isHidden = false
-    }
-    
-    private func setupLottieLoader() {
-        lottieLoader.isHidden = true
-        lottieLoader.loopMode = .loop
-        lottieLoader.contentMode = .scaleAspectFill
-        lottieLoader.animation = LottieAnimation.named("Loader")
-    }
-    
-    @IBAction func btnDoneTapped(_ sender: UIButton) {
-        var videoURLToPass: String?
-        var videoNameToPass: String?
+        showLottieLoader()
+        self.selectedVideoData = coverData
+        print("Name: \(coverData.name)")
+        print("File URL: \(coverData.file ?? "No URL")")
         
-        if let selectedIndex = selectedCustomVideoIndex {
+        if let videoURLString = coverData.file,
+           let videoURL = URL(string: videoURLString) {
+            stopVideo()
             
-            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileName = "\(UUID().uuidString).mp4"
-            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
+            let playerItem = AVPlayerItem(url: videoURL)
+            player = AVPlayer(playerItem: playerItem)
             
-            videoURLToPass = destinationURL.absoluteString
-            videoNameToPass = "Custom Video \(selectedIndex + 1)"
-        }
-        else if let selectedData = selectedVideoData {
-            videoURLToPass = selectedData.file
-            videoNameToPass = selectedData.name
-        }
-        if let imageURL = videoURLToPass {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
-                nextVC.selectedURL = imageURL
-                nextVC.selectedName = videoNameToPass
-                nextVC.selectedCoverURL = selectedCoverImageURL
-                self.navigationController?.pushViewController(nextVC, animated: true)
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer?.frame = videoShowView.bounds
+            playerLayer?.videoGravity = .resizeAspect
+            
+            if let playerLayer = playerLayer {
+                videoShowView.layer.addSublayer(playerLayer)
+                playerLayer.cornerRadius = 8
+                playerLayer.masksToBounds = true
+                videoShowView.bringSubviewToFront(pauseImageView)
             }
-        } else {
-            let alert = UIAlertController(title: "No Image Selected",
-                                          message: "Please select an image before proceeding.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alert, animated: true)
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
+            player?.volume = 1.0
+            pauseVideo()
+            pauseImageView.isHidden = false
+            videoShowView.layer.backgroundColor = UIColor.icon.cgColor
+            isPlaying = false
         }
+        self.hideLottieLoader()
     }
     
-    @IBAction func btnBackTapped(_ sender: UIButton) {
-        self.navigationController?.popViewController(animated: true)
+    // MARK: - setupbackSwipeGesture
+    private func setupSwipeGesture() {
+        let swipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeGesture.edges = .left
+        self.view.addGestureRecognizer(swipeGesture)
+    }
+    
+    @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        if gesture.state == .recognized {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 }
 
@@ -376,7 +414,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         if collectionView == videoCustomCollectionView {
             return customVideos.count + 1
         } else if collectionView == videoCharacterCollectionView {
-            return isLoading ? 6 : viewModel.characters.count
+            return isLoading ? 6 : viewModel.categorys.count
         }
         return 0
     }
@@ -401,10 +439,10 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterCollectionViewCell", for: indexPath) as! VideoCharacterCollectionViewCell
-                let character = viewModel.characters[indexPath.item]
-//                if let url = URL(string: character.characterImage) {
-//                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
-//                }
+                let character = viewModel.categorys[indexPath.item]
+                if let url = URL(string: character.categoryImage) {
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+                }
                 return cell
             }
         }
@@ -412,40 +450,40 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let previousCollectionView = currentlySelectedCollectionView,
-           let previousIndexPath = currentlySelectedIndexPath,
-           previousCollectionView != collectionView {
-            previousCollectionView.deselectItem(at: previousIndexPath, animated: true)
-        }
-        
-        currentlySelectedCollectionView = collectionView
-        currentlySelectedIndexPath = indexPath
         
         if collectionView == videoCustomCollectionView {
             if indexPath.item == 0 {
                 showVideoOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
             } else {
+                if let previousCharacterCell = selectedVideoCategoryCell {
+                    videoCharacterCollectionView.deselectItem(at: previousCharacterCell, animated: true)
+                    selectedVideoCategoryCell = nil
+                }
+                selectedVideoCustomCell = indexPath
+                videoImageView.isHidden = true
                 showLottieLoader()
                 let videoURL = customVideos[indexPath.item - 1]
                 playCustomVideo(url: videoURL, autoPlay: true)
-                selectedCustomVideoIndex = indexPath.item - 1
+                selectedVideoIndex = indexPath.item - 1
                 
                 let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
                 let fileName = "\(UUID().uuidString).mp4"
                 let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-                
-                print("=== Selected Custom Video ===")
-                print("=====================================")
-                print("Video URL: \(destinationURL.absoluteString)")
-                print("=====================================")
-                
+                print("Custom Video URL: \(destinationURL.absoluteString)")
                 hideLottieLoader()
             }
         } else if collectionView == videoCharacterCollectionView {
-            let character = viewModel.characters[indexPath.item]
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "VideoCharacterAllVC") as! VideoCharacterAllVC
-                // vc.characterId = character.characterID
+            if let previousCustomCell = selectedVideoCustomCell {
+                videoCustomCollectionView.deselectItem(at: previousCustomCell, animated: true)
+                selectedVideoCustomCell = nil
+            }
+            selectedVideoCategoryCell = indexPath
+            let character = viewModel.categorys[indexPath.item]
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "VideoCategoryAllVC") as! VideoCategoryAllVC
+            vc.categoryId = character.categoryID
             self.navigationController?.pushViewController(vc, animated: true)
+            self.videoImageView.isHidden = false
+            self.pauseImageView.isHidden = true
         }
     }
     
@@ -576,18 +614,17 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
             guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
                 return
             }
-            
             if UIApplication.shared.canOpenURL(settingsUrl) {
                 UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
                     print("Settings opened: \(success)")
                 })
             }
         }
-        
         snackbar.show(in: self.view, duration: 5.0)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        videoImageView.isHidden = true
         showLottieLoader()
         picker.dismiss(animated: true)
         
@@ -596,31 +633,36 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let fileName = "\(UUID().uuidString).mp4"
         let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-        
-        print("📱 New Custom Video Added:")
-        print("=====================================")
-        print("Source: \(picker.sourceType == .camera ? "Camera" : "Gallery")")
         print("Video URL: \(destinationURL.absoluteString)")
-        print("=====================================")
         
         do {
             try FileManager.default.copyItem(at: videoURL, to: destinationURL)
-            customVideos.append(destinationURL)
-            videoCustomCollectionView.reloadData()
-            saveImages()
-            let indexPath = IndexPath(item: customVideos.count, section: 0)
-            videoCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-            self.selectedCoverPage1Index = indexPath
-            self.videoCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            selectedCustomVideoIndex = customVideos.count - 1
-            playCustomVideo(url: destinationURL, autoPlay: true)
-            self.hideLottieLoader()
+            customVideos.insert(destinationURL, at: 0)
+            selectedVideoIndex = 0
+            saveCustomVideoURLs()
+            
+            DispatchQueue.main.async {
+                self.videoCustomCollectionView.reloadData()
+                let indexPath = IndexPath(item: 1, section: 0)
+                self.videoCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                self.selectedVideoCustomCell = indexPath
+                self.videoCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                self.playCustomVideo(url: destinationURL, autoPlay: true)
+                self.hideLottieLoader()
+            }
         } catch {
             print("Error copying video: \(error)")
         }
     }
     
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+        self.videoImageView.isHidden = false
+        self.pauseImageView.isHidden = true
+    }
+    
     func playCustomVideo(url: URL, autoPlay: Bool = false) {
+        videoImageView.isHidden = true
         showLottieLoader()
         playerLayer?.removeFromSuperlayer()
         
@@ -628,19 +670,19 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         player = AVPlayer(playerItem: playerItem)
         
         playerLayer = AVPlayerLayer(player: player)
-        playerLayer?.frame = videoImageView.bounds
-        playerLayer?.videoGravity = .resizeAspectFill
+        playerLayer?.frame = videoShowView.bounds
+        playerLayer?.videoGravity = .resizeAspect
+        
+        playerLayer?.cornerRadius = 8
+        playerLayer?.masksToBounds = true
         
         if let playerLayer = playerLayer {
-            videoImageView.layer.addSublayer(playerLayer)
+            videoShowView.layer.addSublayer(playerLayer)
+            videoShowView.bringSubviewToFront(pauseImageView)
         }
-        
         player?.volume = 1.0
-        
-        self.videoImageView.isHidden = false
-        
+        videoShowView.layer.backgroundColor = UIColor.icon.cgColor
         hideLottieLoader()
-        
         if autoPlay {
             playVideo()
         } else {
@@ -649,32 +691,9 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
-        
-        if let index = selectedCustomVideoIndex {
+        if let index = selectedVideoIndex {
             let indexPath = IndexPath(item: index + 1, section: 0)
             videoCustomCollectionView.reloadItems(at: [indexPath])
-        }
-    }
-    
-    func loadSavedImages() {
-        showLottieLoader()
-        if let savedImagesData = UserDefaults.standard.object(forKey: "is_UserSelectedVideo") as? Data {
-            do {
-                if let decodedImages = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [URL] {
-                    customVideos = decodedImages
-                    videoCustomCollectionView.reloadData()
-                }
-            } catch {
-                print("Error decoding saved images: \(error)")
-            }
-        }
-        selectedCoverPage1Index = nil
-        hideLottieLoader()
-    }
-    
-    func saveImages() {
-        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customVideos, requiringSecureCoding: false) {
-            UserDefaults.standard.set(encodedData, forKey: "is_UserSelectedVideo")
         }
     }
     
@@ -683,47 +702,43 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         playVideo()
     }
     
-    func updateSelectedVideo(with coverData: CharacterAllData) {
-        showLottieLoader()
-        self.selectedVideoData = coverData
-        print("=== Selected Video from Preview ===")
-        print("Name: \(coverData.name)")
-        print("File URL: \(coverData.file ?? "No URL")")
-        print("Is Favorite: \(coverData.isFavorite)")
-        print("Item ID: \(coverData.itemID)")
-        print("Premium: \(coverData.premium)")
-        print("=====================================")
-        
-        if let videoURLString = coverData.file,
-           let videoURL = URL(string: videoURLString) {
-            stopVideo()
-            
-            self.videoImageView.isHidden = false
-            
-            let playerItem = AVPlayerItem(url: videoURL)
-            player = AVPlayer(playerItem: playerItem)
-            
-            playerLayer = AVPlayerLayer(player: player)
-            playerLayer?.frame = videoImageView.bounds
-            playerLayer?.videoGravity = .resizeAspectFill
-            
-            if let playerLayer = playerLayer {
-                videoImageView.layer.addSublayer(playerLayer)
-            }
-            
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(playerDidFinishPlaying),
-                name: .AVPlayerItemDidPlayToEndTime,
-                object: playerItem
-            )
-            
-            player?.volume = 1.0
-            playVideo()
-            
-            pauseImageView.isHidden = true
-            isPlaying = true
+    private func saveCustomVideoURLs() {
+        let videoURLStrings = customVideos.map { $0.absoluteString }
+        UserDefaults.standard.set(videoURLStrings, forKey: ConstantValue.is_UserVideos)
+    }
+    
+    private func loadCustomVideoURLs() {
+        guard let savedVideoURLStrings = UserDefaults.standard.stringArray(forKey: ConstantValue.is_UserVideos) else {
+            return
         }
-        hideLottieLoader()
+        
+        customVideos = savedVideoURLStrings.compactMap { urlString in
+            guard let url = URL(string: urlString),
+                  FileManager.default.fileExists(atPath: url.path) else {
+                return nil
+            }
+            return url
+        }
+    }
+}
+
+// MARK: - One time Black View Show
+extension VideoVC  {
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        UIView.animate(withDuration: 0.3) {
+            self.oneTimeBlurView.alpha = 0
+        } completion: { _ in
+            self.oneTimeBlurView.isHidden = true
+        }
+    }
+    
+    func isFirstLaunch() -> Bool {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: ConstantValue.hasLaunchedVideo) {
+            return false
+        } else {
+            defaults.set(true, forKey: ConstantValue.hasLaunchedVideo)
+            return true
+        }
     }
 }

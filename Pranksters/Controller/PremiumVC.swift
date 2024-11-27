@@ -23,8 +23,8 @@ class PremiumVC: UIViewController {
         if let imageURL = selectedURL, let coverImageURL = selectedCoverURL, let imageName = selectedName {
             print("=== Received Data in Next ViewController ===")
             print("Cover Image URL: \(coverImageURL)")
-            print("Image URL: \(imageURL)")
-            print("Image Name: \(imageName)")
+            print("URL: \(imageURL)")
+            print("Name: \(imageName)")
             print("=========================================")
         }
         setupUnlockAllButton()

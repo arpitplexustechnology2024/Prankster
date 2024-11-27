@@ -75,44 +75,75 @@ class HomeVC: UIViewController {
         
         tapGestureActions.forEach { view, action in
             view.isUserInteractionEnabled = true
-            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: action))
+            let tapGesture = UITapGestureRecognizer(target: self, action: action)
+            tapGesture.cancelsTouchesInView = false
+            view.addGestureRecognizer(tapGesture)
         }
     }
     
     @objc func btnAudioTapped(_ sender: UITapGestureRecognizer) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
-        vc.viewType = .audio
-        self.navigationController?.pushViewController(vc, animated: true)
+        if isDropdownVisible {
+            hideDropdown()
+        } else {
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+            vc.viewType = .audio
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     @objc func btnVideoTapped(_ sender: UITapGestureRecognizer) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
-        vc.viewType = .video
-        self.navigationController?.pushViewController(vc, animated: true)
+        if isDropdownVisible {
+            hideDropdown()
+        } else {
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+            vc.viewType = .video
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     @objc func btnImageTapped(_ sender: UITapGestureRecognizer) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
-        vc.viewType = .image
-        self.navigationController?.pushViewController(vc, animated: true)
+        if isDropdownVisible {
+            hideDropdown()
+        } else {
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+            vc.viewType = .image
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
     
     @objc func btnPremiumTapped(_ sender: UITapGestureRecognizer) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
-        self.present(vc, animated: true)
+        if isDropdownVisible {
+            hideDropdown()
+        } else {
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
+            self.present(vc, animated: true)
+        }
     }
     
     @objc func btnViewLinkTapped(_ sender: UITapGestureRecognizer) {
-        
+        if isDropdownVisible {
+            hideDropdown()
+        } else {
+            
+        }
     }
     
     @IBAction func btnSpinnerTapped(_ sender: UIButton) {
+        if isDropdownVisible {
+            hideDropdown()
+            return
+        }
         
     }
     
     @IBAction func btnMoreAppTapped(_ sender: UIButton) {
+        if isDropdownVisible {
+            hideDropdown()
+            return
+        }
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppVC") as! MoreAppVC
         self.navigationController?.pushViewController(vc, animated: true)
+        
     }
     
     @IBAction func btnDropDownTapped(_ sender: UIButton) {

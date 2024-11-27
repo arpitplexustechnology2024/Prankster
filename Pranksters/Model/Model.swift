@@ -15,31 +15,47 @@ struct CoverPage: Codable {
 }
 struct CoverPageData: Codable {
     let coverURL: String
+    let coverName: String
+    let tagName: [String]
     let coverPremium: Bool
     let itemID: Int
-    let hide: Bool
-
+    
     enum CodingKeys: String, CodingKey {
         case coverURL = "CoverURL"
+        case coverName = "CoverName"
+        case tagName = "TagName"
         case coverPremium = "CoverPremium"
         case itemID = "ItemId"
-        case hide = "Hide"
     }
 }
 
-// MARK: - CharacterAllResponse
-struct CharacterAllResponse: Codable {
+// MARK: - UserDataUpload
+struct UserDataUpload: Codable {
     let status: Int
     let message: String
-    let data: [CharacterAllData]
+    let data: UserData
 }
-struct CharacterAllData: Codable {
+struct UserData: Codable {
+    let coverURL: String
+    
+    enum CodingKeys: String, CodingKey {
+        case coverURL = "CoverURL"
+    }
+}
+
+// MARK: - CategoryAllResponse
+struct CategoryAllResponse: Codable {
+    let status: Int
+    let message: String
+    let data: [CategoryAllData]
+}
+struct CategoryAllData: Codable {
     let file: String?
     let name: String
     let image: String
     let premium: Bool
     let itemID: Int
-    var isFavorite: Bool
+    let artistName: String
 
     enum CodingKeys: String, CodingKey {
         case file = "File"
@@ -47,7 +63,25 @@ struct CharacterAllData: Codable {
         case image = "Image"
         case premium = "Premium"
         case itemID = "ItemId"
-        case isFavorite
+        case artistName = "ArtistName"
+    }
+}
+
+// MARK: - Welcome
+struct CategoryResponse: Codable {
+    let status: Int
+    let message: String
+    let data: [CategoryData]
+}
+struct CategoryData: Codable {
+    let categoryName: String
+    let categoryImage: String
+    let categoryID: Int
+
+    enum CodingKeys: String, CodingKey {
+        case categoryName = "CategoryName"
+        case categoryImage = "CategoryImage"
+        case categoryID = "CategoryId"
     }
 }
 
@@ -68,4 +102,5 @@ struct MoreData: Codable {
         case packageName
     }
 }
+
 

@@ -7,100 +7,91 @@
 
 import UIKit
 import SDWebImage
-import CoreImage
+
+protocol RealisticCoverAllCollectionViewCellDelegate: AnyObject {
+    func didTapDoneButton(for coverPageData: CoverPageData)
+}
 
 class RealisticCoverAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
-    var premiumIconImageView: UIImageView!
-    private var originalImage: UIImage?
+    @IBOutlet weak var DoneButton: UIButton!
+    @IBOutlet weak var imageName: UILabel!
+    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    weak var delegate: RealisticCoverAllCollectionViewCellDelegate?
+    private var coverPageData: CoverPageData?
+    private var blurredImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        layer.cornerRadius = 10
+        setupUI()
+    }
+    
+    private func setupUI() {
+        layer.cornerRadius = 20
         layer.masksToBounds = false
-        contentView.layer.cornerRadius = 10
+        contentView.layer.cornerRadius = 20
         contentView.layer.masksToBounds = true
+        
+        blurredImageView = UIImageView()
+        blurredImageView.frame = contentView.bounds
+        blurredImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurredImageView.contentMode = .scaleAspectFill
+        
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = blurredImageView.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurredImageView.addSubview(blurEffectView)
+        
+        visualEffectView.layer.cornerRadius = 20
+        visualEffectView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        visualEffectView.layer.masksToBounds = true
+        
+        DoneButton.layer.shadowColor = UIColor.black.cgColor
+        DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
+        DoneButton.layer.shadowRadius = 3.24
+        DoneButton.layer.shadowOpacity = 0.3
+        DoneButton.layer.masksToBounds = false
+        
+        contentView.insertSubview(blurredImageView, at: 0)
+        
+        DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupPremiumIconImageView()
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupPremiumIconImageView()
-    }
-    
-    private func setupPremiumIconImageView() {
-        premiumIconImageView = UIImageView(image: UIImage(named: "premiumIcon"))
-        premiumIconImageView.translatesAutoresizingMaskIntoConstraints = false
-        premiumIconImageView.isHidden = true
-        contentView.addSubview(premiumIconImageView)
-        
-        NSLayoutConstraint.activate([
-            premiumIconImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            premiumIconImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            premiumIconImageView.widthAnchor.constraint(equalToConstant: 40),
-            premiumIconImageView.heightAnchor.constraint(equalToConstant: 40)
-        ])
     }
     
     func configure(with coverPageData: CoverPageData) {
+        self.coverPageData = coverPageData
+        let displayName = coverPageData.coverName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.coverName
+        self.imageName.text = displayName
         if let imageURL = URL(string: coverPageData.coverURL) {
+            blurredImageView.sd_setImage(with: imageURL)
             imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
-                self?.originalImage = image
-                
-                if coverPageData.coverPremium {
-                    self?.applyBlurEffect()
-                    self?.premiumIconImageView.isHidden = false
+                if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
+                    self?.DoneButton.setImage(UIImage(named: "PremiumButton"), for: .normal)
                 } else {
-                    self?.removeBlurEffect()
-                    self?.premiumIconImageView.isHidden = true
+                    self?.DoneButton.setImage(UIImage(named: "selectButton"), for: .normal)
                 }
             }
         }
     }
     
-    func applyBlurEffect() {
-        guard let image = originalImage else { return }
-        
-        let context = CIContext()
-        guard let ciImage = CIImage(image: image) else { return }
-        
-        let filter = CIFilter(name: "CIGaussianBlur")!
-        filter.setValue(ciImage, forKey: kCIInputImageKey)
-        filter.setValue(20.0, forKey: kCIInputRadiusKey)
-        guard let outputImage = filter.outputImage,
-              let cgImage = context.createCGImage(outputImage, from: ciImage.extent) else { return }
-        
-        imageView.image = UIImage(cgImage: cgImage)
-    }
-    
-    func removeBlurEffect() {
-        imageView.image = originalImage
-    }
-    
-    override var isSelected: Bool {
-        didSet {
-            if !premiumIconImageView.isHidden {
-                layer.borderWidth = 0
-                layer.borderColor = nil
-                layer.shadowOpacity = 0
-            } else {
-                layer.borderWidth = isSelected ? 3 : 0
-                layer.borderColor = isSelected ? UIColor.systemYellow.cgColor : nil
-                
-                if isSelected {
-                    layer.shadowColor = UIColor.black.cgColor
-                    layer.shadowOffset = CGSize(width: 0, height: 2)
-                    layer.shadowRadius = 4
-                    layer.shadowOpacity = 0.3
-                } else {
-                    layer.shadowOpacity = 0
-                }
-            }
+    @objc private func doneButtonTapped() {
+        if let coverPageData = coverPageData {
+            delegate?.didTapDoneButton(for: coverPageData)
         }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        blurredImageView.frame = contentView.bounds
     }
 }

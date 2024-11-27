@@ -17,9 +17,23 @@ class AddCoverPageCollectionCell: UICollectionViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
         layer.cornerRadius = 10
-        layer.masksToBounds = false // Changed to false to allow shadow
+        layer.masksToBounds = false 
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            
+            if isSelected {
+                layer.shadowColor = UIColor.black.cgColor
+                layer.shadowOffset = CGSize(width: 0, height: 2)
+                layer.shadowRadius = 4
+                layer.shadowOpacity = 0.3
+            } else {
+                layer.shadowOpacity = 0
+            }
+        }
     }
 }
 
@@ -38,7 +52,7 @@ class CoverPage1CollectionCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             layer.borderWidth = isSelected ? 3 : 0
-            layer.borderColor = isSelected ? UIColor.systemYellow.cgColor : nil
+            layer.borderColor = isSelected ? UIColor.icon.cgColor : nil
             
             if isSelected {
                 layer.shadowColor = UIColor.black.cgColor
@@ -96,7 +110,7 @@ class CoverPage2CollectionCell: UICollectionViewCell {
             imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
                 self?.originalImage = image
                 
-                if coverPageData.coverPremium {
+                if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
                     self?.applyBlurEffect()
                     self?.premiumIconImageView.isHidden = false
                 } else {
@@ -135,7 +149,7 @@ class CoverPage2CollectionCell: UICollectionViewCell {
                 layer.shadowOpacity = 0
             } else {
                 layer.borderWidth = isSelected ? 3 : 0
-                layer.borderColor = isSelected ? UIColor.systemYellow.cgColor : nil
+                layer.borderColor = isSelected ? UIColor.icon.cgColor : nil
                 
                 if isSelected {
                     layer.shadowColor = UIColor.black.cgColor
@@ -195,7 +209,7 @@ class CoverPage3CollectionCell: UICollectionViewCell {
             imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
                 self?.originalImage = image
                 
-                if coverPageData.coverPremium {
+                if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
                     self?.applyBlurEffect()
                     self?.premiumIconImageView.isHidden = false
                 } else {
@@ -234,7 +248,7 @@ class CoverPage3CollectionCell: UICollectionViewCell {
                 layer.shadowOpacity = 0
             } else {
                 layer.borderWidth = isSelected ? 3 : 0
-                layer.borderColor = isSelected ? UIColor.systemYellow.cgColor : nil
+                layer.borderColor = isSelected ? UIColor.icon.cgColor : nil
                 
                 if isSelected {
                     layer.shadowColor = UIColor.black.cgColor

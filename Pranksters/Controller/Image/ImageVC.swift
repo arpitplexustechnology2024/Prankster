@@ -15,11 +15,12 @@ import Photos
 
 class ImageVC: UIViewController {
     
+    // MARK: - IBOutlet
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var oneTimeBlurView: UIView!
-    @IBOutlet weak var AudioShowView: UIView!
+    @IBOutlet weak var imageShowView: UIView!
     @IBOutlet weak var ImageImageView: UIImageView!
     @IBOutlet weak var imageCustomCollectionView: UICollectionView!
     @IBOutlet weak var imageCharacterCollectionView: UICollectionView!
@@ -30,68 +31,52 @@ class ImageVC: UIViewController {
     @IBOutlet weak var imageCustomHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageCharacterHeightConstraint: NSLayoutConstraint!
     
-    private var selectedImageData: CharacterAllData?
-    
+    // MARK: - Properties
+    private var isLoading = true
     var selectedCoverImageURL: String?
-    
-    var selectedImageURL: String?
-    var selectedImageName: String?
-    
-    private var selectedAudioIndex: Int?
-    var selectedCoverPage1Index: IndexPath?
-    
-    var currentlySelectedCollectionView: UICollectionView?
-    var currentlySelectedIndexPath: IndexPath?
-    
-    var customImages: [UIImage] = []
-    
-    private var viewModel: CharacterViewModel!
-    var isLoading = true
+    private var selectedImageIndex: Int?
+    private var selectedImageURL: String?
+    private var selectedImageName: String?
+    private var customImages: [UIImage] = []
+    private var viewModel: CategoryViewModel!
     private var noDataView: NoDataBottomBarView!
+    private var selectedImageData: CategoryAllData?
+    private var selectedImageCustomCell: IndexPath?
+    private var selectedImageCategoryCell: IndexPath?
     private var noInternetView: NoInternetBottombarView!
     
-    init(viewModel: CharacterViewModel) {
+    init(viewModel: CategoryViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        self.viewModel = CharacterViewModel(apiService: CharacterAPIService.shared)
+        self.viewModel = CategoryViewModel(apiService: CategoryAPIService.shared)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        if let selectedIndexPath = imageCustomCollectionView.indexPathsForSelectedItems?.first {
-            imageCustomCollectionView.deselectItem(at: selectedIndexPath, animated: false)
-        }
-        selectedCoverPage1Index = nil
-    }
-    
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupUI()
-        setupViewModel()
-        setupNoDataView()
-        loadSavedImages()
-        setupLottieLoader()
-        showSkeletonLoader()
-        setupNoInternetView()
-        checkInternetAndFetchData()
-        navigationbarView.addBottomShadow()
-        
+        self.setupUI()
+        self.setupViewModel()
+        self.setupNoDataView()
+        self.loadSavedImages()
+        self.setupSwipeGesture()
+        self.setupLottieLoader()
+        self.showSkeletonLoader()
+        self.setupNoInternetView()
+        self.checkInternetAndFetchData()
+        self.navigationbarView.addBottomShadow()
         if let imageURL = selectedCoverImageURL{
-            print("=== Received Data in Cover Image ===")
-            print("Image URL: \(imageURL)")
-            print("=========================================")
+            print("Cover Image URL: \(imageURL)")
         }
-        
-        ImageImageView.loadGif(name: "CoverGIF")
     }
     
+    // MARK: - checkInternetAndFetchData
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
-            viewModel.fetchCharacters(categoryId: 3)
+            viewModel.fetchCategorys(typeId: 3)
             self.noInternetView?.isHidden = true
         } else {
             self.showNoInternetView()
@@ -99,41 +84,33 @@ class ImageVC: UIViewController {
         }
     }
     
-    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.3) {
-            self.oneTimeBlurView.alpha = 0
-        } completion: { _ in
-            self.oneTimeBlurView.isHidden = true
-        }
-    }
-    
-    func isFirstLaunch() -> Bool {
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: "hasLaunchedImage") {
-            return false
-        } else {
-            defaults.set(true, forKey: "hasLaunchedImage")
-            return true
-        }
-    }
-    
+    // MARK: - setupUI
     func setupUI() {
-        bottomView.layer.shadowColor = UIColor.black.cgColor
-        bottomView.layer.shadowOpacity = 0.5
-        bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
-        bottomView.layer.shadowRadius = 12
-        bottomView.layer.cornerRadius = 28
-        bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        bottomScrollView.layer.cornerRadius = 28
-        bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        ImageImageView.layer.cornerRadius = 8
-        AudioShowView.layer.cornerRadius = 8
-        self.imageCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        imageCustomCollectionView.delegate = self
-        imageCustomCollectionView.dataSource = self
-        imageCharacterCollectionView.delegate = self
-        imageCharacterCollectionView.dataSource = self
+        self.bottomView.layer.shadowColor = UIColor.black.cgColor
+        self.bottomView.layer.shadowOpacity = 0.5
+        self.bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
+        self.bottomView.layer.shadowRadius = 12
+        self.bottomView.layer.cornerRadius = 28
+        self.bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        self.bottomScrollView.layer.cornerRadius = 28
+        self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
+        self.ImageImageView.loadGif(name: "CoverGIF")
+        self.ImageImageView.layer.cornerRadius = 8
+        self.imageShowView.layer.cornerRadius = 8
+        self.imageShowView.layer.shadowColor = UIColor.black.cgColor
+        self.imageShowView.layer.shadowOpacity = 0.1
+        self.imageShowView.layer.shadowOffset = CGSize(width: 0, height: 3)
+        self.imageShowView.layer.shadowRadius = 12
+        
+        self.imageCustomCollectionView.delegate = self
+        self.imageCustomCollectionView.dataSource = self
+        self.imageCharacterCollectionView.delegate = self
+        self.imageCharacterCollectionView.dataSource = self
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        self.oneTimeBlurView.addGestureRecognizer(tapGesture)
+        self.oneTimeBlurView.isUserInteractionEnabled = true
         self.oneTimeBlurView.isHidden = true
         if isFirstLaunch() {
             self.oneTimeBlurView.isHidden = false
@@ -141,30 +118,30 @@ class ImageVC: UIViewController {
             self.oneTimeBlurView.isHidden = true
         }
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        oneTimeBlurView.addGestureRecognizer(tapGesture)
-        oneTimeBlurView.isUserInteractionEnabled = true
+        self.imageCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         
         if UIDevice.current.userInterfaceIdiom == .pad {
-            coverImageViewHeightConstraint.constant = 280
-            coverImageViewWidthConstraint.constant = 245
-            scrollViewHeightConstraint.constant = 680
-            imageCustomHeightConstraint.constant = 180
-            imageCharacterHeightConstraint.constant = 360
+            self.coverImageViewHeightConstraint.constant = 280
+            self.coverImageViewWidthConstraint.constant = 245
+            self.scrollViewHeightConstraint.constant = 680
+            self.imageCustomHeightConstraint.constant = 180
+            self.imageCharacterHeightConstraint.constant = 360
         } else {
-            coverImageViewHeightConstraint.constant = 240
-            coverImageViewWidthConstraint.constant = 205
-            scrollViewHeightConstraint.constant = 530
-            imageCustomHeightConstraint.constant = 140
-            imageCharacterHeightConstraint.constant = 280
+            self.coverImageViewHeightConstraint.constant = 240
+            self.coverImageViewWidthConstraint.constant = 205
+            self.scrollViewHeightConstraint.constant = 530
+            self.imageCustomHeightConstraint.constant = 140
+            self.imageCharacterHeightConstraint.constant = 280
         }
         self.view.layoutIfNeeded()
+        
     }
     
+    // MARK: - setupViewModel
     func setupViewModel() {
         viewModel.reloadData = { [weak self] in
             DispatchQueue.main.async {
-                if self?.viewModel.characters.isEmpty ?? true {
+                if self?.viewModel.categorys.isEmpty ?? true {
                     self?.noDataView.isHidden = false
                 } else {
                     self?.hideSkeletonLoader()
@@ -180,13 +157,12 @@ class ImageVC: UIViewController {
         }
     }
     
+    // MARK: - setupNoDataView
     private func setupNoDataView() {
         noDataView = NoDataBottomBarView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
         noDataView.isHidden = true
         self.view.addSubview(noDataView)
-        
         noDataView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -199,13 +175,12 @@ class ImageVC: UIViewController {
         noDataView.layoutIfNeeded()
     }
     
+    // MARK: - setupNoInternetView
     func setupNoInternetView() {
         noInternetView = NoInternetBottombarView()
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
-        
         noInternetView.isHidden = true
         self.view.addSubview(noInternetView)
-        
         noInternetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -218,6 +193,7 @@ class ImageVC: UIViewController {
         noInternetView.layoutIfNeeded()
     }
     
+    // MARK: - retryButtonTapped
     @objc func retryButtonTapped() {
         if isConnectedToInternet() {
             noInternetView.isHidden = true
@@ -229,17 +205,17 @@ class ImageVC: UIViewController {
         }
     }
     
-    func showSkeletonLoader() {
+    private func showSkeletonLoader() {
         isLoading = true
         imageCharacterCollectionView.reloadData()
     }
     
-    func hideSkeletonLoader() {
+    private func hideSkeletonLoader() {
         isLoading = false
         imageCharacterCollectionView.reloadData()
     }
     
-    func showNoInternetView() {
+    private func showNoInternetView() {
         self.noInternetView.isHidden = false
     }
     
@@ -248,18 +224,21 @@ class ImageVC: UIViewController {
         return networkManager?.isReachable ?? false
     }
     
-    func showLottieLoader() {
+    // MARK: - showLottieLoader
+    private func showLottieLoader() {
         lottieLoader.isHidden = false
         ImageImageView.isHidden = true
         lottieLoader.play()
     }
     
-    func hideLottieLoader() {
+    // MARK: - hideLottieLoader
+    private func hideLottieLoader() {
         lottieLoader.stop()
         lottieLoader.isHidden = true
         ImageImageView.isHidden = false
     }
     
+    // MARK: - setupLottieLoader
     private func setupLottieLoader() {
         lottieLoader.isHidden = true
         lottieLoader.loopMode = .loop
@@ -267,11 +246,12 @@ class ImageVC: UIViewController {
         lottieLoader.animation = LottieAnimation.named("Loader")
     }
     
+    // MARK: - btnDoneTapped
     @IBAction func btnDoneTapped(_ sender: UIButton) {
         var imageURLToPass: String?
         var imageNameToPass: String?
         
-        if let selectedIndex = selectedAudioIndex {
+        if let selectedIndex = selectedImageIndex {
             
             let temporaryDirectory = NSTemporaryDirectory()
             let fileName = "CustomImage_\(UUID().uuidString).jpg"
@@ -304,11 +284,18 @@ class ImageVC: UIViewController {
         }
     }
     
+    // MARK: - btnBackTapped
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
     }
     
-    func updateSelectedImage(with coverData: CharacterAllData) {
+    // MARK: - updateSelectedImage
+    func updateSelectedImage(with coverData: CategoryAllData) {
+        selectedImageIndex = nil
+        if let previousCustomCell = selectedImageCustomCell {
+            imageCustomCollectionView.deselectItem(at: previousCustomCell, animated: false)
+            selectedImageCustomCell = nil
+        }
         showLottieLoader()
         selectedImageData = coverData
         selectedImageURL = coverData.image
@@ -320,25 +307,34 @@ class ImageVC: UIViewController {
                 if let error = error {
                     print("Error loading image: \(error.localizedDescription)")
                 } else {
-                    print("=== Selected Image from Preview ===")
-                    print("Name: \(coverData.name)")
                     print("Image URL: \(coverData.image)")
-                    print("Is Favorite: \(coverData.isFavorite)")
-                    print("Item ID: \(coverData.itemID)")
-                    print("Premium: \(coverData.premium)")
-                    print("=====================================")
+                    print("Name: \(coverData.name)")
                 }
             })
         }
     }
+    
+    // MARK: - setupbackSwipeGesture
+    private func setupSwipeGesture() {
+        let swipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeGesture.edges = .left
+        self.view.addGestureRecognizer(swipeGesture)
+    }
+    
+    @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        if gesture.state == .recognized {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
 }
 
+// MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == imageCustomCollectionView {
             return 1 + customImages.count
         } else if collectionView == imageCharacterCollectionView {
-            return isLoading ? 6 : viewModel.characters.count
+            return isLoading ? 6 : viewModel.categorys.count
         }
         return 0
     }
@@ -348,7 +344,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddImageCollectionViewCell", for: indexPath) as! AddImageCollectionViewCell
                 cell.imageView.image = UIImage(named: "AddImage")
-                cell.addAudioLabel.text = "Add Image"
+                cell.addImageLabel.text = "Add Image"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCustomCollectionViewCell", for: indexPath) as! ImageCustomCollectionViewCell
@@ -363,10 +359,10 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterCollectionViewCell", for: indexPath) as! ImageCharacterCollectionViewCell
-                let character = viewModel.characters[indexPath.item]
-//                if let url = URL(string: character.characterImage) {
-//                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
-//                }
+                let character = viewModel.categorys[indexPath.item]
+                if let url = URL(string: character.categoryImage) {
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+                }
                 return cell
             }
         }
@@ -374,38 +370,36 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if let previousCollectionView = currentlySelectedCollectionView,
-           let previousIndexPath = currentlySelectedIndexPath,
-           previousCollectionView != collectionView {
-            previousCollectionView.deselectItem(at: previousIndexPath, animated: true)
-        }
-        
-        currentlySelectedCollectionView = collectionView
-        currentlySelectedIndexPath = indexPath
         
         if collectionView == imageCustomCollectionView {
             if indexPath.item == 0 {
                 showImageOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
             } else {
+                if let previousCharacterCell = selectedImageCategoryCell {
+                    imageCharacterCollectionView.deselectItem(at: previousCharacterCell, animated: true)
+                    selectedImageCategoryCell = nil
+                }
+                selectedImageCustomCell = indexPath
                 showLottieLoader()
                 let customImage = customImages[indexPath.item - 1]
-                selectedAudioIndex = indexPath.item - 1
+                selectedImageIndex = indexPath.item - 1
                 ImageImageView.image = customImage
                 
                 let temporaryDirectory = NSTemporaryDirectory()
                 let fileName = "\(UUID().uuidString).jpg"
                 let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
-                
-                print("=== Selected Custom Image ===")
                 print("Image URL: \(fileURL.absoluteString)")
-                print("==============================")
-                
                 hideLottieLoader()
             }
         } else if collectionView == imageCharacterCollectionView {
-            let character = viewModel.characters[indexPath.item]
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCharacterAllVC") as! ImageCharacterAllVC
-         //   vc.characterId = character.characterID
+            if let previousCustomCell = selectedImageCustomCell {
+                imageCustomCollectionView.deselectItem(at: previousCustomCell, animated: true)
+                selectedImageCustomCell = nil
+            }
+            selectedImageCategoryCell = indexPath
+            let category = viewModel.categorys[indexPath.item]
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCategoryAllVC") as! ImageCategoryAllVC
+            vc.categoryId = category.categoryID
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
@@ -426,6 +420,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     }
 }
 
+// MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
 extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private func showImageOptionsActionSheet(sourceView: UIView) {
         let titleString = NSAttributedString(string: "Select Image", attributes: [
@@ -561,24 +556,19 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
             
             if let imageData = selectedImage.jpegData(compressionQuality: 1.0) {
                 try? imageData.write(to: fileURL)
-                
-                print("📱 New Custom Cover Image Added:")
-                print("=====================================")
-                print("Source: \(picker.sourceType == .camera ? "Camera" : "Gallery")")
                 print("Image URL: \(fileURL.absoluteString)")
-                print("=====================================")
             }
             
             customImages.insert((selectedImage), at: 0)
             ImageImageView.image = selectedImage
-            selectedAudioIndex = 0
+            selectedImageIndex = 0
             saveImages()
             
             DispatchQueue.main.async {
                 self.imageCustomCollectionView.reloadData()
                 let indexPath = IndexPath(item: 1, section: 0)
                 self.imageCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                self.selectedCoverPage1Index = indexPath
+                self.selectedImageCustomCell = indexPath
                 self.imageCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                 self.hideLottieLoader()
             }
@@ -590,7 +580,7 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
     
     func loadSavedImages() {
         showLottieLoader()
-        if let savedImagesData = UserDefaults.standard.object(forKey: "is_UserSelectedImages") as? Data {
+        if let savedImagesData = UserDefaults.standard.object(forKey: ConstantValue.is_UserImages) as? Data {
             do {
                 if let decodedImages = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [UIImage] {
                     customImages = decodedImages
@@ -600,13 +590,34 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
                 print("Error decoding saved images: \(error)")
             }
         }
-        selectedCoverPage1Index = nil
+        selectedImageCustomCell = nil
         hideLottieLoader()
     }
     
     func saveImages() {
         if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customImages, requiringSecureCoding: false) {
-            UserDefaults.standard.set(encodedData, forKey: "is_UserSelectedImages")
+            UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserImages)
+        }
+    }
+}
+
+// MARK: - One time Black View Show
+extension ImageVC  {
+    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
+        UIView.animate(withDuration: 0.3) {
+            self.oneTimeBlurView.alpha = 0
+        } completion: { _ in
+            self.oneTimeBlurView.isHidden = true
+        }
+    }
+    
+    func isFirstLaunch() -> Bool {
+        let defaults = UserDefaults.standard
+        if defaults.bool(forKey: ConstantValue.hasLaunchedImage) {
+            return false
+        } else {
+            defaults.set(true, forKey: ConstantValue.hasLaunchedImage)
+            return true
         }
     }
 }

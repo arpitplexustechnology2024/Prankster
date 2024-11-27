@@ -103,7 +103,7 @@ class AudioCategoryAllVC: UIViewController {
     func fetchAllAudios() {
         guard !isLoadingMore else { return }
         isLoadingMore = true
-        viewModel.fetchAudioData(categoryId: 1, typeId: typeId) { [weak self] success in
+        viewModel.fetchAudioData(categoryId: categoryId, typeId: typeId) { [weak self] success in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.isLoadingMore = false

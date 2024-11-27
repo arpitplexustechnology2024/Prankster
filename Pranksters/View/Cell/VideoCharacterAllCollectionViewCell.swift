@@ -7,105 +7,276 @@
 
 import UIKit
 import SDWebImage
-import CoreImage
+import AVFoundation
 
+// MARK: - Global Video MuteManager
+class GlobalVideoMuteManager {
+    static let shared = GlobalVideoMuteManager()
+    private init() {}
+    
+    var isMutedGlobally = true
+    var muteStatusChangeHandlers: [() -> Void] = []
+    
+    func toggleGlobalMuteStatus() {
+        isMutedGlobally = !isMutedGlobally
+        muteStatusChangeHandlers.forEach { $0() }
+    }
+}
+
+// MARK: - Video Playback Manager
+class VideoPlaybackManager {
+    static let shared = VideoPlaybackManager()
+    private init() {}
+    
+    var currentlyPlayingCell: VideoCharacterAllCollectionViewCell?
+    var currentlyPlayingIndexPath: IndexPath?
+    
+    func stopCurrentPlayback() {
+        currentlyPlayingCell?.stopVideo()
+        currentlyPlayingCell = nil
+        currentlyPlayingIndexPath = nil
+    }
+}
+
+// MARK: - Protocols
+protocol VideoCharacterAllCollectionViewCellDelegate: AnyObject {
+    func didTapDoneButton(for categoryAllData: CategoryAllData)
+    func didTapVideoPlayback(at indexPath: IndexPath)
+}
+
+// MARK: - Collection View Cell
 class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     
+    // MARK: - IBOutlets
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var audioLabel: UILabel!
-    var premiumIconImageView: UIImageView!
-    private var originalImage: UIImage?
+    @IBOutlet weak var DoneButton: UIButton!
+    @IBOutlet weak var imageName: UILabel!
+    @IBOutlet weak var playPauseImageView: UIImageView!
+    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    @IBOutlet weak var muteButton: UIButton!
     
+    // MARK: - Properties
+    weak var delegate: VideoCharacterAllCollectionViewCellDelegate?
+    private var coverPageData: CategoryAllData?
+    private var imageViewTimer: Timer?
+    var currentIndexPath: IndexPath?
+    private var playerLayer: AVPlayerLayer?
+    private var player: AVPlayer?
+    private var isPlaying = false
+    private var isVideoLoaded = false
+    private var lastPausedTime: CMTime?
+    private var isMuted = false
+    
+    // MARK: - Lifecycle Methods
     override func awakeFromNib() {
         super.awakeFromNib()
-        layer.cornerRadius = 10
+        setupUI()
+        setupGlobalMuteObserver()
+    }
+    
+    // MARK: - Setup Methods
+    private func setupUI() {
+        layer.cornerRadius = 20
         layer.masksToBounds = false
-        contentView.layer.cornerRadius = 10
+        contentView.layer.cornerRadius = 20
         contentView.layer.masksToBounds = true
+        
+        visualEffectView.layer.cornerRadius = 20
+        visualEffectView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        visualEffectView.layer.masksToBounds = true
+        
+        DoneButton.layer.shadowColor = UIColor.black.cgColor
+        DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
+        DoneButton.layer.shadowRadius = 3.24
+        DoneButton.layer.shadowOpacity = 0.3
+        DoneButton.layer.masksToBounds = false
+        
+        DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        muteButton.addTarget(self, action: #selector(muteButtonTapped), for: .touchUpInside)
+        muteButton.setImage(UIImage(named: "UnmuteIcon"), for: .normal)
+        muteButton.isHidden = true
+        muteButton.layer.cornerRadius = muteButton.frame.height / 2
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
+        imageView.isUserInteractionEnabled = true
+        imageView.addGestureRecognizer(tapGesture)
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setupPremiumIconImageView()
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setupPremiumIconImageView()
     }
     
-    private func setupPremiumIconImageView() {
-        premiumIconImageView = UIImageView(image: UIImage(named: "premiumIcon"))
-        premiumIconImageView.translatesAutoresizingMaskIntoConstraints = false
-        premiumIconImageView.isHidden = true
-        contentView.addSubview(premiumIconImageView)
+    // MARK: - Configuration
+    func configure(with coverPageData: CategoryAllData, at indexPath: IndexPath) {
+        self.coverPageData = coverPageData
+        self.currentIndexPath = indexPath
+        muteButton.isHidden = true
+        player?.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
+        updateMuteButtonImage()
+        let displayName = coverPageData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.name
+        self.imageName.text = displayName
         
-        NSLayoutConstraint.activate([
-            premiumIconImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            premiumIconImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            premiumIconImageView.widthAnchor.constraint(equalToConstant: 40),
-            premiumIconImageView.heightAnchor.constraint(equalToConstant: 40)
-        ])
+        if coverPageData.premium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
+            self.DoneButton.setImage(UIImage(named: "PremiumButton"), for: .normal)
+        } else {
+            self.DoneButton.setImage(UIImage(named: "selectButton"), for: .normal)
+        }
+        
+        if let videoURL = URL(string: coverPageData.file ?? "N/A") {
+            setupVideo(with: videoURL)
+        }
     }
     
-    func configure(with characterAllData: CharacterAllData) {
-        if let imageURL = URL(string: characterAllData.image) {
-            imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
-                guard let self = self else { return }
-                self.originalImage = image
-                
-                if characterAllData.premium {
-                    self.applyBlurEffect()
-                    self.premiumIconImageView.isHidden = false
-                } else {
-                    self.removeBlurEffect()
-                    self.premiumIconImageView.isHidden = true
-                }
+    private func setupVideo(with url: URL) {
+        stopVideo()
+        playerLayer?.removeFromSuperlayer()
+        
+        let player = AVPlayer(url: url)
+        let playerLayer = AVPlayerLayer(player: player)
+        
+        playerLayer.videoGravity = .resizeAspectFill
+        playerLayer.frame = imageView.bounds
+        imageView.layer.addSublayer(playerLayer)
+        
+        self.player = player
+        self.playerLayer = playerLayer
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(playerDidStartPlaying),
+                                               name: .AVPlayerItemNewAccessLogEntry,
+                                               object: player.currentItem)
+        
+        self.isVideoLoaded = true
+        
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(playerDidFinishPlaying),
+                                               name: .AVPlayerItemDidPlayToEndTime,
+                                               object: player.currentItem)
+    }
+    
+    @objc private func playerDidStartPlaying() {
+        playerLayer?.videoGravity = .resizeAspect
+    }
+    
+    // MARK: - Video Control Methods
+    func playVideo() {
+        guard isVideoLoaded, let player = player else {
+            return
+        }
+        
+        AudioPlaybackManager.shared.stopCurrentPlayback()
+        player.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
+        if let pausedTime = lastPausedTime {
+            player.seek(to: pausedTime)
+        }
+        
+        player.play()
+        showPlayImage()
+        isPlaying = true
+        muteButton.isHidden = false
+        VideoPlaybackManager.shared.currentlyPlayingCell = self
+        VideoPlaybackManager.shared.currentlyPlayingIndexPath = currentIndexPath
+    }
+    
+    func stopVideo() {
+        let currentTime = player?.currentTime()
+        
+        player?.pause()
+        showPauseImage()
+        isPlaying = false
+        imageViewTimer?.invalidate()
+        muteButton.isHidden = true
+        playerLayer?.videoGravity = .resizeAspectFill
+        lastPausedTime = currentTime
+    }
+    
+    private func toggleAudioPlayback() {
+        if !isVideoLoaded {
+            return
+        }
+        
+        if let indexPath = currentIndexPath {
+            delegate?.didTapVideoPlayback(at: indexPath)
+        }
+    }
+    
+    // MARK: - UI Update Methods
+    private func showPlayImage() {
+        imageViewTimer?.invalidate()
+        playPauseImageView.image = UIImage(named: "PauseButton")
+        playPauseImageView.isHidden = false
+        imageViewTimer = Timer.scheduledTimer(
+            withTimeInterval: 1.0, repeats: false
+        ) { [weak self] _ in
+            UIView.animate(withDuration: 0.3) {
+                self?.playPauseImageView.alpha = 0
+            } completion: { _ in
+                self?.playPauseImageView.isHidden = true
+                self?.playPauseImageView.alpha = 1
             }
         }
-        audioLabel.text = characterAllData.name
     }
     
-    func applyBlurEffect() {
-        guard let image = originalImage else { return }
-        
-        let context = CIContext()
-        guard let ciImage = CIImage(image: image) else { return }
-        
-        let filter = CIFilter(name: "CIGaussianBlur")!
-        filter.setValue(ciImage, forKey: kCIInputImageKey)
-        filter.setValue(50.0, forKey: kCIInputRadiusKey)
-        
-        guard let outputImage = filter.outputImage,
-              let cgImage = context.createCGImage(outputImage, from: ciImage.extent) else { return }
-        
-        imageView.image = UIImage(cgImage: cgImage)
+    func showPauseImage() {
+        playPauseImageView.image = UIImage(named: "PlayButton")
+        playPauseImageView.isHidden = false
     }
     
-    func removeBlurEffect() {
-        imageView.image = originalImage
+    // MARK: - Action Methods
+    @objc private func imageViewTapped() {
+        toggleAudioPlayback()
     }
     
-    override var isSelected: Bool {
-        didSet {
-            if !premiumIconImageView.isHidden {
-                layer.borderWidth = 0
-                layer.borderColor = nil
-                layer.shadowOpacity = 0
-            } else {
-                layer.borderWidth = isSelected ? 3 : 0
-                layer.borderColor = isSelected ? UIColor.systemYellow.cgColor : nil
-                
-                if isSelected {
-                    layer.shadowColor = UIColor.black.cgColor
-                    layer.shadowOffset = CGSize(width: 0, height: 2)
-                    layer.shadowRadius = 4
-                    layer.shadowOpacity = 0.3
-                } else {
-                    layer.shadowOpacity = 0
-                }
-            }
+    @objc private func doneButtonTapped() {
+        stopVideo()
+        if let coverPageData = coverPageData {
+            delegate?.didTapDoneButton(for: coverPageData)
         }
+    }
+    
+    private func setupGlobalMuteObserver() {
+        let handler = { [weak self] in
+            guard let self = self, let player = self.player else { return }
+            player.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
+            self.updateMuteButtonImage()
+        }
+        GlobalVideoMuteManager.shared.muteStatusChangeHandlers.append(handler)
+    }
+    
+    private func updateMuteButtonImage() {
+        let isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
+        muteButton.setImage(UIImage(named: isMuted ? "muteIcon 2" : "UnmuteIcon"), for: .normal)
+    }
+    
+    @objc private func muteButtonTapped() {
+        GlobalVideoMuteManager.shared.toggleGlobalMuteStatus()
+    }
+    
+    @objc private func playerDidFinishPlaying() {
+        stopVideo()
+        lastPausedTime = nil
+        playerLayer?.videoGravity = .resizeAspectFill
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = imageView.bounds
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        stopVideo()
+        player = nil
+        playerLayer = nil
+        lastPausedTime = nil
+        isVideoLoaded = false
+        playerLayer?.removeFromSuperlayer()
+        NotificationCenter.default.removeObserver(self)
+        GlobalVideoMuteManager.shared.muteStatusChangeHandlers.removeAll { $0 as? () -> Void == nil }
     }
 }
-

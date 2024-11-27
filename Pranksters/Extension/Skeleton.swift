@@ -113,7 +113,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
     private func setupGradient(for view: UIView, gradientLayer: CAGradientLayer) {
         gradientLayer.colors = [
             UIColor.systemGray4.withAlphaComponent(0.5).cgColor,
-            UIColor.white.withAlphaComponent(0.5).cgColor,
+            UIColor.systemGray.withAlphaComponent(0.5).cgColor,
             UIColor.systemGray4.withAlphaComponent(0.5).cgColor
         ]
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
@@ -185,7 +185,7 @@ class SkeletonBoxCollectionViewCell: UICollectionViewCell {
     private func setupGradient(for view: UIView, gradientLayer: CAGradientLayer) {
         gradientLayer.colors = [
             UIColor.systemGray4.withAlphaComponent(0.5).cgColor,
-            UIColor.white.withAlphaComponent(0.5).cgColor,
+            UIColor.systemGray.withAlphaComponent(0.5).cgColor,
             UIColor.systemGray4.withAlphaComponent(0.5).cgColor
         ]
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)

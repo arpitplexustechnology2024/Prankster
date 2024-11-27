@@ -63,11 +63,11 @@ class NoInternetBottombarView: UIView {
         if UIDevice.current.userInterfaceIdiom == .phone {
             switch screenHeight {
             case 1136, 1334, 1920, 2208:
-                lottieViewTopConstraint.constant = 30
+                lottieViewTopConstraint.constant = 10
                 lottieViewHeightConstraint.constant = 160
                 lottieViewWidthConstraint.constant = 160
                 labelTopConstraint.constant = 0
-                retryButtonTopConstraint.constant = 20
+                retryButtonTopConstraint.constant = 10
             case 2436, 1792, 2556, 2532:
                 lottieViewTopConstraint.constant = 40
                 lottieViewHeightConstraint.constant = 200
@@ -81,11 +81,11 @@ class NoInternetBottombarView: UIView {
                 labelTopConstraint.constant = 20
                 retryButtonTopConstraint.constant = 30
             default:
-                lottieViewTopConstraint.constant = 40
-                lottieViewHeightConstraint.constant = 200
-                lottieViewWidthConstraint.constant = 200
-                labelTopConstraint.constant = 20
-                retryButtonTopConstraint.constant = 30
+                lottieViewTopConstraint.constant = 30
+                lottieViewHeightConstraint.constant = 180
+                lottieViewWidthConstraint.constant = 180
+                labelTopConstraint.constant = 10
+                retryButtonTopConstraint.constant = 20
             }
         }
     }

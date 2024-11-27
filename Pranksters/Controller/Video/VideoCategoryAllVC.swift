@@ -12,97 +12,123 @@ class VideoCategoryAllVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var videoCharacterAllCollectionView: UICollectionView!
-    private var viewModel: CategoryAllViewModel!
+    @IBOutlet weak var searchbar: UISearchBar!
+    
+    var isLoading = true
+    var categoryId: Int = 0
+    private let typeId: Int = 2
+    private var isLoadingMore = false
+    private var isSearchActive = false
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
-    
-    var characterId: Int = 0
-    private let categoryId: Int = 2
-    var isLoading = true
-    
-    init(viewModel: CategoryAllViewModel) {
-        self.viewModel = viewModel
-        super.init(nibName: nil, bundle: nil)
+    private var viewModel = CategoryAllViewModel()
+    private var filteredImages: [CategoryAllData] = []
+    private var currentDataSource: [CategoryAllData] {
+        return isSearchActive ? filteredImages : viewModel.audioData
     }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        self.viewModel = CategoryAllViewModel(apiService: CategoryAllAPIService.shared)
-    }
+    private var cells: [VideoCharacterAllCollectionViewCell] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViewModel()
-        showSkeletonLoader()
-        setupNoDataView()
-        setupNoInternetView()
-        setupCollectionView()
-        checkInternetAndFetchData()
-        addBottomShadow(to: navigationbarView)
-        self.videoCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.setupSearchBar()
+        self.setupNoDataView()
+        self.setupSwipeGesture()
+        self.showSkeletonLoader()
+        self.setupNoInternetView()
+        self.setupCollectionView()
+        self.hideKeyboardTappedAround()
+        self.checkInternetAndFetchData()
+        self.filteredImages = viewModel.audioData
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopPlayingVideo()
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc private func appDidEnterBackground() {
+        if self.isViewLoaded && self.view.window != nil {
+            stopPlayingVideo()
+        }
+    }
+    
+    private func stopPlayingVideo() {
+        if let playingCell = VideoPlaybackManager.shared.currentlyPlayingCell,
+           let playingIndexPath = AudioPlaybackManager.shared.currentlyPlayingIndexPath {
+            playingCell.stopVideo()
+            VideoPlaybackManager.shared.currentlyPlayingCell = nil
+            VideoPlaybackManager.shared.currentlyPlayingIndexPath = nil
+        }
+    }
+    
+    private func setupSearchBar() {
+        searchbar.delegate = self
+        searchbar.placeholder = "Search"
+        searchbar.backgroundImage = UIImage()
+        searchbar.backgroundColor = .comman
+        searchbar.layer.cornerRadius = 10
+        searchbar.clipsToBounds = true
     }
     
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
-           // viewModel.fetchAudioData(categoryId: 2, characterId: characterId)
+            fetchAllVideos()
             self.noInternetView?.isHidden = true
+            self.hideNoDataView()
         } else {
             self.showNoInternetView()
             self.hideSkeletonLoader()
         }
     }
     
-    func addBottomShadow(to view: UIView) {
-        view.layer.masksToBounds = false
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOpacity = 0.2
-        view.layer.shadowOffset = CGSize(width: 0, height: 7)
-        view.layer.shadowRadius = 12
-        view.layer.shadowPath = UIBezierPath(rect: CGRect(x: 0,
-                                                          y: view.bounds.maxY - 4,
-                                                          width: view.bounds.width,
-                                                          height: 4)).cgPath
-    }
-    
     private func setupCollectionView() {
-        videoCharacterAllCollectionView.delegate = self
-        videoCharacterAllCollectionView.dataSource = self
+        self.videoCharacterAllCollectionView.delegate = self
+        self.videoCharacterAllCollectionView.dataSource = self
+        self.videoCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.videoCharacterAllCollectionView.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
         if let layout = videoCharacterAllCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.minimumInteritemSpacing = 16
-            layout.minimumLineSpacing = 16
-            layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+            layout.footerReferenceSize = CGSize(width: view.frame.width, height: 50)
         }
     }
     
-    private func setupViewModel() {
-//        viewModel.reloadData = { [weak self] in
-//            DispatchQueue.main.async {
-//                self?.hideSkeletonLoader()
-//                if self?.viewModel.audioData.isEmpty ?? true {
-//                    self?.showNoDataView()
-//                } else {
-//                    self?.hideNoDataView()
-//                    self?.videoCharacterAllCollectionView.reloadData()
-//                }
-//                self?.videoCharacterAllCollectionView.reloadData()
-//            }
-//        }
-//        
-//        viewModel.onError = { [weak self] error in
-//            self?.hideSkeletonLoader()
-//            self?.showNoDataView()
-//            print("Error: \(error)")
-//        }
+    // MARK: - fetchAllVideos
+    func fetchAllVideos() {
+        guard !isLoadingMore else { return }
+        isLoadingMore = true
+        viewModel.fetchAudioData(categoryId: categoryId, typeId: typeId) { [weak self] success in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                self.isLoadingMore = false
+                if success {
+                    if self.viewModel.audioData.isEmpty {
+                        self.hideSkeletonLoader()
+                        self.showNoDataView()
+                    } else {
+                        self.hideSkeletonLoader()
+                        self.hideNoDataView()
+                        self.videoCharacterAllCollectionView.reloadData()
+                        self.autoplayFirstVisibleVideo()
+                    }
+                } else if let errorMessage = self.viewModel.errorMessage {
+                    self.hideSkeletonLoader()
+                    self.showNoDataView()
+                    print("Error fetching all cover pages: \(errorMessage)")
+                }
+            }
+        }
     }
     
-    func showSkeletonLoader() {
-        isLoading = true
-        videoCharacterAllCollectionView.reloadData()
-    }
-    
-    func hideSkeletonLoader() {
-        isLoading = false
-        videoCharacterAllCollectionView.reloadData()
+    @IBAction func btnBackTapped(_ sender: UIButton) {
+        self.navigationController?.popViewController(animated: true)
     }
     
     private func setupNoDataView() {
@@ -110,12 +136,11 @@ class VideoCategoryAllVC: UIViewController {
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
         self.view.addSubview(noDataView)
-        
         noDataView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noDataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noDataView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor, constant: 30),
+            noDataView.topAnchor.constraint(equalTo: searchbar.bottomAnchor),
             noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -125,12 +150,11 @@ class VideoCategoryAllVC: UIViewController {
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
         noInternetView.isHidden = true
         self.view.addSubview(noInternetView)
-        
         noInternetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noInternetView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor, constant: 30),
+            noInternetView.topAnchor.constraint(equalTo: searchbar.bottomAnchor),
             noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -138,7 +162,7 @@ class VideoCategoryAllVC: UIViewController {
     @objc func retryButtonTapped() {
         if isConnectedToInternet() {
             noInternetView.isHidden = true
-            noDataView.isHidden = true
+            hideNoDataView()
             checkInternetAndFetchData()
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -150,12 +174,22 @@ class VideoCategoryAllVC: UIViewController {
         self.noInternetView.isHidden = false
     }
     
-    func showNoDataView() {
-        noDataView.isHidden = false
+    private func showNoDataView() {
+        noDataView?.isHidden = false
     }
     
-    func hideNoDataView() {
-        noDataView.isHidden = true
+    private func hideNoDataView() {
+        noDataView?.isHidden = true
+    }
+    
+    func showSkeletonLoader() {
+        isLoading = true
+        self.videoCharacterAllCollectionView.reloadData()
+    }
+    
+    func hideSkeletonLoader() {
+        isLoading = false
+        self.videoCharacterAllCollectionView.reloadData()
     }
     
     private func isConnectedToInternet() -> Bool {
@@ -163,15 +197,50 @@ class VideoCategoryAllVC: UIViewController {
         return networkManager?.isReachable ?? false
     }
     
-    @IBAction func btnBackTapped(_ sender: UIButton) {
-        self.navigationController?.popViewController(animated: true)
+    private func setupSwipeGesture() {
+        let swipeGesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handleSwipe(_:)))
+        swipeGesture.edges = .left
+        self.view.addGestureRecognizer(swipeGesture)
+    }
+    
+    @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        if gesture.state == .recognized {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    private func filterContent(with searchText: String) {
+        isSearchActive = !searchText.isEmpty
+        
+        if searchText.isEmpty {
+            filteredImages = viewModel.audioData
+        } else {
+            filteredImages = viewModel.audioData.filter { coverPage in
+                let nameMatch = coverPage.name.lowercased().contains(searchText.lowercased())
+                let categoryMatch = coverPage.artistName.lowercased().contains(searchText.lowercased())
+                return nameMatch || categoryMatch
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.videoCharacterAllCollectionView.reloadData()
+            
+            if self.filteredImages.isEmpty && !searchText.isEmpty {
+                self.showNoDataView()
+            } else {
+                self.hideNoDataView()
+            }
+        }
     }
 }
 
-// MARK: - CollectionView Delegate & DataSource
+// MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isLoading ? 8 : viewModel.audioData.count
+        if isLoading {
+            return 8
+        }
+        return currentDataSource.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -180,25 +249,153 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
             cell.isUserInteractionEnabled = false
             return cell
         } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterCollectionViewCell", for: indexPath) as! VideoCharacterCollectionViewCell
-            let audioData = viewModel.audioData[indexPath.item]
-            cell.configure(with: audioData)
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterAllCollectionViewCell", for: indexPath) as! VideoCharacterAllCollectionViewCell
             
+            guard indexPath.row < currentDataSource.count else {
+                return cell
+            }
+            let coverPageData = currentDataSource[indexPath.row]
+            cell.delegate = self
+            cell.configure(with: coverPageData, at: indexPath)
             return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let layout = collectionViewLayout as! UICollectionViewFlowLayout
-        let paddingSpace = layout.sectionInset.left + layout.sectionInset.right + layout.minimumInteritemSpacing * (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1)
-        let availableWidth = collectionView.frame.width - paddingSpace
-        let widthPerItem = availableWidth / (UIDevice.current.userInterfaceIdiom == .pad ? 3 : 2)
-        let heightPerItem: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 287 : 187
-        return CGSize(width: widthPerItem, height: heightPerItem)
+        let spacing: CGFloat = 16
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let totalSpacing = spacing * 4
+            let width = (collectionView.frame.width - totalSpacing) / 2
+            let height = (collectionView.frame.height - spacing * 3) / 2
+            return CGSize(width: width, height: height)
+        } else {
+            let totalSpacing = spacing * 3
+            let width = collectionView.frame.width - totalSpacing
+            let height = (collectionView.frame.height - totalSpacing) / 2
+            return CGSize(width: width, height: height)
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return 26
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 26
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        let lastItem = viewModel.audioData.count - 1
+        if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
+            fetchAllVideos()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            let footer = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: LoadingFooterView.reuseIdentifier,
+                for: indexPath
+            ) as! LoadingFooterView
+            if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
+                footer.startAnimating()
+            } else {
+                footer.stopAnimating()
+            }
+            
+            return footer
+        }
+        return UICollectionReusableView()
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        autoplayFirstVisibleVideo()
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate {
+            autoplayFirstVisibleVideo()
+        }
+    }
+    
+    private func autoplayFirstVisibleVideo() {
+        guard !isLoading && !currentDataSource.isEmpty else { return }
+        let visibleRect = CGRect(x: 0, y: 300, width: videoCharacterAllCollectionView.bounds.width, height: 300)
+        let visibleCells = videoCharacterAllCollectionView.visibleCells.filter { cell in
+            let cellRect = videoCharacterAllCollectionView.convert(cell.frame, to: videoCharacterAllCollectionView.superview)
+            return visibleRect.intersects(cellRect)
+        }
+        let sortedCells = visibleCells.sorted {
+            let rect1 = videoCharacterAllCollectionView.convert($0.frame, to: videoCharacterAllCollectionView.superview)
+            let rect2 = videoCharacterAllCollectionView.convert($1.frame, to: videoCharacterAllCollectionView.superview)
+            return rect1.origin.y < rect2.origin.y
+        }
+        if let topCell = sortedCells.first as? VideoCharacterAllCollectionViewCell,
+           let indexPath = videoCharacterAllCollectionView.indexPath(for: topCell) {
+            
+            VideoPlaybackManager.shared.stopCurrentPlayback()
+            didTapVideoPlayback(at: indexPath)
+        }
+    }
+}
+
+// MARK: - VideoCharacterAllCollectionViewCellDelegate
+extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
+    func didTapVideoPlayback(at indexPath: IndexPath) {
+        guard let cell = videoCharacterAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell else {
+            return
+        }
+        
+        if VideoPlaybackManager.shared.currentlyPlayingIndexPath == indexPath {
+            
+            cell.stopVideo()
+            VideoPlaybackManager.shared.currentlyPlayingCell = nil
+            VideoPlaybackManager.shared.currentlyPlayingIndexPath = nil
+        } else {
+            VideoPlaybackManager.shared.stopCurrentPlayback()
+            cell.playVideo()
+        }
+    }
+    
+    func didTapDoneButton(for categoryAllData: CategoryAllData) {
+        VideoPlaybackManager.shared.stopCurrentPlayback()
+        
+        if categoryAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: categoryAllData.itemID) {
+            presentPremiumViewController()
+        } else {
+            if let navigationController = self.navigationController {
+                if let videoVC = navigationController.viewControllers.first(where: { $0 is VideoVC }) as? VideoVC {
+                    videoVC.updateSelectedVideo(with: categoryAllData)
+                    navigationController.popToViewController(videoVC, animated: true)
+                }
+            }
+        }
     }
     
     private func presentPremiumViewController() {
         let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumVC") as! PremiumVC
         present(premiumVC, animated: true, completion: nil)
+    }
+}
+
+// MARK: - UISearchBarDelegate
+extension VideoCategoryAllVC: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        filterContent(with: searchText)
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        filterContent(with: "")
     }
 }
