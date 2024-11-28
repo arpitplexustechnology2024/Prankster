@@ -59,6 +59,10 @@
 		BD187C7A2CE2E8EC007744B1 /* VideoCategoryAllVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD187C762CE2E8EC007744B1 /* VideoCategoryAllVC.swift */; };
 		BD187C7F2CE2E8FA007744B1 /* VideoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD187C7D2CE2E8FA007744B1 /* VideoCollectionViewCell.swift */; };
 		BD187C802CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD187C7E2CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift */; };
+		BD7E15612CF7B0C000D7D3C7 /* ShareLinkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15602CF7B0C000D7D3C7 /* ShareLinkVC.swift */; };
+		BD7E15632CF7DDBB00D7D3C7 /* PrankCreateAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15622CF7DDBB00D7D3C7 /* PrankCreateAPI.swift */; };
+		BD7E15652CF7DDD700D7D3C7 /* PrankCreateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15642CF7DDD700D7D3C7 /* PrankCreateViewModel.swift */; };
+		BD7E15672CF808FA00D7D3C7 /* KLEPHON.otf in Resources */ = {isa = PBXBuildFile; fileRef = BD7E15662CF808FA00D7D3C7 /* KLEPHON.otf */; };
 		BD87AD042CF1082F00AE3F7C /* SaveRecordingPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87AD032CF1082F00AE3F7C /* SaveRecordingPopup.swift */; };
 		BDBA94B22CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBA94B12CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift */; };
 		BDBA94B42CED57D30036BF68 /* LoadingFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBA94B32CED57D30036BF68 /* LoadingFooterView.swift */; };
@@ -155,6 +159,10 @@
 		BD187C762CE2E8EC007744B1 /* VideoCategoryAllVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCategoryAllVC.swift; sourceTree = "<group>"; };
 		BD187C7D2CE2E8FA007744B1 /* VideoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCollectionViewCell.swift; sourceTree = "<group>"; };
 		BD187C7E2CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCharacterAllCollectionViewCell.swift; sourceTree = "<group>"; };
+		BD7E15602CF7B0C000D7D3C7 /* ShareLinkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLinkVC.swift; sourceTree = "<group>"; };
+		BD7E15622CF7DDBB00D7D3C7 /* PrankCreateAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankCreateAPI.swift; sourceTree = "<group>"; };
+		BD7E15642CF7DDD700D7D3C7 /* PrankCreateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankCreateViewModel.swift; sourceTree = "<group>"; };
+		BD7E15662CF808FA00D7D3C7 /* KLEPHON.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = KLEPHON.otf; sourceTree = "<group>"; };
 		BD87AD032CF1082F00AE3F7C /* SaveRecordingPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRecordingPopup.swift; sourceTree = "<group>"; };
 		BDBA94B12CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCoverAllCollectionViewCell.swift; sourceTree = "<group>"; };
 		BDBA94B32CED57D30036BF68 /* LoadingFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingFooterView.swift; sourceTree = "<group>"; };
@@ -352,6 +360,7 @@
 				BD187C672CE2D839007744B1 /* Image */,
 				BD187C742CE2E847007744B1 /* Video */,
 				BDF890F52CF0239C00C5230D /* PremiumPopupVC.swift */,
+				BD7E15602CF7B0C000D7D3C7 /* ShareLinkVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -380,6 +389,7 @@
 				BD187C3C2CE287B2007744B1 /* CoverPageAPI.swift */,
 				BD187C3E2CE287B2007744B1 /* CategoryAPI.swift */,
 				BD187C3F2CE287B2007744B1 /* CategoryAllAPI.swift */,
+				BD7E15622CF7DDBB00D7D3C7 /* PrankCreateAPI.swift */,
 			);
 			path = APIManager;
 			sourceTree = "<group>";
@@ -391,6 +401,7 @@
 				BD187C442CE287B8007744B1 /* CoverPageViewModel.swift */,
 				BD187C462CE287B8007744B1 /* CategoryViewModel.swift */,
 				BD187C472CE287B8007744B1 /* CategoryAllViewModel.swift */,
+				BD7E15642CF7DDD700D7D3C7 /* PrankCreateViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -425,6 +436,7 @@
 			isa = PBXGroup;
 			children = (
 				BD187C542CE28B13007744B1 /* CoverGIF.gif */,
+				BD7E15662CF808FA00D7D3C7 /* KLEPHON.otf */,
 			);
 			path = GIF;
 			sourceTree = "<group>";
@@ -590,6 +602,7 @@
 				BD187C282CE285A7007744B1 /* NoInternetBottombarView.xib in Resources */,
 				BD187C0C2CE283FC007744B1 /* NoInternet.json in Resources */,
 				BD187C0D2CE283FC007744B1 /* Nodata.json in Resources */,
+				BD7E15672CF808FA00D7D3C7 /* KLEPHON.otf in Resources */,
 				BD187C0E2CE283FC007744B1 /* Loading.json in Resources */,
 				BDD8808E2CE27D2700376D6E /* Color.xcassets in Resources */,
 				BDD880752CE27A9D00376D6E /* Main.storyboard in Resources */,
@@ -728,6 +741,7 @@
 				BD187C5E2CE2CCA1007744B1 /* AudioVC.swift in Sources */,
 				BD187C5F2CE2CCA1007744B1 /* AudioCategoryAllVC.swift in Sources */,
 				BD187C212CE285A7007744B1 /* NoDataView.swift in Sources */,
+				BD7E15612CF7B0C000D7D3C7 /* ShareLinkVC.swift in Sources */,
 				BD187C2E2CE285E7007744B1 /* MoreAppViewModel.swift in Sources */,
 				BD187C222CE285A7007744B1 /* NoInternetView.swift in Sources */,
 				BDEABF712CEFB02C0021F692 /* CustomRecoderVC.swift in Sources */,
@@ -746,12 +760,14 @@
 				BD187C7A2CE2E8EC007744B1 /* VideoCategoryAllVC.swift in Sources */,
 				BD187C592CE28E7E007744B1 /* PremiumVC.swift in Sources */,
 				BD187C512CE287CB007744B1 /* CoverPageCollectionViewCell.swift in Sources */,
+				BD7E15652CF7DDD700D7D3C7 /* PrankCreateViewModel.swift in Sources */,
 				BD187C412CE287B2007744B1 /* CoverPageAPI.swift in Sources */,
 				BD187C422CE287B2007744B1 /* CategoryAllAPI.swift in Sources */,
 				BD187C432CE287B2007744B1 /* CategoryAPI.swift in Sources */,
 				BD187BFB2CE27FBE007744B1 /* HomeVC.swift in Sources */,
 				BD187C372CE28760007744B1 /* CustomCoverPageVC.swift in Sources */,
 				BD187C332CE28728007744B1 /* EmojiCoverPageVC.swift in Sources */,
+				BD7E15632CF7DDBB00D7D3C7 /* PrankCreateAPI.swift in Sources */,
 				BD187C6B2CE2D859007744B1 /* ImageCategoryAllVC.swift in Sources */,
 				BD187C6D2CE2D859007744B1 /* ImageVC.swift in Sources */,
 				BDD880692CE27A3600376D6E /* SceneDelegate.swift in Sources */,

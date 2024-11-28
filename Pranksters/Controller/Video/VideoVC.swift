@@ -283,10 +283,11 @@ class VideoVC: UIViewController {
         }
         if let imageURL = videoURLToPass {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
+            if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
                 nextVC.selectedURL = imageURL
                 nextVC.selectedName = videoNameToPass
                 nextVC.selectedCoverURL = selectedCoverImageURL
+                nextVC.selectedPranktype = "video"
                 self.navigationController?.pushViewController(nextVC, animated: true)
                 self.videoImageView.isHidden = false
                 self.pauseImageView.isHidden = true
@@ -375,7 +376,7 @@ class VideoVC: UIViewController {
             
             playerLayer = AVPlayerLayer(player: player)
             playerLayer?.frame = videoShowView.bounds
-            playerLayer?.videoGravity = .resizeAspect
+            playerLayer?.videoGravity = .resizeAspectFill
             
             if let playerLayer = playerLayer {
                 videoShowView.layer.addSublayer(playerLayer)
@@ -383,7 +384,7 @@ class VideoVC: UIViewController {
                 playerLayer.masksToBounds = true
                 videoShowView.bringSubviewToFront(pauseImageView)
             }
-            
+            NotificationCenter.default.addObserver(self, selector: #selector(playerDidStartPlaying), name: .AVPlayerItemNewAccessLogEntry, object: playerItem)
             NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
             player?.volume = 1.0
             pauseVideo()
@@ -392,6 +393,10 @@ class VideoVC: UIViewController {
             isPlaying = false
         }
         self.hideLottieLoader()
+    }
+    
+    @objc private func playerDidStartPlaying() {
+        playerLayer?.videoGravity = .resizeAspect
     }
     
     // MARK: - setupbackSwipeGesture
@@ -514,10 +519,17 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         
         let cameraAction = UIAlertAction(title: "Camera", style: .default) { [weak self] _ in
             self?.openVideoCamera()
+            self?.stopVideo()
+            self?.videoImageView.isHidden = false
+            self?.pauseImageView.isHidden = true
+            
         }
         
         let galleryAction = UIAlertAction(title: "Gallery", style: .default) { [weak self] _ in
             self?.openVideoGallery()
+            self?.stopVideo()
+            self?.videoImageView.isHidden = false
+            self?.pauseImageView.isHidden = true
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -647,7 +659,7 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
                 self.videoCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                 self.selectedVideoCustomCell = indexPath
                 self.videoCustomCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                self.playCustomVideo(url: destinationURL, autoPlay: true)
+                self.playCustomVideo(url: destinationURL, autoPlay: false)
                 self.hideLottieLoader()
             }
         } catch {
@@ -687,9 +699,7 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
             playVideo()
         } else {
             pauseVideo()
-            pauseImageView.isHidden = true
         }
-        
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: playerItem)
         if let index = selectedVideoIndex {
             let indexPath = IndexPath(item: index + 1, section: 0)

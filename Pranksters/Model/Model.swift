@@ -56,7 +56,7 @@ struct CategoryAllData: Codable {
     let premium: Bool
     let itemID: Int
     let artistName: String
-
+    
     enum CodingKeys: String, CodingKey {
         case file = "File"
         case name = "Name"
@@ -77,7 +77,7 @@ struct CategoryData: Codable {
     let categoryName: String
     let categoryImage: String
     let categoryID: Int
-
+    
     enum CodingKeys: String, CodingKey {
         case categoryName = "CategoryName"
         case categoryImage = "CategoryImage"
@@ -104,3 +104,24 @@ struct MoreData: Codable {
 }
 
 
+// MARK: - prank create
+struct PrankCreateResponse: Codable {
+    let status: Int
+    let message: String
+    let data: PrankCreateData
+}
+struct PrankCreateData: Codable {
+    let id: String
+    let link: String
+    let coverImage, file: String
+    let type, name: String
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case link = "Link"
+        case coverImage = "CoverImage"
+        case file = "File"
+        case type = "Type"
+        case name = "Name"
+    }
+}

@@ -9,7 +9,7 @@ import UIKit
 import SDWebImage
 import AVFoundation
 
-// MARK: - Global Video MuteManager
+// MARK: - Global VideoMute Manager
 class GlobalVideoMuteManager {
     static let shared = GlobalVideoMuteManager()
     private init() {}
@@ -115,9 +115,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     func configure(with coverPageData: CategoryAllData, at indexPath: IndexPath) {
         self.coverPageData = coverPageData
         self.currentIndexPath = indexPath
-        muteButton.isHidden = true
-        player?.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
-        updateMuteButtonImage()
         let displayName = coverPageData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.name
         self.imageName.text = displayName
         
@@ -130,6 +127,8 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         if let videoURL = URL(string: coverPageData.file ?? "N/A") {
             setupVideo(with: videoURL)
         }
+        player?.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
+        updateMuteButtonImage()
     }
     
     private func setupVideo(with url: URL) {
@@ -168,9 +167,9 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         guard isVideoLoaded, let player = player else {
             return
         }
-        
-        AudioPlaybackManager.shared.stopCurrentPlayback()
         player.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
+        AudioPlaybackManager.shared.stopCurrentPlayback()
+        
         if let pausedTime = lastPausedTime {
             player.seek(to: pausedTime)
         }
@@ -179,6 +178,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         showPlayImage()
         isPlaying = true
         muteButton.isHidden = false
+        
         VideoPlaybackManager.shared.currentlyPlayingCell = self
         VideoPlaybackManager.shared.currentlyPlayingIndexPath = currentIndexPath
     }
@@ -191,7 +191,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         isPlaying = false
         imageViewTimer?.invalidate()
         muteButton.isHidden = true
-        playerLayer?.videoGravity = .resizeAspectFill
         lastPausedTime = currentTime
     }
     
@@ -239,6 +238,36 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    @objc private func muteButtonTapped() {
+        GlobalVideoMuteManager.shared.toggleGlobalMuteStatus()
+    }
+    
+    @objc private func playerDidFinishPlaying() {
+        stopVideo()
+        lastPausedTime = nil
+        player?.seek(to: CMTime.zero)
+        playerLayer?.videoGravity = .resizeAspectFill
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = imageView.bounds
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        NotificationCenter.default.removeObserver(self)
+        
+        stopVideo()
+        playerLayer?.removeFromSuperlayer()
+        player = nil
+        playerLayer = nil
+        isVideoLoaded = false
+        lastPausedTime = nil
+        GlobalVideoMuteManager.shared.muteStatusChangeHandlers.removeAll { $0 as? () -> Void == nil }
+    }
+    
     private func setupGlobalMuteObserver() {
         let handler = { [weak self] in
             guard let self = self, let player = self.player else { return }
@@ -251,32 +280,5 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     private func updateMuteButtonImage() {
         let isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
         muteButton.setImage(UIImage(named: isMuted ? "muteIcon 2" : "UnmuteIcon"), for: .normal)
-    }
-    
-    @objc private func muteButtonTapped() {
-        GlobalVideoMuteManager.shared.toggleGlobalMuteStatus()
-    }
-    
-    @objc private func playerDidFinishPlaying() {
-        stopVideo()
-        lastPausedTime = nil
-        playerLayer?.videoGravity = .resizeAspectFill
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        playerLayer?.frame = imageView.bounds
-    }
-    
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        stopVideo()
-        player = nil
-        playerLayer = nil
-        lastPausedTime = nil
-        isVideoLoaded = false
-        playerLayer?.removeFromSuperlayer()
-        NotificationCenter.default.removeObserver(self)
-        GlobalVideoMuteManager.shared.muteStatusChangeHandlers.removeAll { $0 as? () -> Void == nil }
     }
 }

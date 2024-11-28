@@ -15,6 +15,10 @@
         <string>This app requires camera access to take photos for custom cover images.</string>
         <key>NSPhotoLibraryUsageDescription</key>
         <string>This app requires photo library access to select images for custom cover images.</string>
+        <key>UIAppFonts</key>
+        <array>
+            <string>KLEPHON.otf</string>
+        </array>
         <key>UIApplicationSceneManifest</key>
         <dict>
             <key>UIApplicationSupportsMultipleScenes</key>

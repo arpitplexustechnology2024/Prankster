@@ -38,6 +38,7 @@ class VideoCategoryAllVC: UIViewController {
         self.setupCollectionView()
         self.hideKeyboardTappedAround()
         self.checkInternetAndFetchData()
+        self.autoplayFirstVisibleVideo()
         self.filteredImages = viewModel.audioData
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
@@ -58,12 +59,7 @@ class VideoCategoryAllVC: UIViewController {
     }
     
     private func stopPlayingVideo() {
-        if let playingCell = VideoPlaybackManager.shared.currentlyPlayingCell,
-           let playingIndexPath = AudioPlaybackManager.shared.currentlyPlayingIndexPath {
-            playingCell.stopVideo()
-            VideoPlaybackManager.shared.currentlyPlayingCell = nil
-            VideoPlaybackManager.shared.currentlyPlayingIndexPath = nil
-        }
+            VideoPlaybackManager.shared.stopCurrentPlayback()
     }
     
     private func setupSearchBar() {
@@ -116,7 +112,6 @@ class VideoCategoryAllVC: UIViewController {
                         self.hideSkeletonLoader()
                         self.hideNoDataView()
                         self.videoCharacterAllCollectionView.reloadData()
-                        self.autoplayFirstVisibleVideo()
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
                     self.hideSkeletonLoader()
@@ -229,6 +224,10 @@ class VideoCategoryAllVC: UIViewController {
                 self.showNoDataView()
             } else {
                 self.hideNoDataView()
+                
+                if !self.isLoading && !self.currentDataSource.isEmpty {
+                    self.autoplayFirstVisibleVideo()
+                }
             }
         }
     }
@@ -290,7 +289,7 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
-        if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
+        if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages && isConnectedToInternet() {
             fetchAllVideos()
         }
     }
@@ -325,20 +324,22 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     
     private func autoplayFirstVisibleVideo() {
         guard !isLoading && !currentDataSource.isEmpty else { return }
+        VideoPlaybackManager.shared.stopCurrentPlayback()
+        
         let visibleRect = CGRect(x: 0, y: 300, width: videoCharacterAllCollectionView.bounds.width, height: 300)
         let visibleCells = videoCharacterAllCollectionView.visibleCells.filter { cell in
             let cellRect = videoCharacterAllCollectionView.convert(cell.frame, to: videoCharacterAllCollectionView.superview)
             return visibleRect.intersects(cellRect)
         }
+        
         let sortedCells = visibleCells.sorted {
             let rect1 = videoCharacterAllCollectionView.convert($0.frame, to: videoCharacterAllCollectionView.superview)
             let rect2 = videoCharacterAllCollectionView.convert($1.frame, to: videoCharacterAllCollectionView.superview)
             return rect1.origin.y < rect2.origin.y
         }
+        
         if let topCell = sortedCells.first as? VideoCharacterAllCollectionViewCell,
            let indexPath = videoCharacterAllCollectionView.indexPath(for: topCell) {
-            
-            VideoPlaybackManager.shared.stopCurrentPlayback()
             didTapVideoPlayback(at: indexPath)
         }
     }
@@ -352,7 +353,6 @@ extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
         }
         
         if VideoPlaybackManager.shared.currentlyPlayingIndexPath == indexPath {
-            
             cell.stopVideo()
             VideoPlaybackManager.shared.currentlyPlayingCell = nil
             VideoPlaybackManager.shared.currentlyPlayingIndexPath = nil
@@ -368,11 +368,16 @@ extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
         if categoryAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: categoryAllData.itemID) {
             presentPremiumViewController()
         } else {
-            if let navigationController = self.navigationController {
-                if let videoVC = navigationController.viewControllers.first(where: { $0 is VideoVC }) as? VideoVC {
-                    videoVC.updateSelectedVideo(with: categoryAllData)
-                    navigationController.popToViewController(videoVC, animated: true)
+            if isConnectedToInternet() {
+                if let navigationController = self.navigationController {
+                    if let videoVC = navigationController.viewControllers.first(where: { $0 is VideoVC }) as? VideoVC {
+                        videoVC.updateSelectedVideo(with: categoryAllData)
+                        navigationController.popToViewController(videoVC, animated: true)
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         }
     }

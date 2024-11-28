@@ -295,10 +295,11 @@ class AudioVC: UIViewController {
         
         if let audioURL = audioURLToPass {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
+            if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
                 nextVC.selectedURL = audioURL
                 nextVC.selectedName = audioNameToPass
                 nextVC.selectedCoverURL = selectedCoverImageURL
+                nextVC.selectedPranktype = "audio"
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
         } else {
@@ -391,6 +392,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 if let url = URL(string: category.categoryImage) {
                     cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
                 }
+                cell.categoryName.text = category.categoryName
                 return cell
             }
         }

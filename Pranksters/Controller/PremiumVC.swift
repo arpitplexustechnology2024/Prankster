@@ -9,9 +9,6 @@ import UIKit
 
 class PremiumVC: UIViewController {
     
-    var selectedURL: String?
-    var selectedName: String?
-    var selectedCoverURL: String?
     @IBOutlet weak var unlockAllButton: UIButton!
     @IBOutlet weak var coverImageURL: UILabel!
     @IBOutlet weak var URL: UILabel!
@@ -19,18 +16,7 @@ class PremiumVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        if let imageURL = selectedURL, let coverImageURL = selectedCoverURL, let imageName = selectedName {
-            print("=== Received Data in Next ViewController ===")
-            print("Cover Image URL: \(coverImageURL)")
-            print("URL: \(imageURL)")
-            print("Name: \(imageName)")
-            print("=========================================")
-        }
         setupUnlockAllButton()
-        self.coverImageURL.text = "Cover Image :- \(selectedCoverURL ?? "N/A")"
-        self.URL.text = "URL :- \(selectedURL ?? "N/A")"
-        self.name.text = "Name :- \(selectedName ?? "N/A")"
     }
     
     @IBAction func back(_ sender: Any) {

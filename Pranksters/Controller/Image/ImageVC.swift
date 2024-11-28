@@ -269,10 +269,11 @@ class ImageVC: UIViewController {
         }
         if let imageURL = imageURLToPass {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let nextVC = storyboard.instantiateViewController(withIdentifier: "PremiumVC") as? PremiumVC {
+            if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
                 nextVC.selectedURL = imageURL
                 nextVC.selectedName = imageNameToPass
                 nextVC.selectedCoverURL = selectedCoverImageURL
+                nextVC.selectedPranktype = "gallery"
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
         } else {
