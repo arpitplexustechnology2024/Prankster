@@ -86,6 +86,7 @@ class VideoCustomCollectionViewCell: UICollectionViewCell {
 // MARK: - VideoCharacterCollectionViewCell
 class VideoCharacterCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var categoryName: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

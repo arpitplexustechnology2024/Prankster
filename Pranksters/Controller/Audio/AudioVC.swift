@@ -392,7 +392,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 if let url = URL(string: category.categoryImage) {
                     cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
                 }
-                cell.categoryName.text = category.categoryName
+                cell.categoryName.text = "\(category.categoryName) Sound"
                 return cell
             }
         }

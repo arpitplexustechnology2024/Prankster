@@ -1307,8 +1307,8 @@
                                                                             <color key="backgroundColor" name="Icon"/>
                                                                         </imageView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5LP-EG-vUR">
-                                                                            <rect key="frame" x="8" y="51.333333333333336" width="109" height="22.666666666666664"/>
-                                                                            <fontDescription key="fontDescription" name="KLEPHONRegular" family="KLEPHON" pointSize="23"/>
+                                                                            <rect key="frame" x="8" y="52.333333333333336" width="109" height="20.666666666666664"/>
+                                                                            <fontDescription key="fontDescription" name="KLEPHONRegular" family="KLEPHON" pointSize="21"/>
                                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             <nil key="highlightedColor"/>
                                                                         </label>
@@ -1637,15 +1637,26 @@
                                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Lfp-N2-Yym">
                                                                             <rect key="frame" x="0.0" y="0.0" width="115" height="125"/>
                                                                         </imageView>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dzT-a9-TVK">
+                                                                            <rect key="frame" x="8" y="52.333333333333336" width="99" height="20.666666666666664"/>
+                                                                            <fontDescription key="fontDescription" name="KLEPHONRegular" family="KLEPHON" pointSize="21"/>
+                                                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                            <nil key="highlightedColor"/>
+                                                                        </label>
                                                                     </subviews>
                                                                     <constraints>
+                                                                        <constraint firstAttribute="trailing" secondItem="dzT-a9-TVK" secondAttribute="trailing" constant="8" id="2VW-r4-BqV"/>
+                                                                        <constraint firstItem="dzT-a9-TVK" firstAttribute="leading" secondItem="hhY-JR-tBQ" secondAttribute="leading" constant="8" id="RlI-yC-bqw"/>
+                                                                        <constraint firstItem="dzT-a9-TVK" firstAttribute="centerX" secondItem="hhY-JR-tBQ" secondAttribute="centerX" id="ZGy-B4-5B1"/>
                                                                         <constraint firstAttribute="trailing" secondItem="Lfp-N2-Yym" secondAttribute="trailing" id="e8h-ic-n6R"/>
                                                                         <constraint firstItem="Lfp-N2-Yym" firstAttribute="leading" secondItem="hhY-JR-tBQ" secondAttribute="leading" id="eiO-kt-eAX"/>
                                                                         <constraint firstAttribute="bottom" secondItem="Lfp-N2-Yym" secondAttribute="bottom" id="mXG-hI-MBR"/>
+                                                                        <constraint firstItem="dzT-a9-TVK" firstAttribute="centerY" secondItem="hhY-JR-tBQ" secondAttribute="centerY" id="ujM-WK-yKT"/>
                                                                         <constraint firstItem="Lfp-N2-Yym" firstAttribute="top" secondItem="hhY-JR-tBQ" secondAttribute="top" id="w2d-TI-0JI"/>
                                                                     </constraints>
                                                                 </collectionViewCellContentView>
                                                                 <connections>
+                                                                    <outlet property="categoryName" destination="dzT-a9-TVK" id="kSo-OT-gob"/>
                                                                     <outlet property="imageView" destination="Lfp-N2-Yym" id="bqF-zi-NCt"/>
                                                                 </connections>
                                                             </collectionViewCell>
@@ -1931,15 +1942,26 @@
                                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OhE-fk-P2c">
                                                                             <rect key="frame" x="0.0" y="0.0" width="115" height="125"/>
                                                                         </imageView>
+                                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4mC-hg-5i8">
+                                                                            <rect key="frame" x="8" y="52.333333333333336" width="99" height="20.666666666666664"/>
+                                                                            <fontDescription key="fontDescription" name="KLEPHONRegular" family="KLEPHON" pointSize="21"/>
+                                                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                                            <nil key="highlightedColor"/>
+                                                                        </label>
                                                                     </subviews>
                                                                     <constraints>
+                                                                        <constraint firstAttribute="trailing" secondItem="4mC-hg-5i8" secondAttribute="trailing" constant="8" id="40f-mY-q11"/>
+                                                                        <constraint firstItem="4mC-hg-5i8" firstAttribute="centerX" secondItem="8qM-bD-Qv7" secondAttribute="centerX" id="9GT-V9-iG7"/>
                                                                         <constraint firstItem="OhE-fk-P2c" firstAttribute="top" secondItem="8qM-bD-Qv7" secondAttribute="top" id="GhY-NR-q3N"/>
                                                                         <constraint firstItem="OhE-fk-P2c" firstAttribute="leading" secondItem="8qM-bD-Qv7" secondAttribute="leading" id="KdL-lc-fgE"/>
                                                                         <constraint firstAttribute="bottom" secondItem="OhE-fk-P2c" secondAttribute="bottom" id="aPq-js-Lh6"/>
                                                                         <constraint firstAttribute="trailing" secondItem="OhE-fk-P2c" secondAttribute="trailing" id="db7-xF-bB5"/>
+                                                                        <constraint firstItem="4mC-hg-5i8" firstAttribute="leading" secondItem="8qM-bD-Qv7" secondAttribute="leading" constant="8" id="ihM-Q0-086"/>
+                                                                        <constraint firstItem="4mC-hg-5i8" firstAttribute="centerY" secondItem="8qM-bD-Qv7" secondAttribute="centerY" id="t7W-65-vmF"/>
                                                                     </constraints>
                                                                 </collectionViewCellContentView>
                                                                 <connections>
+                                                                    <outlet property="categoryName" destination="4mC-hg-5i8" id="2OA-Ck-YlI"/>
                                                                     <outlet property="imageView" destination="OhE-fk-P2c" id="tQz-EG-wna"/>
                                                                 </connections>
                                                             </collectionViewCell>

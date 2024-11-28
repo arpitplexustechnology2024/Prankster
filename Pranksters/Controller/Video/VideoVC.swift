@@ -448,6 +448,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 if let url = URL(string: character.categoryImage) {
                     cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
                 }
+                cell.categoryName.text = "\(character.categoryName) Video"
                 return cell
             }
         }

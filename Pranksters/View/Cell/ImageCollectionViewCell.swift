@@ -69,6 +69,7 @@ class ImageCustomCollectionViewCell: UICollectionViewCell {
 // MARK: - AddCoverPageCollectionCell
 class ImageCharacterCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var categoryName: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
