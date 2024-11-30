@@ -46,6 +46,7 @@ class AudioVC: UIViewController {
     private var isLoading = true
     private var isPlaying = false
     var selectedCoverImageURL: String?
+    var selectedCoverImageFile: Data?
     private var selectedAudioIndex: Int?
     private var audioPlayer: AVAudioPlayer?
     var initialAudioData: CategoryAllData?
@@ -99,9 +100,6 @@ class AudioVC: UIViewController {
         if let audioData = initialAudioData {
             playSelectedAudio(audioData)
         }
-        if let imageURL = selectedCoverImageURL{
-            print("Cover Image URL: \(imageURL)")
-        }
     }
     
     // MARK: - checkInternetAndFetchData
@@ -141,7 +139,7 @@ class AudioVC: UIViewController {
         self.audioCustomCollectionView.dataSource = self
         self.audioCharacterCollectionView.delegate = self
         self.audioCharacterCollectionView.dataSource = self
-
+        
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         self.oneTimeBlurView.addGestureRecognizer(tapGesture)
@@ -281,24 +279,31 @@ class AudioVC: UIViewController {
     // MARK: - btnDoneTapped
     @IBAction func btnDoneTapped(_ sender: UIButton) {
         var audioURLToPass: String?
+        var audioFileToPass: Data?
         var audioNameToPass: String?
         
         if let selectedIndex = selectedAudioIndex {
             let audioData = customAudios[selectedIndex]
-            audioURLToPass = audioData.url.absoluteString
             audioNameToPass = audioData.url.lastPathComponent
+            if let fileData = try? Data(contentsOf: audioData.url) {
+                audioFileToPass = fileData
+                audioURLToPass = nil
+            }
         }
         else if let selectedData = selectedAudioData {
             audioURLToPass = selectedData.file
             audioNameToPass = selectedData.name
+            audioFileToPass = nil
         }
         
-        if let audioURL = audioURLToPass {
+        if audioURLToPass != nil || audioFileToPass != nil {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
-                nextVC.selectedURL = audioURL
+                nextVC.selectedURL = audioURLToPass
+                nextVC.selectedFile = audioFileToPass
                 nextVC.selectedName = audioNameToPass
                 nextVC.selectedCoverURL = selectedCoverImageURL
+                nextVC.selectedCoverFile = selectedCoverImageFile
                 nextVC.selectedPranktype = "audio"
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }

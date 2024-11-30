@@ -39,7 +39,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var playPauseImageView: UIImageView!
     @IBOutlet weak var DoneButton: UIButton!
     @IBOutlet weak var audioLabel: UILabel!
-    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    @IBOutlet weak var visualEffectView: UIView!
     
     // MARK: - Properties
     weak var delegate: AudioAllCollectionViewCellDelegate?

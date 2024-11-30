@@ -60,8 +60,8 @@
 		BD187C7F2CE2E8FA007744B1 /* VideoCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD187C7D2CE2E8FA007744B1 /* VideoCollectionViewCell.swift */; };
 		BD187C802CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD187C7E2CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift */; };
 		BD7E15612CF7B0C000D7D3C7 /* ShareLinkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15602CF7B0C000D7D3C7 /* ShareLinkVC.swift */; };
-		BD7E15632CF7DDBB00D7D3C7 /* PrankCreateAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15622CF7DDBB00D7D3C7 /* PrankCreateAPI.swift */; };
-		BD7E15652CF7DDD700D7D3C7 /* PrankCreateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15642CF7DDD700D7D3C7 /* PrankCreateViewModel.swift */; };
+		BD7E15632CF7DDBB00D7D3C7 /* PrankAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15622CF7DDBB00D7D3C7 /* PrankAPI.swift */; };
+		BD7E15652CF7DDD700D7D3C7 /* PrankViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7E15642CF7DDD700D7D3C7 /* PrankViewModel.swift */; };
 		BD7E15672CF808FA00D7D3C7 /* KLEPHON.otf in Resources */ = {isa = PBXBuildFile; fileRef = BD7E15662CF808FA00D7D3C7 /* KLEPHON.otf */; };
 		BD87AD042CF1082F00AE3F7C /* SaveRecordingPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87AD032CF1082F00AE3F7C /* SaveRecordingPopup.swift */; };
 		BDBA94B22CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBA94B12CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift */; };
@@ -80,6 +80,7 @@
 		BDD8808E2CE27D2700376D6E /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDD8808D2CE27D2700376D6E /* Color.xcassets */; };
 		BDEABF712CEFB02C0021F692 /* CustomRecoderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEABF702CEFB02C0021F692 /* CustomRecoderVC.swift */; };
 		BDEABF732CEFB0D70021F692 /* AudioVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEABF722CEFB0D70021F692 /* AudioVisualizer.swift */; };
+		BDF5FBCA2CF93F6C0099AA82 /* BannerAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF5FBC92CF93F6C0099AA82 /* BannerAdUtility.swift */; };
 		BDF890F62CF0239C00C5230D /* PremiumPopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF890F52CF0239C00C5230D /* PremiumPopupVC.swift */; };
 		D4176777E239C4C56858EE3A /* Pods_PrankstersTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEE3FE3546296A3E5F616CB6 /* Pods_PrankstersTests.framework */; };
 /* End PBXBuildFile section */
@@ -160,8 +161,8 @@
 		BD187C7D2CE2E8FA007744B1 /* VideoCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCollectionViewCell.swift; sourceTree = "<group>"; };
 		BD187C7E2CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCharacterAllCollectionViewCell.swift; sourceTree = "<group>"; };
 		BD7E15602CF7B0C000D7D3C7 /* ShareLinkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLinkVC.swift; sourceTree = "<group>"; };
-		BD7E15622CF7DDBB00D7D3C7 /* PrankCreateAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankCreateAPI.swift; sourceTree = "<group>"; };
-		BD7E15642CF7DDD700D7D3C7 /* PrankCreateViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankCreateViewModel.swift; sourceTree = "<group>"; };
+		BD7E15622CF7DDBB00D7D3C7 /* PrankAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankAPI.swift; sourceTree = "<group>"; };
+		BD7E15642CF7DDD700D7D3C7 /* PrankViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankViewModel.swift; sourceTree = "<group>"; };
 		BD7E15662CF808FA00D7D3C7 /* KLEPHON.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = KLEPHON.otf; sourceTree = "<group>"; };
 		BD87AD032CF1082F00AE3F7C /* SaveRecordingPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRecordingPopup.swift; sourceTree = "<group>"; };
 		BDBA94B12CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCoverAllCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -184,6 +185,7 @@
 		BDD8808D2CE27D2700376D6E /* Color.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Color.xcassets; sourceTree = "<group>"; };
 		BDEABF702CEFB02C0021F692 /* CustomRecoderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRecoderVC.swift; sourceTree = "<group>"; };
 		BDEABF722CEFB0D70021F692 /* AudioVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioVisualizer.swift; sourceTree = "<group>"; };
+		BDF5FBC92CF93F6C0099AA82 /* BannerAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdUtility.swift; sourceTree = "<group>"; };
 		BDF890F52CF0239C00C5230D /* PremiumPopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumPopupVC.swift; sourceTree = "<group>"; };
 		D13A1CF391469C63A82A089D /* Pods-Pranksters-PrankstersUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pranksters-PrankstersUITests.debug.xcconfig"; path = "Target Support Files/Pods-Pranksters-PrankstersUITests/Pods-Pranksters-PrankstersUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		FED93AD21F340AE56AB7A8D5 /* Pods_Pranksters_PrankstersUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Pranksters_PrankstersUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -389,7 +391,7 @@
 				BD187C3C2CE287B2007744B1 /* CoverPageAPI.swift */,
 				BD187C3E2CE287B2007744B1 /* CategoryAPI.swift */,
 				BD187C3F2CE287B2007744B1 /* CategoryAllAPI.swift */,
-				BD7E15622CF7DDBB00D7D3C7 /* PrankCreateAPI.swift */,
+				BD7E15622CF7DDBB00D7D3C7 /* PrankAPI.swift */,
 			);
 			path = APIManager;
 			sourceTree = "<group>";
@@ -401,7 +403,7 @@
 				BD187C442CE287B8007744B1 /* CoverPageViewModel.swift */,
 				BD187C462CE287B8007744B1 /* CategoryViewModel.swift */,
 				BD187C472CE287B8007744B1 /* CategoryAllViewModel.swift */,
-				BD7E15642CF7DDD700D7D3C7 /* PrankCreateViewModel.swift */,
+				BD7E15642CF7DDD700D7D3C7 /* PrankViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -428,6 +430,7 @@
 				BD187C162CE2858A007744B1 /* UIImage+GIF.swift */,
 				BD08B4F32CE690EE00394BF9 /* premiumManager.swift */,
 				BDBA94B32CED57D30036BF68 /* LoadingFooterView.swift */,
+				BDF5FBC92CF93F6C0099AA82 /* BannerAdUtility.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				BDD8801E2CE27A2A00376D6E /* Frameworks */,
 				BDD8801F2CE27A2A00376D6E /* Resources */,
 				CFE6F78F6DF943DAEBD0E54B /* [CP] Embed Pods Frameworks */,
+				096B4D7A2D96495E5597E1D0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -534,6 +538,7 @@
 				BDD8803E2CE27A2C00376D6E /* Frameworks */,
 				BDD8803F2CE27A2C00376D6E /* Resources */,
 				67941E4524703C9CB2C49493 /* [CP] Embed Pods Frameworks */,
+				1F2E1153625721B381AD8CE1 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -628,6 +633,40 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		096B4D7A2D96495E5597E1D0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Pranksters/Pods-Pranksters-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Pranksters/Pods-Pranksters-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Pranksters/Pods-Pranksters-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1F2E1153625721B381AD8CE1 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Pranksters-PrankstersUITests/Pods-Pranksters-PrankstersUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Pranksters-PrankstersUITests/Pods-Pranksters-PrankstersUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Pranksters-PrankstersUITests/Pods-Pranksters-PrankstersUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		67941E4524703C9CB2C49493 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -740,6 +779,7 @@
 				BDBA94B42CED57D30036BF68 /* LoadingFooterView.swift in Sources */,
 				BD187C5E2CE2CCA1007744B1 /* AudioVC.swift in Sources */,
 				BD187C5F2CE2CCA1007744B1 /* AudioCategoryAllVC.swift in Sources */,
+				BDF5FBCA2CF93F6C0099AA82 /* BannerAdUtility.swift in Sources */,
 				BD187C212CE285A7007744B1 /* NoDataView.swift in Sources */,
 				BD7E15612CF7B0C000D7D3C7 /* ShareLinkVC.swift in Sources */,
 				BD187C2E2CE285E7007744B1 /* MoreAppViewModel.swift in Sources */,
@@ -760,14 +800,14 @@
 				BD187C7A2CE2E8EC007744B1 /* VideoCategoryAllVC.swift in Sources */,
 				BD187C592CE28E7E007744B1 /* PremiumVC.swift in Sources */,
 				BD187C512CE287CB007744B1 /* CoverPageCollectionViewCell.swift in Sources */,
-				BD7E15652CF7DDD700D7D3C7 /* PrankCreateViewModel.swift in Sources */,
+				BD7E15652CF7DDD700D7D3C7 /* PrankViewModel.swift in Sources */,
 				BD187C412CE287B2007744B1 /* CoverPageAPI.swift in Sources */,
 				BD187C422CE287B2007744B1 /* CategoryAllAPI.swift in Sources */,
 				BD187C432CE287B2007744B1 /* CategoryAPI.swift in Sources */,
 				BD187BFB2CE27FBE007744B1 /* HomeVC.swift in Sources */,
 				BD187C372CE28760007744B1 /* CustomCoverPageVC.swift in Sources */,
 				BD187C332CE28728007744B1 /* EmojiCoverPageVC.swift in Sources */,
-				BD7E15632CF7DDBB00D7D3C7 /* PrankCreateAPI.swift in Sources */,
+				BD7E15632CF7DDBB00D7D3C7 /* PrankAPI.swift in Sources */,
 				BD187C6B2CE2D859007744B1 /* ImageCategoryAllVC.swift in Sources */,
 				BD187C6D2CE2D859007744B1 /* ImageVC.swift in Sources */,
 				BDD880692CE27A3600376D6E /* SceneDelegate.swift in Sources */,

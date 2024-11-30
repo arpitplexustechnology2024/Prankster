@@ -39,6 +39,7 @@ class CoverPageVC: UIViewController {
     var isLoading = true
     var selectedCustomImage: UIImage?
     var selectedCoverImageURL: String?
+    var selectedCoverImageFile: Data?
     var viewType: CoverViewType = .audio
     private var selectedCoverIndex: Int?
     let emojiViewModel = EmojiViewModel()
@@ -145,25 +146,40 @@ class CoverPageVC: UIViewController {
     
     // MARK: - Done Button
     @IBAction func btnDoneTapped(_ sender: UIButton) {
-        if let imageURL = selectedCoverImageURL {
+        if selectedCoverImageURL != nil || selectedCoverImageFile != nil {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             
             switch viewType {
             case .audio:
                 if let nextVC = storyboard.instantiateViewController(identifier: "AudioVC") as? AudioVC {
-                    nextVC.selectedCoverImageURL = imageURL
+                    if let imageURL = selectedCoverImageURL {
+                        nextVC.selectedCoverImageURL = imageURL
+                    }
+                    if let imageFile = selectedCoverImageFile {
+                        nextVC.selectedCoverImageFile = imageFile
+                    }
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
                 
             case .video:
                 if let nextVC = storyboard.instantiateViewController(identifier: "VideoVC") as? VideoVC {
-                    nextVC.selectedCoverImageURL = imageURL
+                    if let imageURL = selectedCoverImageURL {
+                        nextVC.selectedCoverImageURL = imageURL
+                    }
+                    if let imageFile = selectedCoverImageFile {
+                        nextVC.selectedCoverImageFile = imageFile
+                    }
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
                 
             case .image:
                 if let nextVC = storyboard.instantiateViewController(identifier: "ImageVC") as? ImageVC {
-                    nextVC.selectedCoverImageURL = imageURL
+                    if let imageURL = selectedCoverImageURL {
+                        nextVC.selectedCoverImageURL = imageURL
+                    }
+                    if let imageFile = selectedCoverImageFile {
+                        nextVC.selectedCoverImageFile = imageFile
+                    }
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
             }
@@ -316,12 +332,12 @@ class CoverPageVC: UIViewController {
         lottieLoader.isHidden = true
         coverImageView.isHidden = false
     }
-    
     // MARK: - updateSelectedImage
     func updateSelectedImage(with coverData: CoverPageData, customImage: UIImage? = nil) {
         showLottieLoader()
         selectedCoverImageData = coverData
         selectedCoverImageURL = coverData.coverURL
+        
         
         if let customImage = customImage {
             self.coverImageView.image = customImage
@@ -334,7 +350,10 @@ class CoverPageVC: UIViewController {
             
             if let imageData = customImage.jpegData(compressionQuality: 1.0) {
                 try? imageData.write(to: fileURL)
-                self.selectedCoverImageURL = fileURL.absoluteString
+                if let fileData = try? Data(contentsOf: fileURL) {
+                    self.selectedCoverImageFile = fileData
+                    self.selectedCoverImageURL = nil
+                }
                 print("Custom Cover Image URL: \(fileURL.absoluteString)")
             }
         } else if let url = URL(string: coverData.coverURL) {
@@ -344,6 +363,7 @@ class CoverPageVC: UIViewController {
                     print("Error loading image: \(error.localizedDescription)")
                 } else {
                     print("Cover URL: \(coverData.coverURL)")
+                    self?.selectedCoverImageFile = nil
                 }
             }
         }
@@ -440,7 +460,10 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                     
                     if let imageData = customImage.jpegData(compressionQuality: 1.0) {
                         try? imageData.write(to: fileURL)
-                        self.selectedCoverImageURL = fileURL.absoluteString
+                        if let fileData = try? Data(contentsOf: fileURL) {
+                            self.selectedCoverImageFile = fileData
+                            self.selectedCoverImageURL = nil
+                        }
                         print("Custom Cover Image URL: \(fileURL.absoluteString)")
                     }
                     hideLottieLoader()
@@ -451,11 +474,13 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
             let coverPageData = emojiViewModel.emojiCoverPages[indexPath.item]
             self.selectedCoverImageURL = coverPageData.coverURL
             print("Emoji Cover URL: \(coverPageData.coverURL)")
+            self.selectedCoverImageFile = nil
             handleCellSelection(coverPageData: coverPageData, collectionView: collectionView, indexPath: indexPath)
         } else if collectionView == realisticCollectionView {
             let coverPageData = realisticViewModel.realisticCoverPages[indexPath.item]
             self.selectedCoverImageURL = coverPageData.coverURL
             print("Realistic Cover URL: \(coverPageData.coverURL)")
+            self.selectedCoverImageFile = nil
             handleCellSelection(coverPageData: coverPageData, collectionView: collectionView, indexPath: indexPath)
         }
     }
@@ -691,7 +716,10 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
             
             if let imageData = selectedImage.jpegData(compressionQuality: 1.0) {
                 try? imageData.write(to: fileURL)
-                self.selectedCoverImageURL = fileURL.absoluteString
+                if let fileData = try? Data(contentsOf: fileURL) {
+                    self.selectedCoverImageFile = fileData
+                    self.selectedCoverImageURL = nil
+                }
                 print("Custom Cover Image URL: \(fileURL.absoluteString)")
                 
                 customCoverImages.insert(selectedImage, at: 0)

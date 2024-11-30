@@ -125,3 +125,9 @@ struct PrankCreateData: Codable {
         case name = "Name"
     }
 }
+
+// MARK: - Prank Name Update
+struct PrankNameUpdate: Codable {
+    let status: Int
+    let message: String
+}

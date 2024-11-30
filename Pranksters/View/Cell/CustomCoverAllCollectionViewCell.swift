@@ -16,7 +16,7 @@ class CustomCoverAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var DoneButton: UIButton!
-    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    @IBOutlet weak var visualEffectView: UIView!
     weak var delegate: CustomCoverAllCollectionViewCellDelegate?
     var blurredImageView: UIImageView!
     

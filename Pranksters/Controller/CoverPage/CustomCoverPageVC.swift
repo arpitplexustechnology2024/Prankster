@@ -83,12 +83,12 @@ extension CustomCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSourc
         if UIDevice.current.userInterfaceIdiom == .pad {
             let totalSpacing = spacing * 4
             let width = (collectionView.frame.width - totalSpacing) / 2
-            let height = (collectionView.frame.height - spacing * 3) / 2
+            let height = (collectionView.frame.height - spacing * 3) / 2 + 59
             return CGSize(width: width, height: height)
         } else {
             let totalSpacing = spacing * 3
             let width = collectionView.frame.width - totalSpacing
-            let height = (collectionView.frame.height - totalSpacing) / 2
+            let height = ((collectionView.frame.height - totalSpacing) / 2) + 59
             return CGSize(width: width, height: height)
         }
     }

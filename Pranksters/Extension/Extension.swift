@@ -64,3 +64,18 @@ extension UIViewController {
         view.endEditing(true)
     }
 }
+
+// MARK: - UIView
+extension UIView {
+    func showShimmer() {
+        self.subviews.filter { $0 is ShimmerView }.forEach { $0.removeFromSuperview() }
+        
+        let shimmerView = ShimmerView(frame: self.bounds)
+        shimmerView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.addSubview(shimmerView)
+    }
+    
+    func hideShimmer() {
+        self.subviews.filter { $0 is ShimmerView }.forEach { $0.removeFromSuperview() }
+    }
+}

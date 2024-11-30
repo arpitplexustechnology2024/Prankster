@@ -17,7 +17,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var DoneButton: UIButton!
     @IBOutlet weak var imageName: UILabel!
-    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    @IBOutlet weak var visualEffectView: UIView!
     weak var delegate: ImageCharacterAllCollectionViewCellDelegate?
     private var coverPageData: CategoryAllData?
     private var blurredImageView: UIImageView!

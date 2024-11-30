@@ -52,7 +52,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var DoneButton: UIButton!
     @IBOutlet weak var imageName: UILabel!
     @IBOutlet weak var playPauseImageView: UIImageView!
-    @IBOutlet weak var visualEffectView: UIVisualEffectView!
+    @IBOutlet weak var visualEffectView: UIView!
     @IBOutlet weak var muteButton: UIButton!
     
     // MARK: - Properties

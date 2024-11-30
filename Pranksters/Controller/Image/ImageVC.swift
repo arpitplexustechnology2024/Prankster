@@ -34,6 +34,7 @@ class ImageVC: UIViewController {
     // MARK: - Properties
     private var isLoading = true
     var selectedCoverImageURL: String?
+    var selectedCoverImageFile: Data?
     private var selectedImageIndex: Int?
     private var selectedImageURL: String?
     private var selectedImageName: String?
@@ -68,9 +69,6 @@ class ImageVC: UIViewController {
         self.setupNoInternetView()
         self.checkInternetAndFetchData()
         self.navigationbarView.addBottomShadow()
-        if let imageURL = selectedCoverImageURL{
-            print("Cover Image URL: \(imageURL)")
-        }
     }
     
     // MARK: - checkInternetAndFetchData
@@ -249,30 +247,36 @@ class ImageVC: UIViewController {
     // MARK: - btnDoneTapped
     @IBAction func btnDoneTapped(_ sender: UIButton) {
         var imageURLToPass: String?
+        var imageFileToPass: Data?
         var imageNameToPass: String?
         
         if let selectedIndex = selectedImageIndex {
-            
             let temporaryDirectory = NSTemporaryDirectory()
             let fileName = "CustomImage_\(UUID().uuidString).jpg"
             let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
             
             if let imageData = customImages[selectedIndex].jpegData(compressionQuality: 1.0) {
                 try? imageData.write(to: fileURL)
-                imageURLToPass = fileURL.absoluteString
+                if let fileData = try? Data(contentsOf: fileURL) {
+                    imageFileToPass = fileData
+                    imageURLToPass = nil
+                }
                 imageNameToPass = "Custom Image \(selectedIndex + 1)"
             }
-        }
-        else if let selectedData = selectedImageData {
+        } else if let selectedData = selectedImageData {
             imageURLToPass = selectedData.image
             imageNameToPass = selectedData.name
+            imageFileToPass = nil
         }
-        if let imageURL = imageURLToPass {
+        
+        if imageURLToPass != nil || imageFileToPass != nil {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
-                nextVC.selectedURL = imageURL
+                nextVC.selectedURL = imageURLToPass
+                nextVC.selectedFile = imageFileToPass
                 nextVC.selectedName = imageNameToPass
                 nextVC.selectedCoverURL = selectedCoverImageURL
+                nextVC.selectedCoverFile = selectedCoverImageFile
                 nextVC.selectedPranktype = "gallery"
                 self.navigationController?.pushViewController(nextVC, animated: true)
             }
@@ -284,6 +288,7 @@ class ImageVC: UIViewController {
             self.present(alert, animated: true)
         }
     }
+
     
     // MARK: - btnBackTapped
     @IBAction func btnBackTapped(_ sender: UIButton) {

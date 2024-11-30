@@ -37,6 +37,7 @@ class VideoVC: UIViewController {
     private var isPlaying = false
     private var player: AVPlayer?
     var selectedCoverImageURL: String?
+    var selectedCoverImageFile: Data?
     private var selectedVideoIndex: Int?
     private var customVideos: [URL] = []
     private var shouldAutoPlayVideo = false
@@ -58,7 +59,7 @@ class VideoVC: UIViewController {
         super.init(coder: coder)
         self.viewModel = CategoryViewModel(apiService: CategoryAPIService.shared)
     }
-        
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopVideo()
@@ -87,9 +88,6 @@ class VideoVC: UIViewController {
         self.videoCustomCollectionView.reloadData()
         self.pauseImageView.isHidden = true
         self.pauseImageView.image = UIImage(named: "PlayButton")
-        if let imageURL = selectedCoverImageURL{
-            print("Image URL: \(imageURL)")
-        }
     }
     
     // MARK: - checkInternetAndFetchData
@@ -266,35 +264,41 @@ class VideoVC: UIViewController {
     // MARK: - btnDoneTapped
     @IBAction func btnDoneTapped(_ sender: UIButton) {
         var videoURLToPass: String?
+        var videoFileToPass: Data?
         var videoNameToPass: String?
         
         if let selectedIndex = selectedVideoIndex {
-            
-            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let fileName = "\(UUID().uuidString).mp4"
-            let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-            
-            videoURLToPass = destinationURL.absoluteString
+
+            let videoData = customVideos[selectedIndex]
+            print(videoData)
+            if let fileData = try? Data(contentsOf: videoData) {
+                videoFileToPass = fileData
+                videoURLToPass = nil
+            }
             videoNameToPass = "Custom Video \(selectedIndex + 1)"
+            
         }
         else if let selectedData = selectedVideoData {
             videoURLToPass = selectedData.file
             videoNameToPass = selectedData.name
+            videoFileToPass = nil
         }
-        if let imageURL = videoURLToPass {
+        if videoURLToPass != nil || videoFileToPass != nil {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
-                nextVC.selectedURL = imageURL
+                nextVC.selectedURL = videoURLToPass
+                nextVC.selectedFile = videoFileToPass
                 nextVC.selectedName = videoNameToPass
                 nextVC.selectedCoverURL = selectedCoverImageURL
+                nextVC.selectedCoverFile = selectedCoverImageFile
                 nextVC.selectedPranktype = "video"
                 self.navigationController?.pushViewController(nextVC, animated: true)
                 self.videoImageView.isHidden = false
                 self.pauseImageView.isHidden = true
             }
         } else {
-            let alert = UIAlertController(title: "No Image Selected",
-                                          message: "Please select an image before proceeding.",
+            let alert = UIAlertController(title: "No Video Selected",
+                                          message: "Please select an video before proceeding.",
                                           preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "OK", style: .default))
             self.present(alert, animated: true)

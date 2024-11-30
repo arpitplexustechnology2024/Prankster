@@ -9,7 +9,7 @@ target 'Pranksters' do
   pod 'lottie-ios'
   pod 'Alamofire'
   pod 'SDWebImage'
-  pod 'Shuffle-iOS'
+  pod 'Google-Mobile-Ads-SDK'
 
   target 'PrankstersTests' do
     inherit! :search_paths

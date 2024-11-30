@@ -1,30 +1,34 @@
 PODS:
   - Alamofire (5.10.0)
+  - Google-Mobile-Ads-SDK (11.12.0):
+    - GoogleUserMessagingPlatform (>= 1.1)
+  - GoogleUserMessagingPlatform (2.7.0)
   - lottie-ios (4.5.0)
   - SDWebImage (5.19.7):
     - SDWebImage/Core (= 5.19.7)
   - SDWebImage/Core (5.19.7)
-  - Shuffle-iOS (0.5.0)
 
 DEPENDENCIES:
   - Alamofire
+  - Google-Mobile-Ads-SDK
   - lottie-ios
   - SDWebImage
-  - Shuffle-iOS
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - Google-Mobile-Ads-SDK
+    - GoogleUserMessagingPlatform
     - lottie-ios
     - SDWebImage
-    - Shuffle-iOS
 
 SPEC CHECKSUMS:
   Alamofire: cd0b98508df05796dd2ff278f3bb055a631b5390
+  Google-Mobile-Ads-SDK: 3a76704456669fbed2057efc8bdb99050ad0e3fb
+  GoogleUserMessagingPlatform: a8b56893477f67212fbc8411c139e61d463349f5
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
-  Shuffle-iOS: ff33658fb1e5eebd6a4724c156473e63754be9cb
 
-PODFILE CHECKSUM: 6f3205deee8dc3f41e419ad59492f980f8250f2f
+PODFILE CHECKSUM: 483d0311b6823c9f910ab7599db60c07dac9c824
 
 COCOAPODS: 1.15.2

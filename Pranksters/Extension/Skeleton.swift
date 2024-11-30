@@ -211,3 +211,44 @@ class SkeletonBoxCollectionViewCell: UICollectionViewCell {
     }
 }
 
+class ShimmerView: UIView {
+    // MARK: - Properties
+    private let gradientLayer = CAGradientLayer()
+    private let gradientColorOne = UIColor(white: 0.85, alpha: 1.0).cgColor
+    private let gradientColorTwo = UIColor(white: 1.0, alpha: 1.0).cgColor
+    
+    // MARK: - Initialization
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupShimmerEffect()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupShimmerEffect()
+    }
+    
+    // MARK: - Setup Shimmer Effect
+    private func setupShimmerEffect() {
+        backgroundColor = .clear
+        
+        gradientLayer.colors = [gradientColorOne, gradientColorTwo, gradientColorOne]
+        gradientLayer.locations = [0.0, 0.5, 1.0]
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+        layer.addSublayer(gradientLayer)
+    }
+    
+    // MARK: - Layout
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        gradientLayer.frame = bounds
+        
+        let animation = CABasicAnimation(keyPath: "locations")
+        animation.fromValue = [0.0, 0.0, 1.0]
+        animation.toValue = [0.0, 1.0, 1.0]
+        animation.duration = 1.5
+        animation.repeatCount = .infinity
+        gradientLayer.add(animation, forKey: "shimmerAnimation")
+    }
+}
