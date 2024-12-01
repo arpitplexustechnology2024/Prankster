@@ -14,6 +14,9 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
     private weak var rootViewController: UIViewController?
     private var adUnitID: String?
     
+    // Closure to handle reward earning
+    var onRewardEarned: (() -> Void)?
+    
     func loadRewardedAd(adUnitID: String, rootViewController: UIViewController) {
         self.rootViewController = rootViewController
         self.adUnitID = adUnitID
@@ -33,12 +36,12 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
             print("Ad wasn't ready.")
             return
         }
-        rewardedAd.present(fromRootViewController: rootViewController) {
+        rewardedAd.present(fromRootViewController: rootViewController) { [weak self] in
             let reward = rewardedAd.adReward
             print("Reward received with currency \(reward.amount), amount \(reward.amount.doubleValue)")
         }
     }
-
+    
     // MARK: - GADFullScreenContentDelegate
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
@@ -47,15 +50,16 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
             loadRewardedAd(adUnitID: adUnitID, rootViewController: rootViewController!)
         }
     }
-
+    
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         print("Ad will present full screen content.")
     }
-
+    
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         print("Ad did dismiss full screen content.")
         if let adUnitID = adUnitID {
             loadRewardedAd(adUnitID: adUnitID, rootViewController: rootViewController!)
+            self.onRewardEarned?()
         }
     }
 }

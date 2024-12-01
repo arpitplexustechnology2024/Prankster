@@ -131,3 +131,22 @@ struct PrankNameUpdate: Codable {
     let status: Int
     let message: String
 }
+
+// MARK: - Spinner Response
+struct SpinnerResponse: Codable {
+    let status: Int
+    let message: String
+    let data: SpinnerData
+}
+struct SpinnerData: Codable {
+    let link, coverImage, file: String
+    let type, name: String
+    
+    enum CodingKeys: String, CodingKey {
+        case link = "Link"
+        case coverImage = "CoverImage"
+        case file = "File"
+        case type = "Type"
+        case name = "Name"
+    }
+}

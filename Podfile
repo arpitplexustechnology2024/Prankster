@@ -10,6 +10,7 @@ target 'Pranksters' do
   pod 'Alamofire'
   pod 'SDWebImage'
   pod 'Google-Mobile-Ads-SDK'
+  pod 'SwiftFortuneWheel'
 
   target 'PrankstersTests' do
     inherit! :search_paths

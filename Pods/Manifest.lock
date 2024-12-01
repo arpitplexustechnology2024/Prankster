@@ -7,12 +7,14 @@ PODS:
   - SDWebImage (5.19.7):
     - SDWebImage/Core (= 5.19.7)
   - SDWebImage/Core (5.19.7)
+  - SwiftFortuneWheel (1.4.4)
 
 DEPENDENCIES:
   - Alamofire
   - Google-Mobile-Ads-SDK
   - lottie-ios
   - SDWebImage
+  - SwiftFortuneWheel
 
 SPEC REPOS:
   trunk:
@@ -21,6 +23,7 @@ SPEC REPOS:
     - GoogleUserMessagingPlatform
     - lottie-ios
     - SDWebImage
+    - SwiftFortuneWheel
 
 SPEC CHECKSUMS:
   Alamofire: cd0b98508df05796dd2ff278f3bb055a631b5390
@@ -28,7 +31,8 @@ SPEC CHECKSUMS:
   GoogleUserMessagingPlatform: a8b56893477f67212fbc8411c139e61d463349f5
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   SDWebImage: 8a6b7b160b4d710e2a22b6900e25301075c34cb3
+  SwiftFortuneWheel: f69e99359cdef05bad3aa3d1db297bd3da8d324c
 
-PODFILE CHECKSUM: 483d0311b6823c9f910ab7599db60c07dac9c824
+PODFILE CHECKSUM: d96313c803e5ea032e7a924caab88959dc59c529
 
 COCOAPODS: 1.15.2

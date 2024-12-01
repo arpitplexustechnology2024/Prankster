@@ -133,7 +133,8 @@ class HomeVC: UIViewController {
             hideDropdown()
             return
         }
-        
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnMoreAppTapped(_ sender: UIButton) {

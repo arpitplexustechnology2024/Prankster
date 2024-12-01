@@ -37,6 +37,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var bannerAdUtility = BannerAdUtility()
     private var viewModel = PrankViewModel()
     private var noDataView: NoDataBottomBarView!
+    let interstitialAdUtility = InterstitialAdUtility()
     private var noInternetView: NoInternetBottombarView!
     
     let stackView: UIStackView = {
@@ -61,6 +62,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.hideKeyboardTappedAround()
         self.checkInternetAndFetchData()
         bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
+        interstitialAdUtility.delegate = self
+        Task {
+            await interstitialAdUtility.loadInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        }
         self.prankNameLabel.isEditable = false
         self.prankNameLabel.delegate = self
         self.prankNameLabel.returnKeyType = .done
@@ -418,6 +423,126 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         }
     }
     
+    private func shareToSnapchat() {
+        
+        guard let prankLink = viewModel.createPrankLink,
+              let prankName = viewModel.createPrankName,
+              let coverImageURLString = coverImageURL,
+              let coverImageURL = URL(string: coverImageURLString) else { return }
+        
+        let snapchatURL = URL(string: "snapchat://")
+        if let url = snapchatURL, UIApplication.shared.canOpenURL(url) {
+            UIPasteboard.general.string = prankLink
+            let shareView = ShareView(frame: view.bounds)
+            shareView.configure(with: coverImageURL, name: prankName)
+
+            UIGraphicsBeginImageContextWithOptions(shareView.bounds.size, false, 0)
+            shareView.layer.render(in: UIGraphicsGetCurrentContext()!)
+            let image = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+            
+            if let image = image {
+                UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
+            }
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            self.dismiss(animated: true)
+        } else {
+            let snackbar = CustomSnackbar(message: "Snapchat is not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    @objc private func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            print("Error saving photo: \(error.localizedDescription)")
+        } else {
+            print("Successfully saved snapchat story Image to gallery.")
+        }
+    }
+    
+//    private func shareInstagramStory() {
+//        guard let prankLink = viewModel.createPrankLink,
+//              let prankName = viewModel.createPrankName,
+//              let coverImageURLString = coverImageURL,
+//              let coverImageURL = URL(string: coverImageURLString) else { return }
+//        
+//        if let urlScheme = URL(string: "instagram-stories://share?source_application=com.plexustechnology.Pranksters"), UIApplication.shared.canOpenURL(urlScheme) {
+//                
+//                UIPasteboard.general.string = prankLink
+//                
+//                let screenSize = UIScreen.main.bounds.size
+//                let targetAspectRatio: CGFloat = 9.0 / 16.0
+//                let screenAspectRatio = screenSize.width / screenSize.height
+//                
+//                var targetSize: CGSize
+//                
+//                if screenAspectRatio > targetAspectRatio {
+//                    targetSize = CGSize(width: screenSize.height * targetAspectRatio, height: screenSize.height)
+//                } else {
+//                    targetSize = CGSize(width: screenSize.width, height: screenSize.width / targetAspectRatio)
+//                }
+//                let shareView = ShareView(frame: CGRect(origin: .zero, size: targetSize))
+//                shareView.configure(with: coverImageURL, name: prankName)
+//                
+//                shareView.center = CGPoint(x: screenSize.width / 2, y: screenSize.height / 2)
+//                shareView.layoutIfNeeded()
+//                UIGraphicsBeginImageContextWithOptions(targetSize, false, UIScreen.main.scale)
+//                guard let context = UIGraphicsGetCurrentContext() else { return }
+//                shareView.layer.render(in: context)
+//                let image = UIGraphicsGetImageFromCurrentImageContext()
+//                UIGraphicsEndImageContext()
+//                
+//                if let imageData = image?.pngData() {
+//                    if let url = URL(string: prankLink) {
+//                        let items: [String: Any] = [
+//                            "com.instagram.sharedSticker.backgroundImage": imageData,
+//                            "com.instagram.sharedSticker.contentURL": url,
+//                        ]
+//                        UIPasteboard.general.setItems([items])
+//                      //  UIPasteboard.general.setItems([items], options: [.expirationDate: Date().addingTimeInterval(60 * 5)])
+//                        UIApplication.shared.open(urlScheme, options: [:], completionHandler: nil)
+//                    }
+//                }
+//                self.dismiss(animated: true)
+//            } else {
+//                let snackbar = CustomSnackbar(message: "Instagram is not installed!", backgroundColor: .snackbar)
+//                snackbar.show(in: self.view, duration: 3.0)
+//            }
+//    }
+    
+    private func shareInstagramStory() {
+        guard let prankLink = viewModel.createPrankLink,
+              let encodedLink = prankLink.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+            // Show error if link is invalid
+            let snackbar = CustomSnackbar(message: "Invalid link!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+            return
+        }
+        
+        // Instagram Stories URL scheme for sharing a link
+        guard let urlScheme = URL(string: "instagram-stories://share?source_application=com.plexustechnology.Pranksters&source_url=\(encodedLink)") else {
+            return
+        }
+        
+        // Check if Instagram is installed
+        if UIApplication.shared.canOpenURL(urlScheme) {
+            // Attempt to open Instagram Stories with the link
+            UIApplication.shared.open(urlScheme, options: [:]) { success in
+                if !success {
+                    // Show error if opening failed
+                    DispatchQueue.main.async {
+                        let snackbar = CustomSnackbar(message: "Could not open Instagram!", backgroundColor: .snackbar)
+                        snackbar.show(in: self.view, duration: 3.0)
+                    }
+                }
+            }
+        } else {
+            // Show error if Instagram is not installed
+            let snackbar = CustomSnackbar(message: "Instagram is not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
     // MARK: - viewTapped
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
@@ -429,10 +554,60 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 let snackbar = CustomSnackbar(message: "Link copied to clipboard!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
             }
-        case 1: break // Instagram Message
-        case 2: break // Instagram Story
-        case 3: break // Snapchat Message
-        case 4: break  // Snapchat Story
+        case 1:  // Instagram Message
+          // interstitialAdUtility.presentInterstitial(from: self)
+            guard let prankLink = viewModel.createPrankLink,
+                  let prankName = viewModel.createPrankName else { return }
+            let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+            if let url = URL(string: "instagram://sharesheet?text=\(message)") {
+               UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+            
+        case 2:  // Instagram Story
+            interstitialAdUtility.presentInterstitial(from: self)
+        case 3:  // Snapchat Message
+            if let prankLink = viewModel.createPrankLink,
+               let coverImageURL = viewModel.createPrankCoverImage {
+                // Download the cover image
+                AF.request(coverImageURL).responseData { response in
+                    switch response.result {
+                    case .success(let data):
+                        if let coverImage = UIImage(data: data) {
+                            // Save the image to a temporary location
+                            let tempDirectory = FileManager.default.temporaryDirectory
+                            let imagePath = tempDirectory.appendingPathComponent("prankCoverImage.jpg")
+                            
+                            do {
+                                // Write image data to a temporary file
+                                try data.write(to: imagePath)
+                                
+                                // Use Snapchat URL scheme for sharing
+                                let snapURL = URL(string: "snapchat://")!
+                                if UIApplication.shared.canOpenURL(snapURL) {
+                                    // Use UIActivityViewController for sharing
+                                    let activityVC = UIActivityViewController(activityItems: [coverImage, prankLink], applicationActivities: nil)
+                                    self.present(activityVC, animated: true)
+                                } else {
+                                    let snackbar = CustomSnackbar(message: "Snapchat is not installed!", backgroundColor: .snackbar)
+                                    snackbar.show(in: self.view, duration: 3.0)
+                                }
+                            } catch {
+                                print("Error saving image: \(error)")
+                            }
+                        } else {
+                            print("Failed to create image from data.")
+                        }
+                    case .failure(let error):
+                        print("Error downloading cover image: \(error)")
+                    }
+                }
+            } else {
+                let snackbar = CustomSnackbar(message: "Failed to prepare content for sharing!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
+            }
+
+        case 4:   // Snapchat Story
+            shareToSnapchat()
         case 5: // WhatsApp Message
             guard let prankLink = viewModel.createPrankLink,
                   let prankName = viewModel.createPrankName,
@@ -454,6 +629,36 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             shareViaWhatsAppMessage()
         default:
             break
+        }
+    }
+    
+    func shareViaSnapchatMessage() {
+        guard let prankLink = viewModel.createPrankLink,
+              let prankName = viewModel.createPrankName,
+              let coverImageURL = coverImageURL else { return }
+        
+        AF.request(coverImageURL).responseData { [weak self] response in
+            switch response.result {
+            case .success(let imageData):
+                guard let image = UIImage(data: imageData) else { return }
+                
+                let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+                
+                if let imageURL = self?.saveImageToTemporaryFile(image: image) {
+                    // Snapchat's URL scheme for sharing
+                    let snapchatURL = URL(string: "snapchat://post?media=file://\(imageURL.path)&caption=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
+                    
+                    if let url = snapchatURL, UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                    } else {
+                        // Fallback to standard share sheet if Snapchat is not installed
+                        self?.openShareSheetWithImageAndLink(image: image, link: message)
+                    }
+                }
+                
+            case .failure:
+                self?.openShareSheetWithLink(prankLink)
+            }
         }
     }
     
@@ -588,4 +793,24 @@ extension ShareLinkVC: AVAudioPlayerDelegate {
             self.audioPlayer = nil
         }
     }
+}
+
+extension ShareLinkVC: InterstitialAdUtilityDelegate {
+        
+        // MARK: - InterstitialAdUtilityDelegate
+        func didFailToLoadInterstitial() {
+            navigateToSecondViewController()
+        }
+        
+        func didFailToPresentInterstitial() {
+            navigateToSecondViewController()
+        }
+        
+        func didDismissInterstitial() {
+            navigateToSecondViewController()
+        }
+        
+        private func navigateToSecondViewController() {
+            shareInstagramStory()
+        }
 }

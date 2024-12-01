@@ -7,7 +7,25 @@
 		<key>Pranksters.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>13</integer>
+			<integer>14</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>BDD880202CE27A2A00376D6E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BDD880362CE27A2C00376D6E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BDD880402CE27A2C00376D6E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>
