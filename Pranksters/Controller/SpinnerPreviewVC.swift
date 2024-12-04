@@ -26,9 +26,11 @@ class SpinnerPreviewVC: UIViewController {
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var isPlaying = false
+    private var blurEffectView: UIVisualEffectView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBlurEffect()
         self.prankImageView.layer.cornerRadius = 18
         if let coverImageUrl = self.coverImage {
             self.loadImage(from: coverImageUrl, into: self.prankImageView)
@@ -44,6 +46,14 @@ class SpinnerPreviewVC: UIViewController {
         let playPauseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
         self.playPauseImageView.isUserInteractionEnabled = true
         self.playPauseImageView.addGestureRecognizer(playPauseTapGesture)
+    }
+    
+    private func setupBlurEffect() {
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = view.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.insertSubview(blurEffectView, at: 0)
     }
     
     private func loadImage(from urlString: String, into imageView: UIImageView) {
@@ -98,7 +108,6 @@ class SpinnerPreviewVC: UIViewController {
             }
         } catch {
             print("Error setting up audio player: \(error)")
-            isPlaying = false
         }
     }
     
@@ -131,56 +140,61 @@ class SpinnerPreviewVC: UIViewController {
             }
         } catch {
             print("Error setting up video player: \(error)")
-            isPlaying = false
         }
     }
     
     @objc private func togglePlayPause() {
-        isPlaying.toggle()
-        
-        guard let prankDataUrl = file else { return }
-        
-        if type == "audio" {
-            if isPlaying {
-                loadMediaFile(urlString: prankDataUrl) { [weak self] result in
-                    switch result {
-                    case .success(let audioData):
-                        DispatchQueue.main.async {
-                            self?.setupAudioPlayer(data: audioData)
+        if isConnectedToInternet() {
+            guard let prankDataUrl = file else { return }
+            
+            if type == "audio" {
+                if audioPlayer == nil {
+                    loadMediaFile(urlString: prankDataUrl) { [weak self] result in
+                        switch result {
+                        case .success(let audioData):
+                            DispatchQueue.main.async {
+                                self?.setupAudioPlayer(data: audioData)
+                            }
+                        case .failure(let error):
+                            print("Audio loading error: \(error)")
                         }
-                    case .failure(let error):
-                        print("Audio loading error: \(error)")
-                        self?.isPlaying = false
+                    }
+                } else {
+                    if audioPlayer?.isPlaying == true {
+                        audioPlayer?.pause()
+                        playPauseImageView.image = UIImage(named: "PlayButton")
+                        playPauseImageView.isHidden = false
+                    } else {
+                        audioPlayer?.play()
+                        playPauseImageView.isHidden = true
+                    }
+                }
+            } else if type == "video" {
+                if videoPlayer == nil {
+                    loadMediaFile(urlString: prankDataUrl) { [weak self] result in
+                        switch result {
+                        case .success(let videoData):
+                            DispatchQueue.main.async {
+                                self?.setupVideoPlayer(data: videoData)
+                            }
+                        case .failure(let error):
+                            print("Video loading error: \(error)")
+                        }
+                    }
+                } else {
+                    if videoPlayer?.timeControlStatus == .playing {
+                        videoPlayer?.pause()
+                        playPauseImageView.image = UIImage(named: "PlayButton")
+                        playPauseImageView.isHidden = false
+                    } else {
+                        videoPlayer?.play()
+                        playPauseImageView.isHidden = true
                     }
                 }
             } else {
-                audioPlayer?.pause()
-                prankImageView.image = UIImage(named: "audioPrankImage")
-                playPauseImageView.image = UIImage(named: "PlayButton")
-                playPauseImageView.isHidden = false
-            }
-        } else if type == "video" {
-            if isPlaying {
-                loadMediaFile(urlString: prankDataUrl) { [weak self] result in
-                    switch result {
-                    case .success(let videoData):
-                        DispatchQueue.main.async {
-                            self?.setupVideoPlayer(data: videoData)
-                        }
-                    case .failure(let error):
-                        print("Video loading error: \(error)")
-                        self?.isPlaying = false
-                    }
-                }
-            } else {
-                videoPlayer?.pause()
-                playPauseImageView.image = UIImage(named: "PlayButton")
-                playPauseImageView.isHidden = false
-            }
-        } else {
-            if isPlaying {
                 loadImage(from: prankDataUrl, into: prankImageView)
                 playPauseImageView.isHidden = true
+                isPlaying = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [self] in
                     if let coverImageUrl = self.coverImage {
                         self.loadImage(from: coverImageUrl, into: self.prankImageView)
@@ -190,6 +204,10 @@ class SpinnerPreviewVC: UIViewController {
                     isPlaying = false
                 }
             }
+            
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
@@ -201,11 +219,14 @@ class SpinnerPreviewVC: UIViewController {
             if let coverImageUrl = self.coverImage {
                 self.loadImage(from: coverImageUrl, into: self.prankImageView)
             }
+            
             self.playerLayer?.removeFromSuperlayer()
             self.playerLayer = nil
             self.videoPlayer = nil
+            
             self.playPauseImageView.image = UIImage(named: "PlayButton")
             self.playPauseImageView.isHidden = false
+            
             NotificationCenter.default.removeObserver(
                 self,
                 name: .AVPlayerItemDidPlayToEndTime,
@@ -214,12 +235,29 @@ class SpinnerPreviewVC: UIViewController {
         }
     }
     
+    private func isConnectedToInternet() -> Bool {
+        let networkManager = NetworkReachabilityManager()
+        return networkManager?.isReachable ?? false
+    }
+    
     @IBAction func btnDoneTapped(_ sender: UIButton) {
         self.dismiss(animated: true)
     }
-
+    
     @IBAction func btnShareTapped(_ sender: UIButton) {
-        // Implement share functionality if needed
+        self.dismiss(animated: true) { [self] in
+            if let window = UIApplication.shared.windows.first {
+                if let rootViewController = window.rootViewController as? UINavigationController {
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
+                    vc.coverImageURL = link
+                    vc.prankName = name
+                    vc.prankDataURL = file
+                    vc.prankLink = link
+                    vc.selectedPranktype = type
+                    self.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }
     }
 }
 
@@ -230,9 +268,11 @@ extension SpinnerPreviewVC: AVAudioPlayerDelegate {
             if let coverImageUrl = self.coverImage {
                 self.loadImage(from: coverImageUrl, into: self.prankImageView)
             }
+            
+            self.audioPlayer = nil
+            
             self.playPauseImageView.image = UIImage(named: "PlayButton")
             self.playPauseImageView.isHidden = false
-            self.audioPlayer = nil
         }
     }
 }

@@ -124,7 +124,8 @@ class HomeVC: UIViewController {
         if isDropdownVisible {
             hideDropdown()
         } else {
-            
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -133,7 +134,7 @@ class HomeVC: UIViewController {
             hideDropdown()
             return
         }
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerViewController") as! SpinnerViewController
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

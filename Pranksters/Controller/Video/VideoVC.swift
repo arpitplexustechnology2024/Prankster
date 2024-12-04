@@ -263,45 +263,50 @@ class VideoVC: UIViewController {
     
     // MARK: - btnDoneTapped
     @IBAction func btnDoneTapped(_ sender: UIButton) {
-        var videoURLToPass: String?
-        var videoFileToPass: Data?
-        var videoNameToPass: String?
-        
-        if let selectedIndex = selectedVideoIndex {
-
-            let videoData = customVideos[selectedIndex]
-            print(videoData)
-            if let fileData = try? Data(contentsOf: videoData) {
-                videoFileToPass = fileData
-                videoURLToPass = nil
-            }
-            videoNameToPass = "Custom Video \(selectedIndex + 1)"
+        if isConnectedToInternet() {
+            var videoURLToPass: String?
+            var videoFileToPass: Data?
+            var videoNameToPass: String?
             
-        }
-        else if let selectedData = selectedVideoData {
-            videoURLToPass = selectedData.file
-            videoNameToPass = selectedData.name
-            videoFileToPass = nil
-        }
-        if videoURLToPass != nil || videoFileToPass != nil {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
-                nextVC.selectedURL = videoURLToPass
-                nextVC.selectedFile = videoFileToPass
-                nextVC.selectedName = videoNameToPass
-                nextVC.selectedCoverURL = selectedCoverImageURL
-                nextVC.selectedCoverFile = selectedCoverImageFile
-                nextVC.selectedPranktype = "video"
-                self.navigationController?.pushViewController(nextVC, animated: true)
-                self.videoImageView.isHidden = false
-                self.pauseImageView.isHidden = true
+            if let selectedIndex = selectedVideoIndex {
+                
+                let videoData = customVideos[selectedIndex]
+                print(videoData)
+                if let fileData = try? Data(contentsOf: videoData) {
+                    videoFileToPass = fileData
+                    videoURLToPass = nil
+                }
+                videoNameToPass = "Custom Video \(selectedIndex + 1)"
+                
+            }
+            else if let selectedData = selectedVideoData {
+                videoURLToPass = selectedData.file
+                videoNameToPass = selectedData.name
+                videoFileToPass = nil
+            }
+            if videoURLToPass != nil || videoFileToPass != nil {
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
+                    nextVC.selectedURL = videoURLToPass
+                    nextVC.selectedFile = videoFileToPass
+                    nextVC.selectedName = videoNameToPass
+                    nextVC.selectedCoverURL = selectedCoverImageURL
+                    nextVC.selectedCoverFile = selectedCoverImageFile
+                    nextVC.selectedPranktype = "video"
+                    self.navigationController?.pushViewController(nextVC, animated: true)
+                    self.videoImageView.isHidden = false
+                    self.pauseImageView.isHidden = true
+                }
+            } else {
+                let alert = UIAlertController(title: "No Video Selected",
+                                              message: "Please select an video before proceeding.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
             }
         } else {
-            let alert = UIAlertController(title: "No Video Selected",
-                                          message: "Please select an video before proceeding.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alert, animated: true)
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     

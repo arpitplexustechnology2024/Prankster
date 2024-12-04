@@ -66,9 +66,14 @@
 		BD87AD042CF1082F00AE3F7C /* SaveRecordingPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD87AD032CF1082F00AE3F7C /* SaveRecordingPopup.swift */; };
 		BD9C5FE92CFAA88400A92EBE /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9C5FE72CFAA88300A92EBE /* ShareView.swift */; };
 		BD9C5FEA2CFAA88400A92EBE /* ShareView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD9C5FE82CFAA88300A92EBE /* ShareView.xib */; };
+		BD9FA9D62CFCD3F90032E6C6 /* ViewLinkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9FA9D52CFCD3F90032E6C6 /* ViewLinkVC.swift */; };
+		BD9FA9D82CFCD53C0032E6C6 /* ViewLinkCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9FA9D72CFCD53C0032E6C6 /* ViewLinkCollectionViewCell.swift */; };
+		BD9FA9DA2CFCFD110032E6C6 /* ShareLinkPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD9FA9D92CFCFD110032E6C6 /* ShareLinkPopup.swift */; };
 		BDBA94B22CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBA94B12CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift */; };
 		BDBA94B42CED57D30036BF68 /* LoadingFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBA94B32CED57D30036BF68 /* LoadingFooterView.swift */; };
 		BDBA94B62CED63DC0036BF68 /* Loader.json in Resources */ = {isa = PBXBuildFile; fileRef = BDBA94B52CED63DC0036BF68 /* Loader.json */; };
+		BDBB685F2CFE567200A894E8 /* SpinnerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBB685E2CFE567200A894E8 /* SpinnerViewController.swift */; };
+		BDBB68612CFE575A00A894E8 /* SpinnerHistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBB68602CFE575A00A894E8 /* SpinnerHistoryViewController.swift */; };
 		BDD880582CE27A3600376D6E /* PrankstersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD880552CE27A3600376D6E /* PrankstersUITests.swift */; };
 		BDD880592CE27A3600376D6E /* PrankstersUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDD880562CE27A3600376D6E /* PrankstersUITestsLaunchTests.swift */; };
 		BDD880642CE27A3600376D6E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDD8805B2CE27A3600376D6E /* Assets.xcassets */; };
@@ -84,7 +89,6 @@
 		BDEABF732CEFB0D70021F692 /* AudioVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEABF722CEFB0D70021F692 /* AudioVisualizer.swift */; };
 		BDF5FBCA2CF93F6C0099AA82 /* BannerAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF5FBC92CF93F6C0099AA82 /* BannerAdUtility.swift */; };
 		BDF7B7432CFB87960043607B /* InterstitialAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF7B7422CFB87960043607B /* InterstitialAdUtility.swift */; };
-		BDF7B7452CFB9DC40043607B /* SpinnerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF7B7442CFB9DC40043607B /* SpinnerVC.swift */; };
 		BDF7B7472CFBA0B30043607B /* SpinnerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF7B7462CFBA0B30043607B /* SpinnerAPI.swift */; };
 		BDF7B7492CFBA1150043607B /* SpinnerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF7B7482CFBA1150043607B /* SpinnerViewModel.swift */; };
 		BDF7B74B2CFBA2090043607B /* SFWConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDF7B74A2CFBA2090043607B /* SFWConfiguration.swift */; };
@@ -177,9 +181,14 @@
 		BD87AD032CF1082F00AE3F7C /* SaveRecordingPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveRecordingPopup.swift; sourceTree = "<group>"; };
 		BD9C5FE72CFAA88300A92EBE /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		BD9C5FE82CFAA88300A92EBE /* ShareView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ShareView.xib; sourceTree = "<group>"; };
+		BD9FA9D52CFCD3F90032E6C6 /* ViewLinkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewLinkVC.swift; sourceTree = "<group>"; };
+		BD9FA9D72CFCD53C0032E6C6 /* ViewLinkCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewLinkCollectionViewCell.swift; sourceTree = "<group>"; };
+		BD9FA9D92CFCFD110032E6C6 /* ShareLinkPopup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLinkPopup.swift; sourceTree = "<group>"; };
 		BDBA94B12CED19820036BF68 /* CustomCoverAllCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCoverAllCollectionViewCell.swift; sourceTree = "<group>"; };
 		BDBA94B32CED57D30036BF68 /* LoadingFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingFooterView.swift; sourceTree = "<group>"; };
 		BDBA94B52CED63DC0036BF68 /* Loader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Loader.json; sourceTree = "<group>"; };
+		BDBB685E2CFE567200A894E8 /* SpinnerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerViewController.swift; sourceTree = "<group>"; };
+		BDBB68602CFE575A00A894E8 /* SpinnerHistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerHistoryViewController.swift; sourceTree = "<group>"; };
 		BDD880212CE27A2A00376D6E /* Pranksters.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pranksters.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDD880372CE27A2C00376D6E /* PrankstersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrankstersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDD880412CE27A2C00376D6E /* PrankstersUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrankstersUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -199,7 +208,6 @@
 		BDEABF722CEFB0D70021F692 /* AudioVisualizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioVisualizer.swift; sourceTree = "<group>"; };
 		BDF5FBC92CF93F6C0099AA82 /* BannerAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdUtility.swift; sourceTree = "<group>"; };
 		BDF7B7422CFB87960043607B /* InterstitialAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterstitialAdUtility.swift; sourceTree = "<group>"; };
-		BDF7B7442CFB9DC40043607B /* SpinnerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerVC.swift; sourceTree = "<group>"; };
 		BDF7B7462CFBA0B30043607B /* SpinnerAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerAPI.swift; sourceTree = "<group>"; };
 		BDF7B7482CFBA1150043607B /* SpinnerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerViewModel.swift; sourceTree = "<group>"; };
 		BDF7B74A2CFBA2090043607B /* SFWConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFWConfiguration.swift; sourceTree = "<group>"; };
@@ -383,8 +391,11 @@
 				BD187C742CE2E847007744B1 /* Video */,
 				BDF890F52CF0239C00C5230D /* PremiumPopupVC.swift */,
 				BD7E15602CF7B0C000D7D3C7 /* ShareLinkVC.swift */,
-				BDF7B7442CFB9DC40043607B /* SpinnerVC.swift */,
 				BDF7B7522CFBE28E0043607B /* SpinnerPreviewVC.swift */,
+				BD9FA9D52CFCD3F90032E6C6 /* ViewLinkVC.swift */,
+				BD9FA9D92CFCFD110032E6C6 /* ShareLinkPopup.swift */,
+				BDBB685E2CFE567200A894E8 /* SpinnerViewController.swift */,
+				BDBB68602CFE575A00A894E8 /* SpinnerHistoryViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -500,6 +511,7 @@
 				BD187C7D2CE2E8FA007744B1 /* VideoCollectionViewCell.swift */,
 				BD187C7E2CE2E8FA007744B1 /* VideoCharacterAllCollectionViewCell.swift */,
 				BDF7B74E2CFBCF540043607B /* SpinnerCollectionViewCell.swift */,
+				BD9FA9D72CFCD53C0032E6C6 /* ViewLinkCollectionViewCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -805,15 +817,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD9FA9D82CFCD53C0032E6C6 /* ViewLinkCollectionViewCell.swift in Sources */,
 				BD187C312CE28717007744B1 /* CoverPageVC.swift in Sources */,
 				BD08B4F42CE690EE00394BF9 /* premiumManager.swift in Sources */,
+				BD9FA9DA2CFCFD110032E6C6 /* ShareLinkPopup.swift in Sources */,
 				BDBA94B42CED57D30036BF68 /* LoadingFooterView.swift in Sources */,
 				BD187C5E2CE2CCA1007744B1 /* AudioVC.swift in Sources */,
 				BD187C5F2CE2CCA1007744B1 /* AudioCategoryAllVC.swift in Sources */,
 				BDF5FBCA2CF93F6C0099AA82 /* BannerAdUtility.swift in Sources */,
 				BD187C212CE285A7007744B1 /* NoDataView.swift in Sources */,
 				BD7E15612CF7B0C000D7D3C7 /* ShareLinkVC.swift in Sources */,
-				BDF7B7452CFB9DC40043607B /* SpinnerVC.swift in Sources */,
 				BD187C2E2CE285E7007744B1 /* MoreAppViewModel.swift in Sources */,
 				BD187C222CE285A7007744B1 /* NoInternetView.swift in Sources */,
 				BDEABF712CEFB02C0021F692 /* CustomRecoderVC.swift in Sources */,
@@ -827,6 +840,7 @@
 				BDF7B7432CFB87960043607B /* InterstitialAdUtility.swift in Sources */,
 				BD187C722CE2D870007744B1 /* ImageCollectionViewCell.swift in Sources */,
 				BD187C732CE2D870007744B1 /* ImageCharacterAllCollectionViewCell.swift in Sources */,
+				BD9FA9D62CFCD3F90032E6C6 /* ViewLinkVC.swift in Sources */,
 				BD187C4F2CE287CB007744B1 /* EmojiCoverAllCollectionViewCell.swift in Sources */,
 				BD187C502CE287CB007744B1 /* RealisticCoverAllCollectionViewCell.swift in Sources */,
 				BD187C792CE2E8EC007744B1 /* VideoVC.swift in Sources */,
@@ -842,6 +856,7 @@
 				BD187BFB2CE27FBE007744B1 /* HomeVC.swift in Sources */,
 				BD187C372CE28760007744B1 /* CustomCoverPageVC.swift in Sources */,
 				BD187C332CE28728007744B1 /* EmojiCoverPageVC.swift in Sources */,
+				BDBB685F2CFE567200A894E8 /* SpinnerViewController.swift in Sources */,
 				BDF7B7492CFBA1150043607B /* SpinnerViewModel.swift in Sources */,
 				BD7E15632CF7DDBB00D7D3C7 /* PrankAPI.swift in Sources */,
 				BD187C6B2CE2D859007744B1 /* ImageCategoryAllVC.swift in Sources */,
@@ -865,6 +880,7 @@
 				BDF890F62CF0239C00C5230D /* PremiumPopupVC.swift in Sources */,
 				BD187C662CE2CD4E007744B1 /* AudioCollectionViewCell.swift in Sources */,
 				BDD880842CE27B9A00376D6E /* Model.swift in Sources */,
+				BDBB68612CFE575A00A894E8 /* SpinnerHistoryViewController.swift in Sources */,
 				BD187C2A2CE285B0007744B1 /* MoreAppCollectionViewCell.swift in Sources */,
 				BD187BFF2CE28348007744B1 /* StaticFunction.swift in Sources */,
 				BD187C132CE28543007744B1 /* Skeleton.swift in Sources */,

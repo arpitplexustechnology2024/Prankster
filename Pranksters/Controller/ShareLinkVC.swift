@@ -29,8 +29,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var selectedCoverFile: Data?
     var selectedPranktype: String?
     private var isPlaying = false
-    private var coverImageURL: String?
-    private var prankDataURL: String?
+    var coverImageURL: String?
+    var prankDataURL: String?
+    var prankName: String?
+    var prankLink: String?
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -59,13 +61,20 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.setupSwipeGesture()
         self.setupNoInternetView()
         self.addContentToStackView()
+        self.setupKeyboardObservers()
         self.hideKeyboardTappedAround()
         self.checkInternetAndFetchData()
-        bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
-        interstitialAdUtility.delegate = self
-        Task {
-            await interstitialAdUtility.loadInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        if isConnectedToInternet() {
+            bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
+            Task {
+                await interstitialAdUtility.loadInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+            }
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
+        interstitialAdUtility.delegate = self
+        
         self.prankNameLabel.isEditable = false
         self.prankNameLabel.delegate = self
         self.prankNameLabel.returnKeyType = .done
@@ -126,6 +135,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 if success {
+                    self.savePrankToUserDefaults()
                     self.prankImageView.hideShimmer()
                     self.prankNameLabel.hideShimmer()
                     self.nameChangeButton.hideShimmer()
@@ -134,8 +144,41 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     print("Prank Link :- \(self.viewModel.createPrankData ?? "")")
                     print("Prank ID :- \(self.viewModel.createPrankID ?? "")")
                     
+                    if let fileResponse = self.viewModel.createPrankResponse?.file {
+                        // Print CoverImage details
+                        print("\nCover Image Details:")
+                        fileResponse.coverImage.forEach { coverImage in
+                            print("Fieldname: \(coverImage.fieldname)")
+                            print("Original Name: \(coverImage.originalname)")
+                            print("Encoding: \(coverImage.encoding)")
+                            print("Mimetype: \(coverImage.mimetype)")
+                            print("Destination: \(coverImage.destination)")
+                            print("Filename: \(coverImage.filename)")
+                            print("Path: \(coverImage.path)")
+                            print("Size: \(coverImage.size) bytes")
+                            print("---")
+                        }
+                        
+                        // Print File details
+                        print("\nFile Details:")
+                        fileResponse.file.forEach { file in
+                            print("Fieldname: \(file.fieldname)")
+                            print("Original Name: \(file.originalname)")
+                            print("Encoding: \(file.encoding)")
+                            print("Mimetype: \(file.mimetype)")
+                            print("Destination: \(file.destination)")
+                            print("Filename: \(file.filename)")
+                            print("Path: \(file.path)")
+                            print("Size: \(file.size) bytes")
+                            print("---")
+                        }
+                    }
+                    
                     self.coverImageURL = self.viewModel.createPrankCoverImage
                     self.prankDataURL = self.viewModel.createPrankData
+                    self.prankName = self.viewModel.createPrankName
+                    self.prankLink = self.viewModel.createPrankLink
+                    self.prankNameLabel.text = self.prankName
                     
                     if let coverImageUrl = self.coverImageURL {
                         self.loadImage(from: coverImageUrl, into: self.prankImageView)
@@ -151,10 +194,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     let playPauseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
                     self.playPauseImageView.isUserInteractionEnabled = true
                     self.playPauseImageView.addGestureRecognizer(playPauseTapGesture)
-                    
-                    if let prankName = self.viewModel.createPrankName {
-                        self.prankNameLabel.text = prankName
-                    }
                 } else {
                     if let error = self.viewModel.errorMessage {
                         print("Prank failed: \(error)")
@@ -184,84 +223,89 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     @objc private func togglePlayPause() {
-        isPlaying.toggle()
-        
-        guard let prankDataUrl = prankDataURL else { return }
-        
-        if selectedPranktype == "audio" {
-            if isPlaying {
-                if audioPlayer == nil {
-                    do {
-                        let audioData = try Data(contentsOf: URL(string: prankDataUrl)!)
-                        audioPlayer = try AVAudioPlayer(data: audioData)
-                        audioPlayer?.prepareToPlay()
-                    } catch {
-                        print("Error loading audio: \(error)")
-                        isPlaying = false
-                        return
-                    }
-                }
-                audioPlayer?.play()
-                audioPlayer?.delegate = self
-                prankImageView.image = UIImage(named: "audioPrankImage")
-                playPauseImageView.isHidden = true
-            } else {
-                audioPlayer?.pause()
-                prankImageView.image = UIImage(named: "audioPrankImage")
-                playPauseImageView.image = UIImage(named: "PlayButton")
-                playPauseImageView.isHidden = false
-            }
-        } else if selectedPranktype == "video" {
-            if isPlaying {
-                if videoPlayer == nil {
-                    do {
-                        let videoData = try Data(contentsOf: URL(string: prankDataUrl)!)
-                        let temporaryDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                        let temporaryFileURL = temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("mp4")
-                        
-                        try videoData.write(to: temporaryFileURL)
-                        
-                        videoPlayer = AVPlayer(url: temporaryFileURL)
-                        playerLayer = AVPlayerLayer(player: videoPlayer)
-                        playerLayer?.videoGravity = .resizeAspectFill
-                        playerLayer?.frame = prankImageView.bounds
-                        
-                        if let playerLayer = playerLayer {
-                            prankImageView.layer.addSublayer(playerLayer)
+        if isConnectedToInternet() {
+            isPlaying.toggle()
+            
+            guard let prankDataUrl = prankDataURL else { return }
+            
+            if selectedPranktype == "audio" {
+                if isPlaying {
+                    if audioPlayer == nil {
+                        do {
+                            let audioData = try Data(contentsOf: URL(string: prankDataUrl)!)
+                            audioPlayer = try AVAudioPlayer(data: audioData)
+                            audioPlayer?.prepareToPlay()
+                        } catch {
+                            print("Error loading audio: \(error)")
+                            isPlaying = false
+                            return
                         }
-                    } catch {
-                        print("Error loading video: \(error)")
-                        isPlaying = false
-                        return
                     }
-                }
-                
-                videoPlayer?.play()
-                playPauseImageView.isHidden = true
-                NotificationCenter.default.addObserver(
-                    self,
-                    selector: #selector(videoDidFinishPlaying),
-                    name: .AVPlayerItemDidPlayToEndTime,
-                    object: videoPlayer?.currentItem
-                )
-            } else {
-                videoPlayer?.pause()
-                playPauseImageView.image = UIImage(named: "PlayButton")
-                playPauseImageView.isHidden = false
-            }
-        } else {
-            if isPlaying {
-                loadImage(from: prankDataUrl, into: prankImageView)
-                playPauseImageView.isHidden = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [self] in
-                    if let coverImageUrl = self.coverImageURL {
-                        self.loadImage(from: coverImageUrl, into: self.prankImageView)
-                    }
+                    audioPlayer?.play()
+                    audioPlayer?.delegate = self
+                    prankImageView.image = UIImage(named: "audioPrankImage")
+                    playPauseImageView.isHidden = true
+                } else {
+                    audioPlayer?.pause()
+                    prankImageView.image = UIImage(named: "audioPrankImage")
                     playPauseImageView.image = UIImage(named: "PlayButton")
                     playPauseImageView.isHidden = false
-                    isPlaying = false
+                }
+            } else if selectedPranktype == "video" {
+                if isPlaying {
+                    if videoPlayer == nil {
+                        do {
+                            let videoData = try Data(contentsOf: URL(string: prankDataUrl)!)
+                            let temporaryDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                            let temporaryFileURL = temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("mp4")
+                            
+                            try videoData.write(to: temporaryFileURL)
+                            
+                            videoPlayer = AVPlayer(url: temporaryFileURL)
+                            playerLayer = AVPlayerLayer(player: videoPlayer)
+                            playerLayer?.videoGravity = .resizeAspectFill
+                            playerLayer?.frame = prankImageView.bounds
+                            
+                            if let playerLayer = playerLayer {
+                                prankImageView.layer.addSublayer(playerLayer)
+                            }
+                        } catch {
+                            print("Error loading video: \(error)")
+                            isPlaying = false
+                            return
+                        }
+                    }
+                    
+                    videoPlayer?.play()
+                    playPauseImageView.isHidden = true
+                    NotificationCenter.default.addObserver(
+                        self,
+                        selector: #selector(videoDidFinishPlaying),
+                        name: .AVPlayerItemDidPlayToEndTime,
+                        object: videoPlayer?.currentItem
+                    )
+                } else {
+                    videoPlayer?.pause()
+                    playPauseImageView.image = UIImage(named: "PlayButton")
+                    playPauseImageView.isHidden = false
+                }
+            } else {
+                if isPlaying {
+                    loadImage(from: prankDataUrl, into: prankImageView)
+                    playPauseImageView.isHidden = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [self] in
+                        if let coverImageUrl = self.coverImageURL {
+                            self.loadImage(from: coverImageUrl, into: self.prankImageView)
+                        }
+                        playPauseImageView.image = UIImage(named: "PlayButton")
+                        playPauseImageView.isHidden = false
+                        isPlaying = false
+                    }
                 }
             }
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
@@ -328,6 +372,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             noInternetView.isHidden = true
             hideNoDataView()
             checkInternetAndFetchData()
+            bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
+            Task {
+                await interstitialAdUtility.loadInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+            }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
@@ -423,194 +471,31 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         }
     }
     
-    private func shareToSnapchat() {
-        
-        guard let prankLink = viewModel.createPrankLink,
-              let prankName = viewModel.createPrankName,
-              let coverImageURLString = coverImageURL,
-              let coverImageURL = URL(string: coverImageURLString) else { return }
-        
-        let snapchatURL = URL(string: "snapchat://")
-        if let url = snapchatURL, UIApplication.shared.canOpenURL(url) {
-            UIPasteboard.general.string = prankLink
-            let shareView = ShareView(frame: view.bounds)
-            shareView.configure(with: coverImageURL, name: prankName)
-
-            UIGraphicsBeginImageContextWithOptions(shareView.bounds.size, false, 0)
-            shareView.layer.render(in: UIGraphicsGetCurrentContext()!)
-            let image = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            
-            if let image = image {
-                UIImageWriteToSavedPhotosAlbum(image, self, #selector(image(_:didFinishSavingWithError:contextInfo:)), nil)
-            }
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            self.dismiss(animated: true)
-        } else {
-            let snackbar = CustomSnackbar(message: "Snapchat is not installed!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
-        }
-    }
-    
-    @objc private func image(_ image: UIImage, didFinishSavingWithError error: NSError?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            print("Error saving photo: \(error.localizedDescription)")
-        } else {
-            print("Successfully saved snapchat story Image to gallery.")
-        }
-    }
-    
-//    private func shareInstagramStory() {
-//        guard let prankLink = viewModel.createPrankLink,
-//              let prankName = viewModel.createPrankName,
-//              let coverImageURLString = coverImageURL,
-//              let coverImageURL = URL(string: coverImageURLString) else { return }
-//        
-//        if let urlScheme = URL(string: "instagram-stories://share?source_application=com.plexustechnology.Pranksters"), UIApplication.shared.canOpenURL(urlScheme) {
-//                
-//                UIPasteboard.general.string = prankLink
-//                
-//                let screenSize = UIScreen.main.bounds.size
-//                let targetAspectRatio: CGFloat = 9.0 / 16.0
-//                let screenAspectRatio = screenSize.width / screenSize.height
-//                
-//                var targetSize: CGSize
-//                
-//                if screenAspectRatio > targetAspectRatio {
-//                    targetSize = CGSize(width: screenSize.height * targetAspectRatio, height: screenSize.height)
-//                } else {
-//                    targetSize = CGSize(width: screenSize.width, height: screenSize.width / targetAspectRatio)
-//                }
-//                let shareView = ShareView(frame: CGRect(origin: .zero, size: targetSize))
-//                shareView.configure(with: coverImageURL, name: prankName)
-//                
-//                shareView.center = CGPoint(x: screenSize.width / 2, y: screenSize.height / 2)
-//                shareView.layoutIfNeeded()
-//                UIGraphicsBeginImageContextWithOptions(targetSize, false, UIScreen.main.scale)
-//                guard let context = UIGraphicsGetCurrentContext() else { return }
-//                shareView.layer.render(in: context)
-//                let image = UIGraphicsGetImageFromCurrentImageContext()
-//                UIGraphicsEndImageContext()
-//                
-//                if let imageData = image?.pngData() {
-//                    if let url = URL(string: prankLink) {
-//                        let items: [String: Any] = [
-//                            "com.instagram.sharedSticker.backgroundImage": imageData,
-//                            "com.instagram.sharedSticker.contentURL": url,
-//                        ]
-//                        UIPasteboard.general.setItems([items])
-//                      //  UIPasteboard.general.setItems([items], options: [.expirationDate: Date().addingTimeInterval(60 * 5)])
-//                        UIApplication.shared.open(urlScheme, options: [:], completionHandler: nil)
-//                    }
-//                }
-//                self.dismiss(animated: true)
-//            } else {
-//                let snackbar = CustomSnackbar(message: "Instagram is not installed!", backgroundColor: .snackbar)
-//                snackbar.show(in: self.view, duration: 3.0)
-//            }
-//    }
-    
-    private func shareInstagramStory() {
-        guard let prankLink = viewModel.createPrankLink,
-              let encodedLink = prankLink.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
-            // Show error if link is invalid
-            let snackbar = CustomSnackbar(message: "Invalid link!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
-            return
-        }
-        
-        // Instagram Stories URL scheme for sharing a link
-        guard let urlScheme = URL(string: "instagram-stories://share?source_application=com.plexustechnology.Pranksters&source_url=\(encodedLink)") else {
-            return
-        }
-        
-        // Check if Instagram is installed
-        if UIApplication.shared.canOpenURL(urlScheme) {
-            // Attempt to open Instagram Stories with the link
-            UIApplication.shared.open(urlScheme, options: [:]) { success in
-                if !success {
-                    // Show error if opening failed
-                    DispatchQueue.main.async {
-                        let snackbar = CustomSnackbar(message: "Could not open Instagram!", backgroundColor: .snackbar)
-                        snackbar.show(in: self.view, duration: 3.0)
-                    }
-                }
-            }
-        } else {
-            // Show error if Instagram is not installed
-            let snackbar = CustomSnackbar(message: "Instagram is not installed!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
-        }
-    }
-    
     // MARK: - viewTapped
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
         
         switch tappedView.tag {
         case 0: // Copy link
-            if let prankLink = viewModel.createPrankLink {
+            if let prankLink = prankLink {
                 UIPasteboard.general.string = prankLink
                 let snackbar = CustomSnackbar(message: "Link copied to clipboard!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
             }
         case 1:  // Instagram Message
-          // interstitialAdUtility.presentInterstitial(from: self)
-            guard let prankLink = viewModel.createPrankLink,
-                  let prankName = viewModel.createPrankName else { return }
+            guard let prankLink = prankLink,
+                  let prankName = prankName else { return }
             let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
             if let url = URL(string: "instagram://sharesheet?text=\(message)") {
-               UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
-            
         case 2:  // Instagram Story
             interstitialAdUtility.presentInterstitial(from: self)
-        case 3:  // Snapchat Message
-            if let prankLink = viewModel.createPrankLink,
-               let coverImageURL = viewModel.createPrankCoverImage {
-                // Download the cover image
-                AF.request(coverImageURL).responseData { response in
-                    switch response.result {
-                    case .success(let data):
-                        if let coverImage = UIImage(data: data) {
-                            // Save the image to a temporary location
-                            let tempDirectory = FileManager.default.temporaryDirectory
-                            let imagePath = tempDirectory.appendingPathComponent("prankCoverImage.jpg")
-                            
-                            do {
-                                // Write image data to a temporary file
-                                try data.write(to: imagePath)
-                                
-                                // Use Snapchat URL scheme for sharing
-                                let snapURL = URL(string: "snapchat://")!
-                                if UIApplication.shared.canOpenURL(snapURL) {
-                                    // Use UIActivityViewController for sharing
-                                    let activityVC = UIActivityViewController(activityItems: [coverImage, prankLink], applicationActivities: nil)
-                                    self.present(activityVC, animated: true)
-                                } else {
-                                    let snackbar = CustomSnackbar(message: "Snapchat is not installed!", backgroundColor: .snackbar)
-                                    snackbar.show(in: self.view, duration: 3.0)
-                                }
-                            } catch {
-                                print("Error saving image: \(error)")
-                            }
-                        } else {
-                            print("Failed to create image from data.")
-                        }
-                    case .failure(let error):
-                        print("Error downloading cover image: \(error)")
-                    }
-                }
-            } else {
-                let snackbar = CustomSnackbar(message: "Failed to prepare content for sharing!", backgroundColor: .snackbar)
-                snackbar.show(in: self.view, duration: 3.0)
-            }
-
-        case 4:   // Snapchat Story
-            shareToSnapchat()
+        case 3: break  // Snapchat Message
+        case 4: break   // Snapchat Story
         case 5: // WhatsApp Message
-            guard let prankLink = viewModel.createPrankLink,
-                  let prankName = viewModel.createPrankName,
+            guard let prankLink = prankLink,
+                  let prankName = prankName,
                   let coverImageURL = coverImageURL else { return }
             
             AF.request(coverImageURL).responseData { [weak self] response in
@@ -624,59 +509,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     self?.openShareSheetWithLink(prankLink)
                 }
             }
-        case 6: // More
-            //  sharePrank()
+        case 6:  // More
             shareViaWhatsAppMessage()
         default:
             break
-        }
-    }
-    
-    func shareViaSnapchatMessage() {
-        guard let prankLink = viewModel.createPrankLink,
-              let prankName = viewModel.createPrankName,
-              let coverImageURL = coverImageURL else { return }
-        
-        AF.request(coverImageURL).responseData { [weak self] response in
-            switch response.result {
-            case .success(let imageData):
-                guard let image = UIImage(data: imageData) else { return }
-                
-                let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-                
-                if let imageURL = self?.saveImageToTemporaryFile(image: image) {
-                    // Snapchat's URL scheme for sharing
-                    let snapchatURL = URL(string: "snapchat://post?media=file://\(imageURL.path)&caption=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
-                    
-                    if let url = snapchatURL, UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    } else {
-                        // Fallback to standard share sheet if Snapchat is not installed
-                        self?.openShareSheetWithImageAndLink(image: image, link: message)
-                    }
-                }
-                
-            case .failure:
-                self?.openShareSheetWithLink(prankLink)
-            }
-        }
-    }
-    
-    func sharePrank() {
-        guard let prankLink = viewModel.createPrankLink,
-              let prankName = viewModel.createPrankName,
-              let coverImageURL = coverImageURL else { return }
-        
-        AF.request(coverImageURL).responseData { [weak self] response in
-            switch response.result {
-            case .success(let imageData):
-                guard let image = UIImage(data: imageData) else { return }
-                
-                let message = "\(prankName)\n\n🔗 Check it out:\(prankLink)"
-                self?.openShareSheetWithImageAndLink(image: image, link: message)
-            case .failure:
-                self?.openShareSheetWithLink(prankLink)
-            }
         }
     }
     
@@ -697,8 +533,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     private func shareViaWhatsAppMessage() {
-        guard let prankLink = viewModel.createPrankLink,
-              let prankName = viewModel.createPrankName,
+        guard let prankLink = prankLink,
+              let prankName = prankName,
               let coverImageURL = coverImageURL else { return }
         
         AF.request(coverImageURL).responseData { [weak self] response in
@@ -739,8 +575,13 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     // MARK: - btnNameChangeTapped
     @IBAction func btnNameChangeTapped(_ sender: UIButton) {
-        prankNameLabel.isEditable = true
-        prankNameLabel.becomeFirstResponder()
+        if isConnectedToInternet() {
+            prankNameLabel.isEditable = true
+            prankNameLabel.becomeFirstResponder()
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
@@ -752,7 +593,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 print("Name cannot be empty")
                 return false
             }
-
+            
             guard let prankID = viewModel.createPrankID else {
                 print("Prank ID not available")
                 return false
@@ -763,7 +604,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     switch result {
                     case .success(let success):
                         print(success.message)
-                        self.viewModel.createPrankName = updatedName
+                        self.prankName = updatedName
                     case .failure(let failure):
                         print(failure.localizedDescription)
                         self.prankNameLabel.text = self.viewModel.createPrankName
@@ -773,6 +614,40 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             return false
         }
         return true
+    }
+    
+    // MARK: - Keyboard Handling
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc private func keyboardWillShow(_ notification: Notification) {
+        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+            return
+        }
+        
+        let keyboardHeight = keyboardFrame.height
+        let textViewBottomY = prankNameLabel.convert(prankNameLabel.bounds, to: view).maxY
+        let overlap = textViewBottomY - (view.frame.height - keyboardHeight)
+        
+        let additionalSpace: CGFloat = 50
+        
+        if overlap > 0 {
+            UIView.animate(withDuration: 0.3) {
+                self.view.frame.origin.y = -(overlap + additionalSpace)
+            }
+        }
+    }
+    
+    @objc private func keyboardWillHide(_ notification: Notification) {
+        UIView.animate(withDuration: 0.3) {
+            self.view.frame.origin.y = 0
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - btnBackTapped
@@ -796,21 +671,48 @@ extension ShareLinkVC: AVAudioPlayerDelegate {
 }
 
 extension ShareLinkVC: InterstitialAdUtilityDelegate {
+    
+    // MARK: - InterstitialAdUtilityDelegate
+    func didFailToLoadInterstitial() {
+        navigateToSecondViewController()
+    }
+    
+    func didFailToPresentInterstitial() {
+        navigateToSecondViewController()
+    }
+    
+    func didDismissInterstitial() {
+        navigateToSecondViewController()
+    }
+    
+    private func navigateToSecondViewController() {
+    }
+}
+
+extension ShareLinkVC {
+    func savePrankToUserDefaults() {
+        var savedPranks = fetchSavedPranks()
         
-        // MARK: - InterstitialAdUtilityDelegate
-        func didFailToLoadInterstitial() {
-            navigateToSecondViewController()
-        }
+        let newPrank = PrankCreateData(
+            id: viewModel.createPrankID ?? "",
+            link: prankLink ?? "",
+            coverImage: coverImageURL ?? "",
+            file: prankDataURL ?? "",
+            type: selectedPranktype ?? "",
+            name: prankName ?? ""
+        )
+        savedPranks.append(newPrank)
         
-        func didFailToPresentInterstitial() {
-            navigateToSecondViewController()
+        if let encodedData = try? JSONEncoder().encode(savedPranks) {
+            UserDefaults.standard.set(encodedData, forKey: "SavedPranks")
         }
-        
-        func didDismissInterstitial() {
-            navigateToSecondViewController()
+    }
+    
+    func fetchSavedPranks() -> [PrankCreateData] {
+        if let savedPranksData = UserDefaults.standard.data(forKey: "SavedPranks"),
+           let savedPranks = try? JSONDecoder().decode([PrankCreateData].self, from: savedPranksData) {
+            return savedPranks
         }
-        
-        private func navigateToSecondViewController() {
-            shareInstagramStory()
-        }
+        return []
+    }
 }
