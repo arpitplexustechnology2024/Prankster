@@ -7,6 +7,7 @@
             <string>instagram-stories</string>
             <string>snapchat</string>
             <string>whatsapp</string>
+            <string>tg</string>
         </array>
         <key>NSAppTransportSecurity</key>
         <dict>

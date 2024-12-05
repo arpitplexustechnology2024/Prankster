@@ -33,6 +33,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var prankDataURL: String?
     var prankName: String?
     var prankLink: String?
+    var sharePrank: Bool = false
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -55,7 +56,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.createPrank()
         self.setupNoDataView()
         self.setupScrollView()
         self.setupSwipeGesture()
@@ -63,7 +63,35 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.addContentToStackView()
         self.setupKeyboardObservers()
         self.hideKeyboardTappedAround()
-        self.checkInternetAndFetchData()
+    }
+    
+    // MARK: - setupUI
+    func setupUI() {
+        self.shareView.layer.cornerRadius = 15
+        self.prankImageView.layer.cornerRadius = 15
+        self.nameChangeButton.layer.cornerRadius = nameChangeButton.frame.height / 2
+        self.playPauseImageView.image = UIImage(named: "PlayButton")
+        self.playPauseImageView.isUserInteractionEnabled = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
+        self.prankImageView.isUserInteractionEnabled = true
+        self.prankImageView.addGestureRecognizer(tapGesture)
+        
+        let playPauseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
+        self.playPauseImageView.isUserInteractionEnabled = true
+        self.playPauseImageView.addGestureRecognizer(playPauseTapGesture)
+        
+        if sharePrank {
+            self.checkInternetAndFetchData()
+            self.nameChangeButton.isHidden = false
+        } else {
+            self.nameChangeButton.isHidden = true
+            self.prankNameLabel.text = self.prankName
+            
+            if let coverImageUrl = self.coverImageURL {
+                self.loadImage(from: coverImageUrl, into: self.prankImageView)
+            }
+        }
         if isConnectedToInternet() {
             bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
             Task {
@@ -80,19 +108,13 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.prankNameLabel.returnKeyType = .done
     }
     
-    // MARK: - setupUI
-    func setupUI() {
-        self.shareView.layer.cornerRadius = 15
-        self.prankImageView.layer.cornerRadius = 15
-        self.nameChangeButton.layer.cornerRadius = nameChangeButton.frame.height / 2
-    }
-    
     // MARK: - checkInternetAndFetchData
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
             createPrank()
             self.noInternetView?.isHidden = true
             self.scrollViewView.isHidden = false
+            self.playPauseImageView.isHidden = false
             self.hideNoDataView()
         } else {
             self.showNoInternetView()
@@ -385,16 +407,19 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     func showNoInternetView() {
         self.noInternetView.isHidden = false
         self.scrollViewView.isHidden = true
+        self.playPauseImageView.isHidden = true
     }
     
     private func showNoDataView() {
         noDataView?.isHidden = false
         scrollViewView.isHidden = true
+        self.playPauseImageView.isHidden = true
     }
     
     private func hideNoDataView() {
         noDataView?.isHidden = true
         scrollViewView.isHidden = false
+        self.playPauseImageView.isHidden = false
     }
     
     private func isConnectedToInternet() -> Bool {
@@ -423,6 +448,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             (icon: UIImage(named: "instagram"), title: "Story"),
             (icon: UIImage(named: "snapchat"), title: "Message"),
             (icon: UIImage(named: "snapchat"), title: "Story"),
+            (icon: UIImage(named: "telegram"), title: "Message"),
             (icon: UIImage(named: "whatsapp"), title: "Message"),
             (icon: UIImage(named: "moreShare"), title: "More")
         ]
@@ -493,7 +519,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             interstitialAdUtility.presentInterstitial(from: self)
         case 3: break  // Snapchat Message
         case 4: break   // Snapchat Story
-        case 5: // WhatsApp Message
+        case 5: break   // Telegram Message
+        case 6: // WhatsApp Message
             guard let prankLink = prankLink,
                   let prankName = prankName,
                   let coverImageURL = coverImageURL else { return }
@@ -509,7 +536,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     self?.openShareSheetWithLink(prankLink)
                 }
             }
-        case 6:  // More
+        case 7:  // More
             shareViaWhatsAppMessage()
         default:
             break
@@ -695,11 +722,11 @@ extension ShareLinkVC {
         
         let newPrank = PrankCreateData(
             id: viewModel.createPrankID ?? "",
-            link: prankLink ?? "",
-            coverImage: coverImageURL ?? "",
-            file: prankDataURL ?? "",
+            link: viewModel.createPrankLink ?? "",
+            coverImage: viewModel.createPrankCoverImage ?? "",
+            file: viewModel.createPrankData ?? "",
             type: selectedPranktype ?? "",
-            name: prankName ?? ""
+            name: viewModel.createPrankName ?? ""
         )
         savedPranks.append(newPrank)
         

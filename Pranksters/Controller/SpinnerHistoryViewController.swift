@@ -78,17 +78,17 @@ extension SpinnerHistoryViewController: UICollectionViewDelegate, UICollectionVi
     
     @objc func shareButtonTapped(_ sender: UIButton) {
         let prank = spinnerResponseData[sender.tag]
-        self.dismiss(animated: true) { [self] in
-            if let window = UIApplication.shared.windows.first {
-                if let rootViewController = window.rootViewController as? UINavigationController {
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
-                    vc.coverImageURL = prank.coverImage
-                    vc.prankName = prank.name
-                    vc.prankDataURL = prank.file
-                    vc.prankLink = prank.link
-                    vc.selectedPranktype = prank.type
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
+        self.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            if let navigationController = self.navigationController ?? UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
+                vc.coverImageURL = prank.coverImage
+                vc.prankName = prank.name
+                vc.prankDataURL = prank.file
+                vc.prankLink = prank.link
+                vc.selectedPranktype = prank.type
+                vc.sharePrank = false
+                navigationController.pushViewController(vc, animated: true)
             }
         }
     }

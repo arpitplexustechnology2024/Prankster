@@ -26,13 +26,22 @@ enum SpinButtonState {
 class SpinnerViewController: UIViewController {
     
     // MARK: - IBOutlets
-    @IBOutlet weak var bannerHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var spinnerHeightConstraints: NSLayoutConstraint!
-    @IBOutlet weak var spinnerWidthConstraints: NSLayoutConstraint!
     
+    @IBOutlet weak var topHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var bannerHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var spinnerWidghConstraints: NSLayoutConstraint!
+    @IBOutlet weak var spinnerGeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var spinnerbuttonWidghConstraints: NSLayoutConstraint!
+    @IBOutlet weak var spinnerbuttonHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var spinTextHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var rewardWidthConstraits: NSLayoutConstraint!
+    
+    
+    @IBOutlet weak var rewardShowButton: UIButton!
     @IBOutlet weak var spinnerCountLabel: UILabel!
     @IBOutlet weak var spinLabel: UILabel!
     @IBOutlet weak var spinnerbutton: UIButton!
+    
     @IBOutlet weak var wheelControl: SwiftFortuneWheel! {
         didSet {
             wheelControl.configuration = .customColorsConfiguration
@@ -105,8 +114,50 @@ class SpinnerViewController: UIViewController {
             self?.proceedWithSpinning()
         }
         updateTimerLabel()
+        
+        let screenHeight = UIScreen.main.nativeBounds.height
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            switch screenHeight {
+            case 1334:
+                topHeightConstraints.constant = 10
+                spinnerWidghConstraints.constant = 275
+                spinnerGeightConstraints.constant = 275
+            case 1920, 1792:
+                topHeightConstraints.constant = 30
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            case 2340:
+                topHeightConstraints.constant = 40
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            case 2532, 2556:
+                topHeightConstraints.constant = 50
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            case 2622:
+                topHeightConstraints.constant = 66
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            case 2688:
+                topHeightConstraints.constant = 75
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            case 2796:
+                topHeightConstraints.constant = 90
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            case 2869:
+                topHeightConstraints.constant = 100
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            default:
+                topHeightConstraints.constant = 60
+                spinnerWidghConstraints.constant = 300
+                spinnerGeightConstraints.constant = 300
+            }
+        }
     }
-    
+
     // MARK: - Setup Methods
     private func setupViewModel() {
         spinViewModel = SpinnerViewModel()
@@ -147,7 +198,10 @@ class SpinnerViewController: UIViewController {
             let decoder = JSONDecoder()
             if let decodedData = try? decoder.decode([SpinnerData].self, from: savedData) {
                 spinnerResponseData = decodedData
+                rewardShowButton.isEnabled = !spinnerResponseData.isEmpty
             }
+        } else {
+            rewardShowButton.isEnabled = false
         }
     }
     
@@ -320,7 +374,7 @@ class SpinnerViewController: UIViewController {
         }
     }
     
-    @IBAction func historyButtonTapped(_ sender: UIButton) {
+    @IBAction func btnShowReward(_ sender: UIButton) {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerHistoryViewController") as! SpinnerHistoryViewController
         vc.spinnerResponseData = self.spinnerResponseData
         if let sheet = vc.sheetPresentationController {

@@ -278,41 +278,47 @@ class AudioVC: UIViewController {
     
     // MARK: - btnDoneTapped
     @IBAction func btnDoneTapped(_ sender: UIButton) {
-        var audioURLToPass: String?
-        var audioFileToPass: Data?
-        var audioNameToPass: String?
-        
-        if let selectedIndex = selectedAudioIndex {
-            let audioData = customAudios[selectedIndex]
-            audioNameToPass = audioData.url.lastPathComponent
-            if let fileData = try? Data(contentsOf: audioData.url) {
-                audioFileToPass = fileData
-                audioURLToPass = nil
+        if isConnectedToInternet() {
+            var audioURLToPass: String?
+            var audioFileToPass: Data?
+            var audioNameToPass: String?
+            
+            if let selectedIndex = selectedAudioIndex {
+                let audioData = customAudios[selectedIndex]
+                audioNameToPass = audioData.url.lastPathComponent
+                if let fileData = try? Data(contentsOf: audioData.url) {
+                    audioFileToPass = fileData
+                    audioURLToPass = nil
+                }
             }
-        }
-        else if let selectedData = selectedAudioData {
-            audioURLToPass = selectedData.file
-            audioNameToPass = selectedData.name
-            audioFileToPass = nil
-        }
-        
-        if audioURLToPass != nil || audioFileToPass != nil {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
-                nextVC.selectedURL = audioURLToPass
-                nextVC.selectedFile = audioFileToPass
-                nextVC.selectedName = audioNameToPass
-                nextVC.selectedCoverURL = selectedCoverImageURL
-                nextVC.selectedCoverFile = selectedCoverImageFile
-                nextVC.selectedPranktype = "audio"
-                self.navigationController?.pushViewController(nextVC, animated: true)
+            else if let selectedData = selectedAudioData {
+                audioURLToPass = selectedData.file
+                audioNameToPass = selectedData.name
+                audioFileToPass = nil
+            }
+            
+            if audioURLToPass != nil || audioFileToPass != nil {
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
+                    nextVC.selectedURL = audioURLToPass
+                    nextVC.selectedFile = audioFileToPass
+                    nextVC.selectedName = audioNameToPass
+                    nextVC.selectedCoverURL = selectedCoverImageURL
+                    nextVC.selectedCoverFile = selectedCoverImageFile
+                    nextVC.selectedPranktype = "audio"
+                    nextVC.sharePrank = true
+                    self.navigationController?.pushViewController(nextVC, animated: true)
+                }
+            } else {
+                let alert = UIAlertController(title: "No Audio Selected",
+                                              message: "Please select an audio before proceeding.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
             }
         } else {
-            let alert = UIAlertController(title: "No Audio Selected",
-                                          message: "Please select an audio before proceeding.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alert, animated: true)
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     

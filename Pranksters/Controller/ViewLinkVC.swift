@@ -123,9 +123,14 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
     
     @objc func shareButtonTapped(_ sender: UIButton) {
         let prank = pranks[sender.tag]
-        
-        let shareItems: [Any] = [prank.link]
-        let activityViewController = UIActivityViewController(activityItems: shareItems, applicationActivities: nil)
-        present(activityViewController, animated: true, completion: nil)
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShareLinkPopup") as! ShareLinkPopup
+        vc.coverImageURL = prank.coverImage
+        vc.prankName = prank.name
+        vc.prankDataURL = prank.file
+        vc.prankLink = prank.link
+        vc.prankType = prank.type
+        vc.modalTransitionStyle = .crossDissolve
+        vc.modalPresentationStyle = .overCurrentContext
+        self.present(vc, animated: true)
     }
 }

@@ -246,49 +246,55 @@ class ImageVC: UIViewController {
     
     // MARK: - btnDoneTapped
     @IBAction func btnDoneTapped(_ sender: UIButton) {
-        var imageURLToPass: String?
-        var imageFileToPass: Data?
-        var imageNameToPass: String?
-        
-        if let selectedIndex = selectedImageIndex {
-            let temporaryDirectory = NSTemporaryDirectory()
-            let fileName = "CustomImage_\(UUID().uuidString).jpg"
-            let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
+        if isConnectedToInternet() {
+            var imageURLToPass: String?
+            var imageFileToPass: Data?
+            var imageNameToPass: String?
             
-            if let imageData = customImages[selectedIndex].jpegData(compressionQuality: 1.0) {
-                try? imageData.write(to: fileURL)
-                if let fileData = try? Data(contentsOf: fileURL) {
-                    imageFileToPass = fileData
-                    imageURLToPass = nil
+            if let selectedIndex = selectedImageIndex {
+                let temporaryDirectory = NSTemporaryDirectory()
+                let fileName = "CustomImage_\(UUID().uuidString).jpg"
+                let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
+                
+                if let imageData = customImages[selectedIndex].jpegData(compressionQuality: 1.0) {
+                    try? imageData.write(to: fileURL)
+                    if let fileData = try? Data(contentsOf: fileURL) {
+                        imageFileToPass = fileData
+                        imageURLToPass = nil
+                    }
+                    imageNameToPass = "Custom Image \(selectedIndex + 1)"
                 }
-                imageNameToPass = "Custom Image \(selectedIndex + 1)"
+            } else if let selectedData = selectedImageData {
+                imageURLToPass = selectedData.image
+                imageNameToPass = selectedData.name
+                imageFileToPass = nil
             }
-        } else if let selectedData = selectedImageData {
-            imageURLToPass = selectedData.image
-            imageNameToPass = selectedData.name
-            imageFileToPass = nil
-        }
-        
-        if imageURLToPass != nil || imageFileToPass != nil {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
-                nextVC.selectedURL = imageURLToPass
-                nextVC.selectedFile = imageFileToPass
-                nextVC.selectedName = imageNameToPass
-                nextVC.selectedCoverURL = selectedCoverImageURL
-                nextVC.selectedCoverFile = selectedCoverImageFile
-                nextVC.selectedPranktype = "gallery"
-                self.navigationController?.pushViewController(nextVC, animated: true)
+            
+            if imageURLToPass != nil || imageFileToPass != nil {
+                let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
+                    nextVC.selectedURL = imageURLToPass
+                    nextVC.selectedFile = imageFileToPass
+                    nextVC.selectedName = imageNameToPass
+                    nextVC.selectedCoverURL = selectedCoverImageURL
+                    nextVC.selectedCoverFile = selectedCoverImageFile
+                    nextVC.selectedPranktype = "gallery"
+                    nextVC.sharePrank = true
+                    self.navigationController?.pushViewController(nextVC, animated: true)
+                }
+            } else {
+                let alert = UIAlertController(title: "No Image Selected",
+                                              message: "Please select an image before proceeding.",
+                                              preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default))
+                self.present(alert, animated: true)
             }
         } else {
-            let alert = UIAlertController(title: "No Image Selected",
-                                          message: "Please select an image before proceeding.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alert, animated: true)
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
-
+    
     
     // MARK: - btnBackTapped
     @IBAction func btnBackTapped(_ sender: UIButton) {

@@ -245,17 +245,17 @@ class SpinnerPreviewVC: UIViewController {
     }
     
     @IBAction func btnShareTapped(_ sender: UIButton) {
-        self.dismiss(animated: true) { [self] in
-            if let window = UIApplication.shared.windows.first {
-                if let rootViewController = window.rootViewController as? UINavigationController {
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
-                    vc.coverImageURL = link
-                    vc.prankName = name
-                    vc.prankDataURL = file
-                    vc.prankLink = link
-                    vc.selectedPranktype = type
-                    self.navigationController?.pushViewController(vc, animated: true)
-                }
+        self.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            if let navigationController = self.navigationController ?? UIApplication.shared.windows.first?.rootViewController as? UINavigationController {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
+                vc.coverImageURL = self.coverImage
+                vc.prankName = self.name
+                vc.prankDataURL = self.file
+                vc.prankLink = self.link
+                vc.selectedPranktype = self.type
+                vc.sharePrank = false
+                navigationController.pushViewController(vc, animated: true)
             }
         }
     }
