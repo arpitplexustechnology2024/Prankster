@@ -3,8 +3,63 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 56;
 	objects = {
+
+/* Begin PBXBuildFile section */
+		39D557955CA728194C45BFDD /* Pods_Prankster_PranksterUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0555AD96EFBEA4CB450ECEA7 /* Pods_Prankster_PranksterUITests.framework */; };
+		8A14A120C85453A0695CFCAE /* Pods_Prankster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */; };
+		AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */; };
+		BDC68AB52D092D0C00834D9B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AAB2D092D0C00834D9B /* AppDelegate.swift */; };
+		BDC68AB62D092D0C00834D9B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AB22D092D0C00834D9B /* SceneDelegate.swift */; };
+		BDC68AB72D092D0C00834D9B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AB32D092D0C00834D9B /* ViewController.swift */; };
+		BDC68AB82D092D0C00834D9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AAC2D092D0C00834D9B /* Assets.xcassets */; };
+		BDC68ABA2D092D0C00834D9B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AAF2D092D0C00834D9B /* LaunchScreen.storyboard */; };
+		BDC68ABB2D092D0C00834D9B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AB12D092D0C00834D9B /* Main.storyboard */; };
+		BDC68ABE2D092D0F00834D9B /* PranksterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ABC2D092D0F00834D9B /* PranksterTests.swift */; };
+		BDC68AC22D092D1200834D9B /* PranksterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ABF2D092D1200834D9B /* PranksterUITests.swift */; };
+		BDC68AC32D092D1200834D9B /* PranksterUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AC02D092D1200834D9B /* PranksterUITestsLaunchTests.swift */; };
+		BDC68ACF2D092D6400834D9B /* OneSignalPushNotificationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BDC68AC82D092D6400834D9B /* OneSignalPushNotificationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BDC68AD92D092D6800834D9B /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AD62D092D6800834D9B /* NotificationService.swift */; };
+		BDC68B032D092E4B00834D9B /* BannerAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ADA2D092E4B00834D9B /* BannerAdUtility.swift */; };
+		BDC68B042D092E4B00834D9B /* CoverPageAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AF72D092E4B00834D9B /* CoverPageAPI.swift */; };
+		BDC68B052D092E4B00834D9B /* CategoryAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AF62D092E4B00834D9B /* CategoryAPI.swift */; };
+		BDC68B062D092E4B00834D9B /* SpinnerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B012D092E4B00834D9B /* SpinnerViewModel.swift */; };
+		BDC68B072D092E4B00834D9B /* CategoryAllViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AFC2D092E4B00834D9B /* CategoryAllViewModel.swift */; };
+		BDC68B082D092E4B00834D9B /* PrankAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AF92D092E4B00834D9B /* PrankAPI.swift */; };
+		BDC68B092D092E4B00834D9B /* MoreAppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AFF2D092E4B00834D9B /* MoreAppViewModel.swift */; };
+		BDC68B0A2D092E4B00834D9B /* LoadingFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ADD2D092E4B00834D9B /* LoadingFooterView.swift */; };
+		BDC68B0B2D092E4B00834D9B /* CategoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AFD2D092E4B00834D9B /* CategoryViewModel.swift */; };
+		BDC68B0C2D092E4B00834D9B /* UIImage+GIF.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AE42D092E4B00834D9B /* UIImage+GIF.swift */; };
+		BDC68B0D2D092E4B00834D9B /* SpinnerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AFA2D092E4B00834D9B /* SpinnerAPI.swift */; };
+		BDC68B0E2D092E4B00834D9B /* SFWConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AE02D092E4B00834D9B /* SFWConfiguration.swift */; };
+		BDC68B0F2D092E4B00834D9B /* StaticFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AE32D092E4B00834D9B /* StaticFunction.swift */; };
+		BDC68B102D092E4B00834D9B /* MoreAppAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AF82D092E4B00834D9B /* MoreAppAPI.swift */; };
+		BDC68B112D092E4B00834D9B /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AF32D092E4B00834D9B /* Model.swift */; };
+		BDC68B122D092E4B00834D9B /* PrankViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B002D092E4B00834D9B /* PrankViewModel.swift */; };
+		BDC68B132D092E4B00834D9B /* premiumManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ADE2D092E4B00834D9B /* premiumManager.swift */; };
+		BDC68B142D092E4B00834D9B /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ADB2D092E4B00834D9B /* Extension.swift */; };
+		BDC68B152D092E4B00834D9B /* CategoryAllAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AF52D092E4B00834D9B /* CategoryAllAPI.swift */; };
+		BDC68B162D092E4B00834D9B /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AE62D092E4B00834D9B /* Alert.swift */; };
+		BDC68B172D092E4B00834D9B /* Skeleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AE12D092E4B00834D9B /* Skeleton.swift */; };
+		BDC68B182D092E4B00834D9B /* SnapchatEventTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AE72D092E4B00834D9B /* SnapchatEventTracker.swift */; };
+		BDC68B192D092E4B00834D9B /* Snackbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AE22D092E4B00834D9B /* Snackbar.swift */; };
+		BDC68B1A2D092E4B00834D9B /* InterstitialAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ADC2D092E4B00834D9B /* InterstitialAdUtility.swift */; };
+		BDC68B1B2D092E4B00834D9B /* CoverPageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AFE2D092E4B00834D9B /* CoverPageViewModel.swift */; };
+		BDC68B1C2D092E4B00834D9B /* RewardAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68ADF2D092E4B00834D9B /* RewardAdUtility.swift */; };
+		BDC68B1D2D092E4B00834D9B /* KLEPHON.otf in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AEB2D092E4B00834D9B /* KLEPHON.otf */; };
+		BDC68B1E2D092E4B00834D9B /* CoverGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AE92D092E4B00834D9B /* CoverGIF.gif */; };
+		BDC68B1F2D092E4B00834D9B /* Auto-Update.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AE52D092E4B00834D9B /* Auto-Update.json */; };
+		BDC68B202D092E4B00834D9B /* Loading.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AEF2D092E4B00834D9B /* Loading.json */; };
+		BDC68B212D092E4B00834D9B /* Loader.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AEE2D092E4B00834D9B /* Loader.json */; };
+		BDC68B222D092E4B00834D9B /* NoInternet.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AF12D092E4B00834D9B /* NoInternet.json */; };
+		BDC68B232D092E4B00834D9B /* LoadData.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AED2D092E4B00834D9B /* LoadData.json */; };
+		BDC68B242D092E4B00834D9B /* Nodata.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AF02D092E4B00834D9B /* Nodata.json */; };
+		BDC68B272D092E8900834D9B /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B252D092E8900834D9B /* Color.xcassets */; };
+		BDC68B282D092E8900834D9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B262D092E8900834D9B /* GoogleService-Info.plist */; };
+		BDC68B2B2D092F3600834D9B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDC68B2A2D092F3600834D9B /* StoreKit.framework */; };
+		FC4EF9998A05D8F6312151BD /* Pods_PranksterTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D982D927F0340D60CBA877E /* Pods_PranksterTests.framework */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
 		BDC68A8E2D092D0600834D9B /* PBXContainerItemProxy */ = {
@@ -21,50 +76,105 @@
 			remoteGlobalIDString = BDC68A762D092D0400834D9B;
 			remoteInfo = Prankster;
 		};
+		BDC68ACD2D092D6400834D9B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BDC68A6F2D092D0400834D9B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BDC68AC72D092D6400834D9B;
+			remoteInfo = OneSignalPushNotificationExtension;
+		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		BDC68AD42D092D6400834D9B /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BDC68ACF2D092D6400834D9B /* OneSignalPushNotificationExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0555AD96EFBEA4CB450ECEA7 /* Pods_Prankster_PranksterUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prankster_PranksterUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0D982D927F0340D60CBA877E /* Pods_PranksterTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PranksterTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0E1551777EE5A256975FE95B /* Pods-Prankster.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prankster.release.xcconfig"; path = "Target Support Files/Pods-Prankster/Pods-Prankster.release.xcconfig"; sourceTree = "<group>"; };
+		17B4134B574FB637730969CC /* Pods-Prankster-PranksterUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prankster-PranksterUITests.debug.xcconfig"; path = "Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		28BA78DE7AC84A57E8FB85DC /* Pods-OneSignalPushNotificationExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.release.xcconfig"; sourceTree = "<group>"; };
+		713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalPushNotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		BDC68A772D092D0400834D9B /* Prankster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prankster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDC68A8D2D092D0600834D9B /* PranksterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PranksterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDC68A972D092D0600834D9B /* PranksterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PranksterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDC68AAB2D092D0C00834D9B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		BDC68AAC2D092D0C00834D9B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		BDC68AAD2D092D0C00834D9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BDC68AAE2D092D0C00834D9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		BDC68AB02D092D0C00834D9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		BDC68AB22D092D0C00834D9B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		BDC68AB32D092D0C00834D9B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		BDC68ABC2D092D0F00834D9B /* PranksterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PranksterTests.swift; sourceTree = "<group>"; };
+		BDC68ABF2D092D1200834D9B /* PranksterUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PranksterUITests.swift; sourceTree = "<group>"; };
+		BDC68AC02D092D1200834D9B /* PranksterUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PranksterUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		BDC68AC82D092D6400834D9B /* OneSignalPushNotificationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = OneSignalPushNotificationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDC68AD52D092D6800834D9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BDC68AD62D092D6800834D9B /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		BDC68ADA2D092E4B00834D9B /* BannerAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerAdUtility.swift; sourceTree = "<group>"; };
+		BDC68ADB2D092E4B00834D9B /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
+		BDC68ADC2D092E4B00834D9B /* InterstitialAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterstitialAdUtility.swift; sourceTree = "<group>"; };
+		BDC68ADD2D092E4B00834D9B /* LoadingFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingFooterView.swift; sourceTree = "<group>"; };
+		BDC68ADE2D092E4B00834D9B /* premiumManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = premiumManager.swift; sourceTree = "<group>"; };
+		BDC68ADF2D092E4B00834D9B /* RewardAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewardAdUtility.swift; sourceTree = "<group>"; };
+		BDC68AE02D092E4B00834D9B /* SFWConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SFWConfiguration.swift; sourceTree = "<group>"; };
+		BDC68AE12D092E4B00834D9B /* Skeleton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skeleton.swift; sourceTree = "<group>"; };
+		BDC68AE22D092E4B00834D9B /* Snackbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Snackbar.swift; sourceTree = "<group>"; };
+		BDC68AE32D092E4B00834D9B /* StaticFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticFunction.swift; sourceTree = "<group>"; };
+		BDC68AE42D092E4B00834D9B /* UIImage+GIF.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+GIF.swift"; sourceTree = "<group>"; };
+		BDC68AE52D092E4B00834D9B /* Auto-Update.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "Auto-Update.json"; sourceTree = "<group>"; };
+		BDC68AE62D092E4B00834D9B /* Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alert.swift; sourceTree = "<group>"; };
+		BDC68AE72D092E4B00834D9B /* SnapchatEventTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapchatEventTracker.swift; sourceTree = "<group>"; };
+		BDC68AE92D092E4B00834D9B /* CoverGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = CoverGIF.gif; sourceTree = "<group>"; };
+		BDC68AEB2D092E4B00834D9B /* KLEPHON.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = KLEPHON.otf; sourceTree = "<group>"; };
+		BDC68AED2D092E4B00834D9B /* LoadData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LoadData.json; sourceTree = "<group>"; };
+		BDC68AEE2D092E4B00834D9B /* Loader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Loader.json; sourceTree = "<group>"; };
+		BDC68AEF2D092E4B00834D9B /* Loading.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Loading.json; sourceTree = "<group>"; };
+		BDC68AF02D092E4B00834D9B /* Nodata.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Nodata.json; sourceTree = "<group>"; };
+		BDC68AF12D092E4B00834D9B /* NoInternet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NoInternet.json; sourceTree = "<group>"; };
+		BDC68AF32D092E4B00834D9B /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		BDC68AF52D092E4B00834D9B /* CategoryAllAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAllAPI.swift; sourceTree = "<group>"; };
+		BDC68AF62D092E4B00834D9B /* CategoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAPI.swift; sourceTree = "<group>"; };
+		BDC68AF72D092E4B00834D9B /* CoverPageAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverPageAPI.swift; sourceTree = "<group>"; };
+		BDC68AF82D092E4B00834D9B /* MoreAppAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreAppAPI.swift; sourceTree = "<group>"; };
+		BDC68AF92D092E4B00834D9B /* PrankAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankAPI.swift; sourceTree = "<group>"; };
+		BDC68AFA2D092E4B00834D9B /* SpinnerAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerAPI.swift; sourceTree = "<group>"; };
+		BDC68AFC2D092E4B00834D9B /* CategoryAllViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAllViewModel.swift; sourceTree = "<group>"; };
+		BDC68AFD2D092E4B00834D9B /* CategoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewModel.swift; sourceTree = "<group>"; };
+		BDC68AFE2D092E4B00834D9B /* CoverPageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverPageViewModel.swift; sourceTree = "<group>"; };
+		BDC68AFF2D092E4B00834D9B /* MoreAppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreAppViewModel.swift; sourceTree = "<group>"; };
+		BDC68B002D092E4B00834D9B /* PrankViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrankViewModel.swift; sourceTree = "<group>"; };
+		BDC68B012D092E4B00834D9B /* SpinnerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerViewModel.swift; sourceTree = "<group>"; };
+		BDC68B252D092E8900834D9B /* Color.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Color.xcassets; sourceTree = "<group>"; };
+		BDC68B262D092E8900834D9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BDC68B292D092F2900834D9B /* Prankster.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Prankster.entitlements; sourceTree = "<group>"; };
+		BDC68B2A2D092F3600834D9B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prankster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5A7BA264A3D9F5D5F56F594 /* Pods-PranksterTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.release.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.release.xcconfig"; sourceTree = "<group>"; };
+		DBE85015E495927229BA9144 /* Pods-PranksterTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.debug.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.debug.xcconfig"; sourceTree = "<group>"; };
+		DF6DA06B6DF6B11A61EEF855 /* Pods-Prankster.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prankster.debug.xcconfig"; path = "Target Support Files/Pods-Prankster/Pods-Prankster.debug.xcconfig"; sourceTree = "<group>"; };
+		EAB4F535107B2883B95662B1 /* Pods-Prankster-PranksterUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Prankster-PranksterUITests.release.xcconfig"; path = "Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BDC68A9F2D092D0600834D9B /* Exceptions for "Prankster" folder in "Prankster" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = BDC68A762D092D0400834D9B /* Prankster */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		BDC68A792D092D0400834D9B /* Prankster */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BDC68A9F2D092D0600834D9B /* Exceptions for "Prankster" folder in "Prankster" target */,
-			);
-			path = Prankster;
-			sourceTree = "<group>";
-		};
-		BDC68A902D092D0600834D9B /* PranksterTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PranksterTests;
-			sourceTree = "<group>";
-		};
-		BDC68A9A2D092D0600834D9B /* PranksterUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PranksterUITests;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		BDC68A742D092D0400834D9B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A14A120C85453A0695CFCAE /* Pods_Prankster.framework in Frameworks */,
+				BDC68B2B2D092F3600834D9B /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,6 +182,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC4EF9998A05D8F6312151BD /* Pods_PranksterTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,19 +190,58 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39D557955CA728194C45BFDD /* Pods_Prankster_PranksterUITests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BDC68AC52D092D6400834D9B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A47B1172B3348B03F594BA8 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */,
+				28BA78DE7AC84A57E8FB85DC /* Pods-OneSignalPushNotificationExtension.release.xcconfig */,
+				DF6DA06B6DF6B11A61EEF855 /* Pods-Prankster.debug.xcconfig */,
+				0E1551777EE5A256975FE95B /* Pods-Prankster.release.xcconfig */,
+				17B4134B574FB637730969CC /* Pods-Prankster-PranksterUITests.debug.xcconfig */,
+				EAB4F535107B2883B95662B1 /* Pods-Prankster-PranksterUITests.release.xcconfig */,
+				DBE85015E495927229BA9144 /* Pods-PranksterTests.debug.xcconfig */,
+				D5A7BA264A3D9F5D5F56F594 /* Pods-PranksterTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		2E60ED9915687723FF522E78 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68B2A2D092F3600834D9B /* StoreKit.framework */,
+				713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */,
+				C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */,
+				0555AD96EFBEA4CB450ECEA7 /* Pods_Prankster_PranksterUITests.framework */,
+				0D982D927F0340D60CBA877E /* Pods_PranksterTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		BDC68A6E2D092D0400834D9B = {
 			isa = PBXGroup;
 			children = (
-				BDC68A792D092D0400834D9B /* Prankster */,
-				BDC68A902D092D0600834D9B /* PranksterTests */,
-				BDC68A9A2D092D0600834D9B /* PranksterUITests */,
+				BDC68AB42D092D0C00834D9B /* Prankster */,
+				BDC68ABD2D092D0F00834D9B /* PranksterTests */,
+				BDC68AC12D092D1200834D9B /* PranksterUITests */,
+				BDC68AD72D092D6800834D9B /* OneSignalPushNotificationExtension */,
 				BDC68A782D092D0400834D9B /* Products */,
+				1A47B1172B3348B03F594BA8 /* Pods */,
+				2E60ED9915687723FF522E78 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -101,8 +251,150 @@
 				BDC68A772D092D0400834D9B /* Prankster.app */,
 				BDC68A8D2D092D0600834D9B /* PranksterTests.xctest */,
 				BDC68A972D092D0600834D9B /* PranksterUITests.xctest */,
+				BDC68AC82D092D6400834D9B /* OneSignalPushNotificationExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		BDC68AB42D092D0C00834D9B /* Prankster */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68B292D092F2900834D9B /* Prankster.entitlements */,
+				BDC68B2C2D092F6800834D9B /* Delegate */,
+				BDC68AE82D092E4B00834D9B /* Extension */,
+				BDC68AEA2D092E4B00834D9B /* GIF */,
+				BDC68AEC2D092E4B00834D9B /* TextFile */,
+				BDC68AF22D092E4B00834D9B /* LottieJson */,
+				BDC68AF42D092E4B00834D9B /* Model */,
+				BDC68AFB2D092E4B00834D9B /* APIManager */,
+				BDC68B022D092E4B00834D9B /* ViewModel */,
+				BDC68AAC2D092D0C00834D9B /* Assets.xcassets */,
+				BDC68AAD2D092D0C00834D9B /* Info.plist */,
+				BDC68B252D092E8900834D9B /* Color.xcassets */,
+				BDC68B262D092E8900834D9B /* GoogleService-Info.plist */,
+				BDC68AAF2D092D0C00834D9B /* LaunchScreen.storyboard */,
+				BDC68AB12D092D0C00834D9B /* Main.storyboard */,
+				BDC68AB32D092D0C00834D9B /* ViewController.swift */,
+			);
+			path = Prankster;
+			sourceTree = "<group>";
+		};
+		BDC68ABD2D092D0F00834D9B /* PranksterTests */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68ABC2D092D0F00834D9B /* PranksterTests.swift */,
+			);
+			path = PranksterTests;
+			sourceTree = "<group>";
+		};
+		BDC68AC12D092D1200834D9B /* PranksterUITests */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68ABF2D092D1200834D9B /* PranksterUITests.swift */,
+				BDC68AC02D092D1200834D9B /* PranksterUITestsLaunchTests.swift */,
+			);
+			path = PranksterUITests;
+			sourceTree = "<group>";
+		};
+		BDC68AD72D092D6800834D9B /* OneSignalPushNotificationExtension */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AD52D092D6800834D9B /* Info.plist */,
+				BDC68AD62D092D6800834D9B /* NotificationService.swift */,
+			);
+			path = OneSignalPushNotificationExtension;
+			sourceTree = "<group>";
+		};
+		BDC68AE82D092E4B00834D9B /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68ADA2D092E4B00834D9B /* BannerAdUtility.swift */,
+				BDC68ADB2D092E4B00834D9B /* Extension.swift */,
+				BDC68ADC2D092E4B00834D9B /* InterstitialAdUtility.swift */,
+				BDC68ADD2D092E4B00834D9B /* LoadingFooterView.swift */,
+				BDC68ADE2D092E4B00834D9B /* premiumManager.swift */,
+				BDC68ADF2D092E4B00834D9B /* RewardAdUtility.swift */,
+				BDC68AE02D092E4B00834D9B /* SFWConfiguration.swift */,
+				BDC68AE12D092E4B00834D9B /* Skeleton.swift */,
+				BDC68AE22D092E4B00834D9B /* Snackbar.swift */,
+				BDC68AE32D092E4B00834D9B /* StaticFunction.swift */,
+				BDC68AE42D092E4B00834D9B /* UIImage+GIF.swift */,
+				BDC68AE52D092E4B00834D9B /* Auto-Update.json */,
+				BDC68AE62D092E4B00834D9B /* Alert.swift */,
+				BDC68AE72D092E4B00834D9B /* SnapchatEventTracker.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
+		BDC68AEA2D092E4B00834D9B /* GIF */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AE92D092E4B00834D9B /* CoverGIF.gif */,
+			);
+			path = GIF;
+			sourceTree = "<group>";
+		};
+		BDC68AEC2D092E4B00834D9B /* TextFile */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AEB2D092E4B00834D9B /* KLEPHON.otf */,
+			);
+			path = TextFile;
+			sourceTree = "<group>";
+		};
+		BDC68AF22D092E4B00834D9B /* LottieJson */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AED2D092E4B00834D9B /* LoadData.json */,
+				BDC68AEE2D092E4B00834D9B /* Loader.json */,
+				BDC68AEF2D092E4B00834D9B /* Loading.json */,
+				BDC68AF02D092E4B00834D9B /* Nodata.json */,
+				BDC68AF12D092E4B00834D9B /* NoInternet.json */,
+			);
+			path = LottieJson;
+			sourceTree = "<group>";
+		};
+		BDC68AF42D092E4B00834D9B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AF32D092E4B00834D9B /* Model.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		BDC68AFB2D092E4B00834D9B /* APIManager */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AF52D092E4B00834D9B /* CategoryAllAPI.swift */,
+				BDC68AF62D092E4B00834D9B /* CategoryAPI.swift */,
+				BDC68AF72D092E4B00834D9B /* CoverPageAPI.swift */,
+				BDC68AF82D092E4B00834D9B /* MoreAppAPI.swift */,
+				BDC68AF92D092E4B00834D9B /* PrankAPI.swift */,
+				BDC68AFA2D092E4B00834D9B /* SpinnerAPI.swift */,
+			);
+			path = APIManager;
+			sourceTree = "<group>";
+		};
+		BDC68B022D092E4B00834D9B /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AFC2D092E4B00834D9B /* CategoryAllViewModel.swift */,
+				BDC68AFD2D092E4B00834D9B /* CategoryViewModel.swift */,
+				BDC68AFE2D092E4B00834D9B /* CoverPageViewModel.swift */,
+				BDC68AFF2D092E4B00834D9B /* MoreAppViewModel.swift */,
+				BDC68B002D092E4B00834D9B /* PrankViewModel.swift */,
+				BDC68B012D092E4B00834D9B /* SpinnerViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		BDC68B2C2D092F6800834D9B /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68AAB2D092D0C00834D9B /* AppDelegate.swift */,
+				BDC68AB22D092D0C00834D9B /* SceneDelegate.swift */,
+			);
+			path = Delegate;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,20 +404,20 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BDC68AA02D092D0600834D9B /* Build configuration list for PBXNativeTarget "Prankster" */;
 			buildPhases = (
+				6900480F0F44EDE8209A4BF7 /* [CP] Check Pods Manifest.lock */,
 				BDC68A732D092D0400834D9B /* Sources */,
 				BDC68A742D092D0400834D9B /* Frameworks */,
 				BDC68A752D092D0400834D9B /* Resources */,
+				BDC68AD42D092D6400834D9B /* Embed Foundation Extensions */,
+				2265A70A8EC43C6B92653E21 /* [CP] Embed Pods Frameworks */,
+				43722E8A35BCCC75A5B4EBFA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				BDC68A792D092D0400834D9B /* Prankster */,
+				BDC68ACE2D092D6400834D9B /* PBXTargetDependency */,
 			);
 			name = Prankster;
-			packageProductDependencies = (
-			);
 			productName = Prankster;
 			productReference = BDC68A772D092D0400834D9B /* Prankster.app */;
 			productType = "com.apple.product-type.application";
@@ -134,6 +426,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BDC68AA52D092D0600834D9B /* Build configuration list for PBXNativeTarget "PranksterTests" */;
 			buildPhases = (
+				56DA45F51E1CFFE92DD3B12F /* [CP] Check Pods Manifest.lock */,
 				BDC68A892D092D0600834D9B /* Sources */,
 				BDC68A8A2D092D0600834D9B /* Frameworks */,
 				BDC68A8B2D092D0600834D9B /* Resources */,
@@ -143,12 +436,7 @@
 			dependencies = (
 				BDC68A8F2D092D0600834D9B /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				BDC68A902D092D0600834D9B /* PranksterTests */,
-			);
 			name = PranksterTests;
-			packageProductDependencies = (
-			);
 			productName = PranksterTests;
 			productReference = BDC68A8D2D092D0600834D9B /* PranksterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -157,24 +445,40 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BDC68AA82D092D0600834D9B /* Build configuration list for PBXNativeTarget "PranksterUITests" */;
 			buildPhases = (
+				9C939087C8F6F30315A171EB /* [CP] Check Pods Manifest.lock */,
 				BDC68A932D092D0600834D9B /* Sources */,
 				BDC68A942D092D0600834D9B /* Frameworks */,
 				BDC68A952D092D0600834D9B /* Resources */,
+				93110C827C2BA13F3CA13A51 /* [CP] Embed Pods Frameworks */,
+				EF750407E182A7F3D8D6278A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				BDC68A992D092D0600834D9B /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				BDC68A9A2D092D0600834D9B /* PranksterUITests */,
-			);
 			name = PranksterUITests;
-			packageProductDependencies = (
-			);
 			productName = PranksterUITests;
 			productReference = BDC68A972D092D0600834D9B /* PranksterUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		BDC68AC72D092D6400834D9B /* OneSignalPushNotificationExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BDC68AD12D092D6400834D9B /* Build configuration list for PBXNativeTarget "OneSignalPushNotificationExtension" */;
+			buildPhases = (
+				7B661AA0A63F81F058F99219 /* [CP] Check Pods Manifest.lock */,
+				BDC68AC42D092D6400834D9B /* Sources */,
+				BDC68AC52D092D6400834D9B /* Frameworks */,
+				BDC68AC62D092D6400834D9B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OneSignalPushNotificationExtension;
+			productName = OneSignalPushNotificationExtension;
+			productReference = BDC68AC82D092D6400834D9B /* OneSignalPushNotificationExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -197,9 +501,13 @@
 						CreatedOnToolsVersion = 16.1;
 						TestTargetID = BDC68A762D092D0400834D9B;
 					};
+					BDC68AC72D092D6400834D9B = {
+						CreatedOnToolsVersion = 16.1;
+					};
 				};
 			};
 			buildConfigurationList = BDC68A722D092D0400834D9B /* Build configuration list for PBXProject "Prankster" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -207,8 +515,6 @@
 				Base,
 			);
 			mainGroup = BDC68A6E2D092D0400834D9B;
-			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = BDC68A782D092D0400834D9B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -216,6 +522,7 @@
 				BDC68A762D092D0400834D9B /* Prankster */,
 				BDC68A8C2D092D0600834D9B /* PranksterTests */,
 				BDC68A962D092D0600834D9B /* PranksterUITests */,
+				BDC68AC72D092D6400834D9B /* OneSignalPushNotificationExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -225,6 +532,19 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDC68AB82D092D0C00834D9B /* Assets.xcassets in Resources */,
+				BDC68ABA2D092D0C00834D9B /* LaunchScreen.storyboard in Resources */,
+				BDC68ABB2D092D0C00834D9B /* Main.storyboard in Resources */,
+				BDC68B1D2D092E4B00834D9B /* KLEPHON.otf in Resources */,
+				BDC68B1E2D092E4B00834D9B /* CoverGIF.gif in Resources */,
+				BDC68B1F2D092E4B00834D9B /* Auto-Update.json in Resources */,
+				BDC68B202D092E4B00834D9B /* Loading.json in Resources */,
+				BDC68B212D092E4B00834D9B /* Loader.json in Resources */,
+				BDC68B222D092E4B00834D9B /* NoInternet.json in Resources */,
+				BDC68B232D092E4B00834D9B /* LoadData.json in Resources */,
+				BDC68B272D092E8900834D9B /* Color.xcassets in Resources */,
+				BDC68B282D092E8900834D9B /* GoogleService-Info.plist in Resources */,
+				BDC68B242D092E4B00834D9B /* Nodata.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -242,13 +562,208 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BDC68AC62D092D6400834D9B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2265A70A8EC43C6B92653E21 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster/Pods-Prankster-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster/Pods-Prankster-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Prankster/Pods-Prankster-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		43722E8A35BCCC75A5B4EBFA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster/Pods-Prankster-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster/Pods-Prankster-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Prankster/Pods-Prankster-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		56DA45F51E1CFFE92DD3B12F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-PranksterTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6900480F0F44EDE8209A4BF7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Prankster-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7B661AA0A63F81F058F99219 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OneSignalPushNotificationExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		93110C827C2BA13F3CA13A51 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9C939087C8F6F30315A171EB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Prankster-PranksterUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EF750407E182A7F3D8D6278A /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Prankster-PranksterUITests/Pods-Prankster-PranksterUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		BDC68A732D092D0400834D9B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDC68AB52D092D0C00834D9B /* AppDelegate.swift in Sources */,
+				BDC68AB62D092D0C00834D9B /* SceneDelegate.swift in Sources */,
+				BDC68B032D092E4B00834D9B /* BannerAdUtility.swift in Sources */,
+				BDC68B042D092E4B00834D9B /* CoverPageAPI.swift in Sources */,
+				BDC68B052D092E4B00834D9B /* CategoryAPI.swift in Sources */,
+				BDC68B062D092E4B00834D9B /* SpinnerViewModel.swift in Sources */,
+				BDC68B072D092E4B00834D9B /* CategoryAllViewModel.swift in Sources */,
+				BDC68B082D092E4B00834D9B /* PrankAPI.swift in Sources */,
+				BDC68B092D092E4B00834D9B /* MoreAppViewModel.swift in Sources */,
+				BDC68B0A2D092E4B00834D9B /* LoadingFooterView.swift in Sources */,
+				BDC68B0B2D092E4B00834D9B /* CategoryViewModel.swift in Sources */,
+				BDC68B0C2D092E4B00834D9B /* UIImage+GIF.swift in Sources */,
+				BDC68B0D2D092E4B00834D9B /* SpinnerAPI.swift in Sources */,
+				BDC68B0E2D092E4B00834D9B /* SFWConfiguration.swift in Sources */,
+				BDC68B0F2D092E4B00834D9B /* StaticFunction.swift in Sources */,
+				BDC68B102D092E4B00834D9B /* MoreAppAPI.swift in Sources */,
+				BDC68B112D092E4B00834D9B /* Model.swift in Sources */,
+				BDC68B122D092E4B00834D9B /* PrankViewModel.swift in Sources */,
+				BDC68B132D092E4B00834D9B /* premiumManager.swift in Sources */,
+				BDC68B142D092E4B00834D9B /* Extension.swift in Sources */,
+				BDC68B152D092E4B00834D9B /* CategoryAllAPI.swift in Sources */,
+				BDC68B162D092E4B00834D9B /* Alert.swift in Sources */,
+				BDC68B172D092E4B00834D9B /* Skeleton.swift in Sources */,
+				BDC68B182D092E4B00834D9B /* SnapchatEventTracker.swift in Sources */,
+				BDC68B192D092E4B00834D9B /* Snackbar.swift in Sources */,
+				BDC68B1A2D092E4B00834D9B /* InterstitialAdUtility.swift in Sources */,
+				BDC68B1B2D092E4B00834D9B /* CoverPageViewModel.swift in Sources */,
+				BDC68B1C2D092E4B00834D9B /* RewardAdUtility.swift in Sources */,
+				BDC68AB72D092D0C00834D9B /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +771,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDC68ABE2D092D0F00834D9B /* PranksterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +779,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BDC68AC22D092D1200834D9B /* PranksterUITests.swift in Sources */,
+				BDC68AC32D092D1200834D9B /* PranksterUITestsLaunchTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BDC68AC42D092D6400834D9B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDC68AD92D092D6800834D9B /* NotificationService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,17 +805,45 @@
 			target = BDC68A762D092D0400834D9B /* Prankster */;
 			targetProxy = BDC68A982D092D0600834D9B /* PBXContainerItemProxy */;
 		};
+		BDC68ACE2D092D6400834D9B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BDC68AC72D092D6400834D9B /* OneSignalPushNotificationExtension */;
+			targetProxy = BDC68ACD2D092D6400834D9B /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		BDC68AAF2D092D0C00834D9B /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BDC68AAE2D092D0C00834D9B /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		BDC68AB12D092D0C00834D9B /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BDC68AB02D092D0C00834D9B /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		BDC68AA12D092D0600834D9B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DF6DA06B6DF6B11A61EEF855 /* Pods-Prankster.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Prankster/Prankster.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 32BBNXD889;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -297,12 +851,13 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.Prankster;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -312,12 +867,15 @@
 		};
 		BDC68AA22D092D0600834D9B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0E1551777EE5A256975FE95B /* Pods-Prankster.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Prankster/Prankster.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32BBNXD889;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -325,12 +883,13 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.Prankster;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -459,15 +1018,16 @@
 		};
 		BDC68AA62D092D0600834D9B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBE85015E495927229BA9144 /* Pods-PranksterTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32BBNXD889;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.PranksterTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.funTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -478,15 +1038,16 @@
 		};
 		BDC68AA72D092D0600834D9B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D5A7BA264A3D9F5D5F56F594 /* Pods-PranksterTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32BBNXD889;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.PranksterTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.funTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -497,13 +1058,15 @@
 		};
 		BDC68AA92D092D0600834D9B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 17B4134B574FB637730969CC /* Pods-Prankster-PranksterUITests.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32BBNXD889;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.PranksterUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.funUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -514,18 +1077,74 @@
 		};
 		BDC68AAA2D092D0600834D9B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EAB4F535107B2883B95662B1 /* Pods-Prankster-PranksterUITests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 32BBNXD889;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.PranksterUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.funUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Prankster;
+			};
+			name = Release;
+		};
+		BDC68AD22D092D6400834D9B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 32BBNXD889;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OneSignalPushNotificationExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OneSignalPushNotificationExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.OneSignalPushNotificationExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BDC68AD32D092D6400834D9B /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 28BA78DE7AC84A57E8FB85DC /* Pods-OneSignalPushNotificationExtension.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 32BBNXD889;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OneSignalPushNotificationExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = OneSignalPushNotificationExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.OneSignalPushNotificationExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -564,6 +1183,15 @@
 			buildConfigurations = (
 				BDC68AA92D092D0600834D9B /* Debug */,
 				BDC68AAA2D092D0600834D9B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BDC68AD12D092D6400834D9B /* Build configuration list for PBXNativeTarget "OneSignalPushNotificationExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BDC68AD22D092D6400834D9B /* Debug */,
+				BDC68AD32D092D6400834D9B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
