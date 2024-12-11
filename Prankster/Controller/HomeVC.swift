@@ -49,13 +49,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.requestNotificationPermission()
         self.navigationbarView.addBottomShadow()
         
-        //  NotificationCenter.default.addObserver(self, selector: #selector(handleSubscriptionExpired), name: NSNotification.Name("SubscriptionExpired"), object: nil)
     }
-    
-    //    @objc func handleSubscriptionExpired() {
-    //        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
-    //        self.navigationController?.pushViewController(vc, animated: true)
-    //    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

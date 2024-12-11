@@ -278,6 +278,7 @@ class ImageVC: UIViewController {
                     nextVC.selectedCoverURL = selectedCoverImageURL
                     nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "gallery"
+                    nextVC.selectedFileType = "jpg"
                     nextVC.sharePrank = true
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }

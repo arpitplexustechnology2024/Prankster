@@ -306,6 +306,7 @@ class AudioVC: UIViewController {
                     nextVC.selectedCoverURL = selectedCoverImageURL
                     nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "audio"
+                    nextVC.selectedFileType = "mp3"
                     nextVC.sharePrank = true
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }

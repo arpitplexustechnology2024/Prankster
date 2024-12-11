@@ -293,6 +293,7 @@ class VideoVC: UIViewController {
                     nextVC.selectedCoverURL = selectedCoverImageURL
                     nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "video"
+                    nextVC.selectedFileType = "mp4"
                     nextVC.sharePrank = true
                     self.navigationController?.pushViewController(nextVC, animated: true)
                     self.videoImageView.isHidden = false

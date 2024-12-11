@@ -30,6 +30,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var selectedCoverURL: String?
     var selectedCoverFile: Data?
     var selectedPranktype: String?
+    var selectedFileType: String?
     private var isPlaying = false
     var coverImageURL: String?
     var prankDataURL: String?
@@ -167,12 +168,13 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         let file = selectedFile ?? Data()
         let name = selectedName ?? "Unnamed Prank"
         let type = selectedPranktype ?? "Unknown"
+        let fileType = selectedFileType ?? ""
         
         prankImageView.showShimmer()
         prankNameLabel.showShimmer()
         nameChangeButton.showShimmer()
         
-        viewModel.createPrank(coverImage: coverImageFile, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL) { [weak self] success in
+        viewModel.createPrank(coverImage: coverImageFile, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL, fileType: fileType) { [weak self] success in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 if success {
@@ -182,38 +184,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     self.nameChangeButton.hideShimmer()
                     
                     print("Prank Link :- \(self.viewModel.createPrankLink ?? "")")
-                    print("Prank Link :- \(self.viewModel.createPrankData ?? "")")
+                    print("Prank Data :- \(self.viewModel.createPrankData ?? "")")
                     print("Prank ID :- \(self.viewModel.createPrankID ?? "")")
-                    
-                    if let fileResponse = self.viewModel.createPrankResponse?.file {
-                        // Print CoverImage details
-                        print("\nCover Image Details:")
-                        fileResponse.coverImage.forEach { coverImage in
-                            print("Fieldname: \(coverImage.fieldname)")
-                            print("Original Name: \(coverImage.originalname)")
-                            print("Encoding: \(coverImage.encoding)")
-                            print("Mimetype: \(coverImage.mimetype)")
-                            print("Destination: \(coverImage.destination)")
-                            print("Filename: \(coverImage.filename)")
-                            print("Path: \(coverImage.path)")
-                            print("Size: \(coverImage.size) bytes")
-                            print("---")
-                        }
-                        
-                        // Print File details
-                        print("\nFile Details:")
-                        fileResponse.file.forEach { file in
-                            print("Fieldname: \(file.fieldname)")
-                            print("Original Name: \(file.originalname)")
-                            print("Encoding: \(file.encoding)")
-                            print("Mimetype: \(file.mimetype)")
-                            print("Destination: \(file.destination)")
-                            print("Filename: \(file.filename)")
-                            print("Path: \(file.path)")
-                            print("Size: \(file.size) bytes")
-                            print("---")
-                        }
-                    }
                     
                     self.coverImageURL = self.viewModel.createPrankCoverImage
                     self.prankDataURL = self.viewModel.createPrankData

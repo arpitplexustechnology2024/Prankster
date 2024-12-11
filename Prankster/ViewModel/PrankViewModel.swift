@@ -23,7 +23,7 @@ class PrankViewModel {
         self.apiService = apiService
     }
     
-    func createPrank( coverImage: Data,coverImageURL: String,type: String,name: String,file: Data,fileURL: String,completion: @escaping (Bool) -> Void) {
+    func createPrank(coverImage: Data, coverImageURL: String, type: String, name: String, file: Data, fileURL: String, fileType: String, completion: @escaping (Bool) -> Void) {
         guard !isLoading else {
             completion(false)
             return
@@ -31,7 +31,7 @@ class PrankViewModel {
         
         isLoading = true
         
-        apiService.createPrank(coverImage: coverImage, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL) { [weak self] result in
+        apiService.createPrank(coverImage: coverImage, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL, fileType: fileType) { [weak self] result in
             guard let self = self else { return }
             
             DispatchQueue.main.async {
