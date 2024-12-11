@@ -235,6 +235,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         }
     }
     
+    
     @objc private func togglePlayPause() {
         if isConnectedToInternet() {
             isPlaying.toggle()
@@ -244,20 +245,34 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             if selectedPranktype == "audio" {
                 if isPlaying {
                     if audioPlayer == nil {
-                        do {
-                            let audioData = try Data(contentsOf: URL(string: prankDataUrl)!)
-                            audioPlayer = try AVAudioPlayer(data: audioData)
-                            audioPlayer?.prepareToPlay()
-                        } catch {
-                            print("Error loading audio: \(error)")
-                            isPlaying = false
-                            return
-                        }
+                        URLSession.shared.dataTask(with: URL(string: prankDataUrl)!) { [weak self] (data, response, error) in
+                            guard let self = self, let data = data else {
+                                print("Error loading audio: \(error?.localizedDescription ?? "Unknown error")")
+                                DispatchQueue.main.async {
+                                    self?.isPlaying = false
+                                }
+                                return
+                            }
+                            
+                            DispatchQueue.main.async {
+                                do {
+                                    self.audioPlayer = try AVAudioPlayer(data: data)
+                                    self.audioPlayer?.prepareToPlay()
+                                    self.audioPlayer?.play()
+                                    self.audioPlayer?.delegate = self
+                                    self.prankImageView.image = UIImage(named: "audioPrankImage")
+                                    self.playPauseImageView.isHidden = true
+                                } catch {
+                                    print("Error creating audio player: \(error)")
+                                    self.isPlaying = false
+                                }
+                            }
+                        }.resume()
+                    } else {
+                        audioPlayer?.play()
+                        prankImageView.image = UIImage(named: "audioPrankImage")
+                        playPauseImageView.isHidden = true
                     }
-                    audioPlayer?.play()
-                    audioPlayer?.delegate = self
-                    prankImageView.image = UIImage(named: "audioPrankImage")
-                    playPauseImageView.isHidden = true
                 } else {
                     audioPlayer?.pause()
                     prankImageView.image = UIImage(named: "audioPrankImage")
@@ -267,36 +282,52 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             } else if selectedPranktype == "video" {
                 if isPlaying {
                     if videoPlayer == nil {
-                        do {
-                            let videoData = try Data(contentsOf: URL(string: prankDataUrl)!)
-                            let temporaryDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-                            let temporaryFileURL = temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("mp4")
-                            
-                            try videoData.write(to: temporaryFileURL)
-                            
-                            videoPlayer = AVPlayer(url: temporaryFileURL)
-                            playerLayer = AVPlayerLayer(player: videoPlayer)
-                            playerLayer?.videoGravity = .resizeAspectFill
-                            playerLayer?.frame = prankImageView.bounds
-                            
-                            if let playerLayer = playerLayer {
-                                prankImageView.layer.addSublayer(playerLayer)
+                        URLSession.shared.dataTask(with: URL(string: prankDataUrl)!) { [weak self] (data, response, error) in
+                            guard let self = self, let data = data else {
+                                print("Error loading video: \(error?.localizedDescription ?? "Unknown error")")
+                                DispatchQueue.main.async {
+                                    self?.isPlaying = false
+                                }
+                                return
                             }
-                        } catch {
-                            print("Error loading video: \(error)")
-                            isPlaying = false
-                            return
-                        }
+                            
+                            do {
+                                let temporaryDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                                let temporaryFileURL = temporaryDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension("mp4")
+                                
+                                try data.write(to: temporaryFileURL)
+                                
+                                DispatchQueue.main.async {
+                                    self.videoPlayer = AVPlayer(url: temporaryFileURL)
+                                    self.playerLayer = AVPlayerLayer(player: self.videoPlayer)
+                                    self.playerLayer?.videoGravity = .resizeAspectFill
+                                    self.playerLayer?.frame = self.prankImageView.bounds
+                                    
+                                    if let playerLayer = self.playerLayer {
+                                        self.prankImageView.layer.addSublayer(playerLayer)
+                                    }
+                                    
+                                    self.videoPlayer?.play()
+                                    self.playPauseImageView.isHidden = true
+                                    
+                                    NotificationCenter.default.addObserver(
+                                        self,
+                                        selector: #selector(self.videoDidFinishPlaying),
+                                        name: .AVPlayerItemDidPlayToEndTime,
+                                        object: self.videoPlayer?.currentItem
+                                    )
+                                }
+                            } catch {
+                                print("Error saving video: \(error)")
+                                DispatchQueue.main.async {
+                                    self.isPlaying = false
+                                }
+                            }
+                        }.resume()
+                    } else {
+                        videoPlayer?.play()
+                        playPauseImageView.isHidden = true
                     }
-                    
-                    videoPlayer?.play()
-                    playPauseImageView.isHidden = true
-                    NotificationCenter.default.addObserver(
-                        self,
-                        selector: #selector(videoDidFinishPlaying),
-                        name: .AVPlayerItemDidPlayToEndTime,
-                        object: videoPlayer?.currentItem
-                    )
                 } else {
                     videoPlayer?.pause()
                     playPauseImageView.image = UIImage(named: "PlayButton")
@@ -513,9 +544,9 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                   let prankName = prankName else { return }
             let promoText = "Check out this great new video from \(prankName), I found on talent app"
             let shareString = "snapchat://text=\(promoText)&url=\(prankLink)"
-                let escapedShareString = shareString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-                let url = URL(string: escapedShareString)
-                UIApplication.shared.openURL(url!)
+            let escapedShareString = shareString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+            let url = URL(string: escapedShareString)
+            UIApplication.shared.openURL(url!)
         case 4: break  // Snapchat Story
         case 5: break  // Telegram Message
         case 6: // WhatsApp Message
