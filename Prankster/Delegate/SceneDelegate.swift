@@ -86,9 +86,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func navigateToLaunchVC(actionKey: String) {
-//        if let navVC = window?.rootViewController as? UINavigationController,
-//           let launchVC = navVC.viewControllers.first as? LaunchVC {
-//            launchVC.passedActionKey = actionKey
-//        }
+        if let navVC = window?.rootViewController as? UINavigationController,
+           let launchVC = navVC.viewControllers.first as? LaunchVC {
+            launchVC.passedActionKey = actionKey
+        }
     }
 }
