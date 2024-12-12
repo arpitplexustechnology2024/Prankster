@@ -631,7 +631,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     // MARK: - btnNameChangeTapped
     @IBAction func btnNameChangeTapped(_ sender: UIButton) {
-        if isConnectedToInternet() {
+        if prankNameLabel.isEditable {
+            prankNameLabel.resignFirstResponder()
+            prankNameLabel.isEditable = false
+        } else if isConnectedToInternet() {
             prankNameLabel.isEditable = true
             prankNameLabel.becomeFirstResponder()
         } else {
@@ -639,7 +642,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             snackbar.show(in: self.view, duration: 3.0)
         }
     }
-    
+
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()

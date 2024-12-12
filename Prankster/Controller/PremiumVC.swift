@@ -347,13 +347,13 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
     func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
         isRestoringPurchases = false
         if queue.transactions.isEmpty {
-            let alert = UIAlertController(title: "", message: "No active subscription.", preferredStyle: .alert)
-            let okButton = UIAlertAction(title: "Ok", style: .cancel)
-            alert.addAction(okButton)
-            self.present(alert, animated: true)
-//            let snackbar = CustomSnackbar(message: "No active subscription.", backgroundColor: .snackbar)
-//            snackbar.show(in: self.view, duration: 3.0)
-//            self.dismiss(animated: true)
+//            let alert = UIAlertController(title: "", message: "No active subscription.", preferredStyle: .alert)
+//            let okButton = UIAlertAction(title: "Ok", style: .cancel)
+//            alert.addAction(okButton)
+//            self.present(alert, animated: true)
+            let snackbar = CustomSnackbar(message: "No active subscription.", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+            self.dismiss(animated: true)
         }
     }
     
@@ -434,23 +434,18 @@ extension PremiumVC {
     func setupUI() {
         self.premiumButton.layer.cornerRadius = 13
         self.premiumWeeklyView.layer.cornerRadius = 10
-        self.premiumWeeklyView.addGradientBorder(colors: [UIColor(hex: "#01B4D8"),UIColor(hex: "#8FE0EF")],width: 3.0,cornerRadius: 10)
+        
         bestofferView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner]
         bestofferView.layer.cornerRadius = 10
         bestofferView.clipsToBounds = true
-        bestofferView.setHorizontalGradientBackground( colorLeft: UIColor(hex: "#01B4D8"), colorRight: UIColor(hex: "#8FE0EF"))
         self.premiumMonthlyView.layer.cornerRadius = 10
-        self.premiumMonthlyView.addGradientBorder(colors: [UIColor(hex: "#FC6D70"),UIColor(hex: "#FEA3A4")],width: 3.0,cornerRadius: 10)
         topratedView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner]
         topratedView.layer.cornerRadius = 10
         topratedView.clipsToBounds = true
-        topratedView.setHorizontalGradientBackground( colorLeft: UIColor(hex: "#FC6D70"), colorRight: UIColor(hex: "#FEA3A4"))
         self.premiumLifeTimeView.layer.cornerRadius = 10
-        self.premiumLifeTimeView.addGradientBorder(colors: [UIColor(hex: "#B094E0"),UIColor(hex: "#CAA3FD")],width: 4.0,cornerRadius: 10)
         popularView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMaxYCorner]
         popularView.layer.cornerRadius = 10
         popularView.clipsToBounds = true
-        popularView.setHorizontalGradientBackground( colorLeft: UIColor(hex: "#B094E0"), colorRight: UIColor(hex: "#CAA3FD"))
         
         
         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -461,6 +456,13 @@ extension PremiumVC {
         
         let screenHeight = UIScreen.main.nativeBounds.height
         if UIDevice.current.userInterfaceIdiom == .phone {
+            
+            self.premiumWeeklyView.addGradientBorder(colors: [UIColor(hex: "#01B4D8"),UIColor(hex: "#8FE0EF")],width: 3.0,cornerRadius: 10)
+            bestofferView.setHorizontalGradientBackground( colorLeft: UIColor(hex: "#01B4D8"), colorRight: UIColor(hex: "#8FE0EF"))
+            self.premiumMonthlyView.addGradientBorder(colors: [UIColor(hex: "#FC6D70"),UIColor(hex: "#FEA3A4")],width: 3.0,cornerRadius: 10)
+            topratedView.setHorizontalGradientBackground( colorLeft: UIColor(hex: "#FC6D70"), colorRight: UIColor(hex: "#FEA3A4"))
+            self.premiumLifeTimeView.addGradientBorder(colors: [UIColor(hex: "#B094E0"),UIColor(hex: "#CAA3FD")],width: 4.0,cornerRadius: 10)
+            popularView.setHorizontalGradientBackground( colorLeft: UIColor(hex: "#B094E0"), colorRight: UIColor(hex: "#CAA3FD"))
             
             self.featurs01HeightConstraints.constant = 80
             self.featurs01WidthConstraints.constant = 60
@@ -537,6 +539,17 @@ extension PremiumVC {
                 self.featurstext04Constraints.constant = 52.33
             }
         } else {
+            
+            premiumLifeTimeView.layer.borderWidth = 4.0
+            premiumLifeTimeView.layer.borderColor = UIColor(hex: "#B094E0").cgColor
+            popularView.layer.backgroundColor = UIColor(hex: "#B094E0").cgColor
+            premiumMonthlyView.layer.borderWidth = 4.0
+            premiumMonthlyView.layer.borderColor = UIColor(hex: "#FC6D70").cgColor
+            topratedView.layer.backgroundColor = UIColor(hex: "#FC6D70").cgColor
+            premiumWeeklyView.layer.borderWidth = 4.0
+            premiumWeeklyView.layer.borderColor = UIColor(hex: "#01B4D8").cgColor
+            bestofferView.layer.backgroundColor = UIColor(hex: "#01B4D8").cgColor
+            
             self.emojiStarckView.spacing = -5
             self.emojiBottomConstraints.constant = 35
             self.premiymBottomConstraints.constant = 30

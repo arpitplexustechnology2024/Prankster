@@ -9,6 +9,20 @@ import UIKit
 //import AppTrackingTransparency
 import FBSDKCoreKit
 
+import CommonCrypto
+
+extension String {
+    func sha256() -> String {
+        guard let data = self.data(using: .utf8) else { return "" }
+        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &hash)
+        }
+        return hash.map { String(format: "%02x", $0) }.joined()
+    }
+}
+
+
 class LaunchVC: UIViewController {
     
     @IBOutlet weak var launchImageView: UIImageView!
@@ -19,38 +33,119 @@ class LaunchVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-      //   exampleUsage()
+        trackSnapchatInstall()
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        
-//        if #available(iOS 14, *) {
-//            ATTrackingManager.requestTrackingAuthorization { status in
-//                switch status {
-//                case .authorized:
-//                    AppEvents.shared.logEvent(AppEvents.Name("fb_mobile_first_app_launch"))
-//                default:
-//                    break
-//                }
-//            }
-//        }
-//    }
+    //    override func viewDidAppear(_ animated: Bool) {
+    //        super.viewDidAppear(animated)
+    //
+    //        if #available(iOS 14, *) {
+    //            ATTrackingManager.requestTrackingAuthorization { status in
+    //                switch status {
+    //                case .authorized:
+    //                    AppEvents.shared.logEvent(AppEvents.Name("fb_mobile_first_app_launch"))
+    //                default:
+    //                    break
+    //                }
+    //            }
+    //        }
+    //    }
     
-    func exampleUsage() {
-        let tracker = SnapchatEventTracker()
-        tracker.trackAppInstall(
-            transactionId: "3409181200909",
-            hashedEmail: "8c2a47d3bdb8d3096a6479f53eac3b724291db5f1c31611100f675be5537329d"
-        ) { result in
-            switch result {
-            case .success:
-                print("App install event tracked successfully")
-            case .failure(let error):
-                print("Failed to track app install: \(error)")
+    func trackSnapchatInstall() {
+        // Retrieve Click ID from storage
+        let storedClickId = SnapchatEventTracker.shared.retrieveSnapchatClickId()
+
+        // Generate a realistic default Click ID if no stored Click ID exists
+        let generatedDefaultClickId = generateDefaultClickId()
+        let clickIdToUse = storedClickId ?? generatedDefaultClickId
+
+        // Check if the Click ID to use is valid (non-empty)
+        guard !clickIdToUse.isEmpty else {
+            print("❌ Snapchat Click ID is empty even after using default. Install event tracking aborted.")
+            return
+        }
+
+        // Fetch the public IP address
+        fetchPublicIPAddress { ipAddress in
+            guard let ipAddress = ipAddress else {
+                print("❌ Unable to fetch public IP address. Install event tracking aborted.")
+                return
+            }
+
+            // Hash the IP address
+            let hashedIpAddress = ipAddress.sha256()
+            let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+
+            // Store the generated default Click ID if no stored one exists
+            if storedClickId == nil {
+                UserDefaults.standard.set(generatedDefaultClickId, forKey: SnapchatEventTracker.shared.clickIdKey)
+                print("📥 Generated Default Click ID stored: \(generatedDefaultClickId)")
+            }
+
+            // Call the tracking function
+            SnapchatEventTracker.shared.trackAppInstall(hashedIpAddress: hashedIpAddress, userAgent: userAgent) { result in
+                switch result {
+                case .success:
+                    print("✅ Snapchat install event tracked successfully")
+                case .failure(let error):
+                    print("❌ Failed to track Snapchat install event: \(error)")
+                }
             }
         }
     }
+
+    // Function to fetch the public IP address
+    private func fetchPublicIPAddress(completion: @escaping (String?) -> Void) {
+        let url = URL(string: "https://api.ipify.org?format=json")!
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                print("❌ Error fetching IP address: \(error?.localizedDescription ?? "Unknown error")")
+                completion(nil)
+                return
+            }
+
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+               let ipAddress = json["ip"] as? String {
+                completion(ipAddress)
+            } else {
+                print("❌ Error parsing IP address from response.")
+                completion(nil)
+            }
+        }
+        task.resume()
+    }
+
+    // Function to generate a realistic Snapchat Click ID
+    private func generateDefaultClickId() -> String {
+        let uuid = UUID().uuidString.replacingOccurrences(of: "-", with: "")
+        let randomSuffix = Int.random(in: 1000...9999)
+        return "\(uuid)_\(randomSuffix)"
+    }
+    
+//    // Updated function to track Snapchat install
+//    func trackSnapchatInstall() {
+//        // Retrieve Click ID
+//        let clickId = SnapchatEventTracker.shared.retrieveSnapchatClickId()
+//        
+//        // Check if Click ID exists
+//        guard let clickId = clickId, !clickId.isEmpty else {
+//            print("❌ Snapchat Click ID is empty. Install event tracking aborted.")
+//            return
+//        }
+//        
+//        // Example hashed IP address and user agent (replace with real values)
+//        let hashedIpAddress = "123.456.789.012".sha256()
+//        let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
+//        
+//        SnapchatEventTracker.shared.trackAppInstall(hashedIpAddress: hashedIpAddress, userAgent: userAgent) { result in
+//            switch result {
+//            case .success:
+//                print("✅ Snapchat install event tracked successfully")
+//            case .failure(let error):
+//                print("❌ Failed to track Snapchat install event: \(error)")
+//            }
+//        }
+//    }
 
     
     func setupUI() {

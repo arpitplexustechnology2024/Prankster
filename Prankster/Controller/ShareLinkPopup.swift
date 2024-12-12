@@ -324,6 +324,7 @@ class ShareLinkPopup: UIViewController {
                 UIPasteboard.general.string = prankLink
                 let snackbar = CustomSnackbar(message: "Link copied to clipboard!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
+                
             }
         case 1:  // Instagram Message
             guard let prankLink = prankLink,

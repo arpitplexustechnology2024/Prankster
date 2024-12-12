@@ -9,13 +9,22 @@ import Foundation
 import Alamofire
 
 class SnapchatEventTracker {
-    // Configuration constants
-    private let baseURL = "https://tr.snapchat.com/v2/conversion/validate"
-    private let appId = "6670788272"
-    private let snapAppId = "97ad68aa-a2bf-4a7d-b07a-f2a39f03caa6"
-    private let bearerToken = "eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzI2NzI2MTA1LCJzdWIiOiJjMmQyMzI5OC0wYTIzLTRmZTItOTVhZi0zZjJlMDFhMjc0MmZ-UFJPRFVDVElPTn41MjgzNjZkOC01MzMyLTQyZDMtOTQ4NS04M2Y4YjFiNDFiZGQifQ.4EaMtoDAhd4btbEZl2x_GJ2ZocL93VqujqvJ8zqpODQ"
+    // Singleton instance for easy access
+    static let shared = SnapchatEventTracker()
     
-    // Struct to match the JSON payload
+    // Configuration
+    private let conversionURL = "https://tr.snapchat.com/v2/conversion/validate"
+    private let appId = "6739135275"
+    private let snapAppId = "ae721b65-7e0a-44a4-a03b-2e85af04f0cf"
+    private let bearerToken = "eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzMzOTAwNzM2LCJzdWIiOiJjMmQyMzI5OC0wYTIzLTRmZTItOTVhZi0zZjJlMDFhMjc0MmZ-UFJPRFVDVElPTn40MWE2NjEzOS0xMmRjLTQ3ODctOGFmNC1hZWIxZDk2M2VjMWEifQ.Jk9OE8MWQBznASscGif9A-hOcoVo6bE2GEcJZaERRTo"
+    
+    // Private initializer for singleton
+    private init() {}
+    
+    // Click ID Storage Key
+    let clickIdKey = "snapchat_click_id"
+    
+    // Structures for API Payloads
     struct InstallEventPayload: Codable {
         let app_id: String
         let snap_app_id: String
@@ -23,14 +32,60 @@ class SnapchatEventTracker {
         let event_type: String
         let event_conversion_type: String
         let event_tag: String
-        let transaction_id: String
-        let hashed_email: String
+        let hashed_ip_address: String
+        let user_agent: String
+        let click_id: String?
     }
     
-    func trackAppInstall(transactionId: String, hashedEmail: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        // Get current timestamp in ISO 8601 format
+    // Handle Deep Link to Extract Click ID
+    func handleSnapchatDeepLink(_ url: URL) {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+        
+        // Extract Click ID from URL parameters
+        if let clickId = components?.queryItems?.first(where: { $0.name == "click_id" })?.value {
+            // Store Click ID in UserDefaults
+            UserDefaults.standard.set(clickId, forKey: clickIdKey)
+            print("✅ Snapchat Click ID Stored: \(clickId)")
+        } else {
+            print("❌ No Click ID found in the Snapchat deep link")
+        }
+    }
+    
+    // Retrieve Stored Snapchat Click ID
+    func retrieveSnapchatClickId() -> String? {
+        let clickId = UserDefaults.standard.string(forKey: clickIdKey)
+        
+        if let clickId = clickId {
+            print("📦 Retrieved Snapchat Click ID: \(clickId)")
+        } else {
+            print("❗ No Stored Click ID found")
+        }
+        
+        return clickId
+    }
+    
+    // Track App Install with Optional Click ID
+    func trackAppInstall(
+        hashedIpAddress: String,
+        userAgent: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        // Validate hashed IP address and user agent
+        guard !hashedIpAddress.isEmpty, !userAgent.isEmpty else {
+            let error = NSError(domain: "SnapchatEventTracker",
+                                code: 400,
+                                userInfo: [NSLocalizedDescriptionKey: "Invalid hashed IP address or user agent"])
+            print("❌ Hashed IP address and user agent cannot be empty")
+            completion(.failure(error))
+            return
+        }
+        
+        // Retrieve Click ID if available
+        let clickId = retrieveSnapchatClickId()
+        
         let timestamp = ISO8601DateFormatter().string(from: Date())
-        // Create payload
+        
+        // Create payload with optional click ID
         let payload = InstallEventPayload(
             app_id: appId,
             snap_app_id: snapAppId,
@@ -38,18 +93,19 @@ class SnapchatEventTracker {
             event_type: "APP_INSTALL",
             event_conversion_type: "MOBILE_APP",
             event_tag: "offline",
-            transaction_id: transactionId,
-            hashed_email: hashedEmail
+            hashed_ip_address: hashedIpAddress,
+            user_agent: userAgent,
+            click_id: clickId
         )
         
-        // Prepare headers
         let headers: HTTPHeaders = [
             "Content-Type": "application/json",
             "Authorization": "Bearer \(bearerToken)"
         ]
         
-        // Make the API call
-        AF.request(baseURL,
+        print("🚀 Attempting to track Snapchat install event...")
+        
+        AF.request(conversionURL,
                    method: .post,
                    parameters: payload,
                    encoder: JSONParameterEncoder.default,
@@ -58,8 +114,24 @@ class SnapchatEventTracker {
         .response { response in
             switch response.result {
             case .success:
+                print("✅ Snapchat install event tracked successfully")
+                
+                // Optionally clear the stored click ID after successful tracking
+                if clickId != nil {
+                    UserDefaults.standard.removeObject(forKey: self.clickIdKey)
+                    print("🧹 Cleared stored Click ID")
+                }
                 completion(.success(()))
+                
             case .failure(let error):
+                print("❌ Failed to track Snapchat install event:")
+                print("Error: \(error.localizedDescription)")
+                
+                // Log additional details if available
+                if let data = response.data, let errorResponse = String(data: data, encoding: .utf8) {
+                    print("Server Response: \(errorResponse)")
+                }
+                
                 completion(.failure(error))
             }
         }

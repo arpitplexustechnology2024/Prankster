@@ -212,3 +212,22 @@ extension UIView {
         layer.masksToBounds = true
     }
 }
+
+extension UIView {
+    func applyGradient(colors: [UIColor], startPoint: CGPoint = CGPoint(x: 0, y: 0.5), endPoint: CGPoint = CGPoint(x: 1, y: 0.5)) {
+        // Agar pehle se gradient layer exist kare toh usse remove karte hain
+        if let gradientLayer = self.layer.sublayers?.first(where: { $0 is CAGradientLayer }) {
+            gradientLayer.removeFromSuperlayer()
+        }
+        
+        // Naya gradient layer banate hain
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = self.bounds
+        gradientLayer.colors = colors.map { $0.cgColor }
+        gradientLayer.startPoint = startPoint
+        gradientLayer.endPoint = endPoint
+
+        // Gradient ko UIView ke layer par add karte hain
+        self.layer.insertSublayer(gradientLayer, at: 0)
+    }
+}
