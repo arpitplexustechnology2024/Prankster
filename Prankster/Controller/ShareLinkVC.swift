@@ -108,14 +108,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         }
         if isConnectedToInternet() {
             bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
-            Task {
-                await interstitialAdUtility.loadInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
-            }
+            interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-3940256099942544/4411468910", rootViewController: self)
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
         }
-        interstitialAdUtility.delegate = self
         
         self.prankNameLabel.isEditable = false
         self.prankNameLabel.delegate = self
@@ -195,7 +192,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     
                     if let coverImageUrl = self.coverImageURL {
                         self.loadImage(from: coverImageUrl, into: self.prankImageView)
+                        UserDefaults.standard.set(coverImageUrl, forKey: "CoverImage")
+                        NotificationCenter.default.post(name: Notification.Name("PrankInfoUpdated"), object: coverImageUrl)
                     }
+                    UserDefaults.standard.set(self.prankName, forKey: "Name")
                     
                     self.playPauseImageView.image = UIImage(named: "PlayButton")
                     self.playPauseImageView.isUserInteractionEnabled = true
@@ -417,12 +417,26 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             hideNoDataView()
             checkInternetAndFetchData()
             bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
-            Task {
-                await interstitialAdUtility.loadInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+            interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-3940256099942544/4411468910", rootViewController: self)
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    private func navigateToSecondViewController() {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let bottomSheetVC = storyboard.instantiateViewController(withIdentifier: "ShareBottomVC") as! ShareBottomVC
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            bottomSheetVC.modalPresentationStyle = .formSheet
+            bottomSheetVC.preferredContentSize = CGSize(width: 540, height: 540)
+        } else {
+            bottomSheetVC.modalPresentationStyle = .custom
+            bottomSheetVC.transitioningDelegate = self
+            present(bottomSheetVC, animated: true, completion: nil)
         }
     }
     
@@ -531,102 +545,114 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 snackbar.show(in: self.view, duration: 3.0)
             }
         case 1:  // Instagram Message
-            guard let prankLink = prankLink,
-                  let prankName = prankName else { return }
-            let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-            if let url = URL(string: "instagram://sharesheet?text=\(message)") {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareInstagramMessage()
             }
         case 2:  // Instagram Story
-            interstitialAdUtility.presentInterstitial(from: self)
-        case 3:  // Snapchat Message
-            guard let prankLink = prankLink,
-                  let prankName = prankName else { return }
-            let promoText = "Check out this great new video from \(prankName), I found on talent app"
-            let shareString = "snapchat://text=\(promoText)&url=\(prankLink)"
-            let escapedShareString = shareString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-            let url = URL(string: escapedShareString)
-            UIApplication.shared.openURL(url!)
-        case 4: break  // Snapchat Story
-        case 5: break  // Telegram Message
-        case 6: // WhatsApp Message
-            guard let prankLink = prankLink,
-                  let prankName = prankName,
-                  let coverImageURL = coverImageURL else { return }
-            
-            AF.request(coverImageURL).responseData { [weak self] response in
-                switch response.result {
-                case .success(let imageData):
-                    guard let image = UIImage(data: imageData) else { return }
-                    
-                    let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-                    self?.openShareSheetWithImageAndLink(image: image, link: message)
-                case .failure:
-                    self?.openShareSheetWithLink(prankLink)
-                }
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.NavigateToShareSnapchat(sharePrank: "Instagram")
             }
-        case 7:  // More
-            shareViaWhatsAppMessage()
+        case 3:  // Snapchat Message
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareSnapchatMessage()
+            }
+        case 4:   // Snapchat Story
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            }
+        case 5:   // Telegram Message
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareTelegramMessage()
+            }
+        case 6: // WhatsApp Message
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareWhatsAppMessage()
+            }
+        case 7:   // More
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareSnapchatMessage()
+            }
         default:
             break
         }
     }
     
-    private func openShareSheetWithImageAndLink(image: UIImage, link: String) {
-        let activityViewController = UIActivityViewController(
-            activityItems: [image, link],
-            applicationActivities: nil
-        )
-        present(activityViewController, animated: true, completion: nil)
-    }
-    
-    private func openShareSheetWithLink(_ link: String) {
-        let activityViewController = UIActivityViewController(
-            activityItems: [link],
-            applicationActivities: nil
-        )
-        present(activityViewController, animated: true, completion: nil)
-    }
-    
-    private func shareViaWhatsAppMessage() {
+    private func NavigateToShareSnapchat(sharePrank: String?) {
         guard let prankLink = prankLink,
-              let prankName = prankName,
               let coverImageURL = coverImageURL else { return }
         
-        AF.request(coverImageURL).responseData { [weak self] response in
-            switch response.result {
-            case .success(let imageData):
-                guard let image = UIImage(data: imageData) else { return }
-                
-                let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-                
-                if let imageURL = self?.saveImageToTemporaryFile(image: image) {
-                    let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
-                    
-                    if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    }
-                }
-                
-            case .failure:
-                self?.openShareSheetWithLink(prankLink)
-            }
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let bottomSheetVC = storyboard.instantiateViewController(withIdentifier: "ShareBottomVC") as! ShareBottomVC
+        bottomSheetVC.coverImageURL = coverImageURL
+        bottomSheetVC.prankLink = prankLink
+        bottomSheetVC.sharePrank = sharePrank
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            bottomSheetVC.modalPresentationStyle = .formSheet
+            bottomSheetVC.preferredContentSize = CGSize(width: 540, height: 540)
+        } else {
+            bottomSheetVC.modalPresentationStyle = .custom
+            bottomSheetVC.transitioningDelegate = self
+        }
+        present(bottomSheetVC, animated: true, completion: nil)
+    }
+    
+    private func shareWhatsAppMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
+        if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            let snackbar = CustomSnackbar(message: "WhatsApp not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
-    private func saveImageToTemporaryFile(image: UIImage) -> URL? {
-        guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
-        
-        let tempDirectory = FileManager.default.temporaryDirectory
-        let tempFileURL = tempDirectory.appendingPathComponent("\(UUID().uuidString).jpg")
-        
-        do {
-            try data.write(to: tempFileURL)
-            return tempFileURL
-        } catch {
-            print("Error saving image to temporary file: \(error)")
-            return nil
+    private func shareInstagramMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        if let url = URL(string: "instagram://sharesheet?text=\(message)") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            let snackbar = CustomSnackbar(message: "Instagram app not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
+    }
+    
+    private func shareTelegramMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let telegramMessage = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            let snackbar = CustomSnackbar(message: "Telegram app not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    private func shareSnapchatMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        let itemsToShare: [Any] = [message]
+        let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
+        if let popoverController = activityVC.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+        self.present(activityVC, animated: true, completion: nil)
     }
     
     // MARK: - btnNameChangeTapped
@@ -642,7 +668,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             snackbar.show(in: self.view, duration: 3.0)
         }
     }
-
+    
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         if text == "\n" {
             textView.resignFirstResponder()
@@ -725,35 +751,6 @@ extension ShareLinkVC: AVAudioPlayerDelegate {
             self.playPauseImageView.image = UIImage(named: "PlayButton")
             self.playPauseImageView.isHidden = false
             self.audioPlayer = nil
-        }
-    }
-}
-
-extension ShareLinkVC: InterstitialAdUtilityDelegate {
-    
-    // MARK: - InterstitialAdUtilityDelegate
-    func didFailToLoadInterstitial() {
-        navigateToSecondViewController()
-    }
-    
-    func didFailToPresentInterstitial() {
-        navigateToSecondViewController()
-    }
-    
-    func didDismissInterstitial() {
-        navigateToSecondViewController()
-    }
-    
-    private func navigateToSecondViewController() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let bottomSheetVC = storyboard.instantiateViewController(withIdentifier: "ShareBottomVC") as! ShareBottomVC
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            bottomSheetVC.modalPresentationStyle = .formSheet
-            bottomSheetVC.preferredContentSize = CGSize(width: 540, height: 540)
-        } else {
-            bottomSheetVC.modalPresentationStyle = .custom
-            bottomSheetVC.transitioningDelegate = self
-            present(bottomSheetVC, animated: true, completion: nil)
         }
     }
 }

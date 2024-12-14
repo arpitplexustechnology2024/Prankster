@@ -8,57 +8,57 @@
 import GoogleMobileAds
 import UIKit
 
-protocol InterstitialAdUtilityDelegate: AnyObject {
-    func didFailToLoadInterstitial()
-    func didFailToPresentInterstitial()
-    func didDismissInterstitial()
-}
-
 class InterstitialAdUtility: NSObject, GADFullScreenContentDelegate {
     
-    private var interstitial: GADInterstitialAd?
-    weak var delegate: InterstitialAdUtilityDelegate?
+    private var interstitialAd: GADInterstitialAd?
+    private weak var rootViewController: UIViewController?
+    private var adUnitID: String?
     
-    // Asynchronously load an interstitial ad
-    func loadInterstitial(adUnitID: String) async {
-        do {
-            // Attempt to load the interstitial ad
-            interstitial = try await GADInterstitialAd.load(withAdUnitID: adUnitID, request: GADRequest())
-            interstitial?.fullScreenContentDelegate = self
+    var onInterstitialEarned: (() -> Void)?
+    
+    func loadInterstitialAd(adUnitID: String, rootViewController: UIViewController) {
+        self.rootViewController = rootViewController
+        self.adUnitID = adUnitID
+        GADInterstitialAd.load(withAdUnitID: adUnitID, request: GADRequest()) { [weak self] ad, error in
+            if let error = error {
+                print("Rewarded ad failed to load with error: \(error.localizedDescription)")
+                self?.onInterstitialEarned?()
+                return
+            }
+            self?.interstitialAd = ad
+            self?.interstitialAd?.fullScreenContentDelegate = self
             print("Interstitial ad loaded.")
-        } catch {
-            // Handle the error if ad loading fails
-            print("Failed to load interstitial ad with error: \(error.localizedDescription)")
-            delegate?.didFailToLoadInterstitial()
         }
     }
     
-    // Present the interstitial ad from the given view controller
-    func presentInterstitial(from viewController: UIViewController) {
-        guard let interstitial = interstitial else {
+    func showInterstitialAd() {
+        guard let interstitialAd = interstitialAd, let rootViewController = rootViewController else {
             print("Ad wasn't ready.")
-            delegate?.didFailToPresentInterstitial()
+            self.onInterstitialEarned?()
             return
         }
-        interstitial.present(fromRootViewController: viewController)
+        interstitialAd.present(fromRootViewController: rootViewController)
     }
-
+    
     // MARK: - GADFullScreenContentDelegate
     
-    // Called when the ad fails to present full screen content
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        print("Ad did fail to present full screen content.")
-        delegate?.didFailToPresentInterstitial()
+        print("Ad did fail to present full screen content: \(error.localizedDescription)")
+        if let adUnitID = adUnitID {
+            loadInterstitialAd(adUnitID: adUnitID, rootViewController: rootViewController!)
+            self.onInterstitialEarned?()
+        }
     }
     
-    // Called just before the ad presents full screen content
     func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         print("Ad will present full screen content.")
     }
     
-    // Called after the ad has been dismissed
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         print("Ad did dismiss full screen content.")
-        delegate?.didDismissInterstitial()
+        if let adUnitID = adUnitID {
+            loadInterstitialAd(adUnitID: adUnitID, rootViewController: rootViewController!)
+            self.onInterstitialEarned?()
+        }
     }
 }

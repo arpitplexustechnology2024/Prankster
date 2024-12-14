@@ -167,20 +167,16 @@ extension UIView {
         gradientLayer.colors = [colorLeft.cgColor, colorRight.cgColor]
         gradientLayer.locations = [0.0, 1.0]
         
-        // Use bounds that adjust to the current view's size dynamically
         gradientLayer.frame = bounds
         gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
         
-        // Remove any existing gradient layers first
         layer.sublayers?.filter { $0 is CAGradientLayer }.forEach { $0.removeFromSuperlayer() }
         
-        // Insert the new gradient layer at the bottom of the layer stack
         layer.insertSublayer(gradientLayer, at: 0)
     }
     
     func addGradientBorder(colors: [UIColor], width: CGFloat = 2.0, cornerRadius: CGFloat = 8.0) {
-        // Remove any existing gradient border layers
         layer.sublayers?.filter { $0.name == "GradientBorderLayer" }.forEach { $0.removeFromSuperlayer() }
         
         let gradientLayer = CAGradientLayer()
@@ -189,13 +185,11 @@ extension UIView {
         gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
         
-        // Dynamically adjust frame to current view's bounds
         gradientLayer.frame = bounds
 
         let maskLayer = CAShapeLayer()
         maskLayer.lineWidth = width
         
-        // Use the current bounds and corner radius
         maskLayer.path = UIBezierPath(roundedRect: bounds, cornerRadius: cornerRadius).cgPath
         maskLayer.fillColor = UIColor.clear.cgColor
         maskLayer.strokeColor = UIColor.white.cgColor
@@ -210,24 +204,5 @@ extension UIView {
         layer.addSublayer(gradientLayer)
         layer.cornerRadius = cornerRadius
         layer.masksToBounds = true
-    }
-}
-
-extension UIView {
-    func applyGradient(colors: [UIColor], startPoint: CGPoint = CGPoint(x: 0, y: 0.5), endPoint: CGPoint = CGPoint(x: 1, y: 0.5)) {
-        // Agar pehle se gradient layer exist kare toh usse remove karte hain
-        if let gradientLayer = self.layer.sublayers?.first(where: { $0 is CAGradientLayer }) {
-            gradientLayer.removeFromSuperlayer()
-        }
-        
-        // Naya gradient layer banate hain
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.frame = self.bounds
-        gradientLayer.colors = colors.map { $0.cgColor }
-        gradientLayer.startPoint = startPoint
-        gradientLayer.endPoint = endPoint
-
-        // Gradient ko UIView ke layer par add karte hain
-        self.layer.insertSublayer(gradientLayer, at: 0)
     }
 }

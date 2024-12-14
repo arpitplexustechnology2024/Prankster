@@ -19,13 +19,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         Settings.shared.isAutoLogAppEventsEnabled = true
-        // AppEvents.shared.logEvent(AppEvents.Name("fb_mobile_activate_app"))
         FirebaseApp.configure()
         getAndStoreOneSignalPlayerId()
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         OneSignal.initialize("d8e64d76-dc16-444f-af2d-1bb802f7bc44", withLaunchOptions: launchOptions)
         checkNotificationAuthorization()
         setupAppLifecycleObservers()
+        checkForUpdate()
         return true
     }
     
@@ -102,8 +102,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // MARK: UISceneSession Lifecycle
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
     
@@ -166,7 +164,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func promptUserToUpdate() {
         let alert = UIAlertController(
             title: "Update Available",
-            message: "A newer version of the app is available. Please update to the latest version.",
+            message: "A new version of the app is available. Please update to the latest version.",
             preferredStyle: .alert
         )
         
@@ -196,4 +194,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Settings.shared.isAutoLogAppEventsEnabled = true
     }
 }
-

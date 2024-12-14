@@ -171,7 +171,7 @@ class SpinnerVC: UIViewController {
             }
         }
     }
-
+    
     // MARK: - Setup Methods
     private func setupViewModel() {
         spinViewModel = SpinnerViewModel()
@@ -389,7 +389,7 @@ class SpinnerVC: UIViewController {
     }
     
     @IBAction func btnShowReward(_ sender: UIButton) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerHistoryViewController") as! SpinnerHistoryViewController
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerDataVC") as! SpinnerDataVC
         vc.spinnerResponseData = self.spinnerResponseData
         if let sheet = vc.sheetPresentationController {
             sheet.detents = [.medium()]

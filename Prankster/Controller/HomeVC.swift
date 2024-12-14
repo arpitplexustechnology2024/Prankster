@@ -342,12 +342,19 @@ extension HomeVC {
     
     @objc private func privacyPolicyTapped() {
         hideDropdown()
-        print("Privacy Policy tapped")
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PrivacyPolicyVC") as! PrivacyPolicyVC
+        vc.modalPresentationStyle = .pageSheet
+        self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func shareAppTapped() {
         hideDropdown()
-        print("Share app tapped")
+        let appURL = URL(string: "https://apps.apple.com/us/app/6739135275")!
+        
+        let activityViewController = UIActivityViewController(activityItems: [appURL], applicationActivities: nil)
+        activityViewController.popoverPresentationController?.sourceView = self.view
+        
+        present(activityViewController, animated: true, completion: nil)
     }
 }
 

@@ -27,6 +27,7 @@ class ShareLinkPopup: UIViewController {
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var blurEffectView: UIVisualEffectView!
+    let interstitialAdUtility = InterstitialAdUtility()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,7 +39,11 @@ class ShareLinkPopup: UIViewController {
         
         if let coverImageUrl = self.coverImageURL {
             self.loadImage(from: coverImageUrl, into: self.imageView)
+            UserDefaults.standard.set(coverImageUrl, forKey: "CoverImage")
+            NotificationCenter.default.post(name: Notification.Name("PrankInfoUpdated"), object: coverImageUrl)
         }
+        
+        UserDefaults.standard.set(prankName, forKey: "Name")
         
         self.playPauseImageView.image = UIImage(named: "PlayButton")
         self.playPauseImageView.isUserInteractionEnabled = true
@@ -53,6 +58,13 @@ class ShareLinkPopup: UIViewController {
         
         let viewTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.viewClickDissmiss))
         self.view.addGestureRecognizer(viewTapGesture)
+        
+        if isConnectedToInternet() {
+            interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-3940256099942544/4411468910", rootViewController: self)
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
     }
     
     @objc private func viewClickDissmiss() {
@@ -324,293 +336,116 @@ class ShareLinkPopup: UIViewController {
                 UIPasteboard.general.string = prankLink
                 let snackbar = CustomSnackbar(message: "Link copied to clipboard!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
-                
             }
         case 1:  // Instagram Message
-            guard let prankLink = prankLink,
-                  let prankName = prankName else { return }
-            let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-            if let url = URL(string: "instagram://sharesheet?text=\(message)") {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareInstagramMessage()
             }
         case 2:  // Instagram Story
-            guard let prankLink = prankLink,
-                  let prankName = prankName else { return }
-            
-            let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-            if let url = URL(string: "snapchat://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")") {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+            self?.NavigateToShareSnapchat(sharePrank: "Instagram")
             }
         case 3:  // Snapchat Message
-            if let prankLink = prankLink,
-               let coverImageURL = coverImageURL {
-                // Download the cover image
-                AF.request(coverImageURL).responseData { response in
-                    switch response.result {
-                    case .success(let data):
-                        if let coverImage = UIImage(data: data) {
-                            // Save the image to a temporary location
-                            let tempDirectory = FileManager.default.temporaryDirectory
-                            let imagePath = tempDirectory.appendingPathComponent("prankCoverImage.jpg")
-                            
-                            do {
-                                // Write image data to a temporary file
-                                try data.write(to: imagePath)
-                                
-                                // Use Snapchat URL scheme for sharing
-                                let snapURL = URL(string: "snapchat://")!
-                                if UIApplication.shared.canOpenURL(snapURL) {
-                                    // Use UIActivityViewController for sharing
-                                    let activityVC = UIActivityViewController(activityItems: [coverImage, prankLink], applicationActivities: nil)
-                                    self.present(activityVC, animated: true)
-                                } else {
-                                    let snackbar = CustomSnackbar(message: "Snapchat is not installed!", backgroundColor: .snackbar)
-                                    snackbar.show(in: self.view, duration: 3.0)
-                                }
-                            } catch {
-                                print("Error saving image: \(error)")
-                            }
-                        } else {
-                            print("Failed to create image from data.")
-                        }
-                    case .failure(let error):
-                        print("Error downloading cover image: \(error)")
-                    }
-                }
-            } else {
-                let snackbar = CustomSnackbar(message: "Failed to prepare content for sharing!", backgroundColor: .snackbar)
-                snackbar.show(in: self.view, duration: 3.0)
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareSnapchatMessage()
             }
         case 4:   // Snapchat Story
-            guard let prankLink = prankLink,
-                  let prankName = prankName else { return }
-            let promoText = "Check out this great new video from \(prankName), I found on talent app"
-            let shareString = "snapchat://text=\(promoText)&url=\(prankLink)"
-            let escapedShareString = shareString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
-            let url = URL(string: escapedShareString)
-            UIApplication.shared.openURL(url!)
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            }
         case 5:    // Telegram Message
-            if let prankLink = prankLink {
-                let telegramMessage = "\(prankLink)"
-                let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-                if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
-                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                } else {
-                    let snackbar = CustomSnackbar(message: "Telegram app not installed!", backgroundColor: .snackbar)
-                    snackbar.show(in: self.view, duration: 3.0)
-                }
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareTelegramMessage()
             }
         case 6:  // WhatsApp Message
-            shareURLToSnapchat()
-            // shareViaWhatsAppMessage()
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareWhatsAppMessage()
+            }
         case 7:  // More
-            
-            guard let prankLink = prankLink,
-                  let prankName = prankName,
-                  let coverImageURL = coverImageURL else { return }
-            
-            AF.request(coverImageURL).responseData { [weak self] response in
-                switch response.result {
-                case .success(let imageData):
-                    guard let image = UIImage(data: imageData) else { return }
-                    
-                    let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-                    self?.openShareSheetWithImageAndLink(image: image, link: message)
-                case .failure:
-                    self?.openShareSheetWithLink(prankLink)
-                }
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareSnapchatMessage()
             }
         default:
             break
         }
     }
     
-    func shareURLToSnapchat() {
-        let urlToShare = "https://your-url.com"
-        UIPasteboard.general.string = urlToShare
-        if let snapchatURL = URL(string: "snapchat://chat") {
-            if UIApplication.shared.canOpenURL(snapchatURL) {
-                UIApplication.shared.open(snapchatURL, options: [:], completionHandler: nil)
-                print("URL copied to clipboard. Share it in Snapchat manually.")
-            } else {
-                print("Snapchat is not installed.")
-            }
-        }
-    }
-    
-    func shareOnTelegram(prankLink: String, coverImageURL: URL?) {
-        // Validate inputs
-        guard let imageURL = coverImageURL else {
-            print("No image URL provided")
-            return
-        }
-        
-        // Check if Telegram is installed
-        let telegramURLScheme = "tg://msg?text=\(prankLink)"
-        guard let telegramURL = URL(string: telegramURLScheme.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "") else {
-            print("Invalid Telegram URL")
-            return
-        }
-        
-        // Attempt to download the image
-        URLSession.shared.dataTask(with: imageURL) { (data, response, error) in
-            if let error = error {
-                print("Image download error: \(error.localizedDescription)")
-                return
-            }
-            
-            guard let imageData = data, let image = UIImage(data: imageData) else {
-                print("Could not load image")
-                return
-            }
-            
-            // Perform UI updates on the main thread
-            DispatchQueue.main.async {
-                // Prepare activity items
-                let itemsToShare = [image, prankLink] as [Any]
-                
-                // Create activity view controller
-                let activityViewController = UIActivityViewController(
-                    activityItems: itemsToShare,
-                    applicationActivities: nil
-                )
-                
-                // Configure exclusion list to prioritize Telegram
-                activityViewController.excludedActivityTypes = [
-                    .addToReadingList,
-                    .assignToContact,
-                    .print
-                ]
-                
-                // Present the share sheet
-                self.present(activityViewController, animated: true, completion: nil)
-            }
-        }.resume()
-    }
-    
-    
-    func shareToTelegram(link: String, image: UIImage) {
-        // Prepare the message
-        let message = link
-        
-        // Create an array of items to share
-        let items: [Any] = [message, image]
-        
-        // Initialize UIActivityViewController
-        let activityVC = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        
-        // Filter activities to ensure Telegram is included
-        activityVC.excludedActivityTypes = [.postToFacebook, .postToTwitter]
-        
-        // Present the activity view controller
-        activityVC.completionWithItemsHandler = { activityType, completed, returnedItems, error in
-            if let activityType = activityType, activityType.rawValue.contains("com.apple.UIKit.activity.Message") && !UIApplication.shared.canOpenURL(URL(string: "tg://")!) {
-                let snackbar = CustomSnackbar(message: "Telegram app not installed!", backgroundColor: .snackbar)
-                snackbar.show(in: self.view, duration: 3.0)
-            }
-        }
-        
-        // Show the Activity View Controller
-        self.present(activityVC, animated: true, completion: nil)
-    }
-    
-    
-    private func shareToTelegram() {
-        guard let prankLink = prankLink else { return }
-        
-        // Step 1: Download the image
-        guard let coverImageUrl = coverImageURL, let imageUrl = URL(string: coverImageUrl) else {
-            print("Invalid cover image URL")
-            return
-        }
-        
-        AF.download(imageUrl).responseData { response in
-            switch response.result {
-            case .success(let data):
-                if let image = UIImage(data: data) {
-                    let sharingMessage = "Check this out: \(prankLink)"
-                    let sharingItems: [Any] = [image, sharingMessage]
-                    
-                    let activityVC = UIActivityViewController(activityItems: sharingItems, applicationActivities: nil)
-                    
-                    activityVC.excludedActivityTypes = [
-                        .postToFacebook,
-                        .postToTwitter,
-                        .message,
-                        .mail,
-                        .postToWeibo,
-                        .print,
-                        .copyToPasteboard,
-                        .assignToContact,
-                        .saveToCameraRoll
-                    ]
-                    
-                    // Step 4: Present the activity view controller
-                    self.present(activityVC, animated: true, completion: nil)
-                } else {
-                    print("Failed to create image from data")
-                }
-            case .failure(let error):
-                print("Failed to download cover image: \(error)")
-            }
-        }
-    }
-    
-    private func openShareSheetWithImageAndLink(image: UIImage, link: String) {
-        let activityViewController = UIActivityViewController(
-            activityItems: [image, link],
-            applicationActivities: nil
-        )
-        present(activityViewController, animated: true, completion: nil)
-    }
-    
-    private func openShareSheetWithLink(_ link: String) {
-        let activityViewController = UIActivityViewController(
-            activityItems: [link],
-            applicationActivities: nil
-        )
-        present(activityViewController, animated: true, completion: nil)
-    }
-    
-    private func shareViaWhatsAppMessage() {
+    private func NavigateToShareSnapchat(sharePrank: String?) {
         guard let prankLink = prankLink,
-              let prankName = prankName,
               let coverImageURL = coverImageURL else { return }
         
-        AF.request(coverImageURL).responseData { [weak self] response in
-            switch response.result {
-            case .success(let imageData):
-                guard let image = UIImage(data: imageData) else { return }
-                
-                let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
-                
-                if let imageURL = self?.saveImageToTemporaryFile(image: image) {
-                    let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
-                    
-                    if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
-                        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-                    }
-                }
-                
-            case .failure:
-                self?.openShareSheetWithLink(prankLink)
-            }
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let bottomSheetVC = storyboard.instantiateViewController(withIdentifier: "ShareBottomVC") as! ShareBottomVC
+        bottomSheetVC.coverImageURL = coverImageURL
+        bottomSheetVC.prankLink = prankLink
+        bottomSheetVC.sharePrank = sharePrank
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            bottomSheetVC.modalPresentationStyle = .formSheet
+            bottomSheetVC.preferredContentSize = CGSize(width: 540, height: 540)
+        } else {
+            bottomSheetVC.modalPresentationStyle = .custom
+            bottomSheetVC.transitioningDelegate = self
+        }
+        present(bottomSheetVC, animated: true, completion: nil)
+    }
+    
+    private func shareWhatsAppMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
+        if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            let snackbar = CustomSnackbar(message: "WhatsApp not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
-    private func saveImageToTemporaryFile(image: UIImage) -> URL? {
-        guard let data = image.jpegData(compressionQuality: 0.8) else { return nil }
-        
-        let tempDirectory = FileManager.default.temporaryDirectory
-        let tempFileURL = tempDirectory.appendingPathComponent("\(UUID().uuidString).jpg")
-        
-        do {
-            try data.write(to: tempFileURL)
-            return tempFileURL
-        } catch {
-            print("Error saving image to temporary file: \(error)")
-            return nil
+    private func shareInstagramMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        if let url = URL(string: "instagram://sharesheet?text=\(message)") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            let snackbar = CustomSnackbar(message: "Instagram app not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
+    }
+    
+    private func shareTelegramMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let telegramMessage = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+        if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        } else {
+            let snackbar = CustomSnackbar(message: "Telegram app not installed!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    private func shareSnapchatMessage() {
+        guard let prankLink = prankLink,
+              let prankName = prankName else { return }
+        let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        let itemsToShare: [Any] = [message]
+        let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
+        if let popoverController = activityVC.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+        self.present(activityVC, animated: true, completion: nil)
     }
 }
 
@@ -625,5 +460,16 @@ extension ShareLinkPopup: AVAudioPlayerDelegate {
             self.playPauseImageView.isHidden = false
             self.audioPlayer = nil
         }
+    }
+}
+
+extension ShareLinkPopup: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let customPresentationController = CustomePresentationController(
+            presentedViewController: presented,
+            presenting: presenting
+        )
+        customPresentationController.heightPercentage = 0.5
+        return customPresentationController
     }
 }

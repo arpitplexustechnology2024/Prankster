@@ -13,7 +13,7 @@ class SnapchatEventTracker {
     static let shared = SnapchatEventTracker()
     
     // Configuration
-    private let conversionURL = "https://tr.snapchat.com/v2/conversion/validate"
+    private let conversionURL = "https://tr.snapchat.com/v2/conversion/"
     private let appId = "6739135275"
     private let snapAppId = "ae721b65-7e0a-44a4-a03b-2e85af04f0cf"
     private let bearerToken = "eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzMzOTAwNzM2LCJzdWIiOiJjMmQyMzI5OC0wYTIzLTRmZTItOTVhZi0zZjJlMDFhMjc0MmZ-UFJPRFVDVElPTn40MWE2NjEzOS0xMmRjLTQ3ODctOGFmNC1hZWIxZDk2M2VjMWEifQ.Jk9OE8MWQBznASscGif9A-hOcoVo6bE2GEcJZaERRTo"

@@ -6,24 +6,21 @@
 //
 
 import UIKit
+import WebKit
 
 class PrivacyPolicyVC: UIViewController {
-
+    
+    @IBOutlet weak var privacyPolicyWebView: WKWebView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupUI()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    func setupUI() {
+        if let url = URL(string: "https://pslink.world/privacy-policy") {
+            let request = URLRequest(url: url)
+            privacyPolicyWebView.load(request)
+        }
     }
-    */
-
 }

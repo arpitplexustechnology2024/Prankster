@@ -14,6 +14,7 @@ class ShareView: UIView {
     @IBOutlet weak var cardview: UIView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var textLabel: UILabel!
+    @IBOutlet weak var pasteLinkImageView: UIImageView!
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -34,23 +35,50 @@ class ShareView: UIView {
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         
         addSubview(view)
-        
+        loadImage()
         cardview.layer.cornerRadius = 16
         cardview.layer.masksToBounds = true
         
         imageView.layer.cornerRadius = 16
         imageView.clipsToBounds = true
-    }
-    
-    func configure(with imageURL: URL, name: String) {
-        // Load main image
-        imageView.sd_setImage(with: imageURL) { [weak self] (image, error, cacheType, url) in
-            guard let self = self, let loadedImage = image else { return }
-            self.createBlurredBackground(from: loadedImage)
+        
+        if let name = UserDefaults.standard.string(forKey: "Name") {
             self.textLabel.text = name
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(updateProfileImage(notification:)), name: Notification.Name("PrankInfoUpdated"), object: nil)
     }
-
+    
+    private func loadImage() {
+        if let CoverURL = UserDefaults.standard.string(forKey: "CoverImage") {
+            imageView.sd_setImage(with: URL(string: CoverURL), placeholderImage: UIImage(named: "Pranksters"))
+        }
+    }
+    
+    @objc func updateProfileImage(notification: Notification) {
+        if let image = notification.object as? UIImage {
+            imageView.image = image
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: Notification.Name("PrankInfoUpdated"), object: nil)
+    }
+    
+    func configure(with imageURL: URL) {
+        shareBackground.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PranksterBlur")) { [weak self] (image, error, cacheType, url) in
+            guard let self = self else { return }
+            
+            if let loadedImage = image {
+                self.createBlurredBackground(from: loadedImage)
+            } else {
+                if let placeholderImage = UIImage(named: "PranksterBlur") {
+                    self.createBlurredBackground(from: placeholderImage)
+                }
+            }
+        }
+    }
+    
     private func createBlurredBackground(from image: UIImage) {
         let context = CIContext(options: nil)
         guard let ciImage = CIImage(image: image),
@@ -65,4 +93,6 @@ class ShareView: UIView {
         shareBackground.image = UIImage(cgImage: cgImage)
         shareBackground.contentMode = .scaleAspectFill
     }
+    
+    
 }

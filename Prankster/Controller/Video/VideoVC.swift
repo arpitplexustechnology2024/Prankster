@@ -112,7 +112,7 @@ class VideoVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.videoImageView.loadGif(name: "CoverGIF")
+        self.videoImageView.loadGif(name: "VideoGIF")
         self.videoImageView.layer.cornerRadius = 8
         self.videoShowView.layer.cornerRadius = 8
         self.videoShowView.layer.shadowColor = UIColor.black.cgColor

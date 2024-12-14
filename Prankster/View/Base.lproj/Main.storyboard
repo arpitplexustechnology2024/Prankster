@@ -78,7 +78,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="Ihg-GI-gah">
-                                                        <rect key="frame" x="20" y="29.666666666666654" width="145.66666666666666" height="60.666666666666657"/>
+                                                        <rect key="frame" x="20" y="29.666666666666654" width="151" height="60.666666666666657"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Audio Prank" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mWT-4e-Gek">
                                                                 <rect key="frame" x="0.0" y="0.0" width="145.66666666666666" height="34.333333333333336"/>
@@ -86,8 +86,8 @@
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Audio Prank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ebk-8G-bMU">
-                                                                <rect key="frame" x="0.0" y="37.333333333333343" width="94.333333333333329" height="23.333333333333329"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Audio Prank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ebk-8G-bMU">
+                                                                <rect key="frame" x="0.0" y="37.333333333333343" width="151" height="23.333333333333329"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
@@ -115,7 +115,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="6GU-z3-pb8">
-                                                        <rect key="frame" x="20" y="29.666666666666682" width="145" height="60.666666666666657"/>
+                                                        <rect key="frame" x="20" y="29.666666666666682" width="149.33333333333334" height="60.666666666666657"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Prank" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xlC-PA-4mF">
                                                                 <rect key="frame" x="0.0" y="0.0" width="145" height="34.333333333333336"/>
@@ -123,8 +123,8 @@
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Prank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zvR-Bw-sFS">
-                                                                <rect key="frame" x="0.0" y="37.333333333333314" width="92.666666666666671" height="23.333333333333329"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Video Prank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zvR-Bw-sFS">
+                                                                <rect key="frame" x="0.0" y="37.333333333333314" width="149.33333333333334" height="23.333333333333329"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
@@ -152,7 +152,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="zgE-wA-ME3">
-                                                        <rect key="frame" x="20" y="29.666666666666682" width="148" height="60.666666666666657"/>
+                                                        <rect key="frame" x="20" y="29.666666666666682" width="153" height="60.666666666666657"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Image Prank" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mbw-9I-OUE">
                                                                 <rect key="frame" x="0.0" y="0.0" width="148" height="34.333333333333336"/>
@@ -160,8 +160,8 @@
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Image Prank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Vf-2a-bQ9">
-                                                                <rect key="frame" x="0.0" y="37.333333333333314" width="96.333333333333329" height="23.333333333333329"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Create Image Prank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Vf-2a-bQ9">
+                                                                <rect key="frame" x="0.0" y="37.333333333333314" width="153" height="23.333333333333329"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
@@ -189,7 +189,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="K6i-x8-v9S">
-                                                        <rect key="frame" x="19.999999999999993" y="29.666666666666625" width="104.33333333333331" height="60.666666666666657"/>
+                                                        <rect key="frame" x="19.999999999999993" y="29.666666666666625" width="124.33333333333331" height="60.666666666666657"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Premium" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tzm-vG-zaO">
                                                                 <rect key="frame" x="0.0" y="0.0" width="104.33333333333333" height="34.333333333333336"/>
@@ -197,8 +197,8 @@
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Premium" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yhn-j3-yHN">
-                                                                <rect key="frame" x="0.0" y="37.333333333333371" width="68.333333333333329" height="23.333333333333329"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unlock Features" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yhn-j3-yHN">
+                                                                <rect key="frame" x="0.0" y="37.333333333333371" width="124.33333333333333" height="23.333333333333329"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
@@ -234,8 +234,8 @@
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="View Link" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MQ2-nF-Iah">
-                                                                <rect key="frame" x="0.0" y="37.333333333333371" width="73" height="23.333333333333329"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show Prank" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MQ2-nF-Iah">
+                                                                <rect key="frame" x="0.0" y="37.333333333333371" width="90.333333333333329" height="23.333333333333329"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
@@ -862,8 +862,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="View Lorem Ipsum" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="by5-6u-cdj">
-                                <rect key="frame" x="110" y="351.66666666666669" width="147" height="23.333333333333314"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unlock Hidden Views" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="by5-6u-cdj">
+                                <rect key="frame" x="110" y="351.66666666666669" width="169" height="23.333333333333314"/>
                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -1133,8 +1133,8 @@
                                             <action selector="btnBackTapped:" destination="2eJ-5h-dMn" eventType="touchUpInside" id="jbd-FW-KLs"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover page" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GZq-lC-QQn">
-                                        <rect key="frame" x="62" y="11.333333333333327" width="109" height="27.333333333333329"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Cover page" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GZq-lC-QQn">
+                                        <rect key="frame" x="62" y="11.333333333333327" width="172" height="27.333333333333329"/>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -1174,8 +1174,8 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wkk-aC-iE9">
                                                 <rect key="frame" x="0.0" y="0.0" width="402" height="580"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cover page  " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1AG-vX-7We">
-                                                        <rect key="frame" x="16" y="15.999999999999998" width="122" height="27.333333333333329"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Upload Cover page " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1AG-vX-7We">
+                                                        <rect key="frame" x="16" y="15.999999999999998" width="190" height="27.333333333333329"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="20"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -1528,8 +1528,8 @@
                                             <action selector="btnBackTapped:" destination="sVh-Cd-Xdy" eventType="touchUpInside" id="oU5-M7-csu"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZOU-Bg-SO0">
-                                        <rect key="frame" x="61.999999999999986" y="11.333333333333327" width="145.66666666666663" height="27.333333333333329"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Audio" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZOU-Bg-SO0">
+                                        <rect key="frame" x="62" y="11.333333333333327" width="119" height="27.333333333333329"/>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -1649,8 +1649,8 @@
                                                             </collectionViewCell>
                                                         </cells>
                                                     </collectionView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Audio" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K8c-AR-vWA">
-                                                        <rect key="frame" x="16.000000000000007" y="200.33333333333337" width="119.66666666666669" height="27.333333333333343"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Audio Category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="K8c-AR-vWA">
+                                                        <rect key="frame" x="16" y="200.33333333333337" width="150.66666666666666" height="27.333333333333343"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="20"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -1860,8 +1860,8 @@
                                             <action selector="btnBackTapped:" destination="JUK-Yf-WwC" eventType="touchUpInside" id="5aP-G0-iKO"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pIJ-Jy-k97">
-                                        <rect key="frame" x="61.999999999999986" y="11.333333333333327" width="145.66666666666663" height="27.333333333333329"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Image" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pIJ-Jy-k97">
+                                        <rect key="frame" x="62" y="11.333333333333327" width="121" height="27.333333333333329"/>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -1981,8 +1981,8 @@
                                                             </collectionViewCell>
                                                         </cells>
                                                     </collectionView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Image" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wbV-3u-RqC">
-                                                        <rect key="frame" x="16.000000000000007" y="200.33333333333337" width="121.66666666666669" height="27.333333333333343"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Image Category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wbV-3u-RqC">
+                                                        <rect key="frame" x="16" y="200.33333333333337" width="152.33333333333334" height="27.333333333333343"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="20"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -2165,8 +2165,8 @@
                                             <action selector="btnBackTapped:" destination="XFS-ZS-6ue" eventType="touchUpInside" id="RKP-dq-kxs"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EMm-g3-eeD">
-                                        <rect key="frame" x="61.999999999999986" y="11.333333333333327" width="145.66666666666663" height="27.333333333333329"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Select Video" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EMm-g3-eeD">
+                                        <rect key="frame" x="61.999999999999993" y="11.333333333333327" width="118.33333333333331" height="27.333333333333329"/>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -2206,8 +2206,8 @@
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yoq-Q2-Nav">
                                                 <rect key="frame" x="0.0" y="0.0" width="402" height="530"/>
                                                 <subviews>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Upload Audio" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Wf-1u-Dej">
-                                                        <rect key="frame" x="16" y="15.999999999999998" width="130.66666666666666" height="27.333333333333329"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Upload Video" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Wf-1u-Dej">
+                                                        <rect key="frame" x="16" y="15.999999999999998" width="130" height="27.333333333333329"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="20"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -2286,8 +2286,8 @@
                                                             </collectionViewCell>
                                                         </cells>
                                                     </collectionView>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Audio" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rVF-oh-es7">
-                                                        <rect key="frame" x="16.000000000000007" y="200.33333333333337" width="119.66666666666669" height="27.333333333333343"/>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rVF-oh-es7">
+                                                        <rect key="frame" x="16" y="200.33333333333337" width="150" height="27.333333333333343"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="20"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -3844,45 +3844,63 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n5q-ay-lqq">
-                                <rect key="frame" x="16" y="758" width="370" height="52"/>
-                                <color key="backgroundColor" name="yellow"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="52" id="pX6-Mi-i8l"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain" title="Share link">
-                                    <fontDescription key="titleFontDescription" name="Avenir-Heavy" family="Avenir" pointSize="18"/>
-                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="btnShareLinkTapped:" destination="092-k7-lH2" eventType="touchUpInside" id="trY-qw-DIM"/>
-                                </connections>
-                            </button>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="audioPrankImage" translatesAutoresizingMaskIntoConstraints="NO" id="1Dq-MU-Tgj">
                                 <rect key="frame" x="30" y="82" width="342" height="656"/>
                             </imageView>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="bEX-uB-w0l">
+                                <rect key="frame" x="30" y="758" width="342" height="52"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jnd-8p-BDx">
+                                        <rect key="frame" x="0.0" y="0.0" width="166" height="52"/>
+                                        <color key="backgroundColor" name="sharebottom"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Back">
+                                            <fontDescription key="titleFontDescription" name="Avenir-Heavy" family="Avenir" pointSize="18"/>
+                                            <color key="baseForegroundColor" name="Icon"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="btnBackTapped:" destination="092-k7-lH2" eventType="touchUpInside" id="iLc-Zo-sMP"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n5q-ay-lqq">
+                                        <rect key="frame" x="176" y="0.0" width="166" height="52"/>
+                                        <color key="backgroundColor" name="yellow"/>
+                                        <state key="normal" title="Button"/>
+                                        <buttonConfiguration key="configuration" style="plain" title="Next">
+                                            <fontDescription key="titleFontDescription" name="Avenir-Heavy" family="Avenir" pointSize="18"/>
+                                            <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        </buttonConfiguration>
+                                        <connections>
+                                            <action selector="btnNextTapped:" destination="092-k7-lH2" eventType="touchUpInside" id="trY-qw-DIM"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="52" id="Sh4-UX-sZW"/>
+                                </constraints>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="8SC-vo-7R3"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="8SC-vo-7R3" firstAttribute="bottom" secondItem="n5q-ay-lqq" secondAttribute="bottom" constant="30" id="5J0-W7-pFZ"/>
-                            <constraint firstItem="8SC-vo-7R3" firstAttribute="trailing" secondItem="n5q-ay-lqq" secondAttribute="trailing" constant="16" id="Lsx-nE-n8p"/>
                             <constraint firstItem="8SC-vo-7R3" firstAttribute="trailing" secondItem="1Dq-MU-Tgj" secondAttribute="trailing" constant="30" id="OIa-8P-Zzz"/>
                             <constraint firstItem="1Dq-MU-Tgj" firstAttribute="leading" secondItem="8SC-vo-7R3" secondAttribute="leading" constant="30" id="Qoe-xg-fp2"/>
-                            <constraint firstItem="n5q-ay-lqq" firstAttribute="top" secondItem="1Dq-MU-Tgj" secondAttribute="bottom" constant="20" id="WcV-yr-uSI"/>
+                            <constraint firstItem="8SC-vo-7R3" firstAttribute="trailing" secondItem="bEX-uB-w0l" secondAttribute="trailing" constant="30" id="RVa-4r-UMB"/>
                             <constraint firstItem="1Dq-MU-Tgj" firstAttribute="top" secondItem="8SC-vo-7R3" secondAttribute="top" constant="20" id="Xmz-Qn-lae"/>
-                            <constraint firstItem="n5q-ay-lqq" firstAttribute="leading" secondItem="8SC-vo-7R3" secondAttribute="leading" constant="16" id="kd5-E4-Lhp"/>
+                            <constraint firstItem="bEX-uB-w0l" firstAttribute="leading" secondItem="8SC-vo-7R3" secondAttribute="leading" constant="30" id="f3C-tu-8fL"/>
+                            <constraint firstItem="8SC-vo-7R3" firstAttribute="bottom" secondItem="bEX-uB-w0l" secondAttribute="bottom" constant="30" id="rFe-se-vqa"/>
+                            <constraint firstItem="bEX-uB-w0l" firstAttribute="top" secondItem="1Dq-MU-Tgj" secondAttribute="bottom" constant="20" id="u6m-k8-11Y"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="NextButton" destination="n5q-ay-lqq" id="rfO-Wm-eOu"/>
+                        <outlet property="backButton" destination="jnd-8p-BDx" id="sMJ-F5-AkZ"/>
                         <outlet property="imageView" destination="1Dq-MU-Tgj" id="nH6-GI-YtR"/>
-                        <outlet property="shareButton" destination="n5q-ay-lqq" id="rfO-Wm-eOu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dvD-e9-ELh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11945" y="-38"/>
+            <point key="canvasLocation" x="11944.776119402984" y="-38.443935926773456"/>
         </scene>
         <!--SpinnerVC-->
         <scene sceneID="3AH-wO-5Kz">
@@ -4123,10 +4141,10 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
             </objects>
             <point key="canvasLocation" x="10571.641791044776" y="688.55835240274598"/>
         </scene>
-        <!--Spinner History View Controller-->
+        <!--Spinner DataVC-->
         <scene sceneID="vrP-b0-3Kf">
             <objects>
-                <viewController storyboardIdentifier="SpinnerHistoryViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="aNP-30-nxm" customClass="SpinnerHistoryViewController" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="SpinnerDataVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="aNP-30-nxm" customClass="SpinnerDataVC" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="0JB-B3-Aty">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -4554,8 +4572,8 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="View Lorem Ipsum" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zlb-TG-MSN">
-                                <rect key="frame" x="110" y="433.66666666666669" width="147" height="23.333333333333314"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Unlock Hidden Views" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zlb-TG-MSN">
+                                <rect key="frame" x="110" y="433.66666666666669" width="169" height="23.333333333333314"/>
                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -4645,7 +4663,41 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EWG-Xy-w8s" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3888" y="1278"/>
+            <point key="canvasLocation" x="7084" y="634"/>
+        </scene>
+        <!--Privacy PolicyVC-->
+        <scene sceneID="WUH-79-RYD">
+            <objects>
+                <viewController storyboardIdentifier="PrivacyPolicyVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Jig-rc-yNl" customClass="PrivacyPolicyVC" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ozw-cl-1XP">
+                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <wkWebView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Frg-Lk-2GJ">
+                                <rect key="frame" x="0.0" y="62" width="402" height="778"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <wkWebViewConfiguration key="configuration">
+                                    <audiovisualMediaTypes key="mediaTypesRequiringUserActionForPlayback" none="YES"/>
+                                    <wkPreferences key="preferences"/>
+                                </wkWebViewConfiguration>
+                            </wkWebView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="IQZ-UC-EvL"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Frg-Lk-2GJ" firstAttribute="top" secondItem="IQZ-UC-EvL" secondAttribute="top" id="LGy-zI-HaI"/>
+                            <constraint firstItem="IQZ-UC-EvL" firstAttribute="trailing" secondItem="Frg-Lk-2GJ" secondAttribute="trailing" id="PJY-lg-uto"/>
+                            <constraint firstItem="Frg-Lk-2GJ" firstAttribute="leading" secondItem="IQZ-UC-EvL" secondAttribute="leading" id="XRj-CD-fpj"/>
+                            <constraint firstItem="IQZ-UC-EvL" firstAttribute="bottom" secondItem="Frg-Lk-2GJ" secondAttribute="bottom" id="dV8-6U-EXJ"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="privacyPolicyWebView" destination="Frg-Lk-2GJ" id="Gru-iN-ysx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ec6-J9-jY3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="7781" y="634"/>
         </scene>
     </scenes>
     <resources>
@@ -4700,6 +4752,9 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
         </namedColor>
         <namedColor name="recordingPopuptext">
             <color red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="sharebottom">
+            <color red="0.94901960784313721" green="0.95294117647058818" blue="0.96470588235294119" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="yellow">
             <color red="1" green="0.84705882352941175" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

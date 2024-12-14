@@ -480,7 +480,7 @@ extension PremiumBottomVC {
             self.featurstext03.font = UIFont(name: "Avenir-Heavy", size: 17)
             self.featurstext04.font = UIFont(name: "Avenir-Heavy", size: 17)
             switch screenHeight {
-            case 1334, 1920, 2340, 1792: // se
+            case 1334, 1920, 2340, 1792:
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 8
                 self.premiymBottomConstraints.constant = 8
@@ -501,7 +501,7 @@ extension PremiumBottomVC {
                 self.featurstext02.font = UIFont(name: "Avenir-Heavy", size: 13)
                 self.featurstext03.font = UIFont(name: "Avenir-Heavy", size: 13)
                 self.featurstext04.font = UIFont(name: "Avenir-Heavy", size: 13)
-            case 2532, 2556, 2436: // 14
+            case 2532, 2556, 2436:
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 10
                 self.premiymBottomConstraints.constant = 10
@@ -509,7 +509,7 @@ extension PremiumBottomVC {
                 self.featurstext02Constraints.constant = 47.33
                 self.featurstext03Constraints.constant = 47.33
                 self.featurstext04Constraints.constant = 47.33
-            case 2622: // 16 pro
+            case 2622:
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 10
                 self.premiymBottomConstraints.constant = 10
@@ -517,7 +517,7 @@ extension PremiumBottomVC {
                 self.featurstext02Constraints.constant = 47.33
                 self.featurstext03Constraints.constant = 47.33
                 self.featurstext04Constraints.constant = 47.33
-            case 2688, 2886, 2796, 2778, 2868, 2869: // 11 pro max
+            case 2688, 2886, 2796, 2778, 2868, 2869:
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 10
                 self.premiymBottomConstraints.constant = 10
@@ -537,13 +537,13 @@ extension PremiumBottomVC {
             }
         } else {
             
-            premiumLifeTimeView.layer.borderWidth = 4.0
+            premiumLifeTimeView.layer.borderWidth = 3.0
             premiumLifeTimeView.layer.borderColor = UIColor(hex: "#B094E0").cgColor
             popularView.layer.backgroundColor = UIColor(hex: "#B094E0").cgColor
-            premiumMonthlyView.layer.borderWidth = 4.0
+            premiumMonthlyView.layer.borderWidth = 3.0
             premiumMonthlyView.layer.borderColor = UIColor(hex: "#FC6D70").cgColor
             topratedView.layer.backgroundColor = UIColor(hex: "#FC6D70").cgColor
-            premiumWeeklyView.layer.borderWidth = 4.0
+            premiumWeeklyView.layer.borderWidth = 3.0
             premiumWeeklyView.layer.borderColor = UIColor(hex: "#01B4D8").cgColor
             bestofferView.layer.backgroundColor = UIColor(hex: "#01B4D8").cgColor
             
