@@ -1,5 +1,5 @@
 //
-//  SpinnerHistoryViewController.swift
+//  SpinnerDataVC.swift
 //  Pranksters
 //
 //  Created by Arpit iOS Dev. on 02/12/24.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SpinnerHistoryViewController: UIViewController {
+class SpinnerDataVC: UIViewController {
     
     @IBOutlet weak var spinnerDataCollectionView: UICollectionView!
     
@@ -39,7 +39,7 @@ class SpinnerHistoryViewController: UIViewController {
 }
 
 // MARK: - UICollectionView Delegate & DataSource
-extension SpinnerHistoryViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension SpinnerDataVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return spinnerResponseData.count
     }
