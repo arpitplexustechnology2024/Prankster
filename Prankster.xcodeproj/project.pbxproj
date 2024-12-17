@@ -10,6 +10,8 @@
 		39D557955CA728194C45BFDD /* Pods_Prankster_PranksterUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0555AD96EFBEA4CB450ECEA7 /* Pods_Prankster_PranksterUITests.framework */; };
 		8A14A120C85453A0695CFCAE /* Pods_Prankster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */; };
 		AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */; };
+		BDADD19B2D11F22E00BDF838 /* AdsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */; };
+		BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */; };
 		BDB339792D0CEED5001684D8 /* VideoGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB339782D0CEED5001684D8 /* VideoGIF.gif */; };
 		BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB3397E2D0D070B001684D8 /* Insta2.gif */; };
 		BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB339822D0D1A6F001684D8 /* Snap4.gif */; };
@@ -165,6 +167,8 @@
 		28BA78DE7AC84A57E8FB85DC /* Pods-OneSignalPushNotificationExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.release.xcconfig"; sourceTree = "<group>"; };
 		713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalPushNotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsAPI.swift; sourceTree = "<group>"; };
+		BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsViewModel.swift; sourceTree = "<group>"; };
 		BDB339782D0CEED5001684D8 /* VideoGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = VideoGIF.gif; sourceTree = "<group>"; };
 		BDB3397E2D0D070B001684D8 /* Insta2.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Insta2.gif; sourceTree = "<group>"; };
 		BDB339822D0D1A6F001684D8 /* Snap4.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Snap4.gif; sourceTree = "<group>"; };
@@ -495,6 +499,7 @@
 				BDC68AF82D092E4B00834D9B /* MoreAppAPI.swift */,
 				BDC68AF92D092E4B00834D9B /* PrankAPI.swift */,
 				BDC68AFA2D092E4B00834D9B /* SpinnerAPI.swift */,
+				BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */,
 			);
 			path = APIManager;
 			sourceTree = "<group>";
@@ -508,6 +513,7 @@
 				BDC68AFF2D092E4B00834D9B /* MoreAppViewModel.swift */,
 				BDC68B002D092E4B00834D9B /* PrankViewModel.swift */,
 				BDC68B012D092E4B00834D9B /* SpinnerViewModel.swift */,
+				BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -569,10 +575,10 @@
 		BDC68B4B2D0931F800834D9B /* View */ = {
 			isa = PBXGroup;
 			children = (
-				BDC68B2E2D0931F800834D9B /* Main.storyboard */,
-				BDC68B302D0931F800834D9B /* LaunchScreen.storyboard */,
 				BDC68B3E2D0931F800834D9B /* Cell */,
 				BDC68B4A2D0931F800834D9B /* XIB */,
+				BDC68B2E2D0931F800834D9B /* Main.storyboard */,
+				BDC68B302D0931F800834D9B /* LaunchScreen.storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -621,24 +627,24 @@
 		BDC68B6A2D0931F800834D9B /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				BDC68B512D0931F800834D9B /* Audio */,
-				BDC68B562D0931F800834D9B /* CoverPage */,
-				BDC68B592D0931F800834D9B /* Image */,
-				BDC68B5C2D0931F800834D9B /* Video */,
 				BDC68B5D2D0931F800834D9B /* LaunchVC.swift */,
 				BDC68B5E2D0931F800834D9B /* HomeVC.swift */,
 				BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */,
 				BDC68B5F2D0931F800834D9B /* MoreAppVC.swift */,
-				BDC68B602D0931F800834D9B /* PremiumPopupVC.swift */,
-				BDC68B612D0931F800834D9B /* PremiumVC.swift */,
-				BDC68B622D0931F800834D9B /* PremiumBottomVC.swift */,
-				BDC68B632D0931F800834D9B /* ShareLinkPopup.swift */,
-				BDC68B642D0931F800834D9B /* ShareLinkVC.swift */,
+				BDC68B682D0931F800834D9B /* SpinnerVC.swift */,
 				BDC68B652D0931F800834D9B /* SpinnerDataVC.swift */,
 				BDC68B662D0931F800834D9B /* SpinnerPreviewVC.swift */,
-				BDC68B672D0931F800834D9B /* ViewLinkVC.swift */,
-				BDC68B682D0931F800834D9B /* SpinnerVC.swift */,
+				BDC68B562D0931F800834D9B /* CoverPage */,
+				BDC68B512D0931F800834D9B /* Audio */,
+				BDC68B5C2D0931F800834D9B /* Video */,
+				BDC68B592D0931F800834D9B /* Image */,
+				BDC68B612D0931F800834D9B /* PremiumVC.swift */,
+				BDC68B602D0931F800834D9B /* PremiumPopupVC.swift */,
+				BDC68B622D0931F800834D9B /* PremiumBottomVC.swift */,
+				BDC68B642D0931F800834D9B /* ShareLinkVC.swift */,
 				BDC68B692D0931F800834D9B /* ShareBottomVC.swift */,
+				BDC68B672D0931F800834D9B /* ViewLinkVC.swift */,
+				BDC68B632D0931F800834D9B /* ShareLinkPopup.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1069,12 +1075,14 @@
 				BDC68B7F2D0931F900834D9B /* VideoCharacterAllCollectionViewCell.swift in Sources */,
 				BDC68B802D0931F900834D9B /* PremiumPopupVC.swift in Sources */,
 				BDC68B812D0931F900834D9B /* AudioCollectionViewCell.swift in Sources */,
+				BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */,
 				BDC68B822D0931F900834D9B /* ShareBottomVC.swift in Sources */,
 				BDC68B832D0931F900834D9B /* SaveRecordingPopup.swift in Sources */,
 				BDC68B842D0931F900834D9B /* CoverPageCollectionViewCell.swift in Sources */,
 				BDC68B852D0931F900834D9B /* CoverPageVC.swift in Sources */,
 				BDC68B862D0931F900834D9B /* LaunchVC.swift in Sources */,
 				BDC68B872D0931F900834D9B /* RealisticCoverAllCollectionViewCell.swift in Sources */,
+				BDADD19B2D11F22E00BDF838 /* AdsAPI.swift in Sources */,
 				BDC68B882D0931F900834D9B /* ImageVC.swift in Sources */,
 				BDC68B892D0931F900834D9B /* SpinnerCollectionViewCell.swift in Sources */,
 				BDC68B8A2D0931F900834D9B /* SpinnerDataVC.swift in Sources */,
@@ -1173,7 +1181,9 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture photos and videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need access to your microphone to record audio and video with sound.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select and upload images and videos.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1206,7 +1216,9 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This identifier will be used to deliver personalized ads to you.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture photos and videos.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need access to your microphone to record audio and video with sound.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select and upload images and videos.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

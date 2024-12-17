@@ -164,3 +164,26 @@ struct SpinnerData: Codable {
         case name = "Name"
     }
 }
+
+// MARK: - AdsResponse
+struct AdsResponse: Codable {
+    let status: Int
+    let message: String
+    let adsStatus: Bool
+    let data: [AdsData]
+
+    enum CodingKeys: String, CodingKey {
+        case status, message
+        case adsStatus = "AdsStatus"
+        case data
+    }
+}
+struct AdsData: Codable {
+    let adsName, adsID, createdAt, updatedAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case adsName = "AdsName"
+        case adsID = "AdsId"
+        case createdAt, updatedAt
+    }
+}

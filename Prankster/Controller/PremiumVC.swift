@@ -347,10 +347,6 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
     func paymentQueueRestoreCompletedTransactionsFinished(_ queue: SKPaymentQueue) {
         isRestoringPurchases = false
         if queue.transactions.isEmpty {
-//            let alert = UIAlertController(title: "", message: "No active subscription.", preferredStyle: .alert)
-//            let okButton = UIAlertAction(title: "Ok", style: .cancel)
-//            alert.addAction(okButton)
-//            self.present(alert, animated: true)
             let snackbar = CustomSnackbar(message: "No active subscription.", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
             self.dismiss(animated: true)

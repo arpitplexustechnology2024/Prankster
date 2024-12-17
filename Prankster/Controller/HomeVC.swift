@@ -33,6 +33,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     private var isDropdownVisible = false
     var shouldNavigateToSpinner: Bool = false
     var shouldNavigateToMoreApp: Bool = false
+    private let adsViewModel = AdsViewModel()
     
     let notificationMessages = [
         (title: "NotificationTitleKey01", body: "NotificationDescriptonKey01"),
@@ -45,6 +46,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
+        self.loadAds()
         self.seupViewAction()
         self.requestNotificationPermission()
         self.navigationbarView.addBottomShadow()
@@ -395,4 +397,19 @@ extension HomeVC {
             }
         }
     }
+    
+    func loadAds() {
+        adsViewModel.fetchAds { [weak self] success in
+            if success {
+                print("Ads loaded successfully")
+                let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
+                print("Saved Ad Names: \(savedNames)")
+                print("Saved Ad IDs: \(savedIDs)")
+            } else {
+                print("Failed to load ads")
+                self?.adsViewModel.removeAdsFromUserDefaults()
+            }
+        }
+    }
 }
+

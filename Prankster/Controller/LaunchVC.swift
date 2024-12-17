@@ -31,7 +31,6 @@ class LaunchVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-     //   trackSnapchatInstall()
     }
     
     func trackSnapchatInstall() {

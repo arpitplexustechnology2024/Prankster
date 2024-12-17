@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class PremiumPopupVC: UIViewController {
     
@@ -13,6 +14,7 @@ class PremiumPopupVC: UIViewController {
     @IBOutlet weak var premiumView: UIView!
     @IBOutlet weak var watchAdButton: UIButton!
     private let rewardAdUtility = RewardAdUtility()
+    private let adsViewModel = AdsViewModel()
     private var itemIDToUnlock: Int?
     
     override func viewDidLoad() {
@@ -21,7 +23,14 @@ class PremiumPopupVC: UIViewController {
         self.premiumButton.layer.cornerRadius = 8
         self.watchAdButton.layer.cornerRadius = 8
         setupTapGesture()
-        rewardAdUtility.loadRewardedAd(adUnitID: "ca-app-pub-3940256099942544/1712485313", rootViewController: self)
+        if isConnectedToInternet() {
+            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                print("Reward Ad ID: \(rewardAdID)")
+                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
+            } else {
+                print("No Reward Ad ID found")
+            }
+        }
         rewardAdUtility.onRewardEarned = { [weak self] in
             if let itemID = self?.itemIDToUnlock {
                 PremiumManager.shared.temporarilyUnlockContent(itemID: itemID)
@@ -57,11 +66,21 @@ class PremiumPopupVC: UIViewController {
     }
     
     @IBAction func btnWatchAdTapped(_ sender: UIButton) {
-        rewardAdUtility.showRewardedAd()
+        if isConnectedToInternet() {
+            rewardAdUtility.showRewardedAd()
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
     }
     
     func setItemIDToUnlock(_ itemID: Int) {
         self.itemIDToUnlock = itemID
+    }
+    
+    private func isConnectedToInternet() -> Bool {
+        let networkManager = NetworkReachabilityManager()
+        return networkManager?.isReachable ?? false
     }
     
 }

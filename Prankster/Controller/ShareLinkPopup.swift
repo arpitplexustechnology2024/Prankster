@@ -27,6 +27,7 @@ class ShareLinkPopup: UIViewController {
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var blurEffectView: UIVisualEffectView!
+    private let adsViewModel = AdsViewModel()
     let interstitialAdUtility = InterstitialAdUtility()
     
     override func viewDidLoad() {
@@ -60,7 +61,12 @@ class ShareLinkPopup: UIViewController {
         self.view.addGestureRecognizer(viewTapGesture)
         
         if isConnectedToInternet() {
-            interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-3940256099942544/4411468910", rootViewController: self)
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                print("Interstitial Ad ID: \(interstitialAdID)")
+                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+            } else {
+                print("No Interstitial Ad ID found")
+            }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)

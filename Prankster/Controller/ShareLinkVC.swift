@@ -37,6 +37,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var prankName: String?
     var prankLink: String?
     var sharePrank: Bool = false
+    private let adsViewModel = AdsViewModel()
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -107,8 +108,18 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             }
         }
         if isConnectedToInternet() {
-            bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
-            interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-3940256099942544/4411468910", rootViewController: self)
+            if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+                print("Banner Ad ID: \(bannerAdID)")
+                bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+            } else {
+                print("No Banner Ad ID found")
+            }
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                print("Interstitial Ad ID: \(interstitialAdID)")
+                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+            } else {
+                print("No Interstitial Ad ID found")
+            }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
@@ -416,10 +427,17 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             noInternetView.isHidden = true
             hideNoDataView()
             checkInternetAndFetchData()
-            bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-3940256099942544/2435281174")
-            interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-3940256099942544/4411468910", rootViewController: self)
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                
+            if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+                print("Banner Ad ID: \(bannerAdID)")
+                bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+            } else {
+                print("No Banner Ad ID found")
+            }
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                print("Interstitial Ad ID: \(interstitialAdID)")
+                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+            } else {
+                print("No Interstitial Ad ID found")
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)

@@ -60,6 +60,7 @@ class SpinnerVC: UIViewController {
     private var spinViewModel: SpinnerViewModel!
     private let timerKey = "nextSpinAvailableTime"
     private let rewardAdUtility = RewardAdUtility()
+    private let adsViewModel = AdsViewModel()
     private var currentSpinButtonState: SpinButtonState = .spin
     
     var remainingSpins: Int {
@@ -109,7 +110,14 @@ class SpinnerVC: UIViewController {
         wheelControl.configuration = .customColorsConfiguration
         updateSpinLabel()
         startTimerLabelUpdate()
-        rewardAdUtility.loadRewardedAd(adUnitID: "ca-app-pub-3940256099942544/1712485313", rootViewController: self)
+        if isConnectedToInternet() {
+            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                print("Reward Ad ID: \(rewardAdID)")
+                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
+            } else {
+                print("No Reward Ad ID found")
+            }
+        }
         rewardAdUtility.onRewardEarned = { [weak self] in
             self?.proceedWithSpinning()
         }
@@ -119,6 +127,7 @@ class SpinnerVC: UIViewController {
         if UIDevice.current.userInterfaceIdiom == .phone {
             spinnerbuttonWidghConstraints.constant = 230
             spinnerbuttonHeightConstraints.constant = 110
+            bannerHeightConstraints.constant = 90
             switch screenHeight {
             case 1334:
                 topHeightConstraints.constant = 10
