@@ -68,6 +68,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.addContentToStackView()
         self.setupKeyboardObservers()
         self.hideKeyboardTappedAround()
+        
     }
     
     func rateUs() {
@@ -708,6 +709,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     case .success(let success):
                         print(success.message)
                         self.prankName = updatedName
+                        UserDefaults.standard.set(updatedName, forKey: "Name")
                     case .failure(let failure):
                         print(failure.localizedDescription)
                         self.prankNameLabel.text = self.viewModel.createPrankName

@@ -35,6 +35,14 @@ class ShareBottomVC: UIViewController {
         } else {
             loadGif(named: snapGIF[snapCurrentGifIndex])
         }
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+    }
+    
+    @objc func appMovedToBackground() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            UIPasteboard.general.string = self.prankLink
+        }
     }
     
     func loadGif(named gifName: String) {
@@ -135,6 +143,9 @@ class ShareBottomVC: UIViewController {
         } else {
             let snackbar = CustomSnackbar(message: "Instagram is not installed!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
+//            if let appStoreURL = URL(string: "https://apps.apple.com/us/app/instagram/id389801252") {
+//                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+//            }
         }
     }
     
@@ -176,6 +187,9 @@ class ShareBottomVC: UIViewController {
         } else {
             let snackbar = CustomSnackbar(message: "Please Install Snapchat App", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
+//            if let appStoreURL = URL(string: "https://apps.apple.com/app/snapchat/id447188370") {
+//                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+//            }
         }
     }
     

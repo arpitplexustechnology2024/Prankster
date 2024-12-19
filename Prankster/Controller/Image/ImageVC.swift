@@ -93,7 +93,7 @@ class ImageVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.ImageImageView.loadGif(name: "CoverGIF")
+        self.ImageImageView.loadGif(name: "ImageGIF")
         self.ImageImageView.layer.cornerRadius = 8
         self.imageShowView.layer.cornerRadius = 8
         self.imageShowView.layer.shadowColor = UIColor.black.cgColor

@@ -351,7 +351,7 @@ class ShareLinkPopup: UIViewController {
         case 2:  // Instagram Story
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
-            self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                self?.NavigateToShareSnapchat(sharePrank: "Instagram")
             }
         case 3:  // Snapchat Message
             interstitialAdUtility.showInterstitialAd()

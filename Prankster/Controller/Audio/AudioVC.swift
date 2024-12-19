@@ -125,7 +125,7 @@ class AudioVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.audioImageView.loadGif(name: "CoverGIF")
+        self.audioImageView.loadGif(name: "AudioGIF")
         self.audioImageView.layer.cornerRadius = 8
         
         self.audioShowView.layer.cornerRadius = 8

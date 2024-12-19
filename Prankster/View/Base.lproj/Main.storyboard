@@ -376,7 +376,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LFq-WM-0zL" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4496.9465648854957" y="-37.323943661971832"/>
+            <point key="canvasLocation" x="4458" y="-38"/>
         </scene>
         <!--More AppVC-->
         <scene sceneID="vgv-mP-Efi">
@@ -506,7 +506,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="M14-zY-4T9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3170" y="634"/>
+            <point key="canvasLocation" x="3122" y="631"/>
         </scene>
         <!--PremiumVC-->
         <scene sceneID="Ys0-pa-0mL">
@@ -616,19 +616,19 @@
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$800.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lCc-GX-LMx">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="45.666666666666664" height="13.666666666666664"/>
+                                                                        <rect key="frame" x="8" y="78.333333333333371" width="45.666666666666664" height="13.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
                                                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$500.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IKn-Nw-6Lm">
-                                                                        <rect key="frame" x="8" y="60.333333333333364" width="105" height="31.666666666666664"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IKn-Nw-6Lm">
+                                                                        <rect key="frame" x="8" y="92" width="0.0" height="0.0"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
                                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weekly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h2U-l2-R7D">
-                                                                        <rect key="frame" x="58.666666666666671" y="43.666666666666629" width="41.333333333333329" height="16.666666666666671"/>
+                                                                        <rect key="frame" x="58.666666666666671" y="75.333333333333371" width="41.333333333333329" height="16.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -677,19 +677,19 @@
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$1500.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QLn-LX-U7F">
-                                                                        <rect key="frame" x="7.9999999999999964" y="46.666666666666629" width="51.666666666666657" height="13.666666666666664"/>
+                                                                        <rect key="frame" x="7.9999999999999964" y="78.333333333333371" width="51.666666666666657" height="13.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Monthly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p7G-Zi-jwZ">
-                                                                        <rect key="frame" x="64.666666666666657" y="43.666666666666629" width="46.333333333333343" height="16.666666666666671"/>
+                                                                        <rect key="frame" x="64.666666666666657" y="75.333333333333371" width="46.333333333333343" height="16.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$999.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v9z-v8-2VC">
-                                                                        <rect key="frame" x="8" y="60.333333333333364" width="105" height="31.666666666666664"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v9z-v8-2VC">
+                                                                        <rect key="frame" x="8" y="92" width="0.0" height="0.0"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
                                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -739,19 +739,19 @@
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$6000.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SXe-9V-Ny9">
-                                                                        <rect key="frame" x="7.9999999999999964" y="46.666666666666629" width="51.666666666666657" height="13.666666666666664"/>
+                                                                        <rect key="frame" x="7.9999999999999964" y="78.333333333333371" width="51.666666666666657" height="13.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Yearly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uVl-jT-4Q9">
-                                                                        <rect key="frame" x="64.666666666666686" y="43.666666666666629" width="34" height="16.666666666666671"/>
+                                                                        <rect key="frame" x="64.666666666666686" y="75.333333333333371" width="34" height="16.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$3000.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pLd-pZ-iQk">
-                                                                        <rect key="frame" x="7.9999999999999929" y="60.333333333333364" width="118.33333333333331" height="31.666666666666664"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pLd-pZ-iQk">
+                                                                        <rect key="frame" x="8" y="92" width="0.0" height="0.0"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
                                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -953,7 +953,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="FIf-zP-4BS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3887.727272727273" y="631.38075313807531"/>
+            <point key="canvasLocation" x="3796" y="631"/>
         </scene>
         <!--Emoji Cover PageVC-->
         <scene sceneID="yUP-aK-hKL">
@@ -1105,7 +1105,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oyz-Rj-lBl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5804.4776119402977" y="-30.892448512585808"/>
+            <point key="canvasLocation" x="5782" y="-38"/>
         </scene>
         <!--Cover PageVC-->
         <scene sceneID="S6c-Gq-GDL">
@@ -1500,7 +1500,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Gpv-dN-tbm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5144.2748091603053" y="-29.577464788732396"/>
+            <point key="canvasLocation" x="5122" y="-38"/>
         </scene>
         <!--AudioVC-->
         <scene sceneID="T0K-GY-rU9">
@@ -1817,7 +1817,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RP9-Yq-SZW" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7780.5970149253726" y="-34.324942791762012"/>
+            <point key="canvasLocation" x="7760" y="-38"/>
         </scene>
         <!--Custom RecoderVC-->
         <scene sceneID="xNA-0P-azc">
@@ -1832,7 +1832,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bCL-Gd-wzf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8431" y="-36"/>
+            <point key="canvasLocation" x="8422" y="-38"/>
         </scene>
         <!--ImageVC-->
         <scene sceneID="mSL-em-LDk">
@@ -2137,7 +2137,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I5s-gc-XoX" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5655" y="634"/>
+            <point key="canvasLocation" x="5121" y="631"/>
         </scene>
         <!--VideoVC-->
         <scene sceneID="Fs4-k9-wNs">
@@ -2452,7 +2452,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sZc-4Z-90M" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8430" y="689"/>
+            <point key="canvasLocation" x="7760" y="631"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="7vN-HK-Cfy">
@@ -2593,7 +2593,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Pe8-qo-gnB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7083.5820895522384" y="-32.265446224256287"/>
+            <point key="canvasLocation" x="7097" y="-37"/>
         </scene>
         <!--Realistic Cover PageVC-->
         <scene sceneID="hJv-fH-TTW">
@@ -2742,7 +2742,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Mat-wp-ars" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6441.7910447761187" y="-32.951945080091534"/>
+            <point key="canvasLocation" x="6440" y="-38"/>
         </scene>
         <!--Audio Category AllVC-->
         <scene sceneID="shC-Zf-CD2">
@@ -2901,7 +2901,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="igN-k7-a21" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9102.9850746268658" y="-36.384439359267731"/>
+            <point key="canvasLocation" x="9084" y="-37"/>
         </scene>
         <!--Premium PopupVC-->
         <scene sceneID="VO3-gu-CJi">
@@ -3005,7 +3005,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HMS-RM-baw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4690" y="631"/>
+            <point key="canvasLocation" x="4457" y="631"/>
         </scene>
         <!--Save Recording Popup-->
         <scene sceneID="E1g-k2-AFQ">
@@ -3101,7 +3101,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tQv-U0-XqJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9763" y="-37"/>
+            <point key="canvasLocation" x="9746" y="-37"/>
         </scene>
         <!--Share LinkVC-->
         <scene sceneID="8uc-sH-owF">
@@ -3232,7 +3232,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eUK-me-3TC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="10608.955223880597" y="-35.011441647597252"/>
+            <point key="canvasLocation" x="10416" y="-38"/>
         </scene>
         <!--Image Category AllVC-->
         <scene sceneID="zFm-mx-wtn">
@@ -3381,7 +3381,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xEw-5g-Ysg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6348" y="634"/>
+            <point key="canvasLocation" x="5781" y="631"/>
         </scene>
         <!--Video Category AllVC-->
         <scene sceneID="kpu-Sd-JT7">
@@ -3555,7 +3555,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iv3-p6-AHA" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9102.9850746268658" y="688.55835240274598"/>
+            <point key="canvasLocation" x="8421" y="631"/>
         </scene>
         <!--Spinner PreviewVC-->
         <scene sceneID="jRu-w9-616">
@@ -3656,7 +3656,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c6B-r4-lgT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11946" y="689"/>
+            <point key="canvasLocation" x="11084" y="631"/>
         </scene>
         <!--View LinkVC-->
         <scene sceneID="Kn6-Ss-ydG">
@@ -3768,7 +3768,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="50T-wV-Ues" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9876" y="689"/>
+            <point key="canvasLocation" x="9084" y="631"/>
         </scene>
         <!--Share Link Popup-->
         <scene sceneID="Hnm-H0-URu">
@@ -3834,7 +3834,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="C3n-Qu-lw3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11259.701492537313" y="-37.757437070938209"/>
+            <point key="canvasLocation" x="11084" y="-38"/>
         </scene>
         <!--Share BottomVC-->
         <scene sceneID="VVB-28-1nA">
@@ -3900,7 +3900,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dvD-e9-ELh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11944.776119402984" y="-38.443935926773456"/>
+            <point key="canvasLocation" x="11746" y="-38"/>
         </scene>
         <!--SpinnerVC-->
         <scene sceneID="3AH-wO-5Kz">
@@ -4139,7 +4139,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HqN-hr-MBo" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="10571.641791044776" y="688.55835240274598"/>
+            <point key="canvasLocation" x="9745" y="631"/>
         </scene>
         <!--Spinner DataVC-->
         <scene sceneID="vrP-b0-3Kf">
@@ -4239,7 +4239,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TbZ-w1-ofs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="11258" y="689"/>
+            <point key="canvasLocation" x="10415" y="631"/>
         </scene>
         <!--Premium BottomVC-->
         <scene sceneID="hq4-l7-s4X">
@@ -4326,19 +4326,19 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$800.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yXe-2O-6my">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="45.666666666666664" height="13.666666666666664"/>
+                                                                        <rect key="frame" x="8" y="78.333333333333371" width="45.666666666666664" height="13.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$500.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FsP-WP-Bbw">
-                                                                        <rect key="frame" x="8" y="60.333333333333364" width="105" height="31.666666666666664"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FsP-WP-Bbw">
+                                                                        <rect key="frame" x="8" y="92" width="0.0" height="0.0"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
                                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weekly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fCx-vw-H9W">
-                                                                        <rect key="frame" x="58.666666666666671" y="43.666666666666629" width="41.333333333333329" height="16.666666666666671"/>
+                                                                        <rect key="frame" x="58.666666666666671" y="75.333333333333371" width="41.333333333333329" height="16.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -4387,19 +4387,19 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$1500.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rUs-J6-kE2">
-                                                                        <rect key="frame" x="7.9999999999999964" y="46.666666666666629" width="51.666666666666657" height="13.666666666666664"/>
+                                                                        <rect key="frame" x="7.9999999999999964" y="78.333333333333371" width="51.666666666666657" height="13.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Monthly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bEm-LM-3qo">
-                                                                        <rect key="frame" x="64.666666666666657" y="43.666666666666629" width="46.333333333333343" height="16.666666666666671"/>
+                                                                        <rect key="frame" x="64.666666666666657" y="75.333333333333371" width="46.333333333333343" height="16.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$999.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CLs-9Q-Dtm">
-                                                                        <rect key="frame" x="8" y="60.333333333333364" width="105" height="31.666666666666664"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CLs-9Q-Dtm">
+                                                                        <rect key="frame" x="8" y="92" width="0.0" height="0.0"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
                                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -4449,19 +4449,19 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$6000.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="85l-CN-dzs">
-                                                                        <rect key="frame" x="7.9999999999999964" y="46.666666666666629" width="51.666666666666657" height="13.666666666666664"/>
+                                                                        <rect key="frame" x="7.9999999999999964" y="78.333333333333371" width="51.666666666666657" height="13.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Yearly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jsB-KW-FU2">
-                                                                        <rect key="frame" x="64.666666666666686" y="43.666666666666629" width="34" height="16.666666666666671"/>
+                                                                        <rect key="frame" x="64.666666666666686" y="75.333333333333371" width="34" height="16.666666666666671"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
-                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="$3000.00/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="toD-VJ-XI1">
-                                                                        <rect key="frame" x="7.9999999999999929" y="60.333333333333364" width="118.33333333333331" height="31.666666666666664"/>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="toD-VJ-XI1">
+                                                                        <rect key="frame" x="8" y="92" width="0.0" height="0.0"/>
                                                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
                                                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
@@ -4663,7 +4663,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EWG-Xy-w8s" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7084" y="634"/>
+            <point key="canvasLocation" x="6439" y="631"/>
         </scene>
         <!--Privacy PolicyVC-->
         <scene sceneID="WUH-79-RYD">
@@ -4697,7 +4697,7 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ec6-J9-jY3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="7781" y="634"/>
+            <point key="canvasLocation" x="7096" y="631"/>
         </scene>
     </scenes>
     <resources>

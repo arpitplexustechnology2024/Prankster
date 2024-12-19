@@ -12,6 +12,8 @@
 		AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */; };
 		BDADD19B2D11F22E00BDF838 /* AdsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */; };
 		BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */; };
+		BDADD1A52D120D2700BDF838 /* ImageGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDADD1A42D120D2700BDF838 /* ImageGIF.gif */; };
+		BDADD1A92D12184700BDF838 /* AudioGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDADD1A82D12184700BDF838 /* AudioGIF.gif */; };
 		BDB339792D0CEED5001684D8 /* VideoGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB339782D0CEED5001684D8 /* VideoGIF.gif */; };
 		BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB3397E2D0D070B001684D8 /* Insta2.gif */; };
 		BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB339822D0D1A6F001684D8 /* Snap4.gif */; };
@@ -169,6 +171,8 @@
 		925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsAPI.swift; sourceTree = "<group>"; };
 		BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsViewModel.swift; sourceTree = "<group>"; };
+		BDADD1A42D120D2700BDF838 /* ImageGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = ImageGIF.gif; sourceTree = "<group>"; };
+		BDADD1A82D12184700BDF838 /* AudioGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = AudioGIF.gif; sourceTree = "<group>"; };
 		BDB339782D0CEED5001684D8 /* VideoGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = VideoGIF.gif; sourceTree = "<group>"; };
 		BDB3397E2D0D070B001684D8 /* Insta2.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Insta2.gif; sourceTree = "<group>"; };
 		BDB339822D0D1A6F001684D8 /* Snap4.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Snap4.gif; sourceTree = "<group>"; };
@@ -457,6 +461,8 @@
 				BDB339822D0D1A6F001684D8 /* Snap4.gif */,
 				BDB3398A2D0D2B16001684D8 /* Snap5.gif */,
 				BDB339782D0CEED5001684D8 /* VideoGIF.gif */,
+				BDADD1A82D12184700BDF838 /* AudioGIF.gif */,
+				BDADD1A42D120D2700BDF838 /* ImageGIF.gif */,
 				BDC68AE92D092E4B00834D9B /* CoverGIF.gif */,
 			);
 			path = GIF;
@@ -790,6 +796,7 @@
 				BDC68B972D0931F900834D9B /* NoInternetView.xib in Resources */,
 				BDB3398F2D0D2C1C001684D8 /* Insta1.gif in Resources */,
 				BDC68B982D0931F900834D9B /* NoDataView.xib in Resources */,
+				BDADD1A92D12184700BDF838 /* AudioGIF.gif in Resources */,
 				BDC68B992D0931F900834D9B /* NoInternetBottombarView.xib in Resources */,
 				BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */,
 				BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */,
@@ -809,6 +816,7 @@
 				BDC68B232D092E4B00834D9B /* LoadData.json in Resources */,
 				BDC68B272D092E8900834D9B /* Color.xcassets in Resources */,
 				BDB3398C2D0D2B16001684D8 /* Snap5.gif in Resources */,
+				BDADD1A52D120D2700BDF838 /* ImageGIF.gif in Resources */,
 				BDB3398D2D0D2B16001684D8 /* Insta4.gif in Resources */,
 				BDC68B282D092E8900834D9B /* GoogleService-Info.plist in Resources */,
 				BDC68B242D092E4B00834D9B /* Nodata.json in Resources */,

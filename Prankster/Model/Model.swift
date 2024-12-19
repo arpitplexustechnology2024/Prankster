@@ -109,7 +109,6 @@ struct PrankCreateResponse: Codable {
     let status: Int
     let message: String
     let data: PrankCreateData
-    let file: File
 }
 struct PrankCreateData: Codable {
     let id: String
@@ -125,19 +124,6 @@ struct PrankCreateData: Codable {
         case type = "Type"
         case name = "Name"
     }
-}
-struct File: Codable {
-    let coverImage, file: [CoverImage]
-
-    enum CodingKeys: String, CodingKey {
-        case coverImage = "CoverImage"
-        case file = "File"
-    }
-}
-struct CoverImage: Codable {
-    let fieldname, originalname, encoding, mimetype: String
-    let destination, filename, path: String
-    let size: Int
 }
 
 // MARK: - Prank Name Update
@@ -171,7 +157,7 @@ struct AdsResponse: Codable {
     let message: String
     let adsStatus: Bool
     let data: [AdsData]
-
+    
     enum CodingKeys: String, CodingKey {
         case status, message
         case adsStatus = "AdsStatus"
@@ -180,7 +166,7 @@ struct AdsResponse: Codable {
 }
 struct AdsData: Codable {
     let adsName, adsID, createdAt, updatedAt: String
-
+    
     enum CodingKeys: String, CodingKey {
         case adsName = "AdsName"
         case adsID = "AdsId"
