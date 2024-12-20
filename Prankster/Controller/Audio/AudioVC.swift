@@ -100,8 +100,6 @@ class AudioVC: UIViewController {
         if let audioData = initialAudioData {
             playSelectedAudio(audioData)
         }
-        
-        print("Cover Image Name :- \(selectedCoverImageName)")
     }
     
     // MARK: - checkInternetAndFetchData
