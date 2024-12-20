@@ -85,7 +85,7 @@ extension SpinnerDataVC: UICollectionViewDelegate, UICollectionViewDataSource, U
                 vc.coverImageURL = prank.coverImage
                 vc.prankName = prank.name
                 vc.prankDataURL = prank.file
-                vc.prankLink = prank.link
+                vc.prankShareURL = prank.shareURL
                 vc.selectedPranktype = prank.type
                 vc.sharePrank = false
                 navigationController.pushViewController(vc, animated: true)

@@ -27,7 +27,6 @@ class AudioVC: UIViewController {
     // MARK: - outlet
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var audioShowView: UIView!
-    @IBOutlet weak var oneTimeBlurView: UIView!
     @IBOutlet weak var PauseImageView: UIImageView!
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var audioImageView: UIImageView!
@@ -47,6 +46,7 @@ class AudioVC: UIViewController {
     private var isPlaying = false
     var selectedCoverImageURL: String?
     var selectedCoverImageFile: Data?
+    var selectedCoverImageName: String?
     private var selectedAudioIndex: Int?
     private var audioPlayer: AVAudioPlayer?
     var initialAudioData: CategoryAllData?
@@ -100,6 +100,8 @@ class AudioVC: UIViewController {
         if let audioData = initialAudioData {
             playSelectedAudio(audioData)
         }
+        
+        print("Cover Image Name :- \(selectedCoverImageName)")
     }
     
     // MARK: - checkInternetAndFetchData
@@ -139,17 +141,6 @@ class AudioVC: UIViewController {
         self.audioCustomCollectionView.dataSource = self
         self.audioCharacterCollectionView.delegate = self
         self.audioCharacterCollectionView.dataSource = self
-        
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        self.oneTimeBlurView.addGestureRecognizer(tapGesture)
-        self.oneTimeBlurView.isUserInteractionEnabled = true
-        self.oneTimeBlurView.isHidden = true
-        if isFirstLaunch() {
-            self.oneTimeBlurView.isHidden = false
-        } else {
-            self.oneTimeBlurView.isHidden = true
-        }
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
@@ -281,11 +272,9 @@ class AudioVC: UIViewController {
         if isConnectedToInternet() {
             var audioURLToPass: String?
             var audioFileToPass: Data?
-            var audioNameToPass: String?
             
             if let selectedIndex = selectedAudioIndex {
                 let audioData = customAudios[selectedIndex]
-                audioNameToPass = audioData.url.lastPathComponent
                 if let fileData = try? Data(contentsOf: audioData.url) {
                     audioFileToPass = fileData
                     audioURLToPass = nil
@@ -293,7 +282,6 @@ class AudioVC: UIViewController {
             }
             else if let selectedData = selectedAudioData {
                 audioURLToPass = selectedData.file
-                audioNameToPass = selectedData.name
                 audioFileToPass = nil
             }
             
@@ -302,7 +290,7 @@ class AudioVC: UIViewController {
                 if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
                     nextVC.selectedURL = audioURLToPass
                     nextVC.selectedFile = audioFileToPass
-                    nextVC.selectedName = audioNameToPass
+                    nextVC.selectedName = selectedCoverImageName
                     nextVC.selectedCoverURL = selectedCoverImageURL
                     nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "audio"
@@ -706,27 +694,6 @@ extension AudioVC: SaveRecordingDelegate {
             let indexPath = IndexPath(item: 1, section: 0)
             self.audioCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             self.collectionView(self.audioCustomCollectionView, didSelectItemAt: indexPath)
-        }
-    }
-}
-
-// MARK: - One time Black View Show
-extension AudioVC  {
-    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.3) {
-            self.oneTimeBlurView.alpha = 0
-        } completion: { _ in
-            self.oneTimeBlurView.isHidden = true
-        }
-    }
-    
-    func isFirstLaunch() -> Bool {
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: ConstantValue.hasLaunchedAudio) {
-            return false
-        } else {
-            defaults.set(true, forKey: ConstantValue.hasLaunchedAudio)
-            return true
         }
     }
 }

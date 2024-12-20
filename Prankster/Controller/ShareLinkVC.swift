@@ -528,7 +528,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             
             let label = UILabel()
             label.text = item.title
-            label.textColor = .icon
+            label.textColor = .white
             label.font = UIFont.systemFont(ofSize: 12)
             label.translatesAutoresizingMaskIntoConstraints = false
             verticalStackView.addArrangedSubview(imageView)
@@ -622,7 +622,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     private func shareWhatsAppMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n🔗 Check this out: \(prankLink)"
+        let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
         let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
         if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -649,7 +649,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     private func shareTelegramMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let telegramMessage = "\(prankName)\n\n🔗 Check this out: \(prankLink)"
+        let telegramMessage = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
         let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -663,7 +663,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     private func shareSnapchatMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n🔗 Check this out: \(prankLink)"
+        let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
         let itemsToShare: [Any] = [message]
         let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
         if let popoverController = activityVC.popoverPresentationController {

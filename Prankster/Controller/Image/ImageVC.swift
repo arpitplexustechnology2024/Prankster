@@ -19,7 +19,6 @@ class ImageVC: UIViewController {
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
     @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var oneTimeBlurView: UIView!
     @IBOutlet weak var imageShowView: UIView!
     @IBOutlet weak var ImageImageView: UIImageView!
     @IBOutlet weak var imageCustomCollectionView: UICollectionView!
@@ -35,6 +34,7 @@ class ImageVC: UIViewController {
     private var isLoading = true
     var selectedCoverImageURL: String?
     var selectedCoverImageFile: Data?
+    var selectedCoverImageName: String?
     private var selectedImageIndex: Int?
     private var selectedImageURL: String?
     private var selectedImageName: String?
@@ -105,16 +105,6 @@ class ImageVC: UIViewController {
         self.imageCustomCollectionView.dataSource = self
         self.imageCharacterCollectionView.delegate = self
         self.imageCharacterCollectionView.dataSource = self
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        self.oneTimeBlurView.addGestureRecognizer(tapGesture)
-        self.oneTimeBlurView.isUserInteractionEnabled = true
-        self.oneTimeBlurView.isHidden = true
-        if isFirstLaunch() {
-            self.oneTimeBlurView.isHidden = false
-        } else {
-            self.oneTimeBlurView.isHidden = true
-        }
         
         self.imageCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         
@@ -248,7 +238,6 @@ class ImageVC: UIViewController {
         if isConnectedToInternet() {
             var imageURLToPass: String?
             var imageFileToPass: Data?
-            var imageNameToPass: String?
             
             if let selectedIndex = selectedImageIndex {
                 let temporaryDirectory = NSTemporaryDirectory()
@@ -261,11 +250,9 @@ class ImageVC: UIViewController {
                         imageFileToPass = fileData
                         imageURLToPass = nil
                     }
-                    imageNameToPass = "Custom Image \(selectedIndex + 1)"
                 }
             } else if let selectedData = selectedImageData {
                 imageURLToPass = selectedData.image
-                imageNameToPass = selectedData.name
                 imageFileToPass = nil
             }
             
@@ -274,7 +261,7 @@ class ImageVC: UIViewController {
                 if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
                     nextVC.selectedURL = imageURLToPass
                     nextVC.selectedFile = imageFileToPass
-                    nextVC.selectedName = imageNameToPass
+                    nextVC.selectedName = selectedCoverImageName
                     nextVC.selectedCoverURL = selectedCoverImageURL
                     nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "gallery"
@@ -610,27 +597,6 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
     func saveImages() {
         if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customImages, requiringSecureCoding: false) {
             UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserImages)
-        }
-    }
-}
-
-// MARK: - One time Black View Show
-extension ImageVC  {
-    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.3) {
-            self.oneTimeBlurView.alpha = 0
-        } completion: { _ in
-            self.oneTimeBlurView.isHidden = true
-        }
-    }
-    
-    func isFirstLaunch() -> Bool {
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: ConstantValue.hasLaunchedImage) {
-            return false
-        } else {
-            defaults.set(true, forKey: ConstantValue.hasLaunchedImage)
-            return true
         }
     }
 }

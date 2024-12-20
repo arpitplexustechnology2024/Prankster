@@ -140,12 +140,13 @@ struct SpinnerResponse: Codable {
     let data: SpinnerData
 }
 struct SpinnerData: Codable {
-    let link, coverImage, file: String
+    let link, coverImage, shareURL, file: String
     let type, name: String
     
     enum CodingKeys: String, CodingKey {
         case link = "Link"
         case coverImage = "CoverImage"
+        case shareURL = "ShareURL"
         case file = "File"
         case type = "Type"
         case name = "Name"

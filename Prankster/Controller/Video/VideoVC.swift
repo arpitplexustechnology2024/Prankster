@@ -20,7 +20,6 @@ class VideoVC: UIViewController {
     @IBOutlet weak var bottomScrollView: UIScrollView!
     @IBOutlet weak var bottomView: UIView!
     @IBOutlet weak var videoShowView: UIView!
-    @IBOutlet weak var oneTimeBlurView: UIView!
     @IBOutlet weak var videoImageView: UIImageView!
     @IBOutlet weak var pauseImageView: UIImageView!
     @IBOutlet weak var videoCustomCollectionView: UICollectionView!
@@ -38,6 +37,7 @@ class VideoVC: UIViewController {
     private var player: AVPlayer?
     var selectedCoverImageURL: String?
     var selectedCoverImageFile: Data?
+    var selectedCoverImageName: String?
     private var selectedVideoIndex: Int?
     private var customVideos: [URL] = []
     private var shouldAutoPlayVideo = false
@@ -124,16 +124,6 @@ class VideoVC: UIViewController {
         self.videoCustomCollectionView.dataSource = self
         self.videoCharacterCollectionView.delegate = self
         self.videoCharacterCollectionView.dataSource = self
-        
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        self.oneTimeBlurView.addGestureRecognizer(tapGesture)
-        self.oneTimeBlurView.isUserInteractionEnabled = true
-        self.oneTimeBlurView.isHidden = true
-        if isFirstLaunch() {
-            self.oneTimeBlurView.isHidden = false
-        } else {
-            self.oneTimeBlurView.isHidden = true
-        }
         
         self.videoCharacterCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         
@@ -266,7 +256,6 @@ class VideoVC: UIViewController {
         if isConnectedToInternet() {
             var videoURLToPass: String?
             var videoFileToPass: Data?
-            var videoNameToPass: String?
             
             if let selectedIndex = selectedVideoIndex {
                 
@@ -276,12 +265,9 @@ class VideoVC: UIViewController {
                     videoFileToPass = fileData
                     videoURLToPass = nil
                 }
-                videoNameToPass = "Custom Video \(selectedIndex + 1)"
-                
             }
             else if let selectedData = selectedVideoData {
                 videoURLToPass = selectedData.file
-                videoNameToPass = selectedData.name
                 videoFileToPass = nil
             }
             if videoURLToPass != nil || videoFileToPass != nil {
@@ -289,7 +275,7 @@ class VideoVC: UIViewController {
                 if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
                     nextVC.selectedURL = videoURLToPass
                     nextVC.selectedFile = videoFileToPass
-                    nextVC.selectedName = videoNameToPass
+                    nextVC.selectedName = selectedCoverImageName
                     nextVC.selectedCoverURL = selectedCoverImageURL
                     nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "video"
@@ -740,27 +726,6 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
                 return nil
             }
             return url
-        }
-    }
-}
-
-// MARK: - One time Black View Show
-extension VideoVC  {
-    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.3) {
-            self.oneTimeBlurView.alpha = 0
-        } completion: { _ in
-            self.oneTimeBlurView.isHidden = true
-        }
-    }
-    
-    func isFirstLaunch() -> Bool {
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: ConstantValue.hasLaunchedVideo) {
-            return false
-        } else {
-            defaults.set(true, forKey: ConstantValue.hasLaunchedVideo)
-            return true
         }
     }
 }

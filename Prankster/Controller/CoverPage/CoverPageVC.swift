@@ -16,7 +16,6 @@ class CoverPageVC: UIViewController {
     // MARK: - outlet
     @IBOutlet weak var coverView: UIView!
     @IBOutlet weak var bottomView: UIView!
-    @IBOutlet weak var oneTimeBlurView: UIView!
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var coverImageView: UIImageView!
     @IBOutlet weak var bottomScrollView: UIScrollView!
@@ -40,6 +39,7 @@ class CoverPageVC: UIViewController {
     var selectedCustomImage: UIImage?
     var selectedCoverImageURL: String?
     var selectedCoverImageFile: Data?
+    var selectedCoverImageName: String?
     var viewType: CoverViewType = .audio
     private var selectedCoverIndex: Int?
     let emojiViewModel = EmojiViewModel()
@@ -123,16 +123,6 @@ class CoverPageVC: UIViewController {
         self.realisticCollectionView.delegate = self
         self.realisticCollectionView.dataSource = self
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        self.oneTimeBlurView.addGestureRecognizer(tapGesture)
-        self.oneTimeBlurView.isUserInteractionEnabled = true
-        self.oneTimeBlurView.isHidden = true
-        if isFirstLaunch() {
-            self.oneTimeBlurView.isHidden = false
-        } else {
-            self.oneTimeBlurView.isHidden = true
-        }
-        
         self.emojiCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.realisticCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         
@@ -170,33 +160,39 @@ class CoverPageVC: UIViewController {
             switch viewType {
             case .audio:
                 if let nextVC = storyboard.instantiateViewController(identifier: "AudioVC") as? AudioVC {
-                    if let imageURL = selectedCoverImageURL {
+                    if let imageURL = selectedCoverImageURL, let imageName = selectedCoverImageName {
                         nextVC.selectedCoverImageURL = imageURL
+                        nextVC.selectedCoverImageName = imageName
                     }
-                    if let imageFile = selectedCoverImageFile {
+                    if let imageFile = selectedCoverImageFile, let imageName = selectedCoverImageName {
                         nextVC.selectedCoverImageFile = imageFile
+                        nextVC.selectedCoverImageName = imageName
                     }
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
                 
             case .video:
                 if let nextVC = storyboard.instantiateViewController(identifier: "VideoVC") as? VideoVC {
-                    if let imageURL = selectedCoverImageURL {
+                    if let imageURL = selectedCoverImageURL, let imageName = selectedCoverImageName {
                         nextVC.selectedCoverImageURL = imageURL
+                        nextVC.selectedCoverImageName = imageName
                     }
-                    if let imageFile = selectedCoverImageFile {
+                    if let imageFile = selectedCoverImageFile, let imageName = selectedCoverImageName {
                         nextVC.selectedCoverImageFile = imageFile
+                        nextVC.selectedCoverImageName = imageName
                     }
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
                 
             case .image:
                 if let nextVC = storyboard.instantiateViewController(identifier: "ImageVC") as? ImageVC {
-                    if let imageURL = selectedCoverImageURL {
+                    if let imageURL = selectedCoverImageURL, let imageName = selectedCoverImageName {
                         nextVC.selectedCoverImageURL = imageURL
+                        nextVC.selectedCoverImageName = imageName
                     }
-                    if let imageFile = selectedCoverImageFile {
+                    if let imageFile = selectedCoverImageFile, let imageName = selectedCoverImageName {
                         nextVC.selectedCoverImageFile = imageFile
+                        nextVC.selectedCoverImageName = imageName
                     }
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
@@ -355,6 +351,7 @@ class CoverPageVC: UIViewController {
         showLottieLoader()
         selectedCoverImageData = coverData
         selectedCoverImageURL = coverData.coverURL
+        selectedCoverImageName = coverData.coverName
         
         
         if let customImage = customImage {
@@ -371,6 +368,7 @@ class CoverPageVC: UIViewController {
                 if let fileData = try? Data(contentsOf: fileURL) {
                     self.selectedCoverImageFile = fileData
                     self.selectedCoverImageURL = nil
+                    self.selectedCoverImageName = "Custom Cover Image"
                 }
                 print("Custom Cover Image URL: \(fileURL.absoluteString)")
             }
@@ -481,6 +479,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
                         if let fileData = try? Data(contentsOf: fileURL) {
                             self.selectedCoverImageFile = fileData
                             self.selectedCoverImageURL = nil
+                            self.selectedCoverImageName = "Custom Cover Image"
                         }
                         print("Custom Cover Image URL: \(fileURL.absoluteString)")
                     }
@@ -740,6 +739,7 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
                 if let fileData = try? Data(contentsOf: fileURL) {
                     self.selectedCoverImageFile = fileData
                     self.selectedCoverImageURL = nil
+                    self.selectedCoverImageName = "Custom Cover Image"
                 }
                 print("Custom Cover Image URL: \(fileURL.absoluteString)")
                 
@@ -788,27 +788,6 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
     func saveImages() {
         if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customCoverImages, requiringSecureCoding: false) {
             UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserCoverImages)
-        }
-    }
-}
-
-// MARK: - One time Black View Show
-extension CoverPageVC  {
-    @objc func handleTap(_ gesture: UITapGestureRecognizer) {
-        UIView.animate(withDuration: 0.3) {
-            self.oneTimeBlurView.alpha = 0
-        } completion: { _ in
-            self.oneTimeBlurView.isHidden = true
-        }
-    }
-    
-    func isFirstLaunch() -> Bool {
-        let defaults = UserDefaults.standard
-        if defaults.bool(forKey: ConstantValue.hasLaunchedCover) {
-            return false
-        } else {
-            defaults.set(true, forKey: ConstantValue.hasLaunchedCover)
-            return true
         }
     }
 }

@@ -193,7 +193,7 @@ class SpinnerVC: UIViewController {
                 vc.coverImage = response.data.coverImage
                 vc.name = response.data.name
                 vc.file = response.data.file
-                vc.link = response.data.link
+                vc.link = response.data.shareURL
                 vc.type = response.data.type
                 vc.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
