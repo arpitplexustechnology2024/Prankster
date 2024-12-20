@@ -128,6 +128,7 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         vc.prankName = prank.name
         vc.prankDataURL = prank.file
         vc.prankLink = prank.link
+        vc.prankShareURL = prank.shareURL
         vc.prankType = prank.type
         vc.modalTransitionStyle = .crossDissolve
         vc.modalPresentationStyle = .overCurrentContext

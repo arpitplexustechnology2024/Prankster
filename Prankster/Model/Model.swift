@@ -113,13 +113,14 @@ struct PrankCreateResponse: Codable {
 struct PrankCreateData: Codable {
     let id: String
     let link: String
-    let coverImage, file: String
+    let coverImage, shareURL, file: String
     let type, name: String
     
     enum CodingKeys: String, CodingKey {
         case id
         case link = "Link"
         case coverImage = "CoverImage"
+        case shareURL = "ShareURL"
         case file = "File"
         case type = "Type"
         case name = "Name"

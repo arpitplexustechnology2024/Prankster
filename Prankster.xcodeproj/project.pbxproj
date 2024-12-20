@@ -10,10 +10,10 @@
 		39D557955CA728194C45BFDD /* Pods_Prankster_PranksterUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0555AD96EFBEA4CB450ECEA7 /* Pods_Prankster_PranksterUITests.framework */; };
 		8A14A120C85453A0695CFCAE /* Pods_Prankster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */; };
 		AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */; };
+		BD29F6E72D1499780046CCB8 /* AudioGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD29F6E62D1499780046CCB8 /* AudioGIF.gif */; };
 		BDADD19B2D11F22E00BDF838 /* AdsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */; };
 		BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */; };
 		BDADD1A52D120D2700BDF838 /* ImageGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDADD1A42D120D2700BDF838 /* ImageGIF.gif */; };
-		BDADD1A92D12184700BDF838 /* AudioGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDADD1A82D12184700BDF838 /* AudioGIF.gif */; };
 		BDB339792D0CEED5001684D8 /* VideoGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB339782D0CEED5001684D8 /* VideoGIF.gif */; };
 		BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB3397E2D0D070B001684D8 /* Insta2.gif */; };
 		BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB339822D0D1A6F001684D8 /* Snap4.gif */; };
@@ -169,10 +169,10 @@
 		28BA78DE7AC84A57E8FB85DC /* Pods-OneSignalPushNotificationExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.release.xcconfig"; sourceTree = "<group>"; };
 		713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalPushNotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		BD29F6E62D1499780046CCB8 /* AudioGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = AudioGIF.gif; sourceTree = "<group>"; };
 		BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsAPI.swift; sourceTree = "<group>"; };
 		BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsViewModel.swift; sourceTree = "<group>"; };
 		BDADD1A42D120D2700BDF838 /* ImageGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = ImageGIF.gif; sourceTree = "<group>"; };
-		BDADD1A82D12184700BDF838 /* AudioGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = AudioGIF.gif; sourceTree = "<group>"; };
 		BDB339782D0CEED5001684D8 /* VideoGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = VideoGIF.gif; sourceTree = "<group>"; };
 		BDB3397E2D0D070B001684D8 /* Insta2.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Insta2.gif; sourceTree = "<group>"; };
 		BDB339822D0D1A6F001684D8 /* Snap4.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Snap4.gif; sourceTree = "<group>"; };
@@ -461,7 +461,7 @@
 				BDB339822D0D1A6F001684D8 /* Snap4.gif */,
 				BDB3398A2D0D2B16001684D8 /* Snap5.gif */,
 				BDB339782D0CEED5001684D8 /* VideoGIF.gif */,
-				BDADD1A82D12184700BDF838 /* AudioGIF.gif */,
+				BD29F6E62D1499780046CCB8 /* AudioGIF.gif */,
 				BDADD1A42D120D2700BDF838 /* ImageGIF.gif */,
 				BDC68AE92D092E4B00834D9B /* CoverGIF.gif */,
 			);
@@ -796,7 +796,6 @@
 				BDC68B972D0931F900834D9B /* NoInternetView.xib in Resources */,
 				BDB3398F2D0D2C1C001684D8 /* Insta1.gif in Resources */,
 				BDC68B982D0931F900834D9B /* NoDataView.xib in Resources */,
-				BDADD1A92D12184700BDF838 /* AudioGIF.gif in Resources */,
 				BDC68B992D0931F900834D9B /* NoInternetBottombarView.xib in Resources */,
 				BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */,
 				BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */,
@@ -804,6 +803,7 @@
 				BDC68B9B2D0931F900834D9B /* NoDataBottomBarView.xib in Resources */,
 				BDC68B9C2D0931F900834D9B /* LaunchScreen.storyboard in Resources */,
 				BDE091292D0D30AC00C76820 /* Insta3.gif in Resources */,
+				BD29F6E72D1499780046CCB8 /* AudioGIF.gif in Resources */,
 				BDC68B9D2D0931F900834D9B /* Main.storyboard in Resources */,
 				BDC68B1E2D092E4B00834D9B /* CoverGIF.gif in Resources */,
 				BDE286DD2D0D34CC0074A0C4 /* Snap3.gif in Resources */,

@@ -13,6 +13,7 @@ class PrankViewModel {
     var isLoading = false
     var errorMessage: String?
     var createPrankLink: String?
+    var createPrankShareURL: String?
     var createPrankName: String?
     var createPrankCoverImage: String?
     var createPrankData: String?
@@ -40,6 +41,7 @@ class PrankViewModel {
                 switch result {
                 case .success(let response):
                     self.createPrankLink = response.data.link
+                    self.createPrankShareURL = response.data.shareURL
                     self.createPrankCoverImage = response.data.coverImage
                     self.createPrankData = response.data.file
                     self.createPrankName = response.data.name

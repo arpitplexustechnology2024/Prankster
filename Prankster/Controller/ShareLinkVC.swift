@@ -36,6 +36,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var prankDataURL: String?
     var prankName: String?
     var prankLink: String?
+    var prankShareURL: String?
     var sharePrank: Bool = false
     private let adsViewModel = AdsViewModel()
     private var audioPlayer: AVAudioPlayer?
@@ -192,14 +193,15 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     self.prankNameLabel.hideShimmer()
                     self.nameChangeButton.hideShimmer()
                     
-                    print("Prank Link :- \(self.viewModel.createPrankLink ?? "")")
+                    print("Prank Link :- \(self.viewModel.createPrankShareURL ?? "")")
                     print("Prank Data :- \(self.viewModel.createPrankData ?? "")")
                     print("Prank ID :- \(self.viewModel.createPrankID ?? "")")
                     
                     self.coverImageURL = self.viewModel.createPrankCoverImage
                     self.prankDataURL = self.viewModel.createPrankData
                     self.prankName = self.viewModel.createPrankName
-                    self.prankLink = self.viewModel.createPrankLink
+                    self.prankLink = self.viewModel.createPrankShareURL
+                    self.prankShareURL = self.viewModel.createPrankShareURL
                     self.prankNameLabel.text = self.prankName
                     
                     if let coverImageUrl = self.coverImageURL {
@@ -496,12 +498,12 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     // MARK: - addContentToStackView
+    // MARK: - addContentToStackView
     func addContentToStackView() {
         let items = [
             (icon: UIImage(named: "copylink"), title: "Copy link"),
             (icon: UIImage(named: "instagram"), title: "Message"),
             (icon: UIImage(named: "instagram"), title: "Story"),
-            (icon: UIImage(named: "snapchat"), title: "Message"),
             (icon: UIImage(named: "snapchat"), title: "Story"),
             (icon: UIImage(named: "telegram"), title: "Message"),
             (icon: UIImage(named: "whatsapp"), title: "Message"),
@@ -526,7 +528,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             
             let label = UILabel()
             label.text = item.title
-            label.textColor = .white
+            label.textColor = .icon
             label.font = UIFont.systemFont(ofSize: 12)
             label.translatesAutoresizingMaskIntoConstraints = false
             verticalStackView.addArrangedSubview(imageView)
@@ -573,27 +575,22 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.NavigateToShareSnapchat(sharePrank: "Instagram")
             }
-        case 3:  // Snapchat Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareSnapchatMessage()
-            }
-        case 4:   // Snapchat Story
+        case 3:   // Snapchat Story
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
             }
-        case 5:   // Telegram Message
+        case 4:    // Telegram Message
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.shareTelegramMessage()
             }
-        case 6: // WhatsApp Message
+        case 5:  // WhatsApp Message
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.shareWhatsAppMessage()
             }
-        case 7:   // More
+        case 6:  // More
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.shareSnapchatMessage()
@@ -604,7 +601,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     private func NavigateToShareSnapchat(sharePrank: String?) {
-        guard let prankLink = prankLink,
+        guard let prankLink = prankShareURL,
               let coverImageURL = coverImageURL else { return }
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -623,45 +620,48 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     private func shareWhatsAppMessage() {
-        guard let prankLink = prankLink,
+        guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
         let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
         let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
         if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         } else {
-            let snackbar = CustomSnackbar(message: "WhatsApp not installed!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
+            if let appStoreURL = URL(string: "https://apps.apple.com/us/app/whatsapp-messenger/id310633997") {
+                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+            }
         }
     }
     
     private func shareInstagramMessage() {
-        guard let prankLink = prankLink,
+        guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
+        let message = "\(prankName)\n\n\(prankLink)"
         if let url = URL(string: "instagram://sharesheet?text=\(message)") {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         } else {
-            let snackbar = CustomSnackbar(message: "Instagram app not installed!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
+            if let appStoreURL = URL(string: "https://apps.apple.com/us/app/instagram/id389801252") {
+                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+            }
         }
     }
     
     private func shareTelegramMessage() {
-        guard let prankLink = prankLink,
+        guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
         let telegramMessage = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
         let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         } else {
-            let snackbar = CustomSnackbar(message: "Telegram app not installed!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
+            if let appStoreURL = URL(string: "https://apps.apple.com/ng/app/telegram-messenger/id686449807") {
+                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+            }
         }
     }
     
     private func shareSnapchatMessage() {
-        guard let prankLink = prankLink,
+        guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
         let message = "\(prankName)\n\n🔗 Check it out: \(prankLink)"
         let itemsToShare: [Any] = [message]
@@ -782,7 +782,7 @@ extension ShareLinkVC {
         let newPrank = PrankCreateData(
             id: viewModel.createPrankID ?? "",
             link: viewModel.createPrankLink ?? "",
-            coverImage: viewModel.createPrankCoverImage ?? "",
+            coverImage: viewModel.createPrankCoverImage ?? "", shareURL: viewModel.createPrankShareURL ?? "",
             file: viewModel.createPrankData ?? "",
             type: selectedPranktype ?? "",
             name: viewModel.createPrankName ?? ""

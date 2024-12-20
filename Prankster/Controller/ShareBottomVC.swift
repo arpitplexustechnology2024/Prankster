@@ -141,11 +141,9 @@ class ShareBottomVC: UIViewController {
                 }
             }
         } else {
-            let snackbar = CustomSnackbar(message: "Instagram is not installed!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
-//            if let appStoreURL = URL(string: "https://apps.apple.com/us/app/instagram/id389801252") {
-//                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
-//            }
+            if let appStoreURL = URL(string: "https://apps.apple.com/us/app/instagram/id389801252") {
+                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+            }
         }
     }
     
@@ -185,11 +183,9 @@ class ShareBottomVC: UIViewController {
                 UIApplication.shared.open(url, options: [:], completionHandler: nil)
             }
         } else {
-            let snackbar = CustomSnackbar(message: "Please Install Snapchat App", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
-//            if let appStoreURL = URL(string: "https://apps.apple.com/app/snapchat/id447188370") {
-//                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
-//            }
+            if let appStoreURL = URL(string: "https://apps.apple.com/app/snapchat/id447188370") {
+                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+            }
         }
     }
     
