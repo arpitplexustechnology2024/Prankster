@@ -11,6 +11,7 @@
 		8A14A120C85453A0695CFCAE /* Pods_Prankster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */; };
 		AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */; };
 		BD29F6E72D1499780046CCB8 /* AudioGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD29F6E62D1499780046CCB8 /* AudioGIF.gif */; };
+		BD7B005C2D15143700D2A401 /* ImageCategoryVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7B005B2D15143700D2A401 /* ImageCategoryVC.swift */; };
 		BDADD19B2D11F22E00BDF838 /* AdsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */; };
 		BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */; };
 		BDADD1A52D120D2700BDF838 /* ImageGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDADD1A42D120D2700BDF838 /* ImageGIF.gif */; };
@@ -170,6 +171,7 @@
 		713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalPushNotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		BD29F6E62D1499780046CCB8 /* AudioGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = AudioGIF.gif; sourceTree = "<group>"; };
+		BD7B005B2D15143700D2A401 /* ImageCategoryVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCategoryVC.swift; sourceTree = "<group>"; };
 		BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsAPI.swift; sourceTree = "<group>"; };
 		BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsViewModel.swift; sourceTree = "<group>"; };
 		BDADD1A42D120D2700BDF838 /* ImageGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = ImageGIF.gif; sourceTree = "<group>"; };
@@ -617,6 +619,7 @@
 			children = (
 				BDC68B572D0931F800834D9B /* ImageCategoryAllVC.swift */,
 				BDC68B582D0931F800834D9B /* ImageVC.swift */,
+				BD7B005B2D15143700D2A401 /* ImageCategoryVC.swift */,
 			);
 			path = Image;
 			sourceTree = "<group>";
@@ -1070,6 +1073,7 @@
 				BDC68B722D0931F900834D9B /* ShareLinkVC.swift in Sources */,
 				BDC68B732D0931F900834D9B /* HomeVC.swift in Sources */,
 				BDC68B742D0931F900834D9B /* RealisticCoverPageVC.swift in Sources */,
+				BD7B005C2D15143700D2A401 /* ImageCategoryVC.swift in Sources */,
 				BDC68B752D0931F900834D9B /* ImageCollectionViewCell.swift in Sources */,
 				BDC68B762D0931F900834D9B /* ImageCharacterAllCollectionViewCell.swift in Sources */,
 				BDC68B772D0931F900834D9B /* CustomCoverPageVC.swift in Sources */,

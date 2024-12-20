@@ -4663,10 +4663,10 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
             </objects>
             <point key="canvasLocation" x="7096" y="631"/>
         </scene>
-        <!--View Controller-->
+        <!--Image CategoryVC-->
         <scene sceneID="dTW-9V-Ph2">
             <objects>
-                <viewController useStoryboardIdentifierAsRestorationIdentifier="YES" id="F5d-xK-tOi" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="ImageCategoryVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="F5d-xK-tOi" customClass="ImageCategoryVC" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="IHF-gZ-EyF">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -4685,9 +4685,6 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                                         <buttonConfiguration key="configuration" style="plain" image="chevron.left" catalog="system">
                                             <color key="baseForegroundColor" name="Icon"/>
                                         </buttonConfiguration>
-                                        <connections>
-                                            <action selector="btnBackTapped:" destination="F5d-xK-tOi" eventType="touchUpInside" id="8rs-fD-wk0"/>
-                                        </connections>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Show all" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JJf-Sj-gt9">
                                         <rect key="frame" x="61.999999999999993" y="11.333333333333327" width="78.333333333333314" height="27.333333333333329"/>
@@ -4858,11 +4855,6 @@ bGUgdG8gZWRpdCB0aGlzIHBvc3QgYW5kIHJlcHVibGlzaCBjaGFuZ2VzLg
                             <constraint firstItem="fQO-fS-B2A" firstAttribute="leading" secondItem="uSR-2T-tnA" secondAttribute="leading" id="s9E-fe-CDJ"/>
                         </constraints>
                     </view>
-                    <connections>
-                        <outlet property="imageCharacterAllCollectionView" destination="IZh-Fv-bXh" id="DVc-Vt-NwU"/>
-                        <outlet property="navigationbarView" destination="nFK-Hq-Oc0" id="xZB-34-Wwj"/>
-                        <outlet property="searchbar" destination="WbP-9f-4Ga" id="NeF-BJ-byW"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QK0-qF-Bd0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
