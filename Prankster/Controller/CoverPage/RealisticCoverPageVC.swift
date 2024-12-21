@@ -12,6 +12,7 @@ class RealisticCoverPageVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var realisticCoverAllCollectionView: UICollectionView!
+    @IBOutlet weak var realisticCoverSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchbar: UISearchBar!
     private let viewModel = RealisticViewModel()
     private var noDataView: NoDataView!
@@ -24,6 +25,7 @@ class RealisticCoverPageVC: UIViewController {
     var isLoading = true
     private let categoryId: Int = 4
     private var isLoadingMore = false
+    private var selectedIndex: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,16 +40,27 @@ class RealisticCoverPageVC: UIViewController {
         self.self.filteredRealisticCoverPages = viewModel.realisticCoverPages
         
         NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(handlePremiumContentUnlocked),
-                name: NSNotification.Name("PremiumContentUnlocked"),
-                object: nil
-            )
+            self,
+            selector: #selector(handlePremiumContentUnlocked),
+            name: NSNotification.Name("PremiumContentUnlocked"),
+            object: nil
+        )
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self else { return }
+            if !self.currentDataSource.isEmpty {
+                let indexPath = IndexPath(item: 0, section: 0)
+                self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.selectedIndex = 0
+            }
+        }
     }
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
             self.realisticCoverAllCollectionView.reloadData()
+            self.realisticCoverSlideCollectionview.reloadData()
         }
     }
     
@@ -59,9 +72,12 @@ class RealisticCoverPageVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search"
         searchbar.backgroundImage = UIImage()
-        searchbar.backgroundColor = .comman
         searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
+
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField {
+            textField.textColor = .white
+        }
     }
     
     func checkInternetAndFetchData() {
@@ -78,15 +94,11 @@ class RealisticCoverPageVC: UIViewController {
     private func setupCollectionView() {
         self.realisticCoverAllCollectionView.delegate = self
         self.realisticCoverAllCollectionView.dataSource = self
+        self.realisticCoverAllCollectionView.isPagingEnabled = true
+        self.realisticCoverSlideCollectionview.delegate = self
+        self.realisticCoverSlideCollectionview.dataSource = self
         self.realisticCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.realisticCoverAllCollectionView.register(
-            LoadingFooterView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: LoadingFooterView.reuseIdentifier
-        )
-        if let layout = realisticCoverAllCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: view.frame.width, height: 50)
-        }
+        self.realisticCoverSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
     }
     
     func fetchAllCoverPages() {
@@ -104,6 +116,13 @@ class RealisticCoverPageVC: UIViewController {
                         self.hideSkeletonLoader()
                         self.hideNoDataView()
                         self.realisticCoverAllCollectionView.reloadData()
+                        self.realisticCoverSlideCollectionview.reloadData()
+                        
+                        if !self.currentDataSource.isEmpty {
+                            let indexPath = IndexPath(item: self.selectedIndex, section: 0)
+                            self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                        }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
                     self.hideSkeletonLoader()
@@ -172,11 +191,13 @@ class RealisticCoverPageVC: UIViewController {
     func showSkeletonLoader() {
         isLoading = true
         self.realisticCoverAllCollectionView.reloadData()
+        self.realisticCoverSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
         isLoading = false
         self.realisticCoverAllCollectionView.reloadData()
+        self.realisticCoverSlideCollectionview.reloadData()
     }
     
     private func isConnectedToInternet() -> Bool {
@@ -218,6 +239,17 @@ class RealisticCoverPageVC: UIViewController {
                 self.showNoDataView()
             } else {
                 self.hideNoDataView()
+                
+                if !self.filteredRealisticCoverPages.isEmpty {
+                    self.selectedIndex = 0
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    
+                    self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    self.realisticCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    
+                    self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                    self.realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                }
             }
         }
     }
@@ -232,49 +264,71 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if isLoading {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-            cell.isUserInteractionEnabled = false
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RealisticCoverAllCollectionViewCell", for: indexPath) as! RealisticCoverAllCollectionViewCell
-            guard indexPath.row < currentDataSource.count else {
+        if collectionView == realisticCoverAllCollectionView {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RealisticCoverAllCollectionViewCell", for: indexPath) as! RealisticCoverAllCollectionViewCell
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.delegate = self
+                cell.configure(with: coverPageData)
+                
+                cell.isSelected = indexPath.item == selectedIndex
+                
                 return cell
             }
-            
-            let coverPageData = currentDataSource[indexPath.row]
-            cell.delegate = self
-            cell.configure(with: coverPageData)
-            return cell
+        } else if collectionView == realisticCoverSlideCollectionview {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "RealisticCoverSliderCollectionViewCell", for: indexPath) as! RealisticCoverSliderCollectionViewCell
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.configure(with: coverPageData)
+                
+                cell.isSelected = indexPath.item == selectedIndex
+                
+                return cell
+            }
+        }
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.item
+        
+        if collectionView == realisticCoverAllCollectionView {
+            realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        } else if collectionView == realisticCoverSlideCollectionview {
+            realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            realisticCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = 16
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            let totalSpacing = spacing * 4
-            let width = (collectionView.frame.width - totalSpacing) / 2
-            let height = (collectionView.frame.height - spacing * 3) / 2 + 59
-            return CGSize(width: width, height: height)
-        } else {
-            let totalSpacing = spacing * 3
-            let width = collectionView.frame.width - totalSpacing
-            let height = ((collectionView.frame.height - totalSpacing) / 2) + 59
+        let width: CGFloat = 80
+        let height: CGFloat = 104
+        
+        if collectionView == realisticCoverAllCollectionView {
+            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+        } else if collectionView == realisticCoverSlideCollectionview {
             return CGSize(width: width, height: height)
         }
+        return CGSize(width: width, height: height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
-    }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionFooter {
@@ -298,6 +352,21 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         if indexPath.item == viewModel.realisticCoverPages.count - 1 && !viewModel.isLoading && viewModel.hasMorePages {
             fetchAllCoverPages()
+        }
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == realisticCoverAllCollectionView {
+            let pageWidth = scrollView.bounds.width
+            let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
+            
+            if currentPage != selectedIndex {
+                selectedIndex = currentPage
+                
+                let indexPath = IndexPath(item: currentPage, section: 0)
+                realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            }
         }
     }
 }

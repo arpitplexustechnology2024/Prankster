@@ -4,11 +4,12 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NoDataView" customModule="Prankster" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NoDataLightView" customModule="Prankster" customModuleProvider="target">
             <connections>
                 <outlet property="labelTopConstraint" destination="LRM-CF-lE2" id="BcU-cV-SqP"/>
                 <outlet property="lottieView" destination="VIq-Ny-d2c" id="vnn-hE-8C3"/>
@@ -26,7 +27,7 @@
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No data found." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z5D-XC-TkX">
                     <rect key="frame" x="114.66666666666669" y="466" width="164" height="31.666666666666686"/>
                     <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XR3-MH-1ot">
@@ -34,7 +35,7 @@
                     <string key="text">Request failed! Please try again 
 after some time.</string>
                     <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="20"/>
-                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VIq-Ny-d2c" customClass="LottieAnimationView" customModule="Lottie">
@@ -46,7 +47,7 @@ after some time.</string>
                 </view>
             </subviews>
             <viewLayoutGuide key="safeArea" id="4wa-EH-lQO"/>
-            <color key="backgroundColor" red="0.10980392156862745" green="0.10980392156862745" blue="0.10980392156862745" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" name="comman"/>
             <constraints>
                 <constraint firstItem="VIq-Ny-d2c" firstAttribute="leading" secondItem="4wa-EH-lQO" secondAttribute="leading" constant="53" id="41O-13-Wc9"/>
                 <constraint firstItem="z5D-XC-TkX" firstAttribute="top" secondItem="VIq-Ny-d2c" secondAttribute="bottom" constant="50" id="LRM-CF-lE2"/>
@@ -59,4 +60,9 @@ after some time.</string>
             <point key="canvasLocation" x="806.87022900763361" y="-6.3380281690140849"/>
         </view>
     </objects>
+    <resources>
+        <namedColor name="comman">
+            <color red="0.96862745098039216" green="0.94901960784313721" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+    </resources>
 </document>

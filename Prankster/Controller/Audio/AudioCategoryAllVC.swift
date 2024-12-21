@@ -12,6 +12,7 @@ class AudioCategoryAllVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var audioCharacterAllCollectionView: UICollectionView!
+    @IBOutlet weak var audioCharacterSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchbar: UISearchBar!
     
     var isLoading = true
@@ -26,6 +27,7 @@ class AudioCategoryAllVC: UIViewController {
     private var currentDataSource: [CategoryAllData] {
         return isSearchActive ? filteredAudios : viewModel.audioData
     }
+    private var selectedIndex: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,11 +48,45 @@ class AudioCategoryAllVC: UIViewController {
             name: NSNotification.Name("PremiumContentUnlocked"),
             object: nil
         )
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self else { return }
+            if !self.currentDataSource.isEmpty {
+                let indexPath = IndexPath(item: 0, section: 0)
+                self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.selectedIndex = 0
+                
+                if let cell = self.audioCharacterAllCollectionView.cellForItem(at: indexPath) as? AudioCharacterAllCollectionViewCell {
+                    cell.playAudio()
+                    AudioPlaybackManager.shared.currentlyPlayingCell = cell
+                    AudioPlaybackManager.shared.currentlyPlayingIndexPath = indexPath
+                }
+            }
+        }
+    }
+    
+    private func playVisibleCell() {
+        guard !currentDataSource.isEmpty else { return }
+        
+        let visibleRect = CGRect(origin: audioCharacterAllCollectionView.contentOffset, size: audioCharacterAllCollectionView.bounds.size)
+        let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
+        
+        if let visibleIndexPath = audioCharacterAllCollectionView.indexPathForItem(at: visiblePoint),
+           let cell = audioCharacterAllCollectionView.cellForItem(at: visibleIndexPath) as? AudioCharacterAllCollectionViewCell {
+            selectedIndex = visibleIndexPath.item
+            AudioPlaybackManager.shared.stopCurrentPlayback()
+            cell.playAudio()
+            AudioPlaybackManager.shared.currentlyPlayingCell = cell
+            AudioPlaybackManager.shared.currentlyPlayingIndexPath = visibleIndexPath
+            audioCharacterSlideCollectionview.selectItem(at: visibleIndexPath, animated: true, scrollPosition: .centeredHorizontally)
+        }
     }
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
             self.audioCharacterAllCollectionView.reloadData()
+            self.audioCharacterSlideCollectionview.reloadData()
         }
     }
     
@@ -61,6 +97,11 @@ class AudioCategoryAllVC: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopPlayingAudio()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        playVisibleCell()
     }
     
     @objc private func appDidEnterBackground() {
@@ -82,10 +123,14 @@ class AudioCategoryAllVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search"
         searchbar.backgroundImage = UIImage()
-        searchbar.backgroundColor = .comman
         searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
+        
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField {
+            textField.textColor = .white
+        }
     }
+    
     
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
@@ -101,15 +146,11 @@ class AudioCategoryAllVC: UIViewController {
     private func setupCollectionView() {
         self.audioCharacterAllCollectionView.delegate = self
         self.audioCharacterAllCollectionView.dataSource = self
+        self.audioCharacterSlideCollectionview.delegate = self
+        self.audioCharacterSlideCollectionview.dataSource = self
+        self.audioCharacterAllCollectionView.isPagingEnabled = true
         self.audioCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.audioCharacterAllCollectionView.register(
-            LoadingFooterView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: LoadingFooterView.reuseIdentifier
-        )
-        if let layout = audioCharacterAllCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: view.frame.width, height: 50)
-        }
+        self.audioCharacterSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
     }
     
     // MARK: - fetchAllAudios
@@ -128,6 +169,19 @@ class AudioCategoryAllVC: UIViewController {
                         self.hideSkeletonLoader()
                         self.hideNoDataView()
                         self.audioCharacterAllCollectionView.reloadData()
+                        self.audioCharacterSlideCollectionview.reloadData()
+                        
+                        if !self.currentDataSource.isEmpty {
+                            let indexPath = IndexPath(item: self.selectedIndex, section: 0)
+                            self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            
+                            if !self.isLoadingMore {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    self.playVisibleCell()
+                                }
+                            }
+                        }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
                     self.hideSkeletonLoader()
@@ -141,11 +195,13 @@ class AudioCategoryAllVC: UIViewController {
     func showSkeletonLoader() {
         isLoading = true
         audioCharacterAllCollectionView.reloadData()
+        audioCharacterSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
         isLoading = false
         audioCharacterAllCollectionView.reloadData()
+        audioCharacterSlideCollectionview.reloadData()
     }
     
     private func setupNoDataView() {
@@ -157,7 +213,7 @@ class AudioCategoryAllVC: UIViewController {
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noDataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noDataView.topAnchor.constraint(equalTo: searchbar.bottomAnchor),
+            noDataView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor),
             noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -171,7 +227,7 @@ class AudioCategoryAllVC: UIViewController {
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noInternetView.topAnchor.constraint(equalTo: searchbar.bottomAnchor),
+            noInternetView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor),
             noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -235,11 +291,29 @@ class AudioCategoryAllVC: UIViewController {
         
         DispatchQueue.main.async {
             self.audioCharacterAllCollectionView.reloadData()
+            self.audioCharacterSlideCollectionview.reloadData()
             
             if self.filteredAudios.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()
             } else {
                 self.hideNoDataView()
+                
+                if !self.filteredAudios.isEmpty {
+                    self.selectedIndex = 0
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    
+                    self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    self.audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    
+                    self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                    self.audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    
+                    if !self.filteredAudios.isEmpty {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            self.playVisibleCell()
+                        }
+                    }
+                }
             }
         }
     }
@@ -255,48 +329,67 @@ extension AudioCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if isLoading {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-            cell.isUserInteractionEnabled = false
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterAllCollectionViewCell", for: indexPath) as! AudioCharacterAllCollectionViewCell
-            guard indexPath.row < currentDataSource.count else {
+        if collectionView == audioCharacterAllCollectionView {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterAllCollectionViewCell", for: indexPath) as! AudioCharacterAllCollectionViewCell
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                
+                let audioData = currentDataSource[indexPath.row]
+                cell.delegate = self
+                cell.configure(with: audioData, at: indexPath)
                 return cell
             }
-            
-            let audioData = currentDataSource[indexPath.row]
-            cell.delegate = self
-            cell.configure(with: audioData, at: indexPath)
-            return cell
+        } else if collectionView == audioCharacterSlideCollectionview {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterSliderCollectionViewCell", for: indexPath) as! AudioCharacterSliderCollectionViewCell
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.configure(with: coverPageData)
+                
+                cell.isSelected = indexPath.item == selectedIndex
+                
+                return cell
+            }
+        }
+        
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.item
+        
+        if collectionView == audioCharacterAllCollectionView {
+            audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        } else if collectionView == audioCharacterSlideCollectionview {
+            audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = 16
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            let totalSpacing = spacing * 4
-            let width = (collectionView.frame.width - totalSpacing) / 2
-            let height = (collectionView.frame.height - spacing * 3) / 2 + 59
-            return CGSize(width: width, height: height)
-        } else {
-            let totalSpacing = spacing * 3
-            let width = collectionView.frame.width - totalSpacing
-            let height = ((collectionView.frame.height - totalSpacing) / 2) + 59
+        let width: CGFloat = 80
+        let height: CGFloat = 104
+        
+        if collectionView == audioCharacterAllCollectionView {
+            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+        } else if collectionView == audioCharacterSlideCollectionview {
             return CGSize(width: width, height: height)
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
+        return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -322,6 +415,36 @@ extension AudioCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
             return footer
         }
         return UICollectionReusableView()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == audioCharacterAllCollectionView {
+            NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(scrollingEnded), object: nil)
+            perform(#selector(scrollingEnded), with: nil, afterDelay: 0.1)
+            let pageWidth = scrollView.bounds.width
+            let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
+            
+            if currentPage != selectedIndex {
+                selectedIndex = currentPage
+                
+                let indexPath = IndexPath(item: currentPage, section: 0)
+                audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            }
+        }
+    }
+    
+    @objc private func scrollingEnded() {
+        playVisibleCell()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if let playingIndexPath = AudioPlaybackManager.shared.currentlyPlayingIndexPath,
+           let cell = audioCharacterAllCollectionView.cellForItem(at: playingIndexPath) as? AudioCharacterAllCollectionViewCell {
+            cell.playAudio()
+        }
     }
 }
 

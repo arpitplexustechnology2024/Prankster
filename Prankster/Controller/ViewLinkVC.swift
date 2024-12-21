@@ -13,7 +13,7 @@ class ViewLinkVC: UIViewController {
     @IBOutlet weak var viewlinkCollectionView: UICollectionView!
     @IBOutlet weak var navigationView: UIView!
     var pranks: [PrankCreateData] = []
-    private var noDataView: NoDataView!
+    private var noDataView: NoDataLightView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +36,7 @@ class ViewLinkVC: UIViewController {
     }
     
     private func setupNoDataView() {
-        noDataView = NoDataView()
+        noDataView = NoDataLightView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
         self.view.addSubview(noDataView)

@@ -167,11 +167,10 @@ struct AdsResponse: Codable {
     }
 }
 struct AdsData: Codable {
-    let adsName, adsID, createdAt, updatedAt: String
+    let adsName, adsID: String
     
     enum CodingKeys: String, CodingKey {
         case adsName = "AdsName"
         case adsID = "AdsId"
-        case createdAt, updatedAt
     }
 }

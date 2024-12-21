@@ -11,9 +11,11 @@ class CustomCoverPageVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var customeCoverAllCollectionView: UICollectionView!
+    @IBOutlet weak var customeCoverSlideCollectionview: UICollectionView!
     var allCustomCovers: [UIImage] = []
     
     private var noDataView: NoDataView!
+    private var selectedIndex: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,11 +24,24 @@ class CustomCoverPageVC: UIViewController {
         self.setupCollectionView()
         self.updateNoDataViewVisibility()
         self.navigationbarView.addBottomShadow()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self else { return }
+            if !self.allCustomCovers.isEmpty {
+                let indexPath = IndexPath(item: 0, section: 0)
+                self.customeCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.customeCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.selectedIndex = 0
+            }
+        }
     }
     
     private func setupCollectionView() {
         self.customeCoverAllCollectionView.delegate = self
         self.customeCoverAllCollectionView.dataSource = self
+        self.customeCoverAllCollectionView.isPagingEnabled = true
+        self.customeCoverSlideCollectionview.delegate = self
+        self.customeCoverSlideCollectionview.dataSource = self
     }
     
     private func setupNoDataView() {
@@ -46,6 +61,7 @@ class CustomCoverPageVC: UIViewController {
     private func updateNoDataViewVisibility() {
         noDataView.isHidden = !allCustomCovers.isEmpty
         customeCoverAllCollectionView.isHidden = allCustomCovers.isEmpty
+        customeCoverSlideCollectionview.isHidden = allCustomCovers.isEmpty
     }
     
     @IBAction func btnBackTapped(_ sender: UIButton) {
@@ -71,38 +87,57 @@ extension CustomCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSourc
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if collectionView == customeCoverAllCollectionView {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCoverAllCollectionViewCell", for: indexPath) as! CustomCoverAllCollectionViewCell
         cell.imageView.image = allCustomCovers[indexPath.item]
-        cell.blurredImageView.image = allCustomCovers[indexPath.item]
         cell.delegate = self
         return cell
+        } else if collectionView == customeCoverSlideCollectionview {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCoverSliderCollectionViewCell", for: indexPath) as! CustomCoverSliderCollectionViewCell
+            cell.imageView.image = allCustomCovers[indexPath.item]
+            return cell
+        }
+        return UICollectionViewCell()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = 16
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            let totalSpacing = spacing * 4
-            let width = (collectionView.frame.width - totalSpacing) / 2
-            let height = (collectionView.frame.height - spacing * 3) / 2 + 59
-            return CGSize(width: width, height: height)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.item
+        
+        if collectionView == customeCoverAllCollectionView {
+            customeCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            customeCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         } else {
-            let totalSpacing = spacing * 3
-            let width = collectionView.frame.width - totalSpacing
-            let height = ((collectionView.frame.height - totalSpacing) / 2) + 59
-            return CGSize(width: width, height: height)
+            customeCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            customeCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width: CGFloat = 80
+        let height: CGFloat = 104
+        
+        if collectionView == customeCoverAllCollectionView {
+            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+        } else if collectionView == customeCoverSlideCollectionview {
+            return CGSize(width: width, height: height)
+        }
+        return CGSize(width: width, height: height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == customeCoverAllCollectionView {
+            let pageWidth = scrollView.bounds.width
+            let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
+            
+            if currentPage != selectedIndex {
+                selectedIndex = currentPage
+                
+                let indexPath = IndexPath(item: currentPage, section: 0)
+                customeCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                customeCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            }
+        }
     }
 }
 

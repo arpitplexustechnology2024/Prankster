@@ -12,8 +12,8 @@ class MoreAppVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var collectionview: UICollectionView!
-    private var noDataView: NoDataView!
-    private var noInternetView: NoInternetView!
+    private var noDataView: NoDataLightView!
+    private var noInternetView: NoInternetLightView!
     private let viewModel = MoreAppViewModel()
     private var moreDataArray: [MoreData] = []
     
@@ -85,7 +85,7 @@ class MoreAppVC: UIViewController {
     }
     
     private func setupNoDataView() {
-        noDataView = NoDataView()
+        noDataView = NoDataLightView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
         self.view.addSubview(noDataView)
@@ -100,7 +100,7 @@ class MoreAppVC: UIViewController {
     }
     
     func setupNoInternetView() {
-        noInternetView = NoInternetView()
+        noInternetView = NoInternetLightView()
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
         noInternetView.isHidden = true
         self.view.addSubview(noInternetView)

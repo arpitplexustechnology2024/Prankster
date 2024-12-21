@@ -12,6 +12,7 @@ class EmojiCoverPageVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var emojiCoverAllCollectionView: UICollectionView!
+    @IBOutlet weak var emojiCoverSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchbar: UISearchBar!
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
@@ -24,6 +25,7 @@ class EmojiCoverPageVC: UIViewController {
     var isLoading = true
     private let categoryId: Int = 4
     private var isLoadingMore = false
+    private var selectedIndex: Int = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,16 +40,27 @@ class EmojiCoverPageVC: UIViewController {
         self.filteredEmojiCoverPages = viewModel.emojiCoverPages
         
         NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(handlePremiumContentUnlocked),
-                name: NSNotification.Name("PremiumContentUnlocked"),
-                object: nil
-            )
+            self,
+            selector: #selector(handlePremiumContentUnlocked),
+            name: NSNotification.Name("PremiumContentUnlocked"),
+            object: nil
+        )
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+            guard let self = self else { return }
+            if !self.currentDataSource.isEmpty {
+                let indexPath = IndexPath(item: 0, section: 0)
+                self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.selectedIndex = 0
+            }
+        }
     }
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
             self.emojiCoverAllCollectionView.reloadData()
+            self.emojiCoverSlideCollectionview.reloadData()
         }
     }
     
@@ -59,9 +72,12 @@ class EmojiCoverPageVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search"
         searchbar.backgroundImage = UIImage()
-        searchbar.backgroundColor = .comman
         searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
+
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField {
+            textField.textColor = .white
+        }
     }
     
     func checkInternetAndFetchData() {
@@ -76,17 +92,13 @@ class EmojiCoverPageVC: UIViewController {
     }
     
     private func setupCollectionView() {
+        self.emojiCoverSlideCollectionview.delegate = self
+        self.emojiCoverSlideCollectionview.dataSource = self
         self.emojiCoverAllCollectionView.delegate = self
         self.emojiCoverAllCollectionView.dataSource = self
+        self.emojiCoverAllCollectionView.isPagingEnabled = true
         self.emojiCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.emojiCoverAllCollectionView.register(
-            LoadingFooterView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: LoadingFooterView.reuseIdentifier
-        )
-        if let layout = emojiCoverAllCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: view.frame.width, height: 50)
-        }
+        self.emojiCoverSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
     }
     
     func fetchAllCoverPages() {
@@ -104,6 +116,13 @@ class EmojiCoverPageVC: UIViewController {
                         self.hideSkeletonLoader()
                         self.hideNoDataView()
                         self.emojiCoverAllCollectionView.reloadData()
+                        self.emojiCoverSlideCollectionview.reloadData()
+                        
+                        if !self.currentDataSource.isEmpty {
+                            let indexPath = IndexPath(item: self.selectedIndex, section: 0)
+                            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                        }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
                     self.hideSkeletonLoader()
@@ -172,11 +191,13 @@ class EmojiCoverPageVC: UIViewController {
     func showSkeletonLoader() {
         isLoading = true
         self.emojiCoverAllCollectionView.reloadData()
+        self.emojiCoverSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
         isLoading = false
         self.emojiCoverAllCollectionView.reloadData()
+        self.emojiCoverSlideCollectionview.reloadData()
     }
     
     private func isConnectedToInternet() -> Bool {
@@ -213,11 +234,23 @@ class EmojiCoverPageVC: UIViewController {
         
         DispatchQueue.main.async {
             self.emojiCoverAllCollectionView.reloadData()
+            self.emojiCoverSlideCollectionview.reloadData()
             
             if self.filteredEmojiCoverPages.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()
             } else {
                 self.hideNoDataView()
+                
+                if !self.filteredEmojiCoverPages.isEmpty {
+                    self.selectedIndex = 0
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    
+                    self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    
+                    self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                    self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                }
             }
         }
     }
@@ -232,49 +265,70 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if isLoading {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-            cell.isUserInteractionEnabled = false
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
-            
-            guard indexPath.row < currentDataSource.count else {
+        if collectionView == emojiCoverAllCollectionView {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
+                
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.delegate = self
+                cell.configure(with: coverPageData)
+                
+                cell.isSelected = indexPath.item == selectedIndex
+                
                 return cell
             }
-            
-            let coverPageData = currentDataSource[indexPath.row]
-            cell.delegate = self
-            cell.configure(with: coverPageData)
-            return cell
+        } else if collectionView == emojiCoverSlideCollectionview {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverSliderCollectionViewCell", for: indexPath) as! EmojiCoverSliderCollectionViewCell
+                
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.configure(with: coverPageData)
+                
+                cell.isSelected = indexPath.item == selectedIndex
+                
+                return cell
+            }
+        }
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.item
+        
+        if collectionView == emojiCoverAllCollectionView {
+            emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        } else {
+            emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = 16
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            let totalSpacing = spacing * 4
-            let width = (collectionView.frame.width - totalSpacing) / 2
-            let height = (collectionView.frame.height - spacing * 3) / 2 + 59
-            return CGSize(width: width, height: height)
-        } else {
-            let totalSpacing = spacing * 3
-            let width = collectionView.frame.width - totalSpacing
-            let height = ((collectionView.frame.height - totalSpacing) / 2) + 59
+        let width: CGFloat = 80
+        let height: CGFloat = 104
+        
+        if collectionView == emojiCoverAllCollectionView {
+            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+        } else if collectionView == emojiCoverSlideCollectionview {
             return CGSize(width: width, height: height)
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
+        return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -300,6 +354,21 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
             return footer
         }
         return UICollectionReusableView()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == emojiCoverAllCollectionView {
+            let pageWidth = scrollView.bounds.width
+            let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
+            
+            if currentPage != selectedIndex {
+                selectedIndex = currentPage
+                
+                let indexPath = IndexPath(item: currentPage, section: 0)
+                emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            }
+        }
     }
 }
 

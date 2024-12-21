@@ -12,6 +12,7 @@ class ImageCategoryAllVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var imageCharacterAllCollectionView: UICollectionView!
+    @IBOutlet weak var imageCharacterSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchbar: UISearchBar!
     
     var isLoading = true
@@ -19,6 +20,7 @@ class ImageCategoryAllVC: UIViewController {
     private let typeId: Int = 3
     private var isLoadingMore = false
     private var isSearchActive = false
+    private var selectedIndex: Int = 0
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
     private var viewModel = CategoryAllViewModel()
@@ -40,16 +42,27 @@ class ImageCategoryAllVC: UIViewController {
         self.filteredImages = viewModel.audioData
         
         NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(handlePremiumContentUnlocked),
-                name: NSNotification.Name("PremiumContentUnlocked"),
-                object: nil
-            )
-    }
+            self,
+            selector: #selector(handlePremiumContentUnlocked),
+            name: NSNotification.Name("PremiumContentUnlocked"),
+            object: nil
+        )
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+                    guard let self = self else { return }
+                    if !self.currentDataSource.isEmpty {
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.selectedIndex = 0
+                    }
+                }
+            }
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
             self.imageCharacterAllCollectionView.reloadData()
+            self.imageCharacterSlideCollectionview.reloadData()
         }
     }
     
@@ -61,7 +74,6 @@ class ImageCategoryAllVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search"
         searchbar.backgroundImage = UIImage()
-        searchbar.backgroundColor = .comman
         searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
     }
@@ -80,15 +92,12 @@ class ImageCategoryAllVC: UIViewController {
     private func setupCollectionView() {
         self.imageCharacterAllCollectionView.delegate = self
         self.imageCharacterAllCollectionView.dataSource = self
+        self.imageCharacterAllCollectionView.isPagingEnabled = true
+        self.imageCharacterSlideCollectionview.delegate = self
+        self.imageCharacterSlideCollectionview.dataSource = self
         self.imageCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.imageCharacterAllCollectionView.register(
-            LoadingFooterView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: LoadingFooterView.reuseIdentifier
-        )
-        if let layout = imageCharacterAllCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: view.frame.width, height: 50)
-        }
+        self.imageCharacterSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        
     }
     
     // MARK: - fetchAllImages
@@ -107,6 +116,13 @@ class ImageCategoryAllVC: UIViewController {
                         self.hideSkeletonLoader()
                         self.hideNoDataView()
                         self.imageCharacterAllCollectionView.reloadData()
+                        self.imageCharacterSlideCollectionview.reloadData()
+                        
+                        if !self.currentDataSource.isEmpty {
+                            let indexPath = IndexPath(item: self.selectedIndex, section: 0)
+                            self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                        }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
                     self.hideSkeletonLoader()
@@ -207,18 +223,29 @@ class ImageCategoryAllVC: UIViewController {
         } else {
             filteredImages = viewModel.audioData.filter { coverPage in
                 let nameMatch = coverPage.name.lowercased().contains(searchText.lowercased())
-                let categoryMatch = coverPage.artistName.lowercased().contains(searchText.lowercased())
-                return nameMatch || categoryMatch
+                return nameMatch
             }
         }
         
         DispatchQueue.main.async {
             self.imageCharacterAllCollectionView.reloadData()
+            self.imageCharacterSlideCollectionview.reloadData()
             
             if self.filteredImages.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()
             } else {
                 self.hideNoDataView()
+                
+                if !self.filteredImages.isEmpty {
+                    self.selectedIndex = 0
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    
+                    self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                    self.imageCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    
+                    self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                    self.imageCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                }
             }
         }
     }
@@ -234,55 +261,71 @@ extension ImageCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if isLoading {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-            cell.isUserInteractionEnabled = false
-            return cell
-        } else {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
-            
-            guard indexPath.row < currentDataSource.count else {
+        if collectionView == imageCharacterAllCollectionView {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
+                
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.delegate = self
+                cell.configure(with: coverPageData)
                 return cell
             }
-            
-            let coverPageData = currentDataSource[indexPath.row]
-            cell.delegate = self
-            cell.configure(with: coverPageData)
-            return cell
+        } else if collectionView == imageCharacterSlideCollectionview {
+            if isLoading {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                cell.isUserInteractionEnabled = false
+                return cell
+            } else {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterSliderCollectionViewCell", for: indexPath) as! ImageCharacterSliderCollectionViewCell
+                
+                guard indexPath.row < currentDataSource.count else {
+                    return cell
+                }
+                
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.configure(with: coverPageData)
+                return cell
+            }
+        }
+        return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedIndex = indexPath.item
+        
+        if collectionView == imageCharacterAllCollectionView {
+            imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            imageCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+        } else {
+            imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            imageCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = 16
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            let totalSpacing = spacing * 4
-            let width = (collectionView.frame.width - totalSpacing) / 2
-            let height = (collectionView.frame.height - spacing * 3) / 2 + 59
-            return CGSize(width: width, height: height)
-        } else {
-            let totalSpacing = spacing * 3
-            let width = collectionView.frame.width - totalSpacing
-            let height = ((collectionView.frame.height - totalSpacing) / 2) + 59
+        let width: CGFloat = 80
+        let height: CGFloat = 104
+        
+        if collectionView == imageCharacterAllCollectionView {
+            return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
+        } else if collectionView == imageCharacterSlideCollectionview {
             return CGSize(width: width, height: height)
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 26
+        return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-                fetchAllImages()
+            fetchAllImages()
         }
     }
     
@@ -298,10 +341,24 @@ extension ImageCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
             } else {
                 footer.stopAnimating()
             }
-            
             return footer
         }
         return UICollectionReusableView()
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView == imageCharacterAllCollectionView {
+            let pageWidth = scrollView.bounds.width
+            let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
+            
+            if currentPage != selectedIndex {
+                selectedIndex = currentPage
+                
+                let indexPath = IndexPath(item: currentPage, section: 0)
+                imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                imageCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            }
+        }
     }
 }
 

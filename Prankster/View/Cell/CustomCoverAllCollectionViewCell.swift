@@ -16,42 +16,23 @@ class CustomCoverAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var DoneButton: UIButton!
-    @IBOutlet weak var visualEffectView: UIView!
     weak var delegate: CustomCoverAllCollectionViewCellDelegate?
-    var blurredImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        layer.cornerRadius = 20
-        layer.masksToBounds = false
-        contentView.layer.cornerRadius = 20
-        contentView.layer.masksToBounds = true
-        
-        blurredImageView = UIImageView()
-        blurredImageView.frame = contentView.bounds
-        blurredImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurredImageView.contentMode = .scaleAspectFill
-        
-        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = blurredImageView.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurredImageView.addSubview(blurEffectView)
-        
-        visualEffectView.layer.cornerRadius = 20
-        visualEffectView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        visualEffectView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = false
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = true
         
         DoneButton.layer.shadowColor = UIColor.black.cgColor
         DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
         DoneButton.layer.shadowRadius = 3.24
         DoneButton.layer.shadowOpacity = 0.3
         DoneButton.layer.masksToBounds = false
-        
-        contentView.insertSubview(blurredImageView, at: 0)
 
         DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        self.DoneButton.setImage(UIImage(named: "selectButton"), for: .normal)
+        self.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
     }
     
     override init(frame: CGRect) {
@@ -67,9 +48,37 @@ class CustomCoverAllCollectionViewCell: UICollectionViewCell {
             delegate?.didTapDoneButton(with: image)
         }
     }
+}
+
+class CustomCoverSliderCollectionViewCell: UICollectionViewCell {
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        blurredImageView.frame = contentView.bounds
+    @IBOutlet weak var imageView: UIImageView!
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        setupUI()
+    }
+    
+    private func setupUI() {
+        layer.cornerRadius = 10
+        layer.masksToBounds = false
+        contentView.layer.cornerRadius = 10
+        contentView.layer.masksToBounds = true
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            layer.borderWidth = isSelected ? 3 : 0
+            layer.borderColor = isSelected ? UIColor.white.cgColor : nil
+        }
     }
 }

@@ -13,6 +13,7 @@ enum AdType: String {
     case banner = "bannerAdID"
     case interstitial = "interstitialAdID"
     case reward = "rewardAdID"
+    case appid = "appID"
 }
 
 // MARK: - AdsViewModel
@@ -60,6 +61,8 @@ class AdsViewModel {
                 saveAdID(type: .interstitial, adID: ids[index])
             case "reward":
                 saveAdID(type: .reward, adID: ids[index])
+            case "appid":
+                saveAdID(type: .appid, adID: ids[index])
             default:
                 break
             }

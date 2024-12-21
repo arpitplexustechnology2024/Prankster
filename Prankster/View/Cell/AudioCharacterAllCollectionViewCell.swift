@@ -39,18 +39,18 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var playPauseImageView: UIImageView!
     @IBOutlet weak var DoneButton: UIButton!
     @IBOutlet weak var audioLabel: UILabel!
-    @IBOutlet weak var visualEffectView: UIView!
+    @IBOutlet weak var premiumButton: UIButton!
     
     // MARK: - Properties
     weak var delegate: AudioAllCollectionViewCellDelegate?
     private var categoryAllData: CategoryAllData?
-    private var blurredImageView: UIImageView!
     private var audioPlayer: AVAudioPlayer?
     private var imageViewTimer: Timer?
     private var isAudioPlaying = false
     private var currentIndexPath: IndexPath?
     private var audioDownloadTask: URLSessionDataTask?
     private var isAudioLoaded = false
+    private var nameBlurView: UIVisualEffectView!
     
     // MARK: - Lifecycle Methods
     override func awakeFromNib() {
@@ -59,27 +59,20 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     }
     
     private func setupUI() {
-        layer.cornerRadius = 20
-        layer.masksToBounds = false
-        contentView.layer.cornerRadius = 20
-        contentView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = false
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = true
         
-        blurredImageView = UIImageView()
-        blurredImageView.frame = contentView.bounds
-        blurredImageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurredImageView.contentMode = .scaleAspectFill
+        let labelBlurEffect = UIBlurEffect(style: .light)
+        nameBlurView = UIVisualEffectView(effect: labelBlurEffect)
+        nameBlurView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
         
-        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = blurredImageView.bounds
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        blurredImageView.addSubview(blurEffectView)
+        audioLabel.backgroundColor = .clear
+        audioLabel.textColor = .white
+        audioLabel.layer.masksToBounds = true
         
-        visualEffectView.layer.cornerRadius = 20
-        visualEffectView.layer.maskedCorners = [
-            .layerMinXMaxYCorner, .layerMaxXMaxYCorner,
-        ]
-        visualEffectView.layer.masksToBounds = true
+        contentView.insertSubview(nameBlurView, belowSubview: audioLabel)
         
         DoneButton.layer.shadowColor = UIColor.black.cgColor
         DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
@@ -87,9 +80,8 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         DoneButton.layer.shadowOpacity = 0.3
         DoneButton.layer.masksToBounds = false
         
-        contentView.insertSubview(blurredImageView, at: 0)
-        
         DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        premiumButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         imageView.isUserInteractionEnabled = true
@@ -110,20 +102,21 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         self.currentIndexPath = indexPath
         
         let displayName = categoryAllData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : categoryAllData.name
-        self.audioLabel.text = displayName
+        self.audioLabel.text = "  \(displayName)  "
         
         if let imageURL = URL(string: categoryAllData.image) {
-            blurredImageView.sd_setImage(with: imageURL)
             imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
                 if categoryAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: categoryAllData.itemID) {
-                    self?.DoneButton.setImage(UIImage(named: "PremiumButton"), for: .normal)
+                    self?.premiumButton.isHidden = false
+                    self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
                 } else {
-                    self?.DoneButton.setImage(UIImage(named: "selectButton"), for: .normal)
+                    self?.premiumButton.isHidden = true
+                    self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
                 }
             }
         }
         setupAudioPlayback(with: categoryAllData.file)
-    }
+    } 
     
     private func setupAudioPlayback(with audioURLString: String?) {
         stopAudio()
@@ -164,7 +157,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         
         AudioPlaybackManager.shared.stopCurrentPlayback()
         audioPlayer.play()
-        showPlayImage()
+        self.playPauseImageView.isHidden = true
         isAudioPlaying = true
         AudioPlaybackManager.shared.currentlyPlayingCell = self
         AudioPlaybackManager.shared.currentlyPlayingIndexPath = currentIndexPath
@@ -188,23 +181,6 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         delegate?.didTapAudioPlayback(at: indexPath)
     }
     
-    // MARK: - UI Update Methods
-    private func showPlayImage() {
-        imageViewTimer?.invalidate()
-        playPauseImageView.image = UIImage(named: "PauseButton")
-        playPauseImageView.isHidden = false
-        imageViewTimer = Timer.scheduledTimer(
-            withTimeInterval: 2.0, repeats: false
-        ) { [weak self] _ in
-            UIView.animate(withDuration: 0.3) {
-                self?.playPauseImageView.alpha = 0
-            } completion: { _ in
-                self?.playPauseImageView.isHidden = true
-                self?.playPauseImageView.alpha = 1
-            }
-        }
-    }
-    
     private func showPauseImage() {
         playPauseImageView.image = UIImage(named: "PlayButton")
         playPauseImageView.isHidden = false
@@ -217,9 +193,14 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         }
     }
     
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        blurredImageView.frame = contentView.bounds
+        
+        let padding: CGFloat = 4
+        nameBlurView.frame = audioLabel.frame.insetBy(dx: -padding, dy: -padding)
+        nameBlurView.layer.cornerRadius = nameBlurView.frame.height / 2
+        nameBlurView.layer.masksToBounds = true
     }
     
     @objc private func imageViewTapped() {
@@ -241,6 +222,49 @@ extension AudioCharacterAllCollectionViewCell: AVAudioPlayerDelegate {
         DispatchQueue.main.async { [weak self] in
             self?.stopAudio()
             player.currentTime = 0
+        }
+    }
+}
+
+
+class AudioCharacterSliderCollectionViewCell: UICollectionViewCell {
+    
+    @IBOutlet weak var imageView: UIImageView!
+    private var categoryAllData: CategoryAllData?
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        setupUI()
+    }
+    
+    private func setupUI() {
+        layer.cornerRadius = 10
+        layer.masksToBounds = false
+        contentView.layer.cornerRadius = 10
+        contentView.layer.masksToBounds = true
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    func configure(with categoryAllData: CategoryAllData) {
+        self.categoryAllData = categoryAllData
+        if let imageURL = URL(string: categoryAllData.image) {
+            imageView.sd_setImage(with: imageURL) { image, _, _, _ in
+            }
+        }
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            layer.borderWidth = isSelected ? 3 : 0
+            layer.borderColor = isSelected ? UIColor.white.cgColor : nil
         }
     }
 }
