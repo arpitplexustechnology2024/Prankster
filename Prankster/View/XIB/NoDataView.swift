@@ -13,7 +13,6 @@ class NoDataView: UIView {
     
     @IBOutlet weak var lottieView: LottieAnimationView!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var lottieViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var labelTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var lottieViewHeightConstraint: NSLayoutConstraint!
@@ -37,8 +36,6 @@ class NoDataView: UIView {
         addSubview(view)
         
         adjustConstraints()
-        
-        localizeUI()
         setupLottieLoader()
     }
     
@@ -47,11 +44,6 @@ class NoDataView: UIView {
         lottieView.contentMode = .scaleAspectFit
         lottieView.animation = LottieAnimation.named("Nodata")
         lottieView.play()
-    }
-    
-    func localizeUI() {
-        titleLabel.text = NSLocalizedString("No data found.", comment: "")
-        messageLabel.text = NSLocalizedString("Request failed! Please try again \n after some time.", comment: "")
     }
     
     private func adjustConstraints() {

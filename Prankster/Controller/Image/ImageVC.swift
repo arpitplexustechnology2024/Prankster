@@ -423,7 +423,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
 // MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
 extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private func showImageOptionsActionSheet(sourceView: UIView) {
-        let titleString = NSAttributedString(string: "Select Image", attributes: [
+        let titleString = NSAttributedString(string: "Select image prank", attributes: [
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)
         ])
         

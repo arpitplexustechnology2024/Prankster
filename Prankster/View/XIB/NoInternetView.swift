@@ -13,7 +13,6 @@ class NoInternetView: UIView {
     
     @IBOutlet weak var lottieView: LottieAnimationView!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var messageLabel: UILabel!
     @IBOutlet weak var retryButton: UIButton!
     @IBOutlet weak var lottieViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var lottieViewHeightConstraint: NSLayoutConstraint!
@@ -41,7 +40,6 @@ class NoInternetView: UIView {
         addSubview(view)
         
         adjustConstraints()
-        localizeUI()
         setupLottieLoader()
     }
     
@@ -50,11 +48,6 @@ class NoInternetView: UIView {
         lottieView.contentMode = .scaleAspectFit
         lottieView.animation = LottieAnimation.named("NoInternet")
         lottieView.play()
-    }
-    
-    func localizeUI() {
-        titleLabel.text = NSLocalizedString("Oops... \n No internet connection!", comment: "")
-        messageLabel.text = NSLocalizedString("Please turn on internet connection!", comment: "")
     }
     
     private func adjustConstraints() {

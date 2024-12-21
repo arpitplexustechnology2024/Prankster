@@ -508,7 +508,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
 
 extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private func showVideoOptionsActionSheet(sourceView: UIView) {
-        let titleString = NSAttributedString(string: "Select Video", attributes: [
+        let titleString = NSAttributedString(string: "Select video prank", attributes: [
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)
         ])
         

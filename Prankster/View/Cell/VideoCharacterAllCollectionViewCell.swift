@@ -52,8 +52,8 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var DoneButton: UIButton!
     @IBOutlet weak var imageName: UILabel!
     @IBOutlet weak var playPauseImageView: UIImageView!
-    @IBOutlet weak var visualEffectView: UIView!
     @IBOutlet weak var muteButton: UIButton!
+    @IBOutlet weak var premiumButton: UIButton!
     
     // MARK: - Properties
     weak var delegate: VideoCharacterAllCollectionViewCellDelegate?
@@ -66,6 +66,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     private var isVideoLoaded = false
     private var lastPausedTime: CMTime?
     private var isMuted = false
+    private var nameBlurView: UIVisualEffectView!
     
     // MARK: - Lifecycle Methods
     override func awakeFromNib() {
@@ -76,14 +77,20 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Setup Methods
     private func setupUI() {
-        layer.cornerRadius = 20
-        layer.masksToBounds = false
-        contentView.layer.cornerRadius = 20
-        contentView.layer.masksToBounds = true
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = false
+        imageView.layer.cornerRadius = 20
+        imageView.layer.masksToBounds = true
         
-        visualEffectView.layer.cornerRadius = 20
-        visualEffectView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        visualEffectView.layer.masksToBounds = true
+        let labelBlurEffect = UIBlurEffect(style: .light)
+        nameBlurView = UIVisualEffectView(effect: labelBlurEffect)
+        nameBlurView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        
+        imageName.backgroundColor = .clear
+        imageName.textColor = .white
+        imageName.layer.masksToBounds = true
+        
+        contentView.insertSubview(nameBlurView, belowSubview: imageName)
         
         DoneButton.layer.shadowColor = UIColor.black.cgColor
         DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
@@ -92,6 +99,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         DoneButton.layer.masksToBounds = false
         
         DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        premiumButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         muteButton.addTarget(self, action: #selector(muteButtonTapped), for: .touchUpInside)
         muteButton.setImage(UIImage(named: "UnmuteIcon"), for: .normal)
         muteButton.isHidden = true
@@ -116,12 +124,14 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         self.coverPageData = coverPageData
         self.currentIndexPath = indexPath
         let displayName = coverPageData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.name
-        self.imageName.text = displayName
+        self.imageName.text = "  \(displayName)  "
         
         if coverPageData.premium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
-            self.DoneButton.setImage(UIImage(named: "PremiumButton"), for: .normal)
+            self.premiumButton.isHidden = false
+            self.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
         } else {
-            self.DoneButton.setImage(UIImage(named: "selectButton"), for: .normal)
+            self.premiumButton.isHidden = true
+            self.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
         }
         
         if let videoURL = URL(string: coverPageData.file ?? "N/A") {
@@ -138,17 +148,12 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         let player = AVPlayer(url: url)
         let playerLayer = AVPlayerLayer(player: player)
         
-        playerLayer.videoGravity = .resizeAspectFill
+        playerLayer.videoGravity = .resizeAspect
         playerLayer.frame = imageView.bounds
         imageView.layer.addSublayer(playerLayer)
         
         self.player = player
         self.playerLayer = playerLayer
-        
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(playerDidStartPlaying),
-                                               name: .AVPlayerItemNewAccessLogEntry,
-                                               object: player.currentItem)
         
         self.isVideoLoaded = true
         
@@ -156,10 +161,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
                                                selector: #selector(playerDidFinishPlaying),
                                                name: .AVPlayerItemDidPlayToEndTime,
                                                object: player.currentItem)
-    }
-    
-    @objc private func playerDidStartPlaying() {
-        playerLayer?.videoGravity = .resizeAspect
     }
     
     // MARK: - Video Control Methods
@@ -175,7 +176,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         }
         
         player.play()
-        showPlayImage()
+        self.playPauseImageView.isHidden = true
         isPlaying = true
         muteButton.isHidden = false
         
@@ -204,23 +205,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    // MARK: - UI Update Methods
-    private func showPlayImage() {
-        imageViewTimer?.invalidate()
-        playPauseImageView.image = UIImage(named: "PauseButton")
-        playPauseImageView.isHidden = false
-        imageViewTimer = Timer.scheduledTimer(
-            withTimeInterval: 1.0, repeats: false
-        ) { [weak self] _ in
-            UIView.animate(withDuration: 0.3) {
-                self?.playPauseImageView.alpha = 0
-            } completion: { _ in
-                self?.playPauseImageView.isHidden = true
-                self?.playPauseImageView.alpha = 1
-            }
-        }
-    }
-    
     func showPauseImage() {
         playPauseImageView.image = UIImage(named: "PlayButton")
         playPauseImageView.isHidden = false
@@ -246,13 +230,18 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         stopVideo()
         lastPausedTime = nil
         player?.seek(to: CMTime.zero)
-        playerLayer?.videoGravity = .resizeAspectFill
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer?.frame = imageView.bounds
+        
+        let padding: CGFloat = 4
+        nameBlurView.frame = imageName.frame.insetBy(dx: -padding, dy: -padding)
+        nameBlurView.layer.cornerRadius = nameBlurView.frame.height / 2
+        nameBlurView.layer.masksToBounds = true
     }
+    
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -279,6 +268,89 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     
     private func updateMuteButtonImage() {
         let isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
-        muteButton.setImage(UIImage(named: isMuted ? "muteIcon 2" : "UnmuteIcon"), for: .normal)
+        muteButton.setImage(UIImage(named: isMuted ? "Mute" : "Unmute"), for: .normal)
+    }
+}
+
+class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
+    
+    @IBOutlet weak var imageView: UIImageView!
+    private var categoryAllData: CategoryAllData?
+    private var currentVideoURL: URL?
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        setupUI()
+    }
+    
+    private func setupUI() {
+        layer.cornerRadius = 10
+        layer.masksToBounds = false
+        contentView.layer.cornerRadius = 10
+        contentView.layer.masksToBounds = true
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+        currentVideoURL = nil
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    func configure(with categoryAllData: CategoryAllData) {
+        self.categoryAllData = categoryAllData
+        
+        guard let fileURLString = categoryAllData.file,
+              let videoURL = URL(string: fileURLString) else {
+            return
+        }
+        
+        if currentVideoURL == videoURL {
+            return
+        }
+        
+        currentVideoURL = videoURL
+        
+        generateThumbnail(from: videoURL) { [weak self] image in
+            DispatchQueue.main.async {
+                guard let self = self,
+                      self.currentVideoURL == videoURL else {
+                    return
+                }
+                self.imageView.image = image
+            }
+        }
+    }
+    
+    private func generateThumbnail(from url: URL, completion: @escaping (UIImage?) -> Void) {
+        let asset = AVAsset(url: url)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true
+        imageGenerator.maximumSize = CGSize(width: 200, height: 200)
+        
+        let time = CMTime(seconds: 1, preferredTimescale: 600)
+        imageGenerator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { _, cgImage, _, _, _ in
+            if let cgImage = cgImage {
+                let image = UIImage(cgImage: cgImage)
+                completion(image)
+            } else {
+                completion(nil)
+            }
+        }
+    }
+    
+    override var isSelected: Bool {
+        didSet {
+            layer.borderWidth = isSelected ? 3 : 0
+            layer.borderColor = isSelected ? UIColor.white.cgColor : nil
+        }
     }
 }

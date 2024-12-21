@@ -70,7 +70,7 @@ class RealisticCoverPageVC: UIViewController {
     
     private func setupSearchBar() {
         searchbar.delegate = self
-        searchbar.placeholder = "Search"
+        searchbar.placeholder = "Search cover image"
         searchbar.backgroundImage = UIImage()
         searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
@@ -234,6 +234,7 @@ class RealisticCoverPageVC: UIViewController {
         
         DispatchQueue.main.async {
             self.realisticCoverAllCollectionView.reloadData()
+            self.realisticCoverSlideCollectionview.reloadData()
             
             if self.filteredRealisticCoverPages.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()

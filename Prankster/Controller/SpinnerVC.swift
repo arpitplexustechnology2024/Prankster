@@ -188,6 +188,7 @@ class SpinnerVC: UIViewController {
         spinViewModel.onDataUpdate = { [weak self] response in
             guard let response = response else { return }
             DispatchQueue.main.async {
+                self?.rewardShowButton.isEnabled = true
                 self?.updateSpinnerData(with: response.data)
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerPreviewVC") as! SpinnerPreviewVC
                 vc.coverImage = response.data.coverImage
@@ -302,7 +303,7 @@ class SpinnerVC: UIViewController {
     
     // MARK: - Timer Methods
     func startTimerForNextSpins() {
-        nextSpinAvailableTime = Date().addingTimeInterval(2 * 60)
+        nextSpinAvailableTime = Date().addingTimeInterval(4 * 60 * 60)
     }
     
     func startTimerLabelUpdate() {
@@ -347,7 +348,7 @@ class SpinnerVC: UIViewController {
             
             let hours = Int(remainingTime) / 3600
             let minutes = (Int(remainingTime) % 3600) / 60
-            spinLabel.text = String(format: "Reset in \n%02dh:%02dm", hours, minutes)
+            spinLabel.text = String(format: "New spin \n%02dh:%02dm", hours, minutes)
             spinLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
             
             updateSpinButtonState()

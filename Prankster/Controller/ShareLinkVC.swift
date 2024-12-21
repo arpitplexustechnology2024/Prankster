@@ -498,15 +498,14 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     // MARK: - addContentToStackView
-    // MARK: - addContentToStackView
     func addContentToStackView() {
         let items = [
             (icon: UIImage(named: "copylink"), title: "Copy link"),
-            (icon: UIImage(named: "instagram"), title: "Message"),
-            (icon: UIImage(named: "instagram"), title: "Story"),
-            (icon: UIImage(named: "snapchat"), title: "Story"),
-            (icon: UIImage(named: "telegram"), title: "Message"),
-            (icon: UIImage(named: "whatsapp"), title: "Message"),
+            (icon: UIImage(named: "whatsapp"), title: "Whatsapp"),
+            (icon: UIImage(named: "instagram"), title: "IG message"),
+            (icon: UIImage(named: "instagram"), title: "IG story"),
+            (icon: UIImage(named: "snapchat"), title: "Snap story"),
+            (icon: UIImage(named: "telegram"), title: "Telegram"),
             (icon: UIImage(named: "moreShare"), title: "More")
         ]
         
@@ -565,30 +564,30 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 let snackbar = CustomSnackbar(message: "Link copied to clipboard!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
             }
-        case 1:  // Instagram Message
+        case 1:  // WhatsApp Message
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shareWhatsAppMessage()
+            }
+        case 2:  // Instagram Message
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.shareInstagramMessage()
             }
-        case 2:  // Instagram Story
+        case 3:  // Instagram Story
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.NavigateToShareSnapchat(sharePrank: "Instagram")
             }
-        case 3:   // Snapchat Story
+        case 4:   // Snapchat Story
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
             }
-        case 4:    // Telegram Message
+        case 5:    // Telegram Message
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
                 self?.shareTelegramMessage()
-            }
-        case 5:  // WhatsApp Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareWhatsAppMessage()
             }
         case 6:  // More
             interstitialAdUtility.showInterstitialAd()

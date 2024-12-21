@@ -280,7 +280,7 @@ extension HomeVC {
         )
         
         let shareButton = createOptionButton(
-            title: "Share app with a friend",
+            title: "Share app",
             icon: "share",
             action: #selector(shareAppTapped)
         )

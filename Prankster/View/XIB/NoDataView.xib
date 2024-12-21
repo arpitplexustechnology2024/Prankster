@@ -14,7 +14,6 @@
                 <outlet property="lottieView" destination="VIq-Ny-d2c" id="vnn-hE-8C3"/>
                 <outlet property="lottieViewHeightConstraint" destination="RpE-yw-n4K" id="mhz-UA-VFM"/>
                 <outlet property="lottieViewTopConstraint" destination="SfF-2A-bai" id="tbR-MV-7Rk"/>
-                <outlet property="messageLabel" destination="XR3-MH-1ot" id="HGJ-K9-sTi"/>
                 <outlet property="titleLabel" destination="z5D-XC-TkX" id="zPc-eh-hvZ"/>
             </connections>
         </placeholder>
@@ -27,14 +26,6 @@
                     <rect key="frame" x="114.66666666666669" y="466" width="164" height="31.666666666666686"/>
                     <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="23"/>
                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XR3-MH-1ot">
-                    <rect key="frame" x="54.333333333333343" y="505.66666666666669" width="284.66666666666663" height="54.666666666666686"/>
-                    <string key="text">Request failed! Please try again 
-after some time.</string>
-                    <fontDescription key="fontDescription" name="Avenir-Book" family="Avenir" pointSize="20"/>
-                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VIq-Ny-d2c" customClass="LottieAnimationView" customModule="Lottie">
@@ -50,11 +41,9 @@ after some time.</string>
             <constraints>
                 <constraint firstItem="VIq-Ny-d2c" firstAttribute="leading" secondItem="4wa-EH-lQO" secondAttribute="leading" constant="53" id="41O-13-Wc9"/>
                 <constraint firstItem="z5D-XC-TkX" firstAttribute="top" secondItem="VIq-Ny-d2c" secondAttribute="bottom" constant="50" id="LRM-CF-lE2"/>
-                <constraint firstItem="XR3-MH-1ot" firstAttribute="centerX" secondItem="8Rf-4Q-1Nn" secondAttribute="centerX" id="NJC-D8-yN1"/>
                 <constraint firstItem="VIq-Ny-d2c" firstAttribute="top" secondItem="4wa-EH-lQO" secondAttribute="top" constant="70" id="SfF-2A-bai"/>
                 <constraint firstItem="4wa-EH-lQO" firstAttribute="trailing" secondItem="VIq-Ny-d2c" secondAttribute="trailing" constant="53" id="fcK-tH-qgb"/>
                 <constraint firstItem="z5D-XC-TkX" firstAttribute="centerX" secondItem="8Rf-4Q-1Nn" secondAttribute="centerX" id="rTD-4o-vAu"/>
-                <constraint firstItem="XR3-MH-1ot" firstAttribute="top" secondItem="z5D-XC-TkX" secondAttribute="bottom" constant="8" id="tH0-9M-B31"/>
             </constraints>
             <point key="canvasLocation" x="806.87022900763361" y="-6.3380281690140849"/>
         </view>

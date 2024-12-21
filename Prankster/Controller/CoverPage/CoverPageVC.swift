@@ -602,7 +602,7 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
     
     // MARK: - Show ImageOptions ActionSheet
     private func showImageOptionsActionSheet(sourceView: UIView) {
-        let titleString = NSAttributedString(string: "Select Image", attributes: [
+        let titleString = NSAttributedString(string: "Select cover image", attributes: [
             NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 20)
         ])
         

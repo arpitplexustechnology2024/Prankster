@@ -72,7 +72,7 @@ class ImageCategoryAllVC: UIViewController {
     
     private func setupSearchBar() {
         searchbar.delegate = self
-        searchbar.placeholder = "Search"
+        searchbar.placeholder = "Search image name"
         searchbar.backgroundImage = UIImage()
         searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
