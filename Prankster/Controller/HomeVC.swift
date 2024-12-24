@@ -36,11 +36,12 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     private let adsViewModel = AdsViewModel()
     
     let notificationMessages = [
-        (title: "NotificationTitleKey01", body: "NotificationDescriptonKey01"),
-        (title: "NotificationTitleKey02", body: "NotificationDescriptonKey02"),
-        (title: "NotificationTitleKey03", body: "NotificationDescriptonKey03"),
-        (title: "NotificationTitleKey04", body: "NotificationDescriptonKey04"),
-        (title: "NotificationTitleKey05", body: "NotificationDescriptonKey05")
+        (title: "Sex Prank", body: "Create sex prank & share it & capture funny moments."),
+        (title: "फाट साउंड प्रैंक", body: "आपका फ्रेंड क्लास मैं है उसके साथ फनी फाट साउंड प्रैंक करो"),
+        (title: "GF prank...👧🏻", body: "Prank with your girlfriend if you are daring.😂"),
+        (title: "Viral prank 🚨", body: "Your prank video has gone viral, and now people are eagerly waiting for your next one 👀"),
+        (title: "चड्डी का कलर 👙", body: "कोनसे कलर की चड्डी पहनी है! #Prankster😜"),
+        (title: "Crush waiting...", body: "Your crush has just viewed your profile picture. This prank do with your friend!")
     ]
     
     override func viewDidLoad() {
@@ -383,7 +384,7 @@ extension HomeVC {
         content.sound = UNNotificationSound.default
         
         var dateComponents = DateComponents()
-        dateComponents.hour = 17
+        dateComponents.hour = 10
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         

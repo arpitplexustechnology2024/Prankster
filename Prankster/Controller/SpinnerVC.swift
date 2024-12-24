@@ -10,6 +10,7 @@ import SwiftFortuneWheel
 import SDWebImage
 import Alamofire
 import StoreKit
+import UserNotifications
 
 // MARK: - Spinner Struct
 struct Spinner {
@@ -52,6 +53,13 @@ class SpinnerVC: UIViewController {
         }
     }
     
+    let notificationMessages = [
+        (title: "Spin the Wheel! 🎡", body: "Unlock Premium Pranks with every spin!"),
+        (title: "Ready to Spin? 🎯", body: "Spin and grab your Premium Pranks now! ⏰"),
+        (title: "Knock Knock! who's there?", body: "Your true friend Prankster!"),
+        (title: "Spin & Get Rewarded! 🎁", body: "Win Premium Pranks every time you spin! 🔥"),
+    ]
+    
     // MARK: - Properties
     var prizes: [Spinner] = []
     var finalValue: String = ""
@@ -92,9 +100,10 @@ class SpinnerVC: UIViewController {
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViewModel()
-        setupInitialSpins()
-        loadSavedSpinnerData()
+        self.setupViewModel()
+        self.setupInitialSpins()
+        self.loadSavedSpinnerData()
+        self.requestNotificationPermission()
         
         prizes = [
             Spinner(image: "Audio1", value: "1"),
@@ -301,9 +310,56 @@ class SpinnerVC: UIViewController {
         }
     }
     
+    private func checkNotificationPermissionAndSchedule() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            switch settings.authorizationStatus {
+            case .authorized:
+                self.scheduleSpinnerNotification()
+            case .denied, .notDetermined, .provisional, .ephemeral:
+                print("Notifications are not allowed by the user")
+            @unknown default:
+                print("Unknown notification authorization status")
+            }
+        }
+    }
+    
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Notification permission granted")
+            } else {
+                print("Notification permission denied")
+            }
+        }
+    }
+    
+    private func scheduleSpinnerNotification() {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        let content = UNMutableNotificationContent()
+        let randomMessage = notificationMessages.randomElement()!
+        content.title = NSLocalizedString(randomMessage.title, comment: "")
+        content.body = NSLocalizedString(randomMessage.body, comment: "")
+        content.sound = UNNotificationSound.default
+        
+     //   let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 4 * 60 * 60, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2 * 60, repeats: false)
+        
+        let request = UNNotificationRequest(identifier: "spinnerReset", content: content, trigger: trigger)
+        
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Error scheduling notification: \(error.localizedDescription)")
+            } else {
+                print("Notification scheduled for spinnerReset.")
+            }
+        }
+    }
+    
     // MARK: - Timer Methods
     func startTimerForNextSpins() {
-        nextSpinAvailableTime = Date().addingTimeInterval(4 * 60 * 60)
+     //   nextSpinAvailableTime = Date().addingTimeInterval(4 * 60 * 60)
+        nextSpinAvailableTime = Date().addingTimeInterval(2 * 60)
+        checkNotificationPermissionAndSchedule()
     }
     
     func startTimerLabelUpdate() {
@@ -342,6 +398,8 @@ class SpinnerVC: UIViewController {
             UserDefaults.standard.removeObject(forKey: "savedSpinnerData")
             spinnerResponseData.removeAll()
             nextSpinAvailableTime = nil
+            
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         } else {
             remainingSpins = 0
             currentSpinButtonState = .waitingForReset

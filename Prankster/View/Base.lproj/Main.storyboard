@@ -541,7 +541,8 @@ your pranks</string>
                                     </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RlU-v0-xSK">
                                         <rect key="frame" x="62.000000000000007" y="11.333333333333327" width="116.66666666666669" height="27.333333333333329"/>
-                                        <string key="text">Subscription</string>
+                                        <string key="text">Subscription
+</string>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -1057,31 +1058,45 @@ Images, Audio &amp; Videos</string>
                                             <action selector="btnBackTapped:" destination="zxF-9I-AvT" eventType="touchUpInside" id="r3T-UA-UKA"/>
                                         </connections>
                                     </button>
-                                    <searchBar contentMode="redraw" barStyle="black" placeholder="Search cover image" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ydX-in-xhP">
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="50u-Xc-JkR">
                                         <rect key="frame" x="54" y="6" width="332" height="38"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="nyq-7Z-qgn">
+                                            <rect key="frame" x="0.0" y="0.0" width="332" height="38"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <searchBar contentMode="redraw" placeholder="Search cover image" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ydX-in-xhP">
+                                                    <rect key="frame" x="-8" y="0.0" width="348" height="38"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <scopeButtonTitles>
+                                                        <string>Title</string>
+                                                        <string>Title</string>
+                                                    </scopeButtonTitles>
+                                                    <connections>
+                                                        <outlet property="delegate" destination="zxF-9I-AvT" id="Py7-iN-NmB"/>
+                                                    </connections>
+                                                </searchBar>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="ydX-in-xhP" secondAttribute="bottom" id="O9c-N2-vqA"/>
+                                                <constraint firstAttribute="trailing" secondItem="ydX-in-xhP" secondAttribute="trailing" constant="-8" id="Olr-4M-GoQ"/>
+                                                <constraint firstItem="ydX-in-xhP" firstAttribute="top" secondItem="nyq-7Z-qgn" secondAttribute="top" id="Ydl-5J-7Dj"/>
+                                                <constraint firstItem="ydX-in-xhP" firstAttribute="leading" secondItem="nyq-7Z-qgn" secondAttribute="leading" constant="-8" id="n3D-JY-YKr"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="38" id="d2a-nO-Jem"/>
+                                            <constraint firstAttribute="height" constant="38" id="dVg-Lj-3S9"/>
                                         </constraints>
-                                        <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                        <scopeButtonTitles>
-                                            <string>Title</string>
-                                            <string>Title</string>
-                                        </scopeButtonTitles>
-                                        <connections>
-                                            <outlet property="delegate" destination="zxF-9I-AvT" id="Py7-iN-NmB"/>
-                                        </connections>
-                                    </searchBar>
+                                        <blurEffect style="regular"/>
+                                    </visualEffectView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="ydX-in-xhP" firstAttribute="centerY" secondItem="1DI-Aw-LY3" secondAttribute="centerY" id="9Df-B4-bfp"/>
+                                    <constraint firstItem="50u-Xc-JkR" firstAttribute="leading" secondItem="6MN-PZ-X3J" secondAttribute="trailing" constant="8" id="AIF-AD-Tdz"/>
+                                    <constraint firstAttribute="trailing" secondItem="50u-Xc-JkR" secondAttribute="trailing" constant="16" id="CMk-jq-OFe"/>
+                                    <constraint firstItem="50u-Xc-JkR" firstAttribute="centerY" secondItem="1DI-Aw-LY3" secondAttribute="centerY" id="EVX-T5-yrg"/>
                                     <constraint firstItem="6MN-PZ-X3J" firstAttribute="leading" secondItem="1DI-Aw-LY3" secondAttribute="leading" constant="16" id="Hrk-mt-hXZ"/>
                                     <constraint firstAttribute="height" constant="50" id="JKe-g7-Epv"/>
-                                    <constraint firstAttribute="trailing" secondItem="ydX-in-xhP" secondAttribute="trailing" constant="16" id="aIv-Hr-Avr"/>
                                     <constraint firstItem="6MN-PZ-X3J" firstAttribute="centerY" secondItem="1DI-Aw-LY3" secondAttribute="centerY" id="vua-gH-nBg"/>
-                                    <constraint firstItem="ydX-in-xhP" firstAttribute="leading" secondItem="6MN-PZ-X3J" secondAttribute="trailing" constant="8" id="xyR-3I-hb9"/>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="gee-0x-fB9">
@@ -1147,6 +1162,7 @@ Images, Audio &amp; Videos</string>
                         <outlet property="emojiCoverSlideCollectionview" destination="gee-0x-fB9" id="Qyn-7A-aHS"/>
                         <outlet property="navigationbarView" destination="1DI-Aw-LY3" id="9UU-IB-tNl"/>
                         <outlet property="searchbar" destination="ydX-in-xhP" id="xMl-EX-ho6"/>
+                        <outlet property="searchbarBlurView" destination="50u-Xc-JkR" id="1M3-q0-jGi"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oyz-Rj-lBl" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1247,7 +1263,7 @@ Images, Audio &amp; Videos</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Bn0-VA-QSl">
-                                                                            <rect key="frame" x="11" y="16.666666666666671" width="93" height="91.999999999999986"/>
+                                                                            <rect key="frame" x="11" y="16.666666666666671" width="93" height="92"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="plus" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="gG2-8m-Z8a">
                                                                                     <rect key="frame" x="0.0" y="2.3333333333333321" width="93" height="35.666666666666671"/>
@@ -1473,19 +1489,19 @@ cover image</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hxb-Uv-Z8W">
-                                <rect key="frame" x="98.666666666666686" y="122" width="205" height="240"/>
+                                <rect key="frame" x="106" y="122" width="190" height="240"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xBe-JG-XIw">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dAz-Lm-8J3" customClass="LottieAnimationView" customModule="Lottie">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" name="comman"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="205" id="44f-WK-7GK"/>
+                                    <constraint firstAttribute="width" constant="190" id="44f-WK-7GK"/>
                                     <constraint firstItem="xBe-JG-XIw" firstAttribute="leading" secondItem="hxb-Uv-Z8W" secondAttribute="leading" id="IK4-Xl-ejr"/>
                                     <constraint firstAttribute="trailing" secondItem="dAz-Lm-8J3" secondAttribute="trailing" id="KYz-dd-bf3"/>
                                     <constraint firstItem="xBe-JG-XIw" firstAttribute="top" secondItem="hxb-Uv-Z8W" secondAttribute="top" id="ehv-JR-svN"/>
@@ -1635,19 +1651,19 @@ cover image</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="kvC-6a-h28">
-                                                                            <rect key="frame" x="-101.66666666666666" y="16.666666666666671" width="318.33333333333326" height="92"/>
+                                                                            <rect key="frame" x="0.0" y="16.666666666666671" width="115" height="92"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AddAudio" translatesAutoresizingMaskIntoConstraints="NO" id="5DT-Ax-BBg">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="318.33333333333331" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
                                                                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="height" constant="40" id="q1q-At-PAh"/>
                                                                                     </constraints>
                                                                                 </imageView>
                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bbs-Cf-seu">
-                                                                                    <rect key="frame" x="0.0" y="48" width="318.33333333333331" height="44"/>
+                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="44"/>
                                                                                     <string key="text">Add
- prank audio</string>
+ audio prank</string>
                                                                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
                                                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <nil key="highlightedColor"/>
@@ -1658,6 +1674,8 @@ cover image</string>
                                                                     <constraints>
                                                                         <constraint firstItem="kvC-6a-h28" firstAttribute="centerX" secondItem="VbH-Kf-brH" secondAttribute="centerX" id="B2Y-pD-VNf"/>
                                                                         <constraint firstItem="kvC-6a-h28" firstAttribute="centerY" secondItem="VbH-Kf-brH" secondAttribute="centerY" id="bO8-eX-uV3"/>
+                                                                        <constraint firstItem="kvC-6a-h28" firstAttribute="leading" secondItem="VbH-Kf-brH" secondAttribute="leading" id="hh2-qy-iPJ"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="kvC-6a-h28" secondAttribute="trailing" id="rfu-0n-FD6"/>
                                                                     </constraints>
                                                                 </collectionViewCellContentView>
                                                                 <color key="backgroundColor" systemColor="systemYellowColor"/>
@@ -1781,20 +1799,20 @@ cover image</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="txB-Ee-fYq">
-                                <rect key="frame" x="98.666666666666686" y="122" width="205" height="240"/>
+                                <rect key="frame" x="106" y="122" width="190" height="240"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Sbn-WA-6tU">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PlayButton" translatesAutoresizingMaskIntoConstraints="NO" id="1dl-W3-7aF">
-                                        <rect key="frame" x="72.333333333333329" y="90" width="59.999999999999986" height="60"/>
+                                        <rect key="frame" x="65" y="90" width="60" height="60"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="60" id="YFG-vo-s7p"/>
                                             <constraint firstAttribute="height" constant="60" id="npV-Vy-1ot"/>
                                         </constraints>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1Ud-BP-HF8" customClass="LottieAnimationView" customModule="Lottie">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -1810,7 +1828,7 @@ cover image</string>
                                     <constraint firstAttribute="trailing" secondItem="Sbn-WA-6tU" secondAttribute="trailing" id="XmD-oS-nca"/>
                                     <constraint firstAttribute="bottom" secondItem="Sbn-WA-6tU" secondAttribute="bottom" id="baq-q1-jTX"/>
                                     <constraint firstAttribute="height" constant="240" id="eD6-Rw-Lih"/>
-                                    <constraint firstAttribute="width" constant="205" id="eci-iL-rCo"/>
+                                    <constraint firstAttribute="width" constant="190" id="eci-iL-rCo"/>
                                     <constraint firstItem="1Ud-BP-HF8" firstAttribute="leading" secondItem="txB-Ee-fYq" secondAttribute="leading" id="qmv-2e-OCI"/>
                                 </constraints>
                             </view>
@@ -1960,17 +1978,17 @@ cover image</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Wpa-zD-cdT">
-                                                                            <rect key="frame" x="-110.66666666666669" y="16.666666666666671" width="336.33333333333331" height="92"/>
+                                                                            <rect key="frame" x="0.0" y="16.666666666666671" width="115" height="92"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AddImage" translatesAutoresizingMaskIntoConstraints="NO" id="FPi-l9-EZi">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="336.33333333333331" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
                                                                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="height" constant="40" id="BTA-vB-ThK"/>
                                                                                     </constraints>
                                                                                 </imageView>
                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wrp-RG-1bz">
-                                                                                    <rect key="frame" x="0.0" y="48" width="336.33333333333331" height="44"/>
+                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="44"/>
                                                                                     <string key="text">Add 
 image prank</string>
                                                                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
@@ -1982,7 +2000,9 @@ image prank</string>
                                                                     </subviews>
                                                                     <constraints>
                                                                         <constraint firstItem="Wpa-zD-cdT" firstAttribute="centerX" secondItem="o8W-DH-OPB" secondAttribute="centerX" id="Wid-KP-4mv"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="Wpa-zD-cdT" secondAttribute="trailing" id="iOj-do-Mnx"/>
                                                                         <constraint firstItem="Wpa-zD-cdT" firstAttribute="centerY" secondItem="o8W-DH-OPB" secondAttribute="centerY" id="uDz-dc-71d"/>
+                                                                        <constraint firstItem="Wpa-zD-cdT" firstAttribute="leading" secondItem="o8W-DH-OPB" secondAttribute="leading" id="zcn-6s-l6v"/>
                                                                     </constraints>
                                                                 </collectionViewCellContentView>
                                                                 <color key="backgroundColor" systemColor="systemYellowColor"/>
@@ -2104,19 +2124,19 @@ image prank</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wo0-hd-tQy">
-                                <rect key="frame" x="98.666666666666686" y="122" width="205" height="240"/>
+                                <rect key="frame" x="106" y="122" width="190" height="240"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SJ6-zw-oZ7">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eQ5-vP-mf1" customClass="LottieAnimationView" customModule="Lottie">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
                                 <color key="backgroundColor" name="comman"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="205" id="4i2-sC-zTb"/>
+                                    <constraint firstAttribute="width" constant="190" id="4i2-sC-zTb"/>
                                     <constraint firstAttribute="bottom" secondItem="SJ6-zw-oZ7" secondAttribute="bottom" id="84Z-1j-Qmr"/>
                                     <constraint firstAttribute="trailing" secondItem="SJ6-zw-oZ7" secondAttribute="trailing" id="IKQ-D8-UcG"/>
                                     <constraint firstItem="eQ5-vP-mf1" firstAttribute="leading" secondItem="wo0-hd-tQy" secondAttribute="leading" id="KDZ-ol-6N0"/>
@@ -2258,18 +2278,18 @@ image prank</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="H5K-6W-6j6">
-                                                                            <rect key="frame" x="-111" y="16.666666666666671" width="337" height="92"/>
+                                                                            <rect key="frame" x="0.0" y="16.666666666666671" width="115" height="92"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AddVideo" translatesAutoresizingMaskIntoConstraints="NO" id="n8G-WZ-sBF">
-                                                                                    <rect key="frame" x="0.0" y="0.0" width="337" height="40"/>
+                                                                                    <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
                                                                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="height" constant="40" id="Ymt-xu-IKC"/>
                                                                                     </constraints>
                                                                                 </imageView>
                                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jMy-6N-uG4">
-                                                                                    <rect key="frame" x="0.0" y="48" width="337" height="44"/>
-                                                                                    <string key="text">Add 
+                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="44"/>
+                                                                                    <string key="text">Add
 video prank</string>
                                                                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
                                                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -2280,6 +2300,8 @@ video prank</string>
                                                                     </subviews>
                                                                     <constraints>
                                                                         <constraint firstItem="H5K-6W-6j6" firstAttribute="centerX" secondItem="g0F-IL-e1Y" secondAttribute="centerX" id="5P8-Y8-bxC"/>
+                                                                        <constraint firstAttribute="trailing" secondItem="H5K-6W-6j6" secondAttribute="trailing" id="Weo-Lv-bh1"/>
+                                                                        <constraint firstItem="H5K-6W-6j6" firstAttribute="leading" secondItem="g0F-IL-e1Y" secondAttribute="leading" id="qNQ-dE-Cqa"/>
                                                                         <constraint firstItem="H5K-6W-6j6" firstAttribute="centerY" secondItem="g0F-IL-e1Y" secondAttribute="centerY" id="z4f-Az-b3j"/>
                                                                     </constraints>
                                                                 </collectionViewCellContentView>
@@ -2402,20 +2424,20 @@ video prank</string>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eUp-2X-fcy">
-                                <rect key="frame" x="98.666666666666686" y="122" width="205" height="240"/>
+                                <rect key="frame" x="106" y="122" width="190" height="240"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PlayButton" translatesAutoresizingMaskIntoConstraints="NO" id="74b-5K-909">
-                                        <rect key="frame" x="72.333333333333329" y="90" width="59.999999999999986" height="60"/>
+                                        <rect key="frame" x="65" y="90" width="60" height="60"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="60" id="ZZg-9U-MWe"/>
                                             <constraint firstAttribute="height" constant="60" id="dHp-9y-5vM"/>
                                         </constraints>
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="vbF-OX-cbA">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vJu-OV-A6S" customClass="LottieAnimationView" customModule="Lottie">
-                                        <rect key="frame" x="0.0" y="0.0" width="205" height="240"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="190" height="240"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     </view>
                                 </subviews>
@@ -2428,7 +2450,7 @@ video prank</string>
                                     <constraint firstAttribute="trailing" secondItem="vbF-OX-cbA" secondAttribute="trailing" id="Sdl-5M-7Sf"/>
                                     <constraint firstItem="74b-5K-909" firstAttribute="centerX" secondItem="eUp-2X-fcy" secondAttribute="centerX" id="WOC-Bk-rKe"/>
                                     <constraint firstItem="vbF-OX-cbA" firstAttribute="top" secondItem="eUp-2X-fcy" secondAttribute="top" id="Wgk-em-15T"/>
-                                    <constraint firstAttribute="width" constant="205" id="gcK-39-4az"/>
+                                    <constraint firstAttribute="width" constant="190" id="gcK-39-4az"/>
                                     <constraint firstItem="vJu-OV-A6S" firstAttribute="top" secondItem="eUp-2X-fcy" secondAttribute="top" id="hsx-Z4-iGZ"/>
                                     <constraint firstAttribute="bottom" secondItem="vJu-OV-A6S" secondAttribute="bottom" id="l1p-BF-9DF"/>
                                     <constraint firstItem="vbF-OX-cbA" firstAttribute="leading" secondItem="eUp-2X-fcy" secondAttribute="leading" id="p7j-7k-wLb"/>
@@ -2597,28 +2619,42 @@ video prank</string>
                                             <action selector="btnBackTapped:" destination="2IJ-ki-hNT" eventType="touchUpInside" id="1mY-8d-bVt"/>
                                         </connections>
                                     </button>
-                                    <searchBar contentMode="redraw" barStyle="black" placeholder="Search audio or artist name" translatesAutoresizingMaskIntoConstraints="NO" id="FGA-sV-8Kj">
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JsH-2l-Wpj">
                                         <rect key="frame" x="54" y="6" width="332" height="38"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="eiu-1N-KjI">
+                                            <rect key="frame" x="0.0" y="0.0" width="332" height="38"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <searchBar contentMode="redraw" placeholder="Search audio or artist name" translatesAutoresizingMaskIntoConstraints="NO" id="FGA-sV-8Kj">
+                                                    <rect key="frame" x="-8" y="0.0" width="348" height="38"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <scopeButtonTitles>
+                                                        <string>Title</string>
+                                                        <string>Title</string>
+                                                    </scopeButtonTitles>
+                                                </searchBar>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="FGA-sV-8Kj" firstAttribute="leading" secondItem="eiu-1N-KjI" secondAttribute="leading" constant="-8" id="2Lv-at-Ga5"/>
+                                                <constraint firstAttribute="bottom" secondItem="FGA-sV-8Kj" secondAttribute="bottom" id="PCx-wd-B0G"/>
+                                                <constraint firstItem="FGA-sV-8Kj" firstAttribute="top" secondItem="eiu-1N-KjI" secondAttribute="top" id="bkv-a9-f5L"/>
+                                                <constraint firstAttribute="trailing" secondItem="FGA-sV-8Kj" secondAttribute="trailing" constant="-8" id="gJW-sA-g8m"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="38" id="kW2-5n-6yE"/>
+                                            <constraint firstAttribute="height" constant="38" id="5pk-mW-psa"/>
                                         </constraints>
-                                        <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                        <scopeButtonTitles>
-                                            <string>Title</string>
-                                            <string>Title</string>
-                                        </scopeButtonTitles>
-                                    </searchBar>
+                                        <blurEffect style="regular"/>
+                                    </visualEffectView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="m7H-yu-dUu" firstAttribute="centerY" secondItem="4zd-Qv-iu3" secondAttribute="centerY" id="4oV-Ep-zrV"/>
-                                    <constraint firstItem="FGA-sV-8Kj" firstAttribute="leading" secondItem="m7H-yu-dUu" secondAttribute="trailing" constant="8" id="ON5-aH-T0J"/>
-                                    <constraint firstAttribute="trailing" secondItem="FGA-sV-8Kj" secondAttribute="trailing" constant="16" id="WwZ-0I-HWf"/>
+                                    <constraint firstItem="JsH-2l-Wpj" firstAttribute="leading" secondItem="m7H-yu-dUu" secondAttribute="trailing" constant="8" id="Q6T-Xl-j6d"/>
                                     <constraint firstAttribute="height" constant="50" id="YGA-he-Tko"/>
+                                    <constraint firstItem="JsH-2l-Wpj" firstAttribute="centerY" secondItem="4zd-Qv-iu3" secondAttribute="centerY" id="e6v-Hd-a2X"/>
+                                    <constraint firstAttribute="trailing" secondItem="JsH-2l-Wpj" secondAttribute="trailing" constant="16" id="jXj-8A-wzV"/>
                                     <constraint firstItem="m7H-yu-dUu" firstAttribute="leading" secondItem="4zd-Qv-iu3" secondAttribute="leading" constant="16" id="tyD-qx-6UB"/>
-                                    <constraint firstItem="FGA-sV-8Kj" firstAttribute="centerY" secondItem="4zd-Qv-iu3" secondAttribute="centerY" id="zTI-rq-lkI"/>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="fF7-eL-kjL">
@@ -2685,6 +2721,7 @@ video prank</string>
                         <outlet property="audioCharacterSlideCollectionview" destination="fF7-eL-kjL" id="9C3-Ao-EDN"/>
                         <outlet property="navigationbarView" destination="4zd-Qv-iu3" id="sa4-Ry-ZEU"/>
                         <outlet property="searchbar" destination="FGA-sV-8Kj" id="cTu-Nq-Y1Q"/>
+                        <outlet property="searchbarBlurView" destination="JsH-2l-Wpj" id="CVb-es-Fs7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="igN-k7-a21" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -4287,28 +4324,42 @@ Images, Audio &amp; Videos</string>
                                             <action selector="btnBackTapped:" destination="R7M-cI-Fcp" eventType="touchUpInside" id="xva-r9-hcA"/>
                                         </connections>
                                     </button>
-                                    <searchBar contentMode="redraw" barStyle="black" text="" placeholder="Search cover image" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bQT-re-FYX">
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iER-Ub-3m1">
                                         <rect key="frame" x="54" y="6" width="332" height="38"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="9YN-Fv-2zb">
+                                            <rect key="frame" x="0.0" y="0.0" width="332" height="38"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <searchBar contentMode="redraw" text="" placeholder="Search cover image" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bQT-re-FYX">
+                                                    <rect key="frame" x="-8" y="0.0" width="348" height="38"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <scopeButtonTitles>
+                                                        <string>Title</string>
+                                                        <string>Title</string>
+                                                    </scopeButtonTitles>
+                                                </searchBar>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="bQT-re-FYX" secondAttribute="bottom" id="I52-0M-Ywc"/>
+                                                <constraint firstAttribute="trailing" secondItem="bQT-re-FYX" secondAttribute="trailing" constant="-8" id="Xwj-dm-BjX"/>
+                                                <constraint firstItem="bQT-re-FYX" firstAttribute="leading" secondItem="9YN-Fv-2zb" secondAttribute="leading" constant="-8" id="ffk-n7-4NR"/>
+                                                <constraint firstItem="bQT-re-FYX" firstAttribute="top" secondItem="9YN-Fv-2zb" secondAttribute="top" id="uND-nE-9mv"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="38" id="H34-bG-MRT"/>
+                                            <constraint firstAttribute="height" constant="38" id="yFB-40-RfI"/>
                                         </constraints>
-                                        <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                        <scopeButtonTitles>
-                                            <string>Title</string>
-                                            <string>Title</string>
-                                        </scopeButtonTitles>
-                                    </searchBar>
+                                        <blurEffect style="regular"/>
+                                    </visualEffectView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="bQT-re-FYX" firstAttribute="centerY" secondItem="6ER-Z4-iKV" secondAttribute="centerY" id="0uo-ZW-uRO"/>
                                     <constraint firstAttribute="height" constant="50" id="36M-fP-8Nd"/>
+                                    <constraint firstItem="iER-Ub-3m1" firstAttribute="centerY" secondItem="6ER-Z4-iKV" secondAttribute="centerY" id="Iep-0t-Lmk"/>
                                     <constraint firstItem="d4M-Qg-Sgp" firstAttribute="leading" secondItem="6ER-Z4-iKV" secondAttribute="leading" constant="16" id="M0Z-Ep-KFr"/>
+                                    <constraint firstAttribute="trailing" secondItem="iER-Ub-3m1" secondAttribute="trailing" constant="16" id="Mp3-si-YH7"/>
                                     <constraint firstItem="d4M-Qg-Sgp" firstAttribute="centerY" secondItem="6ER-Z4-iKV" secondAttribute="centerY" id="NXe-5v-EHc"/>
-                                    <constraint firstItem="bQT-re-FYX" firstAttribute="leading" secondItem="d4M-Qg-Sgp" secondAttribute="trailing" constant="8" id="OxF-UO-Y32"/>
-                                    <constraint firstAttribute="trailing" secondItem="bQT-re-FYX" secondAttribute="trailing" constant="16" id="lfB-cg-aXQ"/>
+                                    <constraint firstItem="iER-Ub-3m1" firstAttribute="leading" secondItem="d4M-Qg-Sgp" secondAttribute="trailing" constant="8" id="z7T-ai-Zpv"/>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="2hF-VV-hQ8">
@@ -4374,6 +4425,7 @@ Images, Audio &amp; Videos</string>
                         <outlet property="realisticCoverAllCollectionView" destination="cIt-yH-7yr" id="0Jx-6f-aUB"/>
                         <outlet property="realisticCoverSlideCollectionview" destination="2hF-VV-hQ8" id="gaK-wC-fdQ"/>
                         <outlet property="searchbar" destination="bQT-re-FYX" id="a2B-Hf-dAg"/>
+                        <outlet property="searchbarBlurView" destination="iER-Ub-3m1" id="UMi-8s-eLp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dSy-Qw-K8w" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -4633,28 +4685,42 @@ Images, Audio &amp; Videos</string>
                                             <action selector="btnBackTapped:" destination="MII-GQ-2uE" eventType="touchUpInside" id="06h-Vy-ccP"/>
                                         </connections>
                                     </button>
-                                    <searchBar contentMode="redraw" barStyle="black" placeholder="Search image name" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VKe-q8-LEM">
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bcZ-6w-0QI">
                                         <rect key="frame" x="54" y="6" width="332" height="38"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="B3a-0N-AIC">
+                                            <rect key="frame" x="0.0" y="0.0" width="332" height="38"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <searchBar contentMode="redraw" placeholder="Search image name" translucent="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VKe-q8-LEM">
+                                                    <rect key="frame" x="-8" y="0.0" width="348" height="38"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <scopeButtonTitles>
+                                                        <string>Title</string>
+                                                        <string>Title</string>
+                                                    </scopeButtonTitles>
+                                                </searchBar>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="VKe-q8-LEM" firstAttribute="top" secondItem="B3a-0N-AIC" secondAttribute="top" id="0bD-wn-6Qh"/>
+                                                <constraint firstItem="VKe-q8-LEM" firstAttribute="leading" secondItem="B3a-0N-AIC" secondAttribute="leading" constant="-8" id="DIa-gh-jSw"/>
+                                                <constraint firstAttribute="bottom" secondItem="VKe-q8-LEM" secondAttribute="bottom" id="gDI-hY-sbY"/>
+                                                <constraint firstAttribute="trailing" secondItem="VKe-q8-LEM" secondAttribute="trailing" constant="-8" id="ysQ-m0-jCQ"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="38" id="d6H-71-wif"/>
+                                            <constraint firstAttribute="height" constant="38" id="Wvu-G5-icz"/>
                                         </constraints>
-                                        <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                        <scopeButtonTitles>
-                                            <string>Title</string>
-                                            <string>Title</string>
-                                        </scopeButtonTitles>
-                                    </searchBar>
+                                        <blurEffect style="light"/>
+                                    </visualEffectView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="VKe-q8-LEM" firstAttribute="centerY" secondItem="qmy-7B-IzZ" secondAttribute="centerY" id="AEp-Sg-BNr"/>
-                                    <constraint firstAttribute="trailing" secondItem="VKe-q8-LEM" secondAttribute="trailing" constant="16" id="RN7-o4-4Hp"/>
+                                    <constraint firstItem="bcZ-6w-0QI" firstAttribute="leading" secondItem="akf-sD-rRn" secondAttribute="trailing" constant="8" id="3al-yp-4rk"/>
                                     <constraint firstAttribute="height" constant="50" id="Z9I-Y5-CvI"/>
                                     <constraint firstItem="akf-sD-rRn" firstAttribute="centerY" secondItem="qmy-7B-IzZ" secondAttribute="centerY" id="ZK5-1I-Hvy"/>
                                     <constraint firstItem="akf-sD-rRn" firstAttribute="leading" secondItem="qmy-7B-IzZ" secondAttribute="leading" constant="16" id="cQD-y5-6Xz"/>
-                                    <constraint firstItem="VKe-q8-LEM" firstAttribute="leading" secondItem="akf-sD-rRn" secondAttribute="trailing" constant="8" id="czV-BE-byI"/>
+                                    <constraint firstItem="bcZ-6w-0QI" firstAttribute="centerY" secondItem="qmy-7B-IzZ" secondAttribute="centerY" id="gU6-hU-C8R"/>
+                                    <constraint firstAttribute="trailing" secondItem="bcZ-6w-0QI" secondAttribute="trailing" constant="16" id="x57-AO-JAW"/>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="akG-CK-q9v">
@@ -4720,6 +4786,7 @@ Images, Audio &amp; Videos</string>
                         <outlet property="imageCharacterSlideCollectionview" destination="akG-CK-q9v" id="9ye-7S-hGG"/>
                         <outlet property="navigationbarView" destination="qmy-7B-IzZ" id="Gd1-JL-zoc"/>
                         <outlet property="searchbar" destination="VKe-q8-LEM" id="2Z3-uq-mNI"/>
+                        <outlet property="searchbarBlurView" destination="bcZ-6w-0QI" id="2vV-fl-W74"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="12y-Ko-fWg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -4844,28 +4911,43 @@ Images, Audio &amp; Videos</string>
                                             <action selector="btnBackTapped:" destination="hlU-Ax-oh9" eventType="touchUpInside" id="9DL-Zt-TIr"/>
                                         </connections>
                                     </button>
-                                    <searchBar contentMode="redraw" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="g2U-7y-VoF">
+                                    <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="z4j-Ei-VFY">
                                         <rect key="frame" x="54" y="6" width="332" height="38"/>
-                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="yaI-0m-d8Y">
+                                            <rect key="frame" x="0.0" y="0.0" width="332" height="38"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <subviews>
+                                                <searchBar contentMode="redraw" translatesAutoresizingMaskIntoConstraints="NO" id="g2U-7y-VoF">
+                                                    <rect key="frame" x="-8" y="0.0" width="348" height="38"/>
+                                                    <string key="placeholder">Search video or artist name
+</string>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                    <scopeButtonTitles>
+                                                        <string>Title</string>
+                                                        <string>Title</string>
+                                                    </scopeButtonTitles>
+                                                </searchBar>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="g2U-7y-VoF" secondAttribute="trailing" constant="-8" id="aEz-fg-S6W"/>
+                                                <constraint firstItem="g2U-7y-VoF" firstAttribute="top" secondItem="yaI-0m-d8Y" secondAttribute="top" id="fl7-bp-KNc"/>
+                                                <constraint firstAttribute="bottom" secondItem="g2U-7y-VoF" secondAttribute="bottom" id="nSz-KF-MLT"/>
+                                                <constraint firstItem="g2U-7y-VoF" firstAttribute="leading" secondItem="yaI-0m-d8Y" secondAttribute="leading" constant="-8" id="wAJ-Ih-aha"/>
+                                            </constraints>
+                                        </view>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="38" id="bZX-Fd-PBI"/>
+                                            <constraint firstAttribute="height" constant="38" id="3Ck-Yk-KUQ"/>
                                         </constraints>
-                                        <string key="placeholder">Search video or artist name</string>
-                                        <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                        <scopeButtonTitles>
-                                            <string>Title</string>
-                                            <string>Title</string>
-                                        </scopeButtonTitles>
-                                    </searchBar>
+                                        <blurEffect style="regular"/>
+                                    </visualEffectView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstItem="g2U-7y-VoF" firstAttribute="centerY" secondItem="Ydt-3T-sTc" secondAttribute="centerY" id="7D4-6r-V5k"/>
-                                    <constraint firstItem="g2U-7y-VoF" firstAttribute="leading" secondItem="o29-hu-K5M" secondAttribute="trailing" constant="8" id="HUP-uT-aYF"/>
+                                    <constraint firstItem="z4j-Ei-VFY" firstAttribute="leading" secondItem="o29-hu-K5M" secondAttribute="trailing" constant="8" id="0CL-ac-H30"/>
+                                    <constraint firstAttribute="trailing" secondItem="z4j-Ei-VFY" secondAttribute="trailing" constant="16" id="1Xg-b2-Kdb"/>
                                     <constraint firstItem="o29-hu-K5M" firstAttribute="leading" secondItem="Ydt-3T-sTc" secondAttribute="leading" constant="16" id="Q57-Yo-7lu"/>
                                     <constraint firstItem="o29-hu-K5M" firstAttribute="centerY" secondItem="Ydt-3T-sTc" secondAttribute="centerY" id="V2T-qD-7rp"/>
-                                    <constraint firstAttribute="trailing" secondItem="g2U-7y-VoF" secondAttribute="trailing" constant="16" id="m3K-J6-plU"/>
+                                    <constraint firstItem="z4j-Ei-VFY" firstAttribute="centerY" secondItem="Ydt-3T-sTc" secondAttribute="centerY" id="ici-DF-cse"/>
                                     <constraint firstAttribute="height" constant="50" id="oZt-49-FUh"/>
                                 </constraints>
                             </view>
@@ -4931,6 +5013,7 @@ Images, Audio &amp; Videos</string>
                     <connections>
                         <outlet property="navigationbarView" destination="Ydt-3T-sTc" id="3E0-Ut-V1g"/>
                         <outlet property="searchbar" destination="g2U-7y-VoF" id="n5Z-Cy-JcP"/>
+                        <outlet property="searchbarBlurView" destination="z4j-Ei-VFY" id="t60-Jj-Bgz"/>
                         <outlet property="videoCharacterAllCollectionView" destination="i57-T3-JmP" id="W1z-OO-1dn"/>
                         <outlet property="videoCharacterSliderCollectionView" destination="rg8-Uh-enV" id="mCA-rU-Zgf"/>
                     </connections>

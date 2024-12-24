@@ -52,7 +52,7 @@ class MoreAppVC: UIViewController {
     }
     
     private func fetchMoreData() {
-        let packageName = "id553834731"
+        let packageName = "id6739135275"
         viewModel.fetchMoreData(packageName: packageName) { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async { [self] in

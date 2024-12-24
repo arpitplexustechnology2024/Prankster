@@ -112,7 +112,7 @@ class VideoVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.videoImageView.loadGif(name: "VideoGIF")
+        self.videoImageView.loadGif(name: "Video")
         self.videoImageView.layer.cornerRadius = 8
         self.videoShowView.layer.cornerRadius = 8
         self.videoShowView.layer.shadowColor = UIColor.black.cgColor
@@ -129,13 +129,13 @@ class VideoVC: UIViewController {
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
-            self.coverImageViewWidthConstraint.constant = 245
+            self.coverImageViewWidthConstraint.constant = 230
             self.scrollViewHeightConstraint.constant = 680
             self.videoCustomHeightConstraint.constant = 180
             self.videoCharacterHeightConstraint.constant = 360
         } else {
             self.coverImageViewHeightConstraint.constant = 240
-            self.coverImageViewWidthConstraint.constant = 205
+            self.coverImageViewWidthConstraint.constant = 190
             self.scrollViewHeightConstraint.constant = 530
             self.videoCustomHeightConstraint.constant = 140
             self.videoCharacterHeightConstraint.constant = 280
@@ -426,7 +426,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddVideoCollectionViewCell", for: indexPath) as! AddVideoCollectionViewCell
                 cell.imageView.image = UIImage(named: "AddVideo")
-                cell.addAudioLabel.text = "Add Video"
+                cell.addAudioLabel.text = "Add \n video prank"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCustomCollectionViewCell", for: indexPath) as! VideoCustomCollectionViewCell

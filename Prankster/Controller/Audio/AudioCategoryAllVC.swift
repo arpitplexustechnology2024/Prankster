@@ -14,6 +14,7 @@ class AudioCategoryAllVC: UIViewController {
     @IBOutlet weak var audioCharacterAllCollectionView: UICollectionView!
     @IBOutlet weak var audioCharacterSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchbar: UISearchBar!
+    @IBOutlet weak var searchbarBlurView: UIVisualEffectView!
     
     var isLoading = true
     var categoryId: Int = 0
@@ -123,8 +124,11 @@ class AudioCategoryAllVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search audio or artist name"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = 10
+        searchbar.layer.cornerRadius = searchbar.frame.height / 2
         searchbar.clipsToBounds = true
+        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.clipsToBounds = true
+        searchbarBlurView.layer.masksToBounds = true
         
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white

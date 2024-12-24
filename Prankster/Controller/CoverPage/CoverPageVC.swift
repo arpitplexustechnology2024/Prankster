@@ -128,14 +128,14 @@ class CoverPageVC: UIViewController {
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
-            self.coverImageViewWidthConstraint.constant = 245
+            self.coverImageViewWidthConstraint.constant = 230
             self.scrollViewHeightConstraint.constant = 750
             self.customCoverHeightConstraint.constant = 180
             self.emojiHeightConstraint.constant = 180
             self.realisticHeightConstraint.constant = 180
         } else {
             self.coverImageViewHeightConstraint.constant = 240
-            self.coverImageViewWidthConstraint.constant = 205
+            self.coverImageViewWidthConstraint.constant = 190
             self.scrollViewHeightConstraint.constant = 600
             self.customCoverHeightConstraint.constant = 140
             self.emojiHeightConstraint.constant = 140
@@ -425,7 +425,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddCoverPageCollectionCell", for: indexPath) as! AddCoverPageCollectionCell
                 cell.imageView.image = UIImage(systemName: "plus")
-                cell.addCoverPageLabel.text = "Cover Page"
+                cell.addCoverPageLabel.text = "Add \n cover image"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CoverPage1CollectionCell", for: indexPath) as! CoverPage1CollectionCell

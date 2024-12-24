@@ -14,6 +14,8 @@ class RealisticCoverPageVC: UIViewController {
     @IBOutlet weak var realisticCoverAllCollectionView: UICollectionView!
     @IBOutlet weak var realisticCoverSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchbar: UISearchBar!
+    @IBOutlet weak var searchbarBlurView: UIVisualEffectView!
+    
     private let viewModel = RealisticViewModel()
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
@@ -72,8 +74,11 @@ class RealisticCoverPageVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search cover image"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = 10
+        searchbar.layer.cornerRadius = searchbar.frame.height / 2
         searchbar.clipsToBounds = true
+        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.clipsToBounds = true
+        searchbarBlurView.layer.masksToBounds = true
 
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white

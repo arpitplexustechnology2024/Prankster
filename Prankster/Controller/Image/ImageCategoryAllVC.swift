@@ -14,6 +14,7 @@ class ImageCategoryAllVC: UIViewController {
     @IBOutlet weak var imageCharacterAllCollectionView: UICollectionView!
     @IBOutlet weak var imageCharacterSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchbar: UISearchBar!
+    @IBOutlet weak var searchbarBlurView: UIVisualEffectView!
     
     var isLoading = true
     var categoryId: Int = 0
@@ -49,15 +50,15 @@ class ImageCategoryAllVC: UIViewController {
         )
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                    guard let self = self else { return }
-                    if !self.currentDataSource.isEmpty {
-                        let indexPath = IndexPath(item: 0, section: 0)
-                        self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.selectedIndex = 0
-                    }
-                }
+            guard let self = self else { return }
+            if !self.currentDataSource.isEmpty {
+                let indexPath = IndexPath(item: 0, section: 0)
+                self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                self.selectedIndex = 0
             }
+        }
+    }
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
@@ -74,8 +75,15 @@ class ImageCategoryAllVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search image name"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = 10
+        searchbar.layer.cornerRadius = searchbar.frame.height / 2
         searchbar.clipsToBounds = true
+        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.clipsToBounds = true
+        searchbarBlurView.layer.masksToBounds = true
+        
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField {
+            textField.textColor = .white
+        }
     }
     
     func checkInternetAndFetchData() {

@@ -56,7 +56,7 @@ class AudioVC: UIViewController {
     private var selectedAudioData: CategoryAllData?
     private var selectedAudioCharacterCell: IndexPath?
     private var noInternetView: NoInternetBottombarView!
-    private let defaultImages = ["MusicAudio01", "MusicAudio02", "MusicAudio03", "MusicAudio04", "MusicAudio05"]
+    private let defaultImages = ["image-1", "image 1", "image-1", "image 1", "MusicAudio05"]
     private var customAudios: [(url: URL, image: UIImage?)] = [] {
         didSet {
             saveAudios()
@@ -142,13 +142,13 @@ class AudioVC: UIViewController {
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
-            self.coverImageViewWidthConstraint.constant = 245
+            self.coverImageViewWidthConstraint.constant = 230
             self.scrollViewHeightConstraint.constant = 680
             self.audioCustomHeightConstraint.constant = 180
             self.audioCharacterHeightConstraint.constant = 360
         } else {
             self.coverImageViewHeightConstraint.constant = 240
-            self.coverImageViewWidthConstraint.constant = 205
+            self.coverImageViewWidthConstraint.constant = 190
             self.scrollViewHeightConstraint.constant = 530
             self.audioCustomHeightConstraint.constant = 140
             self.audioCharacterHeightConstraint.constant = 280
@@ -371,7 +371,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddAudioCollectionCell", for: indexPath) as! AddAudioCollectionCell
                 cell.imageView.image = UIImage(named: "AddAudio")
-                cell.addAudioLabel.text = "Add Audio"
+                cell.addAudioLabel.text = "Add \n audio prank"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCustomCollectionCell", for: indexPath) as! AudioCustomCollectionCell

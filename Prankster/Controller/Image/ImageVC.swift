@@ -93,7 +93,7 @@ class ImageVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.ImageImageView.loadGif(name: "ImageGIF")
+        self.ImageImageView.loadGif(name: "Image")
         self.ImageImageView.layer.cornerRadius = 8
         self.imageShowView.layer.cornerRadius = 8
         self.imageShowView.layer.shadowColor = UIColor.black.cgColor
@@ -110,13 +110,13 @@ class ImageVC: UIViewController {
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
-            self.coverImageViewWidthConstraint.constant = 245
+            self.coverImageViewWidthConstraint.constant = 230
             self.scrollViewHeightConstraint.constant = 680
             self.imageCustomHeightConstraint.constant = 180
             self.imageCharacterHeightConstraint.constant = 360
         } else {
             self.coverImageViewHeightConstraint.constant = 240
-            self.coverImageViewWidthConstraint.constant = 205
+            self.coverImageViewWidthConstraint.constant = 190
             self.scrollViewHeightConstraint.constant = 530
             self.imageCustomHeightConstraint.constant = 140
             self.imageCharacterHeightConstraint.constant = 280
@@ -343,7 +343,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddImageCollectionViewCell", for: indexPath) as! AddImageCollectionViewCell
                 cell.imageView.image = UIImage(named: "AddImage")
-                cell.addImageLabel.text = "Add Image"
+                cell.addImageLabel.text = "Add \n image prank"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCustomCollectionViewCell", for: indexPath) as! ImageCustomCollectionViewCell
