@@ -105,7 +105,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         self.audioLabel.text = "  \(displayName)  "
         
         if let imageURL = URL(string: categoryAllData.image) {
-            imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderAudio")) { [weak self] image, _, _, _ in
                 if categoryAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: categoryAllData.itemID) {
                     self?.premiumButton.isHidden = false
                     self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
@@ -256,7 +256,7 @@ class AudioCharacterSliderCollectionViewCell: UICollectionViewCell {
     func configure(with categoryAllData: CategoryAllData) {
         self.categoryAllData = categoryAllData
         if let imageURL = URL(string: categoryAllData.image) {
-            imageView.sd_setImage(with: imageURL) { image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderAudio")) { image, _, _, _ in
             }
         }
     }

@@ -93,7 +93,7 @@ class ImageVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.ImageImageView.loadGif(name: "Image")
+        self.ImageImageView.loadGif(name: "ImageGIF")
         self.ImageImageView.layer.cornerRadius = 8
         self.imageShowView.layer.cornerRadius = 8
         self.imageShowView.layer.shadowColor = UIColor.black.cgColor
@@ -360,7 +360,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterCollectionViewCell", for: indexPath) as! ImageCharacterCollectionViewCell
                 let character = viewModel.categorys[indexPath.item]
                 if let url = URL(string: character.categoryImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderImage"))
                 }
                 cell.categoryName.text = "\(character.categoryName) Image"
                 return cell

@@ -388,7 +388,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterCollectionCell", for: indexPath) as! AudioCharacterCollectionCell
                 let category = viewModel.categorys[indexPath.item]
                 if let url = URL(string: category.categoryImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio"))
                 }
                 cell.categoryName.text = "\(category.categoryName) Sound"
                 return cell

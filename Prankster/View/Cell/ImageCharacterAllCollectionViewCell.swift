@@ -67,7 +67,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
         let displayName = coverPageData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.name
         self.imageName.text = "  \(displayName)  "
         if let imageURL = URL(string: coverPageData.image) {
-            imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { [weak self] image, _, _, _ in
                 if coverPageData.premium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
                     self?.premiumButton.isHidden = false
                     self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
@@ -124,7 +124,7 @@ class ImageCharacterSliderCollectionViewCell: UICollectionViewCell {
     func configure(with coverPageData: CategoryAllData) {
         self.coverPageData = coverPageData
         if let imageURL = URL(string: coverPageData.image) {
-            imageView.sd_setImage(with: imageURL) { image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { image, _, _, _ in
             }
         }
     }

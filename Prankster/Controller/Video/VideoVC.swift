@@ -112,7 +112,7 @@ class VideoVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.videoImageView.loadGif(name: "Video")
+        self.videoImageView.loadGif(name: "VideoGIF")
         self.videoImageView.layer.cornerRadius = 8
         self.videoShowView.layer.cornerRadius = 8
         self.videoShowView.layer.shadowColor = UIColor.black.cgColor
@@ -443,7 +443,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterCollectionViewCell", for: indexPath) as! VideoCharacterCollectionViewCell
                 let character = viewModel.categorys[indexPath.item]
                 if let url = URL(string: character.categoryImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder"))
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderVideo"))
                 }
                 cell.categoryName.text = "\(character.categoryName) Video"
                 return cell

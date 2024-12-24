@@ -107,7 +107,7 @@ class CoverPage2CollectionCell: UICollectionViewCell {
     
     func configure(with coverPageData: CoverPageData) {
         if let imageURL = URL(string: coverPageData.coverURL) {
-            imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { [weak self] image, _, _, _ in
                 self?.originalImage = image
                 
                 if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
@@ -206,7 +206,7 @@ class CoverPage3CollectionCell: UICollectionViewCell {
     
     func configure(with coverPageData: CoverPageData) {
         if let imageURL = URL(string: coverPageData.coverURL) {
-            imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { [weak self] image, _, _, _ in
                 self?.originalImage = image
                 
                 if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
