@@ -72,23 +72,15 @@ class AudioCharacterCollectionCell: UICollectionViewCell {
     @IBOutlet weak var categoryName: UILabel!
     override func awakeFromNib() {
         super.awakeFromNib()
-        setupUI()
-    }
-    
-    private func setupUI() {
         layer.cornerRadius = 10
         layer.masksToBounds = false
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        
+        categoryName.layer.shadowColor = UIColor.black.cgColor
+        categoryName.layer.shadowOffset = CGSize(width: 0, height: 2)
+        categoryName.layer.shadowRadius = 5
+        categoryName.layer.shadowOpacity = 0.5
     }
     
     override var isSelected: Bool {

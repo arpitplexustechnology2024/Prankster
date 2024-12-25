@@ -8,14 +8,38 @@
 import Foundation
 import Alamofire
 
+enum SpinnerError: Error {
+    case betterLuckNextTime
+    case noDataFound
+    case typeIdRequired
+    case notFound
+    case unknown(String)
+    
+    var message: String {
+        switch self {
+        case .betterLuckNextTime:
+            return "Better Luck Next Time"
+        case .noDataFound:
+            return "No data found"
+        case .typeIdRequired:
+            return "TypeId value is required"
+        case .notFound:
+            return "Not Found"
+        case .unknown(let message):
+            return message
+        }
+    }
+}
+
+
 // MARK: - SpinService Protocol
 protocol SpinnerAPIProtocol {
-    func postSpin(typeId: String, completion: @escaping (Result<SpinnerResponse, Error>) -> Void)
+    func postSpin(typeId: String, completion: @escaping (Result<SpinnerResponse, SpinnerError>) -> Void)
 }
 
 // MARK: - SpinService
 class SpinnerAPIManger: SpinnerAPIProtocol {
-    func postSpin(typeId: String, completion: @escaping (Result<SpinnerResponse, Error>) -> Void) {
+    func postSpin(typeId: String, completion: @escaping (Result<SpinnerResponse, SpinnerError>) -> Void) {
         let url = "https://pslink.world/api/spin"
         
         let parameters: [String: String] = [
@@ -29,11 +53,21 @@ class SpinnerAPIManger: SpinnerAPIProtocol {
                     if welcome.status == 1 {
                         completion(.success(welcome))
                     } else {
-                        let error = NSError(domain: "", code: -2, userInfo: [NSLocalizedDescriptionKey: "Invalid status"])
-                        completion(.failure(error))
+                        switch welcome.message {
+                        case "Better Luck Next Time":
+                            completion(.failure(.betterLuckNextTime))
+                        case "No data found":
+                            completion(.failure(.noDataFound))
+                        case "TypeId value is required":
+                            completion(.failure(.typeIdRequired))
+                        case "Not Found":
+                            completion(.failure(.notFound))
+                        default:
+                            completion(.failure(.unknown(welcome.message)))
+                        }
                     }
                 case .failure(let error):
-                    completion(.failure(error))
+                    completion(.failure(.unknown(error.localizedDescription)))
                 }
             }
     }

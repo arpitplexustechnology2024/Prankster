@@ -225,7 +225,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="Yco-dG-hht">
-                                                        <rect key="frame" x="20" y="18" width="134.66666666666666" height="84"/>
+                                                        <rect key="frame" x="20.000000000000014" y="29.666666666666625" width="224.33333333333337" height="60.666666666666657"/>
                                                         <subviews>
                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="View prank" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WIn-hR-CZt">
                                                                 <rect key="frame" x="0.0" y="0.0" width="134.66666666666666" height="34.333333333333336"/>
@@ -233,10 +233,8 @@
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MQ2-nF-Iah">
-                                                                <rect key="frame" x="0.0" y="37.333333333333371" width="134" height="46.666666666666657"/>
-                                                                <string key="text">Recently created 
-your pranks</string>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Recently created your pranks" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MQ2-nF-Iah">
+                                                                <rect key="frame" x="0.0" y="37.333333333333371" width="224.33333333333334" height="23.333333333333329"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="17"/>
                                                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                 <nil key="highlightedColor"/>
@@ -287,8 +285,8 @@ your pranks</string>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ABO-cE-U2G">
                                 <rect key="frame" x="0.0" y="62" width="402" height="50"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prank category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Erl-YK-2FK">
-                                        <rect key="frame" x="16" y="11.333333333333327" width="141.66666666666666" height="27.333333333333329"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Prankster" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Erl-YK-2FK">
+                                        <rect key="frame" x="16" y="11.333333333333327" width="89" height="27.333333333333329"/>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
@@ -548,10 +546,10 @@ your pranks</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZHO-88-H1y">
-                                        <rect key="frame" x="328" y="9" width="66" height="32"/>
+                                        <rect key="frame" x="321.33333333333331" y="7.6666666666666714" width="72.666666666666686" height="34.666666666666664"/>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="restore">
-                                            <fontDescription key="titleFontDescription" name="Avenir-Medium" family="Avenir" pointSize="13"/>
+                                            <fontDescription key="titleFontDescription" name="Avenir-Medium" family="Avenir" pointSize="15"/>
                                             <color key="baseForegroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </buttonConfiguration>
                                         <connections>
@@ -604,8 +602,8 @@ your pranks</string>
                                                                         <rect key="frame" x="0.0" y="0.0" width="87" height="30"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Best offer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vrI-93-Qq8">
-                                                                                <rect key="frame" x="16.666666666666668" y="6.6666666666666288" width="53.666666666666657" height="16.666666666666668"/>
-                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
+                                                                                <rect key="frame" x="12.333333333333332" y="5.3333333333333712" width="62.333333333333343" height="19.333333333333332"/>
+                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="14"/>
                                                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -619,8 +617,8 @@ your pranks</string>
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹19.99" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lCc-GX-LMx">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="32.333333333333336" height="13.666666666666664"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
+                                                                        <rect key="frame" x="8" y="43.666666666666629" width="38.666666666666664" height="16.666666666666671"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -631,8 +629,8 @@ your pranks</string>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weekly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h2U-l2-R7D">
-                                                                        <rect key="frame" x="45.333333333333329" y="43.666666666666629" width="41.333333333333329" height="16.666666666666671"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                                                        <rect key="frame" x="51.666666666666657" y="41" width="48" height="19.333333333333329"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -665,8 +663,8 @@ your pranks</string>
                                                                         <rect key="frame" x="0.0" y="0.0" width="87" height="30"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Top Rated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xaM-yk-bl6">
-                                                                                <rect key="frame" x="15.666666666666654" y="6.6666666666666288" width="55.666666666666657" height="16.666666666666668"/>
-                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
+                                                                                <rect key="frame" x="11.333333333333343" y="5.3333333333333712" width="64.666666666666671" height="19.333333333333332"/>
+                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="14"/>
                                                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -680,14 +678,14 @@ your pranks</string>
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹99.99/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QLn-LX-U7F">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="39.333333333333336" height="13.666666666666664"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
+                                                                        <rect key="frame" x="8" y="43.666666666666629" width="47.333333333333336" height="16.666666666666671"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Monthly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p7G-Zi-jwZ">
-                                                                        <rect key="frame" x="52.333333333333343" y="43.666666666666629" width="46.333333333333343" height="16.666666666666671"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                                                        <rect key="frame" x="60.333333333333343" y="41" width="54" height="19.333333333333329"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -727,8 +725,8 @@ your pranks</string>
                                                                         <rect key="frame" x="0.0" y="0.0" width="87" height="30"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Popular" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9DT-CN-dK1">
-                                                                                <rect key="frame" x="22.666666666666686" y="6.6666666666666288" width="42" height="16.666666666666668"/>
-                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
+                                                                                <rect key="frame" x="19" y="5.3333333333333712" width="49" height="19.333333333333332"/>
+                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="14"/>
                                                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -742,14 +740,14 @@ your pranks</string>
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹999.99/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SXe-9V-Ny9">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="45.333333333333336" height="13.666666666666664"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
+                                                                        <rect key="frame" x="8.0000000000000036" y="43.666666666666629" width="54.333333333333343" height="16.666666666666671"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Yearly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uVl-jT-4Q9">
-                                                                        <rect key="frame" x="58.333333333333314" y="43.666666666666629" width="34" height="16.666666666666671"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                                                        <rect key="frame" x="67.333333333333314" y="41" width="39.666666666666657" height="19.333333333333329"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -969,7 +967,7 @@ Images, Audio &amp; Videos</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="tN9-0Z-62t">
-                                <rect key="frame" x="0.0" y="62" width="402" height="656"/>
+                                <rect key="frame" x="0.0" y="62" width="402" height="670"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="HNd-ub-tFW">
                                     <size key="itemSize" width="401" height="656"/>
@@ -979,7 +977,7 @@ Images, Audio &amp; Videos</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EmojiCoverAllCollectionViewCell" id="xM6-nk-sbK" customClass="EmojiCoverAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="401" height="656"/>
+                                        <rect key="frame" x="0.0" y="7" width="401" height="656"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Mpg-z8-Moq">
                                             <rect key="frame" x="0.0" y="0.0" width="401" height="656"/>
@@ -987,31 +985,31 @@ Images, Audio &amp; Videos</string>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ICa-iv-kF2">
                                                     <rect key="frame" x="8" y="0.0" width="385" height="656"/>
-                                                    <color key="backgroundColor" red="0.21176470588235294" green="0.20392156862745098" blue="0.23137254901960785" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="backgroundColor" red="0.14901960784313725" green="0.14509803921568626" blue="0.14509803921568626" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Love" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0lB-8f-YHC">
-                                                    <rect key="frame" x="147.33333333333334" y="560.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
+                                                    <rect key="frame" x="147.33333333333334" y="550.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
                                                     <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="I3A-ID-w0h">
-                                                    <rect key="frame" x="153.66666666666666" y="604" width="94" height="40"/>
+                                                    <rect key="frame" x="143.66666666666666" y="594" width="113.99999999999997" height="50"/>
                                                     <subviews>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Juc-Kg-ZM9">
-                                                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="40" id="EgZ-cA-8hB"/>
-                                                                <constraint firstAttribute="height" constant="40" id="g29-gg-ysy"/>
+                                                                <constraint firstAttribute="width" constant="50" id="EgZ-cA-8hB"/>
+                                                                <constraint firstAttribute="height" constant="50" id="g29-gg-ysy"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="Premium 3"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hiH-3V-aEd">
-                                                            <rect key="frame" x="54" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="64" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="UfW-L4-UV3"/>
-                                                                <constraint firstAttribute="width" constant="40" id="uFk-xZ-3w7"/>
+                                                                <constraint firstAttribute="height" constant="50" id="UfW-L4-UV3"/>
+                                                                <constraint firstAttribute="width" constant="50" id="uFk-xZ-3w7"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="selectYesButton"/>
@@ -1100,30 +1098,30 @@ Images, Audio &amp; Videos</string>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="gee-0x-fB9">
-                                <rect key="frame" x="0.0" y="720" width="402" height="120"/>
+                                <rect key="frame" x="0.0" y="734" width="402" height="106"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="J3z-wx-l3G"/>
+                                    <constraint firstAttribute="height" constant="106" id="J3z-wx-l3G"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="KSP-OQ-PeF">
-                                    <size key="itemSize" width="96" height="104"/>
+                                    <size key="itemSize" width="90" height="90"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="16" minY="8" maxX="16" maxY="8"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EmojiCoverSliderCollectionViewCell" id="CyD-ma-krR" customClass="EmojiCoverSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="8" width="80" height="104"/>
+                                        <rect key="frame" x="16" y="8" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="wWf-dh-YcE">
-                                            <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="I1g-Ji-8Pi">
-                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="104" id="WjW-Ef-4x6"/>
-                                                        <constraint firstAttribute="width" constant="80" id="bpZ-AV-L8L"/>
+                                                        <constraint firstAttribute="height" constant="90" id="WjW-Ef-4x6"/>
+                                                        <constraint firstAttribute="width" constant="90" id="bpZ-AV-L8L"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -1134,7 +1132,7 @@ Images, Audio &amp; Videos</string>
                                                 <constraint firstItem="I1g-Ji-8Pi" firstAttribute="leading" secondItem="wWf-dh-YcE" secondAttribute="leading" id="kWV-Um-w2C"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="80" height="104"/>
+                                        <size key="customSize" width="90" height="90"/>
                                         <connections>
                                             <outlet property="imageView" destination="I1g-Ji-8Pi" id="9UM-F7-xD6"/>
                                         </connections>
@@ -1263,19 +1261,17 @@ Images, Audio &amp; Videos</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Bn0-VA-QSl">
-                                                                            <rect key="frame" x="11" y="16.666666666666671" width="93" height="92"/>
+                                                                            <rect key="frame" x="18" y="27.666666666666671" width="79" height="70"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="plus" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="gG2-8m-Z8a">
-                                                                                    <rect key="frame" x="0.0" y="2.3333333333333321" width="93" height="35.666666666666671"/>
+                                                                                    <rect key="frame" x="0.0" y="2.3333333333333321" width="79" height="35.666666666666671"/>
                                                                                     <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <constraints>
                                                                                         <constraint firstAttribute="height" constant="40" id="VUl-8T-MHy"/>
                                                                                     </constraints>
                                                                                 </imageView>
-                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2xo-2C-vuh">
-                                                                                    <rect key="frame" x="0.0" y="48" width="93" height="44"/>
-                                                                                    <string key="text">Add 
-cover image</string>
+                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add cover" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2xo-2C-vuh">
+                                                                                    <rect key="frame" x="0.0" y="48" width="79" height="22"/>
                                                                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
                                                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <nil key="highlightedColor"/>
@@ -1404,19 +1400,6 @@ cover image</string>
                                                             </collectionViewCell>
                                                         </cells>
                                                     </collectionView>
-                                                    <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sbI-LW-oaI">
-                                                        <rect key="frame" x="303.33333333333331" y="16" width="82.666666666666686" height="32"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="32" id="bm0-Dm-BUg"/>
-                                                        </constraints>
-                                                        <state key="normal" title="Button"/>
-                                                        <buttonConfiguration key="configuration" style="plain" title="Show all">
-                                                            <fontDescription key="titleFontDescription" name="Avenir-Heavy" family="Avenir" pointSize="15"/>
-                                                        </buttonConfiguration>
-                                                        <connections>
-                                                            <action selector="btnCoverPage1ShowAllTapped:" destination="2eJ-5h-dMn" eventType="touchUpInside" id="MOO-zm-Qgn"/>
-                                                        </connections>
-                                                    </button>
                                                     <button opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gMw-L2-1m9">
                                                         <rect key="frame" x="303.33333333333331" y="200.33333333333337" width="82.666666666666686" height="32"/>
                                                         <constraints>
@@ -1447,7 +1430,6 @@ cover image</string>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <constraints>
                                                     <constraint firstItem="PWE-1G-7CM" firstAttribute="leading" secondItem="wkk-aC-iE9" secondAttribute="leading" id="0D8-fx-f77"/>
-                                                    <constraint firstItem="sbI-LW-oaI" firstAttribute="top" secondItem="wkk-aC-iE9" secondAttribute="top" constant="16" id="1Uy-0H-W4h"/>
                                                     <constraint firstItem="1AG-vX-7We" firstAttribute="leading" secondItem="wkk-aC-iE9" secondAttribute="leading" constant="16" id="4Oy-gx-mK2"/>
                                                     <constraint firstItem="bPw-za-FkM" firstAttribute="top" secondItem="vQ1-ho-KRF" secondAttribute="bottom" constant="20" id="83R-vz-vd1"/>
                                                     <constraint firstItem="WL9-K6-CfO" firstAttribute="leading" secondItem="wkk-aC-iE9" secondAttribute="leading" constant="16" id="89w-cY-8Fd"/>
@@ -1458,7 +1440,6 @@ cover image</string>
                                                     <constraint firstItem="WL9-K6-CfO" firstAttribute="top" secondItem="vQ1-ho-KRF" secondAttribute="bottom" constant="20" id="Xku-y9-ABs"/>
                                                     <constraint firstItem="eh0-oW-Qqr" firstAttribute="leading" secondItem="wkk-aC-iE9" secondAttribute="leading" constant="16" id="cLW-fO-YZu"/>
                                                     <constraint firstItem="oF1-J0-hbh" firstAttribute="top" secondItem="WL9-K6-CfO" secondAttribute="bottom" constant="12" id="dn3-tX-kmg"/>
-                                                    <constraint firstAttribute="trailing" secondItem="sbI-LW-oaI" secondAttribute="trailing" constant="16" id="eLF-lP-GID"/>
                                                     <constraint firstItem="gMw-L2-1m9" firstAttribute="top" secondItem="PWE-1G-7CM" secondAttribute="bottom" constant="20" id="fhh-vQ-7Yt"/>
                                                     <constraint firstAttribute="trailing" secondItem="gMw-L2-1m9" secondAttribute="trailing" constant="16" id="h5H-8i-Ds4"/>
                                                     <constraint firstItem="1AG-vX-7We" firstAttribute="top" secondItem="wkk-aC-iE9" secondAttribute="top" constant="16" id="hPJ-5p-fUs"/>
@@ -1651,7 +1632,7 @@ cover image</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="kvC-6a-h28">
-                                                                            <rect key="frame" x="0.0" y="16.666666666666671" width="115" height="92"/>
+                                                                            <rect key="frame" x="0.0" y="27.666666666666671" width="115" height="70"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AddAudio" translatesAutoresizingMaskIntoConstraints="NO" id="5DT-Ax-BBg">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
@@ -1660,10 +1641,8 @@ cover image</string>
                                                                                         <constraint firstAttribute="height" constant="40" id="q1q-At-PAh"/>
                                                                                     </constraints>
                                                                                 </imageView>
-                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bbs-Cf-seu">
-                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="44"/>
-                                                                                    <string key="text">Add
- audio prank</string>
+                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add audio" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bbs-Cf-seu">
+                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="22"/>
                                                                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
                                                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <nil key="highlightedColor"/>
@@ -1978,7 +1957,7 @@ cover image</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Wpa-zD-cdT">
-                                                                            <rect key="frame" x="0.0" y="16.666666666666671" width="115" height="92"/>
+                                                                            <rect key="frame" x="0.0" y="27.666666666666671" width="115" height="70"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AddImage" translatesAutoresizingMaskIntoConstraints="NO" id="FPi-l9-EZi">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
@@ -1987,10 +1966,8 @@ cover image</string>
                                                                                         <constraint firstAttribute="height" constant="40" id="BTA-vB-ThK"/>
                                                                                     </constraints>
                                                                                 </imageView>
-                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wrp-RG-1bz">
-                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="44"/>
-                                                                                    <string key="text">Add 
-image prank</string>
+                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add image" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wrp-RG-1bz">
+                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="22"/>
                                                                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
                                                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <nil key="highlightedColor"/>
@@ -2278,7 +2255,7 @@ image prank</string>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <subviews>
                                                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="H5K-6W-6j6">
-                                                                            <rect key="frame" x="0.0" y="16.666666666666671" width="115" height="92"/>
+                                                                            <rect key="frame" x="0.0" y="27.666666666666671" width="115" height="70"/>
                                                                             <subviews>
                                                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AddVideo" translatesAutoresizingMaskIntoConstraints="NO" id="n8G-WZ-sBF">
                                                                                     <rect key="frame" x="0.0" y="0.0" width="115" height="40"/>
@@ -2287,10 +2264,8 @@ image prank</string>
                                                                                         <constraint firstAttribute="height" constant="40" id="Ymt-xu-IKC"/>
                                                                                     </constraints>
                                                                                 </imageView>
-                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jMy-6N-uG4">
-                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="44"/>
-                                                                                    <string key="text">Add
-video prank</string>
+                                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add video" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jMy-6N-uG4">
+                                                                                    <rect key="frame" x="0.0" y="48" width="115" height="22"/>
                                                                                     <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="16"/>
                                                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                     <nil key="highlightedColor"/>
@@ -2520,7 +2495,7 @@ video prank</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="x8V-I8-GI1">
-                                <rect key="frame" x="0.0" y="62" width="402" height="656"/>
+                                <rect key="frame" x="0.0" y="62" width="402" height="670"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="T3N-UP-ETd">
                                     <size key="itemSize" width="401" height="654"/>
@@ -2530,7 +2505,7 @@ video prank</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AudioCharacterAllCollectionViewCell" id="2eH-Tr-qH2" customClass="AudioCharacterAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1" width="401" height="654"/>
+                                        <rect key="frame" x="0.0" y="8" width="401" height="654"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="pGK-5Z-8wQ">
                                             <rect key="frame" x="0.0" y="0.0" width="401" height="654"/>
@@ -2538,7 +2513,7 @@ video prank</string>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="9ib-d3-PdX">
                                                     <rect key="frame" x="8" y="0.0" width="385" height="654"/>
-                                                    <color key="backgroundColor" red="0.21176470589999999" green="0.20392156859999999" blue="0.23137254900000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="backgroundColor" red="0.14901960784313725" green="0.14509803921568626" blue="0.14509803921568626" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cqm-nL-ntd">
                                                     <rect key="frame" x="160.66666666666666" y="287" width="80" height="80"/>
@@ -2548,22 +2523,22 @@ video prank</string>
                                                     </constraints>
                                                 </imageView>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="Yfm-JN-LvZ">
-                                                    <rect key="frame" x="153.66666666666666" y="602" width="94" height="40"/>
+                                                    <rect key="frame" x="143.66666666666666" y="592" width="113.99999999999997" height="50"/>
                                                     <subviews>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YfQ-xA-9hk">
-                                                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="5ui-M5-NZo"/>
-                                                                <constraint firstAttribute="width" constant="40" id="lem-EK-KDU"/>
+                                                                <constraint firstAttribute="height" constant="50" id="5ui-M5-NZo"/>
+                                                                <constraint firstAttribute="width" constant="50" id="lem-EK-KDU"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="Premium 3"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pqh-7i-qIJ">
-                                                            <rect key="frame" x="54" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="64" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="Yhy-ev-AJF"/>
-                                                                <constraint firstAttribute="width" constant="40" id="mlM-Oi-oAX"/>
+                                                                <constraint firstAttribute="height" constant="50" id="Yhy-ev-AJF"/>
+                                                                <constraint firstAttribute="width" constant="50" id="mlM-Oi-oAX"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="selectYesButton"/>
@@ -2571,7 +2546,7 @@ video prank</string>
                                                     </subviews>
                                                 </stackView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Love" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TlW-v4-NXh">
-                                                    <rect key="frame" x="147.33333333333334" y="558.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
+                                                    <rect key="frame" x="147.33333333333334" y="548.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
                                                     <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
@@ -2658,30 +2633,30 @@ video prank</string>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="fF7-eL-kjL">
-                                <rect key="frame" x="0.0" y="720" width="402" height="120"/>
+                                <rect key="frame" x="0.0" y="734" width="402" height="106"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="BGD-wg-Zdc"/>
+                                    <constraint firstAttribute="height" constant="106" id="BGD-wg-Zdc"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Ogh-am-dUN">
-                                    <size key="itemSize" width="96" height="104"/>
+                                    <size key="itemSize" width="90" height="90"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="16" minY="8" maxX="16" maxY="8"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AudioCharacterSliderCollectionViewCell" id="cR4-W1-gfc" customClass="AudioCharacterSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="8" width="80" height="104"/>
+                                        <rect key="frame" x="16" y="8" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="qzu-R9-ea8">
-                                            <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4Wh-gp-tE1">
-                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="104" id="1jb-oQ-CEn"/>
-                                                        <constraint firstAttribute="width" constant="80" id="nTt-X9-NUS"/>
+                                                        <constraint firstAttribute="height" constant="90" id="1jb-oQ-CEn"/>
+                                                        <constraint firstAttribute="width" constant="90" id="nTt-X9-NUS"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -2692,7 +2667,7 @@ video prank</string>
                                                 <constraint firstItem="4Wh-gp-tE1" firstAttribute="leading" secondItem="qzu-R9-ea8" secondAttribute="leading" id="il4-d9-01b"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="80" height="104"/>
+                                        <size key="customSize" width="90" height="90"/>
                                         <connections>
                                             <outlet property="imageView" destination="4Wh-gp-tE1" id="95d-uj-0Ay"/>
                                         </connections>
@@ -2737,10 +2712,10 @@ video prank</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bpv-C4-0zr">
-                                <rect key="frame" x="20" y="262" width="362" height="350"/>
+                                <rect key="frame" x="20" y="247" width="362" height="380"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iLo-tq-PCF">
-                                        <rect key="frame" x="16" y="289" width="330" height="45"/>
+                                        <rect key="frame" x="16" y="319" width="330" height="45"/>
                                         <color key="backgroundColor" name="Icon"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="kvh-8w-HBs"/>
@@ -2755,7 +2730,7 @@ video prank</string>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pwf-kn-et9">
-                                        <rect key="frame" x="16" y="217" width="330" height="45"/>
+                                        <rect key="frame" x="16" y="247" width="330" height="45"/>
                                         <color key="backgroundColor" name="yellow"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="Qea-Mu-puJ"/>
@@ -2777,34 +2752,34 @@ video prank</string>
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Premium" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bEp-Uu-mRw">
-                                        <rect key="frame" x="143" y="138.66666666666669" width="76" height="25"/>
-                                        <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="18"/>
+                                        <rect key="frame" x="139.33333333333334" y="139" width="83.666666666666657" height="27.333333333333343"/>
+                                        <fontDescription key="fontDescription" name="Avenir-Black" family="Avenir" pointSize="20"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1vw-m3-vk7">
-                                        <rect key="frame" x="16" y="169.33333333333331" width="330" height="39.666666666666657"/>
+                                        <rect key="frame" x="16" y="172" width="330" height="67"/>
                                         <string key="text">This content is part of our Premium Collection! Exclusive access to video, audio, and images is just a subscription away. Upgrade now to enjoy unlimited creativity!</string>
-                                        <fontDescription key="fontDescription" type="system" pointSize="11"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Obe-kb-DUu">
-                                        <rect key="frame" x="196.66666666666663" y="275" width="149.33333333333337" height="1"/>
+                                        <rect key="frame" x="198" y="305" width="148" height="1"/>
                                         <color key="backgroundColor" red="0.46274509803921571" green="0.45882352941176469" blue="0.45882352941176469" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="Nek-4n-RXK"/>
                                         </constraints>
                                     </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="00p-8m-6vk">
-                                        <rect key="frame" x="16" y="275" width="149.66666666666666" height="1"/>
+                                        <rect key="frame" x="16" y="305" width="148" height="1"/>
                                         <color key="backgroundColor" red="0.46274509800000002" green="0.45882352939999999" blue="0.45882352939999999" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="hHa-ik-diy"/>
                                         </constraints>
                                     </view>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Or" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cgg-cO-zws">
-                                        <rect key="frame" x="173.66666666666666" y="267" width="15" height="17"/>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="OR" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cgg-cO-zws">
+                                        <rect key="frame" x="172" y="297" width="18" height="17"/>
                                         <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
                                         <color key="textColor" red="0.46274509803921571" green="0.45882352941176469" blue="0.45882352941176469" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
@@ -2829,7 +2804,7 @@ video prank</string>
                                     <constraint firstItem="iLo-tq-PCF" firstAttribute="leading" secondItem="bpv-C4-0zr" secondAttribute="leading" constant="16" id="asf-t4-baN"/>
                                     <constraint firstItem="1vw-m3-vk7" firstAttribute="leading" secondItem="bpv-C4-0zr" secondAttribute="leading" constant="16" id="cOV-N1-VNN"/>
                                     <constraint firstItem="MlF-QB-3Bh" firstAttribute="top" secondItem="bpv-C4-0zr" secondAttribute="top" constant="8" id="fDk-Uk-bO9"/>
-                                    <constraint firstAttribute="height" constant="350" id="fkV-1Z-Q3s"/>
+                                    <constraint firstAttribute="height" constant="380" id="fkV-1Z-Q3s"/>
                                     <constraint firstItem="cgg-cO-zws" firstAttribute="centerX" secondItem="bpv-C4-0zr" secondAttribute="centerX" id="mqt-6G-h2a"/>
                                     <constraint firstItem="1vw-m3-vk7" firstAttribute="top" secondItem="bEp-Uu-mRw" secondAttribute="bottom" constant="5.6699999999999999" id="o4D-ra-OqW"/>
                                     <constraint firstItem="bEp-Uu-mRw" firstAttribute="centerX" secondItem="bpv-C4-0zr" secondAttribute="centerX" id="pEy-cI-2I4"/>
@@ -3000,19 +2975,19 @@ video prank</string>
                                 <rect key="frame" x="16" y="120" width="370" height="551"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Wdr-kF-Eix">
-                                        <rect key="frame" x="8" y="8" width="354" height="457"/>
+                                        <rect key="frame" x="8" y="8" width="354" height="467"/>
                                     </imageView>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sth-dg-kNs">
-                                        <rect key="frame" x="8" y="473" width="298" height="70"/>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" text="Cover Image" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sth-dg-kNs">
+                                        <rect key="frame" x="8" y="491" width="298" height="52"/>
                                         <constraints>
-                                            <constraint firstAttribute="height" constant="70" id="0ks-2W-yzE"/>
+                                            <constraint firstAttribute="height" constant="52" id="0ks-2W-yzE"/>
                                         </constraints>
                                         <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iAt-XQ-pa2">
-                                        <rect key="frame" x="314" y="473" width="48" height="48"/>
+                                        <rect key="frame" x="314" y="483" width="48" height="48"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="48" id="IZb-kf-dnD"/>
                                             <constraint firstAttribute="width" constant="48" id="K1F-8x-OZh"/>
@@ -3040,7 +3015,7 @@ video prank</string>
                                     <constraint firstAttribute="trailing" secondItem="iAt-XQ-pa2" secondAttribute="trailing" constant="8" id="S87-li-Qys"/>
                                     <constraint firstAttribute="trailing" secondItem="Wdr-kF-Eix" secondAttribute="trailing" constant="8" id="cDD-Ij-NtB"/>
                                     <constraint firstItem="Pbb-Rw-RLn" firstAttribute="centerY" secondItem="nvI-e3-FUt" secondAttribute="centerY" id="dCD-x5-k4G"/>
-                                    <constraint firstItem="sth-dg-kNs" firstAttribute="top" secondItem="Wdr-kF-Eix" secondAttribute="bottom" constant="8" symbolic="YES" id="eXr-eM-ZMp"/>
+                                    <constraint firstItem="sth-dg-kNs" firstAttribute="top" secondItem="Wdr-kF-Eix" secondAttribute="bottom" constant="16" id="eXr-eM-ZMp"/>
                                     <constraint firstItem="Pbb-Rw-RLn" firstAttribute="centerX" secondItem="nvI-e3-FUt" secondAttribute="centerX" id="m2G-yP-xTX"/>
                                     <constraint firstItem="sth-dg-kNs" firstAttribute="leading" secondItem="nvI-e3-FUt" secondAttribute="leading" constant="8" id="ryb-DM-qBC"/>
                                     <constraint firstItem="iAt-XQ-pa2" firstAttribute="leading" secondItem="sth-dg-kNs" secondAttribute="trailing" constant="8" id="te5-D8-vRr"/>
@@ -3678,51 +3653,51 @@ video prank</string>
                                 <rect key="frame" x="0.0" y="62" width="402" height="778"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="gA6-OL-lG7">
-                                    <size key="itemSize" width="369" height="55"/>
+                                    <size key="itemSize" width="369" height="60"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="26" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="SpinnerCollectionViewCell" id="6mM-ko-Yaa" customClass="SpinnerCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="16.666666666666668" y="26" width="369" height="55"/>
+                                        <rect key="frame" x="16.666666666666668" y="26" width="369" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="rhE-eC-Wuo">
-                                            <rect key="frame" x="0.0" y="0.0" width="369" height="55"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="369" height="60"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1wD-CX-171">
-                                                    <rect key="frame" x="8" y="8" width="39" height="39"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1wD-CX-171">
+                                                    <rect key="frame" x="8" y="10" width="40" height="40"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="39" id="tpp-3j-axE"/>
-                                                        <constraint firstAttribute="width" constant="39" id="waj-Vn-njw"/>
+                                                        <constraint firstAttribute="height" constant="40" id="tpp-3j-axE"/>
+                                                        <constraint firstAttribute="width" constant="40" id="waj-Vn-njw"/>
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OFe-h8-FA9">
-                                                    <rect key="frame" x="63" y="17" width="38" height="21"/>
-                                                    <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="15"/>
+                                                    <rect key="frame" x="64" y="18.333333333333336" width="43" height="23.333333333333336"/>
+                                                    <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="17"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pk5-ZZ-dfs">
-                                                    <rect key="frame" x="331" y="12.666666666666664" width="30" height="30"/>
+                                                    <rect key="frame" x="321" y="10" width="40" height="40"/>
                                                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="30" id="2bA-zE-2NF"/>
-                                                        <constraint firstAttribute="height" constant="30" id="aBf-23-7zZ"/>
+                                                        <constraint firstAttribute="width" constant="40" id="2bA-zE-2NF"/>
+                                                        <constraint firstAttribute="height" constant="40" id="aBf-23-7zZ"/>
                                                     </constraints>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="SharePrankButton"/>
                                                 </button>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="YsN-Ry-mG8">
-                                                    <rect key="frame" x="254" y="12.666666666666664" width="69" height="30"/>
+                                                    <rect key="frame" x="233.33333333333334" y="10" width="79.666666666666657" height="40"/>
                                                     <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="30" id="pvc-cG-J8N"/>
+                                                        <constraint firstAttribute="height" constant="40" id="pvc-cG-J8N"/>
                                                     </constraints>
                                                     <state key="normal" title="Button"/>
                                                     <buttonConfiguration key="configuration" style="plain" title="Preview">
-                                                        <fontDescription key="titleFontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                                        <fontDescription key="titleFontDescription" name="Avenir-Heavy" family="Avenir" pointSize="15"/>
                                                         <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     </buttonConfiguration>
                                                 </button>
@@ -3739,6 +3714,7 @@ video prank</string>
                                             </constraints>
                                         </collectionViewCellContentView>
                                         <color key="backgroundColor" name="yellow"/>
+                                        <size key="customSize" width="369" height="60"/>
                                         <connections>
                                             <outlet property="imageName" destination="OFe-h8-FA9" id="3pj-aN-ypk"/>
                                             <outlet property="imageView" destination="1wD-CX-171" id="oIt-la-e3z"/>
@@ -3764,7 +3740,7 @@ video prank</string>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TbZ-w1-ofs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="10415" y="631"/>
+            <point key="canvasLocation" x="10414.925373134327" y="630.89244851258582"/>
         </scene>
         <!--Premium BottomVC-->
         <scene sceneID="hq4-l7-s4X">
@@ -3836,8 +3812,8 @@ video prank</string>
                                                                         <rect key="frame" x="0.0" y="0.0" width="87" height="30"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Best offer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L7y-hp-nWf">
-                                                                                <rect key="frame" x="16.666666666666668" y="6.6666666666666288" width="53.666666666666657" height="16.666666666666668"/>
-                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
+                                                                                <rect key="frame" x="12.333333333333332" y="5.3333333333333712" width="62.333333333333343" height="19.333333333333332"/>
+                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="14"/>
                                                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -3851,8 +3827,8 @@ video prank</string>
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹19.99/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yXe-2O-6my">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="39.333333333333336" height="13.666666666666664"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
+                                                                        <rect key="frame" x="8" y="43.666666666666629" width="47.333333333333336" height="16.666666666666671"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3863,8 +3839,8 @@ video prank</string>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Weekly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fCx-vw-H9W">
-                                                                        <rect key="frame" x="52.333333333333329" y="43.666666666666629" width="41.333333333333329" height="16.666666666666671"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                                                        <rect key="frame" x="60.333333333333329" y="41" width="48" height="19.333333333333329"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3897,8 +3873,8 @@ video prank</string>
                                                                         <rect key="frame" x="0.0" y="0.0" width="87" height="30"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Top Rated" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="01i-ay-5zQ">
-                                                                                <rect key="frame" x="15.666666666666654" y="6.6666666666666288" width="55.666666666666657" height="16.666666666666668"/>
-                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
+                                                                                <rect key="frame" x="11.333333333333343" y="5.3333333333333712" width="64.666666666666671" height="19.333333333333332"/>
+                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="14"/>
                                                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -3912,14 +3888,14 @@ video prank</string>
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹99.99/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rUs-J6-kE2">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="39.333333333333336" height="13.666666666666664"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
+                                                                        <rect key="frame" x="8" y="43.666666666666629" width="47.333333333333336" height="16.666666666666671"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Monthly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bEm-LM-3qo">
-                                                                        <rect key="frame" x="52.333333333333343" y="43.666666666666629" width="46.333333333333343" height="16.666666666666671"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                                                        <rect key="frame" x="60.333333333333343" y="41" width="54" height="19.333333333333329"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -3959,8 +3935,8 @@ video prank</string>
                                                                         <rect key="frame" x="0.0" y="0.0" width="87" height="30"/>
                                                                         <subviews>
                                                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Popular" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="E7S-rK-EjQ">
-                                                                                <rect key="frame" x="22.666666666666686" y="6.6666666666666288" width="42" height="16.666666666666668"/>
-                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
+                                                                                <rect key="frame" x="19" y="5.3333333333333712" width="49" height="19.333333333333332"/>
+                                                                                <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="14"/>
                                                                                 <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                                 <nil key="highlightedColor"/>
                                                                             </label>
@@ -3974,14 +3950,14 @@ video prank</string>
                                                                         </constraints>
                                                                     </view>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹999.99/-" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="85l-CN-dzs">
-                                                                        <rect key="frame" x="8" y="46.666666666666629" width="45.333333333333336" height="13.666666666666664"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="10"/>
+                                                                        <rect key="frame" x="8.0000000000000036" y="43.666666666666629" width="54.333333333333343" height="16.666666666666671"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Yearly" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jsB-KW-FU2">
-                                                                        <rect key="frame" x="58.333333333333314" y="43.666666666666629" width="34" height="16.666666666666671"/>
-                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
+                                                                        <rect key="frame" x="67.333333333333314" y="41" width="39.666666666666657" height="19.333333333333329"/>
+                                                                        <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="14"/>
                                                                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                         <nil key="highlightedColor"/>
                                                                     </label>
@@ -4235,7 +4211,7 @@ Images, Audio &amp; Videos</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="cIt-yH-7yr">
-                                <rect key="frame" x="0.0" y="62" width="402" height="656"/>
+                                <rect key="frame" x="0.0" y="62" width="402" height="670"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="W4q-VU-hOf">
                                     <size key="itemSize" width="401" height="659.66666666666663"/>
@@ -4245,7 +4221,7 @@ Images, Audio &amp; Videos</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RealisticCoverAllCollectionViewCell" id="ZyF-Of-cGb" customClass="RealisticCoverAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="-1.6666666666666667" width="401" height="659.66666666666663"/>
+                                        <rect key="frame" x="0.0" y="5.333333333333333" width="401" height="659.66666666666663"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="AKs-4D-HPH">
                                             <rect key="frame" x="0.0" y="0.0" width="401" height="659.66666666666663"/>
@@ -4253,31 +4229,31 @@ Images, Audio &amp; Videos</string>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="VPS-1P-bbQ">
                                                     <rect key="frame" x="8" y="0.0" width="385" height="659.66666666666663"/>
-                                                    <color key="backgroundColor" red="0.21176470588235294" green="0.20392156862745098" blue="0.23137254901960785" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="backgroundColor" red="0.14901960784313725" green="0.14509803921568626" blue="0.14509803921568626" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Love" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CxO-qn-adr">
-                                                    <rect key="frame" x="147.33333333333334" y="564.33333333333337" width="106.66666666666666" height="27.333333333333371"/>
+                                                    <rect key="frame" x="147.33333333333334" y="554.33333333333337" width="106.66666666666666" height="27.333333333333371"/>
                                                     <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="I5y-UP-ExX">
-                                                    <rect key="frame" x="153.66666666666666" y="607.66666666666663" width="94" height="40"/>
+                                                    <rect key="frame" x="143.66666666666666" y="597.66666666666663" width="113.99999999999997" height="50"/>
                                                     <subviews>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gcZ-qw-Pof">
-                                                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="5Wq-uw-eRd"/>
-                                                                <constraint firstAttribute="width" constant="40" id="gY6-cR-bAI"/>
+                                                                <constraint firstAttribute="height" constant="50" id="5Wq-uw-eRd"/>
+                                                                <constraint firstAttribute="width" constant="50" id="gY6-cR-bAI"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="Premium 3"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Une-5y-R0t">
-                                                            <rect key="frame" x="54" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="64" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="40" id="TwW-Yv-9EM"/>
-                                                                <constraint firstAttribute="height" constant="40" id="eap-eh-Hrx"/>
+                                                                <constraint firstAttribute="width" constant="50" id="TwW-Yv-9EM"/>
+                                                                <constraint firstAttribute="height" constant="50" id="eap-eh-Hrx"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="selectYesButton"/>
@@ -4363,30 +4339,30 @@ Images, Audio &amp; Videos</string>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="2hF-VV-hQ8">
-                                <rect key="frame" x="0.0" y="720" width="402" height="120"/>
+                                <rect key="frame" x="0.0" y="734" width="402" height="106"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="cps-xp-FdF"/>
+                                    <constraint firstAttribute="height" constant="106" id="cps-xp-FdF"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="X6e-q9-3Hs">
-                                    <size key="itemSize" width="96" height="104"/>
+                                    <size key="itemSize" width="90" height="90"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="16" minY="8" maxX="16" maxY="8"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="RealisticCoverSliderCollectionViewCell" id="RVD-pp-Rgg" customClass="RealisticCoverSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="8" width="80" height="104"/>
+                                        <rect key="frame" x="16" y="8" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="K7g-t9-eBQ">
-                                            <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="hIi-bl-bwe">
-                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="height" constant="104" id="7se-ko-zwj"/>
-                                                        <constraint firstAttribute="width" constant="80" id="zMg-gV-JFk"/>
+                                                        <constraint firstAttribute="height" constant="90" id="7se-ko-zwj"/>
+                                                        <constraint firstAttribute="width" constant="90" id="zMg-gV-JFk"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -4397,7 +4373,7 @@ Images, Audio &amp; Videos</string>
                                                 <constraint firstAttribute="bottom" secondItem="hIi-bl-bwe" secondAttribute="bottom" id="kDW-qT-4O6"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="80" height="104"/>
+                                        <size key="customSize" width="90" height="90"/>
                                         <connections>
                                             <outlet property="imageView" destination="hIi-bl-bwe" id="D1P-e6-CmQ"/>
                                         </connections>
@@ -4432,161 +4408,6 @@ Images, Audio &amp; Videos</string>
             </objects>
             <point key="canvasLocation" x="6438.805970149253" y="-37.07093821510297"/>
         </scene>
-        <!--Custom Cover PageVC-->
-        <scene sceneID="woR-6m-W1r">
-            <objects>
-                <viewController storyboardIdentifier="CustomCoverPageVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="r5j-F6-PqO" customClass="CustomCoverPageVC" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="7W3-ce-Cbq">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Yst-aE-v4D">
-                                <rect key="frame" x="0.0" y="62" width="402" height="658"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="W5x-Mu-CKS">
-                                    <size key="itemSize" width="402" height="663.66666666666663"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CustomCoverAllCollectionViewCell" id="b4Q-9K-3fj" customClass="CustomCoverAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="-2.6666666666666665" width="402" height="663.66666666666663"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="G13-rw-bI5">
-                                            <rect key="frame" x="0.0" y="0.0" width="402" height="663.66666666666663"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="rH3-EF-DWg">
-                                                    <rect key="frame" x="0.0" y="0.0" width="402" height="663.66666666666663"/>
-                                                    <color key="backgroundColor" red="0.21176470588235294" green="0.20392156862745098" blue="0.23137254901960785" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                </imageView>
-                                                <stackView opaque="NO" contentMode="scaleToFill" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="04P-6H-IeZ">
-                                                    <rect key="frame" x="181" y="611.66666666666663" width="40" height="40"/>
-                                                    <subviews>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EHY-92-N3Y">
-                                                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="43N-5m-fbI"/>
-                                                                <constraint firstAttribute="width" constant="40" id="v2N-DA-XEY"/>
-                                                            </constraints>
-                                                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                                            <state key="normal" title="Button" image="selectYesButton"/>
-                                                        </button>
-                                                    </subviews>
-                                                </stackView>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstItem="rH3-EF-DWg" firstAttribute="leading" secondItem="G13-rw-bI5" secondAttribute="leading" id="CgU-ve-UnY"/>
-                                                <constraint firstAttribute="bottom" secondItem="rH3-EF-DWg" secondAttribute="bottom" id="UUQ-zy-Lhm"/>
-                                                <constraint firstAttribute="bottom" secondItem="04P-6H-IeZ" secondAttribute="bottom" constant="12" id="Wub-MQ-YNP"/>
-                                                <constraint firstItem="rH3-EF-DWg" firstAttribute="top" secondItem="G13-rw-bI5" secondAttribute="top" id="XGD-Ag-4pY"/>
-                                                <constraint firstItem="04P-6H-IeZ" firstAttribute="centerX" secondItem="G13-rw-bI5" secondAttribute="centerX" id="frY-3r-2Xg"/>
-                                                <constraint firstAttribute="trailing" secondItem="rH3-EF-DWg" secondAttribute="trailing" id="pZ6-kc-Zrs"/>
-                                            </constraints>
-                                        </collectionViewCellContentView>
-                                        <size key="customSize" width="402" height="663.66666666666663"/>
-                                        <connections>
-                                            <outlet property="DoneButton" destination="EHY-92-N3Y" id="kaq-da-tQz"/>
-                                            <outlet property="imageView" destination="rH3-EF-DWg" id="wKg-Md-cQH"/>
-                                        </connections>
-                                    </collectionViewCell>
-                                </cells>
-                            </collectionView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="49h-He-O4O">
-                                <rect key="frame" x="0.0" y="70" width="402" height="50"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AJL-Of-vhV">
-                                        <rect key="frame" x="16" y="10" width="30" height="30"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="30" id="3hT-tT-m4B"/>
-                                            <constraint firstAttribute="height" constant="30" id="Ron-rB-gth"/>
-                                        </constraints>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal" image="chevron.left" catalog="system"/>
-                                        <buttonConfiguration key="configuration" style="plain" image="chevron.left" catalog="system">
-                                            <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        </buttonConfiguration>
-                                        <connections>
-                                            <action selector="btnBackTapped:" destination="r5j-F6-PqO" eventType="touchUpInside" id="9im-QF-ZJj"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstItem="AJL-Of-vhV" firstAttribute="leading" secondItem="49h-He-O4O" secondAttribute="leading" constant="16" id="29h-6V-PXj"/>
-                                    <constraint firstAttribute="height" constant="50" id="3xM-WJ-VlU"/>
-                                    <constraint firstItem="AJL-Of-vhV" firstAttribute="centerY" secondItem="49h-He-O4O" secondAttribute="centerY" id="NJ3-ku-VTi"/>
-                                </constraints>
-                            </view>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Wl5-3b-nqF">
-                                <rect key="frame" x="0.0" y="720" width="402" height="120"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="aFd-4l-2qN"/>
-                                </constraints>
-                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="8Ek-05-MFr">
-                                    <size key="itemSize" width="96" height="104"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="16" minY="8" maxX="16" maxY="8"/>
-                                </collectionViewFlowLayout>
-                                <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CustomCoverSliderCollectionViewCell" id="6TV-oo-oQN" customClass="CustomCoverSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="8" width="80" height="104"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="N2J-cd-7VJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="joC-pw-pFd">
-                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="80" id="JT1-dU-lhK"/>
-                                                        <constraint firstAttribute="height" constant="104" id="RYR-nG-2Mf"/>
-                                                    </constraints>
-                                                </imageView>
-                                            </subviews>
-                                            <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="joC-pw-pFd" secondAttribute="trailing" id="Kkr-5X-f9H"/>
-                                                <constraint firstItem="joC-pw-pFd" firstAttribute="leading" secondItem="N2J-cd-7VJ" secondAttribute="leading" id="lzJ-i7-cNL"/>
-                                                <constraint firstAttribute="bottom" secondItem="joC-pw-pFd" secondAttribute="bottom" id="uwj-My-O1C"/>
-                                                <constraint firstItem="joC-pw-pFd" firstAttribute="top" secondItem="N2J-cd-7VJ" secondAttribute="top" id="wAQ-EJ-FFQ"/>
-                                            </constraints>
-                                        </collectionViewCellContentView>
-                                        <size key="customSize" width="80" height="104"/>
-                                        <connections>
-                                            <outlet property="imageView" destination="joC-pw-pFd" id="tmV-4h-L6K"/>
-                                        </connections>
-                                    </collectionViewCell>
-                                </cells>
-                            </collectionView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="Dg3-JT-Yah"/>
-                        <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="49h-He-O4O" firstAttribute="trailing" secondItem="Dg3-JT-Yah" secondAttribute="trailing" id="RdO-hi-qZI"/>
-                            <constraint firstItem="Wl5-3b-nqF" firstAttribute="top" secondItem="Yst-aE-v4D" secondAttribute="bottom" id="SUg-Fj-HzW"/>
-                            <constraint firstItem="49h-He-O4O" firstAttribute="leading" secondItem="Dg3-JT-Yah" secondAttribute="leading" id="SlZ-nq-PNb"/>
-                            <constraint firstItem="Yst-aE-v4D" firstAttribute="top" secondItem="Dg3-JT-Yah" secondAttribute="top" id="akh-uI-W4Y"/>
-                            <constraint firstItem="Yst-aE-v4D" firstAttribute="trailing" secondItem="Dg3-JT-Yah" secondAttribute="trailing" id="c5p-Dg-WbQ"/>
-                            <constraint firstItem="Wl5-3b-nqF" firstAttribute="leading" secondItem="Dg3-JT-Yah" secondAttribute="leading" id="cxR-6M-fHO"/>
-                            <constraint firstItem="Wl5-3b-nqF" firstAttribute="trailing" secondItem="Dg3-JT-Yah" secondAttribute="trailing" id="d0o-mA-Zsb"/>
-                            <constraint firstItem="49h-He-O4O" firstAttribute="top" secondItem="Dg3-JT-Yah" secondAttribute="top" constant="8" id="jDG-DB-fmp"/>
-                            <constraint firstItem="Wl5-3b-nqF" firstAttribute="bottom" secondItem="Dg3-JT-Yah" secondAttribute="bottom" id="ltr-j7-dss"/>
-                            <constraint firstItem="Yst-aE-v4D" firstAttribute="leading" secondItem="Dg3-JT-Yah" secondAttribute="leading" id="owW-bW-yrC"/>
-                        </constraints>
-                    </view>
-                    <connections>
-                        <outlet property="customeCoverAllCollectionView" destination="Yst-aE-v4D" id="FIM-l6-B0h"/>
-                        <outlet property="customeCoverSlideCollectionview" destination="Wl5-3b-nqF" id="ufL-xu-oco"/>
-                        <outlet property="navigationbarView" destination="49h-He-O4O" id="6AT-cn-KJB"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="TOK-VI-GO0" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="7095.5223880597014" y="-38.443935926773456"/>
-        </scene>
         <!--Image Category AllVC-->
         <scene sceneID="NVk-H5-ryE">
             <objects>
@@ -4596,7 +4417,7 @@ Images, Audio &amp; Videos</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="gC6-JA-F6e">
-                                <rect key="frame" x="0.0" y="62" width="402" height="656"/>
+                                <rect key="frame" x="0.0" y="62" width="402" height="670"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="DNV-1O-hEh">
                                     <size key="itemSize" width="401" height="657"/>
@@ -4606,7 +4427,7 @@ Images, Audio &amp; Videos</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCharacterAllCollectionViewCell" id="IAp-qm-kz1" customClass="ImageCharacterAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="-0.66666666666666663" width="401" height="657"/>
+                                        <rect key="frame" x="0.0" y="6.666666666666667" width="401" height="657"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="eWJ-bD-CRi">
                                             <rect key="frame" x="0.0" y="0.0" width="401" height="657"/>
@@ -4614,31 +4435,31 @@ Images, Audio &amp; Videos</string>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4cb-8C-6L3">
                                                     <rect key="frame" x="8" y="0.0" width="385" height="657"/>
-                                                    <color key="backgroundColor" red="0.21176470588235294" green="0.20392156862745098" blue="0.23137254901960785" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="backgroundColor" red="0.14901960784313725" green="0.14509803921568626" blue="0.14509803921568626" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Love" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gel-5M-TbO">
-                                                    <rect key="frame" x="147.33333333333334" y="561.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
+                                                    <rect key="frame" x="147.33333333333334" y="551.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
                                                     <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="pCt-zG-RiO">
-                                                    <rect key="frame" x="153.66666666666666" y="605" width="94" height="40"/>
+                                                    <rect key="frame" x="143.66666666666666" y="595" width="113.99999999999997" height="50"/>
                                                     <subviews>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tz1-d9-udY">
-                                                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="40" id="Ldc-fP-opF"/>
-                                                                <constraint firstAttribute="height" constant="40" id="QFl-v9-rNO"/>
+                                                                <constraint firstAttribute="width" constant="50" id="Ldc-fP-opF"/>
+                                                                <constraint firstAttribute="height" constant="50" id="QFl-v9-rNO"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="Premium 3"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XbZ-VP-fn9">
-                                                            <rect key="frame" x="54" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="64" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="40" id="H92-YZ-Bpa"/>
-                                                                <constraint firstAttribute="height" constant="40" id="cmX-uH-cc4"/>
+                                                                <constraint firstAttribute="width" constant="50" id="H92-YZ-Bpa"/>
+                                                                <constraint firstAttribute="height" constant="50" id="cmX-uH-cc4"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="selectYesButton"/>
@@ -4724,30 +4545,30 @@ Images, Audio &amp; Videos</string>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="akG-CK-q9v">
-                                <rect key="frame" x="0.0" y="720" width="402" height="120"/>
+                                <rect key="frame" x="0.0" y="734" width="402" height="106"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="0Z3-O8-0aW"/>
+                                    <constraint firstAttribute="height" constant="106" id="0Z3-O8-0aW"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="bTF-DQ-EjZ">
-                                    <size key="itemSize" width="96" height="104"/>
+                                    <size key="itemSize" width="90" height="90"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="16" minY="8" maxX="16" maxY="8"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCharacterSliderCollectionViewCell" id="Lyy-o5-Xjc" customClass="ImageCharacterSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="8" width="80" height="104"/>
+                                        <rect key="frame" x="16" y="8" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="tTF-Tc-rM4">
-                                            <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bGC-1V-WE2">
-                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="80" id="Xhf-cs-4Fl"/>
-                                                        <constraint firstAttribute="height" constant="104" id="eXY-Z9-bSW"/>
+                                                        <constraint firstAttribute="width" constant="90" id="Xhf-cs-4Fl"/>
+                                                        <constraint firstAttribute="height" constant="90" id="eXY-Z9-bSW"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -4758,7 +4579,7 @@ Images, Audio &amp; Videos</string>
                                                 <constraint firstItem="bGC-1V-WE2" firstAttribute="top" secondItem="tTF-Tc-rM4" secondAttribute="top" id="bWW-ib-Etg"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="80" height="104"/>
+                                        <size key="customSize" width="90" height="90"/>
                                         <connections>
                                             <outlet property="imageView" destination="bGC-1V-WE2" id="Fxb-Vm-0CM"/>
                                         </connections>
@@ -4802,7 +4623,7 @@ Images, Audio &amp; Videos</string>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="i57-T3-JmP">
-                                <rect key="frame" x="0.0" y="62" width="402" height="656"/>
+                                <rect key="frame" x="0.0" y="62" width="402" height="670"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="QSs-rQ-Sab">
                                     <size key="itemSize" width="401" height="654"/>
@@ -4812,7 +4633,7 @@ Images, Audio &amp; Videos</string>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VideoCharacterAllCollectionViewCell" id="WG4-eb-TXd" customClass="VideoCharacterAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="1" width="401" height="654"/>
+                                        <rect key="frame" x="0.0" y="8" width="401" height="654"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="YKz-Lz-oLI">
                                             <rect key="frame" x="0.0" y="0.0" width="401" height="654"/>
@@ -4820,7 +4641,7 @@ Images, Audio &amp; Videos</string>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7cz-wa-XU4">
                                                     <rect key="frame" x="8" y="0.0" width="385" height="654"/>
-                                                    <color key="backgroundColor" red="0.21176470589999999" green="0.20392156859999999" blue="0.23137254900000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <color key="backgroundColor" red="0.14901960784313725" green="0.14509803921568626" blue="0.14509803921568626" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="B2M-4h-fkz">
                                                     <rect key="frame" x="160.66666666666666" y="287" width="80" height="80"/>
@@ -4830,31 +4651,31 @@ Images, Audio &amp; Videos</string>
                                                     </constraints>
                                                 </imageView>
                                                 <stackView opaque="NO" contentMode="scaleToFill" spacing="14" translatesAutoresizingMaskIntoConstraints="NO" id="oCg-gR-fKk">
-                                                    <rect key="frame" x="126.66666666666669" y="602" width="148" height="40"/>
+                                                    <rect key="frame" x="111.66666666666669" y="592" width="178" height="50"/>
                                                     <subviews>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tkt-es-BSi">
-                                                            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="width" constant="40" id="cKf-4W-Uez"/>
-                                                                <constraint firstAttribute="height" constant="40" id="rWT-Uj-GGQ"/>
+                                                                <constraint firstAttribute="width" constant="50" id="cKf-4W-Uez"/>
+                                                                <constraint firstAttribute="height" constant="50" id="rWT-Uj-GGQ"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="Premium 3"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DZB-Gq-BqJ">
-                                                            <rect key="frame" x="53.999999999999986" y="0.0" width="40" height="40"/>
+                                                            <rect key="frame" x="63.999999999999986" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="gYP-qG-uYR"/>
-                                                                <constraint firstAttribute="width" constant="40" id="mWE-vg-65j"/>
+                                                                <constraint firstAttribute="height" constant="50" id="gYP-qG-uYR"/>
+                                                                <constraint firstAttribute="width" constant="50" id="mWE-vg-65j"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="Unmute"/>
                                                         </button>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QgH-Zr-HkX">
-                                                            <rect key="frame" x="107.99999999999999" y="0.0" width="40.000000000000014" height="40"/>
+                                                            <rect key="frame" x="128" y="0.0" width="50" height="50"/>
                                                             <constraints>
-                                                                <constraint firstAttribute="height" constant="40" id="Ea2-yn-u3q"/>
-                                                                <constraint firstAttribute="width" constant="40" id="a9Z-Y9-5Di"/>
+                                                                <constraint firstAttribute="height" constant="50" id="Ea2-yn-u3q"/>
+                                                                <constraint firstAttribute="width" constant="50" id="a9Z-Y9-5Di"/>
                                                             </constraints>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal" title="Button" image="selectYesButton"/>
@@ -4862,7 +4683,7 @@ Images, Audio &amp; Videos</string>
                                                     </subviews>
                                                 </stackView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Funny Love" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qbG-pP-Cfk">
-                                                    <rect key="frame" x="147.33333333333334" y="558.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
+                                                    <rect key="frame" x="147.33333333333334" y="548.66666666666663" width="106.66666666666666" height="27.333333333333371"/>
                                                     <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="20"/>
                                                     <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
@@ -4952,30 +4773,30 @@ Images, Audio &amp; Videos</string>
                                 </constraints>
                             </view>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="rg8-Uh-enV">
-                                <rect key="frame" x="0.0" y="720" width="402" height="120"/>
+                                <rect key="frame" x="0.0" y="734" width="402" height="106"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="fzD-xr-SCG"/>
+                                    <constraint firstAttribute="height" constant="106" id="fzD-xr-SCG"/>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="ifB-Br-feQ">
-                                    <size key="itemSize" width="96" height="104"/>
+                                    <size key="itemSize" width="90" height="90"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="16" minY="8" maxX="16" maxY="8"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VideoCharacterSliderCollectionViewCell" id="qPd-Am-dqN" customClass="VideoCharacterSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="8" width="80" height="104"/>
+                                        <rect key="frame" x="16" y="8" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="rZf-ou-LQJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Bik-4m-Gev">
-                                                    <rect key="frame" x="0.0" y="0.0" width="80" height="104"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="80" id="Jgh-Yu-Hyp"/>
-                                                        <constraint firstAttribute="height" constant="104" id="MlS-jB-xp4"/>
+                                                        <constraint firstAttribute="width" constant="90" id="Jgh-Yu-Hyp"/>
+                                                        <constraint firstAttribute="height" constant="90" id="MlS-jB-xp4"/>
                                                     </constraints>
                                                 </imageView>
                                             </subviews>
@@ -4986,7 +4807,7 @@ Images, Audio &amp; Videos</string>
                                                 <constraint firstAttribute="bottom" secondItem="Bik-4m-Gev" secondAttribute="bottom" id="hzQ-jq-55D"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="80" height="104"/>
+                                        <size key="customSize" width="90" height="90"/>
                                         <connections>
                                             <outlet property="imageView" destination="Bik-4m-Gev" id="9kr-jm-PGc"/>
                                         </connections>
@@ -5022,16 +4843,89 @@ Images, Audio &amp; Videos</string>
             </objects>
             <point key="canvasLocation" x="8421" y="631"/>
         </scene>
+        <!--Better LuckVC-->
+        <scene sceneID="7aT-WI-jTs">
+            <objects>
+                <viewController storyboardIdentifier="BetterLuckVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Yv1-ed-vgE" customClass="BetterLuckVC" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="T9p-bi-YuD">
+                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YnE-3T-f1Y">
+                                <rect key="frame" x="16" y="158" width="370" height="498"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Better Luck" translatesAutoresizingMaskIntoConstraints="NO" id="TPj-rH-f8g">
+                                        <rect key="frame" x="0.0" y="-13" width="370" height="511"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="TPj-rH-f8g" secondAttribute="trailing" id="1bq-JH-VIc"/>
+                                    <constraint firstItem="TPj-rH-f8g" firstAttribute="top" secondItem="YnE-3T-f1Y" secondAttribute="top" constant="-13" id="fU9-P0-0dc"/>
+                                    <constraint firstItem="TPj-rH-f8g" firstAttribute="leading" secondItem="YnE-3T-f1Y" secondAttribute="leading" id="qTX-DY-96z"/>
+                                    <constraint firstAttribute="bottom" secondItem="TPj-rH-f8g" secondAttribute="bottom" id="u8n-zP-KeL"/>
+                                </constraints>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Better luck for next time" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8XW-7H-5mW">
+                                <rect key="frame" x="45.333333333333343" y="672" width="311.33333333333326" height="37"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="37" id="pIa-0a-3fG"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="27"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="21" translatesAutoresizingMaskIntoConstraints="NO" id="s7e-Aq-RQ8">
+                                <rect key="frame" x="178.66666666666666" y="725" width="45" height="45"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2tQ-Lm-6kn">
+                                        <rect key="frame" x="0.0" y="0.0" width="45" height="45"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="45" id="59N-2h-hlt"/>
+                                            <constraint firstAttribute="height" constant="45" id="9M7-K4-Y6h"/>
+                                        </constraints>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="yes"/>
+                                        <connections>
+                                            <action selector="btnDoneTapped:" destination="Yv1-ed-vgE" eventType="touchUpInside" id="MfI-nj-a8U"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="ULc-hc-CnI"/>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.75" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="ULc-hc-CnI" firstAttribute="trailing" secondItem="YnE-3T-f1Y" secondAttribute="trailing" constant="16" id="1Ij-sL-QwV"/>
+                            <constraint firstItem="8XW-7H-5mW" firstAttribute="centerX" secondItem="T9p-bi-YuD" secondAttribute="centerX" id="AxD-mR-hbE"/>
+                            <constraint firstItem="8XW-7H-5mW" firstAttribute="top" secondItem="YnE-3T-f1Y" secondAttribute="bottom" constant="16" id="LnL-jp-aWi"/>
+                            <constraint firstItem="ULc-hc-CnI" firstAttribute="bottom" secondItem="s7e-Aq-RQ8" secondAttribute="bottom" constant="70" id="Paa-ey-ohL"/>
+                            <constraint firstItem="s7e-Aq-RQ8" firstAttribute="top" secondItem="8XW-7H-5mW" secondAttribute="bottom" constant="16" id="SpP-dq-rd9"/>
+                            <constraint firstItem="YnE-3T-f1Y" firstAttribute="leading" secondItem="ULc-hc-CnI" secondAttribute="leading" constant="16" id="T1b-fS-Jiz"/>
+                            <constraint firstItem="s7e-Aq-RQ8" firstAttribute="centerX" secondItem="T9p-bi-YuD" secondAttribute="centerX" id="Vwu-yu-Ay1"/>
+                            <constraint firstItem="YnE-3T-f1Y" firstAttribute="top" secondItem="ULc-hc-CnI" secondAttribute="top" constant="96" id="wXk-lN-FLp"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="betterLuckImageView" destination="TPj-rH-f8g" id="vUn-j8-BOg"/>
+                        <outlet property="betterLunkLabel" destination="8XW-7H-5mW" id="2HQ-Zt-AI1"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zyn-Zp-sG8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="11710.447761194029" y="630.89244851258582"/>
+        </scene>
     </scenes>
     <resources>
         <image name="1" width="412" height="412"/>
         <image name="2" width="412" height="618"/>
         <image name="3" width="412" height="618"/>
         <image name="4" width="412" height="607"/>
-        <image name="AddAudio" width="318" height="337"/>
-        <image name="AddImage" width="336" height="335"/>
-        <image name="AddVideo" width="337" height="325"/>
+        <image name="AddAudio" width="350" height="373"/>
+        <image name="AddImage" width="388" height="346"/>
+        <image name="AddVideo" width="391" height="396"/>
         <image name="Audio" width="717" height="711"/>
+        <image name="Better Luck" width="1297" height="1970"/>
         <image name="Button" width="2273" height="1088"/>
         <image name="Congratulations" width="2868" height="399"/>
         <image name="DropDown" width="260" height="260"/>

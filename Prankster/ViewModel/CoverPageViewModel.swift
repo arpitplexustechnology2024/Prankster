@@ -100,38 +100,3 @@ class RealisticViewModel {
         hasMorePages = true
     }
 }
-
-// MARK: - FileUploadViewModel
-class FileUploadViewModel {
-    private let apiService: FileUploadAPIServiceProtocol
-    var isLoading = false
-    var errorMessage: String?
-    var uploadedCoverURL: String?
-    
-    init(apiService: FileUploadAPIServiceProtocol = FileUploadAPIService.shared) {
-        self.apiService = apiService
-    }
-    
-    func uploadFile(fileData: Data, typeId: Int, completion: @escaping (Bool) -> Void) {
-        guard !isLoading else {
-            completion(false)
-            return
-        }
-        
-        isLoading = true
-        
-        apiService.uploadFile(file: fileData, typeId: typeId) { [weak self] result in
-            guard let self = self else { return }
-            self.isLoading = false
-            
-            switch result {
-            case .success(let response):
-                self.uploadedCoverURL = response.data.coverURL
-                completion(true)
-            case .failure(let error):
-                self.errorMessage = error.localizedDescription
-                completion(false)
-            }
-        }
-    }
-}

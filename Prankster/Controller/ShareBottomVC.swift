@@ -30,6 +30,8 @@ class ShareBottomVC: UIViewController {
         NextButton.layer.cornerRadius = 13
         backButton.layer.cornerRadius = 13
         
+        backButton.setTitle("Cancel", for: .normal)
+        
         if sharePrank == "Instagram" {
             loadGif(named: instaGIF[instaCurrentGifIndex])
         } else {
@@ -58,6 +60,7 @@ class ShareBottomVC: UIViewController {
             instaCurrentGifIndex += 1
             if instaCurrentGifIndex < instaGIF.count {
                 loadGif(named: instaGIF[instaCurrentGifIndex])
+                backButton.setTitle("Back", for: .normal)
             } else {
                 shareInstagramStory()
             }
@@ -65,6 +68,7 @@ class ShareBottomVC: UIViewController {
             snapCurrentGifIndex += 1
             if snapCurrentGifIndex < snapGIF.count {
                 loadGif(named: snapGIF[snapCurrentGifIndex])
+                backButton.setTitle("Back", for: .normal)
             } else {
                 shareToSnapchat()
             }
@@ -76,10 +80,14 @@ class ShareBottomVC: UIViewController {
             instaCurrentGifIndex -= 1
             if instaCurrentGifIndex < 0 && instaGIF[0] == "Insta1" {
                 instaCurrentGifIndex = 0
+                dismiss(animated: true, completion: nil)
                 return
             }
             if instaCurrentGifIndex >= 0 {
                 loadGif(named: instaGIF[instaCurrentGifIndex])
+                if instaGIF[instaCurrentGifIndex] == "Insta1" {
+                    backButton.setTitle("Cancel", for: .normal)
+                }
             } else {
                 instaCurrentGifIndex = instaGIF.count - 1
                 loadGif(named: instaGIF[instaCurrentGifIndex])
@@ -88,10 +96,14 @@ class ShareBottomVC: UIViewController {
             snapCurrentGifIndex -= 1
             if snapCurrentGifIndex < 0 && snapGIF[0] == "Snap1" {
                 snapCurrentGifIndex = 0
+                dismiss(animated: true, completion: nil)
                 return
             }
             if snapCurrentGifIndex >= 0 {
                 loadGif(named: snapGIF[snapCurrentGifIndex])
+                if snapGIF[snapCurrentGifIndex] == "Snap1" {
+                    backButton.setTitle("Cancel", for: .normal)
+                }
             } else {
                 snapCurrentGifIndex = snapGIF.count - 1
                 loadGif(named: snapGIF[snapCurrentGifIndex])

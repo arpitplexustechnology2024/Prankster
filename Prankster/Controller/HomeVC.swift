@@ -31,8 +31,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     
     private var dropdownView: UIView?
     private var isDropdownVisible = false
-    var shouldNavigateToSpinner: Bool = false
-    var shouldNavigateToMoreApp: Bool = false
     private let adsViewModel = AdsViewModel()
     
     let notificationMessages = [
@@ -51,29 +49,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.seupViewAction()
         self.requestNotificationPermission()
         self.navigationbarView.addBottomShadow()
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if shouldNavigateToSpinner {
-            navigateToSpinnerVC()
-            shouldNavigateToSpinner = false
-        }
-        if shouldNavigateToMoreApp {
-            navigateToMoreAppVC()
-            shouldNavigateToMoreApp = false
-        }
-    }
-    
-    func navigateToSpinnerVC() {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC")
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    func navigateToMoreAppVC() {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "MoreAppVC")
-        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func setupUI() {
@@ -276,13 +251,13 @@ extension HomeVC {
         
         let privacyButton = createOptionButton(
             title: "Privacy Policy",
-            icon: "privacy",
+            icon: "PrivacyPolicy",
             action: #selector(privacyPolicyTapped)
         )
         
         let shareButton = createOptionButton(
             title: "Share app",
-            icon: "share",
+            icon: "ShareApp",
             action: #selector(shareAppTapped)
         )
         

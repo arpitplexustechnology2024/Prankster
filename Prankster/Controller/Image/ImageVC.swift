@@ -93,7 +93,8 @@ class ImageVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.ImageImageView.loadGif(name: "ImageGIF")
+        // self.ImageImageView.loadGif(name: "ImageGIF")
+        self.ImageImageView.image = UIImage(named: "Pranksters")
         self.ImageImageView.layer.cornerRadius = 8
         self.imageShowView.layer.cornerRadius = 8
         self.imageShowView.layer.shadowColor = UIColor.black.cgColor
@@ -270,11 +271,8 @@ class ImageVC: UIViewController {
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
             } else {
-                let alert = UIAlertController(title: "No Image Selected",
-                                              message: "Please select an image before proceeding.",
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.present(alert, animated: true)
+                let snackbar = CustomSnackbar(message: "Please select a image.", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -343,7 +341,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddImageCollectionViewCell", for: indexPath) as! AddImageCollectionViewCell
                 cell.imageView.image = UIImage(named: "AddImage")
-                cell.addImageLabel.text = "Add \n image prank"
+                cell.addImageLabel.text = "Add image"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCustomCollectionViewCell", for: indexPath) as! ImageCustomCollectionViewCell
@@ -358,11 +356,17 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterCollectionViewCell", for: indexPath) as! ImageCharacterCollectionViewCell
-                let character = viewModel.categorys[indexPath.item]
-                if let url = URL(string: character.categoryImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderImage"))
+                let category = viewModel.categorys[indexPath.item]
+                if let url = URL(string: category.categoryImage) {
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio")) { image, error, cacheType, imageURL in
+                        if image != nil {
+                            cell.categoryName.text = "\(category.categoryName) Image"
+                            cell.categoryName.isHidden = false
+                        } else {
+                            cell.categoryName.isHidden = true
+                        }
+                    }
                 }
-                cell.categoryName.text = "\(character.categoryName) Image"
                 return cell
             }
         }
@@ -402,6 +406,18 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             vc.categoryId = category.categoryID
             self.navigationController?.pushViewController(vc, animated: true)
         }
+    }
+    
+    func deselectCharacterCell() {
+        if let selectedCell = selectedImageCategoryCell {
+            imageCharacterCollectionView.deselectItem(at: selectedCell, animated: false)
+            selectedImageCategoryCell = nil
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        deselectCharacterCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -520,9 +536,9 @@ extension ImageVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         
         switch feature {
         case "camera":
-            messageKey = "We need access to your camera to set the profile picture."
+            messageKey = "We need access to your camera to set the image."
         case "photo library":
-            messageKey = "We need access to your photo library to set the profile picture."
+            messageKey = "We need access to your photo library to set the image."
         default:
             messageKey = "SnackbarDefaultPermissionAccess"
         }

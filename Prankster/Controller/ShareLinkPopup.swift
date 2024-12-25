@@ -336,6 +336,9 @@ class ShareLinkPopup: UIViewController {
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
         
+        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
+                                adsViewModel.getAdID(type: .interstitial) == nil
+        
         switch tappedView.tag {
         case 0: // Copy link
             if let prankLink = prankLink {
@@ -344,34 +347,58 @@ class ShareLinkPopup: UIViewController {
                 snackbar.show(in: self.view, duration: 3.0)
             }
         case 1:  // WhatsApp Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareWhatsAppMessage()
+            if shouldShareDirectly {
+                self.shareWhatsAppMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareWhatsAppMessage()
+                }
             }
         case 2:  // Instagram Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareInstagramMessage()
+            if shouldShareDirectly {
+                self.shareInstagramMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareInstagramMessage()
+                }
             }
         case 3:  // Instagram Story
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+            if shouldShareDirectly {
+                self.NavigateToShareSnapchat(sharePrank: "Instagram")
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                }
             }
         case 4:   // Snapchat Story
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            if shouldShareDirectly {
+                self.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                }
             }
         case 5:    // Telegram Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareTelegramMessage()
+            if shouldShareDirectly {
+                self.shareTelegramMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareTelegramMessage()
+                }
             }
         case 6:  // More
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareSnapchatMessage()
+            if shouldShareDirectly {
+                self.shareMoreMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareMoreMessage()
+                }
             }
         default:
             break
@@ -438,7 +465,7 @@ class ShareLinkPopup: UIViewController {
         }
     }
     
-    private func shareSnapchatMessage() {
+    private func shareMoreMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
         let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"

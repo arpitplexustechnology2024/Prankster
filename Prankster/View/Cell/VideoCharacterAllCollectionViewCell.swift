@@ -288,11 +288,13 @@ class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
         layer.masksToBounds = false
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
+        
+        imageView.image = UIImage(named: "PlaceholderVideo")
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        imageView.image = nil
+        imageView.image = UIImage(named: "PlaceholderVideo")
         currentVideoURL = nil
     }
     
@@ -310,6 +312,8 @@ class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
         
         guard let fileURLString = categoryAllData.file,
               let videoURL = URL(string: fileURLString) else {
+            
+            imageView.image = UIImage(named: "PlaceholderVideo")
             return
         }
         
@@ -318,6 +322,8 @@ class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
         }
         
         currentVideoURL = videoURL
+        
+        imageView.image = UIImage(named: "PlaceholderVideo")
         
         generateThumbnail(from: videoURL) { [weak self] image in
             DispatchQueue.main.async {

@@ -68,7 +68,7 @@ class RealisticCoverAllCollectionViewCell: UICollectionViewCell {
         self.imageName.text =  "  \(displayName)  "
         
         if let imageURL = URL(string: coverPageData.coverURL) {
-            imageView.sd_setImage(with: imageURL) { [weak self] image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { [weak self] image, _, _, _ in
                 if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
                     self?.premiumButton.isHidden = false
                     self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
@@ -125,7 +125,7 @@ class RealisticCoverSliderCollectionViewCell: UICollectionViewCell {
     func configure(with coverPageData: CoverPageData) {
         self.coverPageData = coverPageData
         if let imageURL = URL(string: coverPageData.coverURL) {
-            imageView.sd_setImage(with: imageURL) { image, _, _, _ in
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { image, _, _, _ in
             }
         }
     }

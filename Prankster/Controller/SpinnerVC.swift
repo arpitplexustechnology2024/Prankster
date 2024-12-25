@@ -212,8 +212,27 @@ class SpinnerVC: UIViewController {
         }
         
         spinViewModel.onError = { error in
-            DispatchQueue.main.async {
-                print("Error")
+            self.handleSpinnerError(error)
+        }
+    }
+    
+    func handleSpinnerError(_ error: SpinnerError) {
+        DispatchQueue.main.async {
+            switch error {
+            case .betterLuckNextTime:
+                print("Better luck next time!")
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "BetterLuckVC") as! BetterLuckVC
+                vc.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overCurrentContext
+                self.present(vc, animated: true)
+            case .noDataFound:
+                print("No data found")
+            case .typeIdRequired:
+                print("Type ID is required")
+            case .notFound:
+                print("Not found")
+            case .unknown(let message):
+                print("Unknown error: \(message)")
             }
         }
     }
@@ -274,6 +293,10 @@ class SpinnerVC: UIViewController {
         
         if remainingSpins == 0 {
             startTimerForNextSpins()
+        }
+        
+        if remainingSpins == 2 {
+            self.rateUs()
         }
         
         let finalIdx = finishIndex
@@ -341,8 +364,7 @@ class SpinnerVC: UIViewController {
         content.body = NSLocalizedString(randomMessage.body, comment: "")
         content.sound = UNNotificationSound.default
         
-     //   let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 4 * 60 * 60, repeats: false)
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2 * 60, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 4 * 60 * 60, repeats: false)
         
         let request = UNNotificationRequest(identifier: "spinnerReset", content: content, trigger: trigger)
         
@@ -357,8 +379,7 @@ class SpinnerVC: UIViewController {
     
     // MARK: - Timer Methods
     func startTimerForNextSpins() {
-     //   nextSpinAvailableTime = Date().addingTimeInterval(4 * 60 * 60)
-        nextSpinAvailableTime = Date().addingTimeInterval(2 * 60)
+        nextSpinAvailableTime = Date().addingTimeInterval(4 * 60 * 60)
         checkNotificationPermissionAndSchedule()
     }
     
@@ -422,7 +443,6 @@ class SpinnerVC: UIViewController {
             case .spin:
                 if remainingSpins > 0 {
                     proceedWithSpinning()
-                    self.rateUs()
                 }
             case .watchAd:
                 rewardAdUtility.showRewardedAd()

@@ -118,7 +118,7 @@ class Snackbar: UIView {
             messageLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -8),
             
             actionButton.leadingAnchor.constraint(greaterThanOrEqualTo: messageLabel.trailingAnchor, constant: 8),
-            actionButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -16),
+            actionButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8),
             actionButton.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 80)
         ])
@@ -142,7 +142,7 @@ class Snackbar: UIView {
         NSLayoutConstraint.activate([
             self.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             self.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            self.heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
+            self.heightAnchor.constraint(greaterThanOrEqualToConstant: 55),
             snackbarBottomConstraint
         ])
         

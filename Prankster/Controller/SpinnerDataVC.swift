@@ -72,7 +72,7 @@ extension SpinnerDataVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width = collectionView.frame.width - 32
-        let height: CGFloat = 55
+        let height: CGFloat = 60
         return CGSize(width: width, height: height)
     }
     

@@ -123,6 +123,7 @@
 		BDC68B9B2D0931F900834D9B /* NoDataBottomBarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B402D0931F800834D9B /* NoDataBottomBarView.xib */; };
 		BDC68B9C2D0931F900834D9B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B302D0931F800834D9B /* LaunchScreen.storyboard */; };
 		BDC68B9D2D0931F900834D9B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B2E2D0931F800834D9B /* Main.storyboard */; };
+		BDCD59F82D1B8D5400DF5330 /* BetterLuckVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */; };
 		BDE0912B2D0D31E300C76820 /* PrivacyPolicyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */; };
 		FC4EF9998A05D8F6312151BD /* Pods_PranksterTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D982D927F0340D60CBA877E /* Pods_PranksterTests.framework */; };
 /* End PBXBuildFile section */
@@ -292,6 +293,7 @@
 		BDC68B672D0931F800834D9B /* ViewLinkVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewLinkVC.swift; sourceTree = "<group>"; };
 		BDC68B682D0931F800834D9B /* SpinnerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerVC.swift; sourceTree = "<group>"; };
 		BDC68B692D0931F800834D9B /* ShareBottomVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareBottomVC.swift; sourceTree = "<group>"; };
+		BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterLuckVC.swift; sourceTree = "<group>"; };
 		BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyVC.swift; sourceTree = "<group>"; };
 		C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prankster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A7BA264A3D9F5D5F56F594 /* Pods-PranksterTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.release.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -660,6 +662,7 @@
 				BDC68B682D0931F800834D9B /* SpinnerVC.swift */,
 				BDC68B652D0931F800834D9B /* SpinnerDataVC.swift */,
 				BDC68B662D0931F800834D9B /* SpinnerPreviewVC.swift */,
+				BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */,
 				BDC68B562D0931F800834D9B /* CoverPage */,
 				BDC68B512D0931F800834D9B /* Audio */,
 				BDC68B5C2D0931F800834D9B /* Video */,
@@ -1131,6 +1134,7 @@
 				BDC68B942D0931F900834D9B /* VideoCollectionViewCell.swift in Sources */,
 				BDC68B952D0931F900834D9B /* ViewLinkCollectionViewCell.swift in Sources */,
 				BDC68B962D0931F900834D9B /* AudioVC.swift in Sources */,
+				BDCD59F82D1B8D5400DF5330 /* BetterLuckVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1213,9 +1217,9 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture photos and videos.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture image and video.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need access to your microphone to record audio and video with sound.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select and upload images and videos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select and upload image and video.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1248,9 +1252,9 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture photos and videos.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need access to your camera to capture image and video.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We need access to your microphone to record audio and video with sound.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select and upload images and videos.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need access to your photo library to select and upload image and video.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

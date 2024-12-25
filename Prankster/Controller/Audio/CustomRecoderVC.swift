@@ -65,6 +65,7 @@ class CustomRecoderVC: UIViewController {
     private var recordingSeconds = 0
     private var audioRecorder: AVAudioRecorder?
     weak var delegate: SaveRecordingDelegate?
+    private let maxRecordingDuration: TimeInterval = 15.0
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -181,6 +182,10 @@ class CustomRecoderVC: UIViewController {
     }
     
     @objc private func saveButtonTapped() {
+        self.autoSaveRecording()
+    }
+    
+    private func autoSaveRecording() {
         stopRecording()
         visualizer.stopRecording()
         cancelButton.isEnabled = false
@@ -234,11 +239,17 @@ class CustomRecoderVC: UIViewController {
     private func startTimer() {
         var seconds = recordingSeconds
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            
             seconds += 1
-            self?.recordingSeconds = seconds
+            self.recordingSeconds = seconds
             let minutes = seconds / 60
             let remainingSeconds = seconds % 60
-            self?.timeLabel.text = String(format: "%02d:%02d", minutes, remainingSeconds)
+            self.timeLabel.text = String(format: "%02d:%02d", minutes, remainingSeconds)
+            
+            if seconds >= Int(self.maxRecordingDuration) {
+                self.autoSaveRecording()
+            }
         }
     }
     

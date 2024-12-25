@@ -44,11 +44,11 @@ class VideoCategoryAllVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(appDidEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         
         NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(handlePremiumContentUnlocked),
-                name: NSNotification.Name("PremiumContentUnlocked"),
-                object: nil
-            )
+            self,
+            selector: #selector(handlePremiumContentUnlocked),
+            name: NSNotification.Name("PremiumContentUnlocked"),
+            object: nil
+        )
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self = self else { return }
@@ -86,8 +86,16 @@ class VideoCategoryAllVC: UIViewController {
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
+            let currentIndex = self.selectedIndex
+            
             self.videoCharacterAllCollectionView.reloadData()
             self.videoCharacterSliderCollectionView.reloadData()
+            
+            let indexPath = IndexPath(item: currentIndex, section: 0)
+            self.videoCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            
+            self.selectedIndex = currentIndex
         }
     }
     
@@ -293,6 +301,8 @@ class VideoCategoryAllVC: UIViewController {
         }
         
         DispatchQueue.main.async {
+            self.selectedIndex = 0
+            
             self.videoCharacterAllCollectionView.reloadData()
             self.videoCharacterSliderCollectionView.reloadData()
             
@@ -302,15 +312,18 @@ class VideoCategoryAllVC: UIViewController {
                 self.hideNoDataView()
                 
                 if !self.filteredVideos.isEmpty {
-                    self.selectedIndex = 0
                     let indexPath = IndexPath(item: 0, section: 0)
                     
-                    self.videoCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                    self.videoCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.videoCharacterAllCollectionView.numberOfItems(inSection: 0) > 0 {
+                        self.videoCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.videoCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
                     
-                    self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                    self.videoCharacterSliderCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                
+                    if self.videoCharacterSliderCollectionView.numberOfItems(inSection: 0) > 0 {
+                        self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.videoCharacterSliderCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                    
                     if !self.filteredVideos.isEmpty {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             self.playVisibleCell()
@@ -371,6 +384,8 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < currentDataSource.count else { return }
+        
         selectedIndex = indexPath.item
         
         if collectionView == videoCharacterAllCollectionView {
@@ -383,8 +398,8 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = 80
-        let height: CGFloat = 104
+        let width: CGFloat = 90
+        let height: CGFloat = 90
         
         if collectionView == videoCharacterAllCollectionView {
             return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
@@ -401,24 +416,6 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionFooter {
-            let footer = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: LoadingFooterView.reuseIdentifier,
-                for: indexPath
-            ) as! LoadingFooterView
-            if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
-                footer.startAnimating()
-            } else {
-                footer.stopAnimating()
-            }
-            
-            return footer
-        }
-        return UICollectionReusableView()
-    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == videoCharacterAllCollectionView {
             NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(scrollingEnded), object: nil)
@@ -426,89 +423,96 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
             let pageWidth = scrollView.bounds.width
             let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
             
+            guard currentPage >= 0 && currentPage < currentDataSource.count else { return }
+            
             if currentPage != selectedIndex {
                 selectedIndex = currentPage
                 
                 let indexPath = IndexPath(item: currentPage, section: 0)
-                videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                videoCharacterSliderCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            }
-        }
-    }
-    
-    @objc private func scrollingEnded() {
-        playVisibleCell()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if let playingIndexPath = VideoPlaybackManager.shared.currentlyPlayingIndexPath,
-           let cell = videoCharacterAllCollectionView.cellForItem(at: playingIndexPath) as? VideoCharacterAllCollectionViewCell {
-            cell.playVideo()
-        }
-    }
-}
-
-// MARK: - VideoCharacterAllCollectionViewCellDelegate
-extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
-    func didTapVideoPlayback(at indexPath: IndexPath) {
-        guard let cell = videoCharacterAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell else {
-            return
-        }
-        
-        if VideoPlaybackManager.shared.currentlyPlayingIndexPath == indexPath {
-            cell.stopVideo()
-            VideoPlaybackManager.shared.currentlyPlayingCell = nil
-            VideoPlaybackManager.shared.currentlyPlayingIndexPath = nil
-        } else {
-            VideoPlaybackManager.shared.stopCurrentPlayback()
-            cell.playVideo()
-        }
-    }
-    
-    func didTapDoneButton(for categoryAllData: CategoryAllData) {
-        VideoPlaybackManager.shared.stopCurrentPlayback()
-        
-        if categoryAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: categoryAllData.itemID) {
-            presentPremiumViewController(for: categoryAllData)
-        } else {
-            if isConnectedToInternet() {
-                if let navigationController = self.navigationController {
-                    if let videoVC = navigationController.viewControllers.first(where: { $0 is VideoVC }) as? VideoVC {
-                        videoVC.updateSelectedVideo(with: categoryAllData)
-                        navigationController.popToViewController(videoVC, animated: true)
+                DispatchQueue.main.async {
+                    if currentPage < self.currentDataSource.count {
+                        
+                        self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.videoCharacterSliderCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                 }
-            } else {
-                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-                snackbar.show(in: self.view, duration: 3.0)
+            }
+        }
+    }
+        
+        @objc private func scrollingEnded() {
+            playVisibleCell()
+        }
+        
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            
+            if let playingIndexPath = VideoPlaybackManager.shared.currentlyPlayingIndexPath,
+               let cell = videoCharacterAllCollectionView.cellForItem(at: playingIndexPath) as? VideoCharacterAllCollectionViewCell {
+                cell.playVideo()
             }
         }
     }
     
-    private func presentPremiumViewController(for categoryAllData: CategoryAllData) {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
-        premiumVC.setItemIDToUnlock(categoryAllData.itemID)
-        premiumVC.modalTransitionStyle = .crossDissolve
-        premiumVC.modalPresentationStyle = .overCurrentContext
-        present(premiumVC, animated: true, completion: nil)
-    }
-}
-
-// MARK: - UISearchBarDelegate
-extension VideoCategoryAllVC: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        filterContent(with: searchText)
+    // MARK: - VideoCharacterAllCollectionViewCellDelegate
+    extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
+        func didTapVideoPlayback(at indexPath: IndexPath) {
+            guard let cell = videoCharacterAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell else {
+                return
+            }
+            
+            if VideoPlaybackManager.shared.currentlyPlayingIndexPath == indexPath {
+                cell.stopVideo()
+                VideoPlaybackManager.shared.currentlyPlayingCell = nil
+                VideoPlaybackManager.shared.currentlyPlayingIndexPath = nil
+            } else {
+                VideoPlaybackManager.shared.stopCurrentPlayback()
+                cell.playVideo()
+            }
+        }
+        
+        func didTapDoneButton(for categoryAllData: CategoryAllData) {
+            VideoPlaybackManager.shared.stopCurrentPlayback()
+            
+            if categoryAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: categoryAllData.itemID) {
+                presentPremiumViewController(for: categoryAllData)
+            } else {
+                if isConnectedToInternet() {
+                    if let navigationController = self.navigationController {
+                        if let videoVC = navigationController.viewControllers.first(where: { $0 is VideoVC }) as? VideoVC {
+                            videoVC.updateSelectedVideo(with: categoryAllData)
+                            navigationController.popToViewController(videoVC, animated: true)
+                        }
+                    }
+                } else {
+                    let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                    snackbar.show(in: self.view, duration: 3.0)
+                }
+            }
+        }
+        
+        private func presentPremiumViewController(for categoryAllData: CategoryAllData) {
+            let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
+            premiumVC.setItemIDToUnlock(categoryAllData.itemID)
+            premiumVC.modalTransitionStyle = .crossDissolve
+            premiumVC.modalPresentationStyle = .overCurrentContext
+            present(premiumVC, animated: true, completion: nil)
+        }
     }
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.resignFirstResponder()
+    // MARK: - UISearchBarDelegate
+    extension VideoCategoryAllVC: UISearchBarDelegate {
+        func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+            filterContent(with: searchText)
+        }
+        
+        func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+            searchBar.resignFirstResponder()
+        }
+        
+        func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+            searchBar.text = ""
+            searchBar.resignFirstResponder()
+            filterContent(with: "")
+        }
     }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        searchBar.resignFirstResponder()
-        filterContent(with: "")
-    }
-}

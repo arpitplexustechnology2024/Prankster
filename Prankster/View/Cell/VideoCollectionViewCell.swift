@@ -94,6 +94,11 @@ class VideoCharacterCollectionViewCell: UICollectionViewCell {
         layer.masksToBounds = false
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
+        
+        categoryName.layer.shadowColor = UIColor.black.cgColor
+        categoryName.layer.shadowOffset = CGSize(width: 0, height: 2)
+        categoryName.layer.shadowRadius = 5
+        categoryName.layer.shadowOpacity = 0.5
     }
     
     override var isSelected: Bool {

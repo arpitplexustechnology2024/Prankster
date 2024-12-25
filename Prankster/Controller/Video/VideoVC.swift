@@ -112,7 +112,8 @@ class VideoVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.videoImageView.loadGif(name: "VideoGIF")
+      //  self.videoImageView.loadGif(name: "VideoGIF")
+        self.videoImageView.image = UIImage(named: "Pranksters")
         self.videoImageView.layer.cornerRadius = 8
         self.videoShowView.layer.cornerRadius = 8
         self.videoShowView.layer.shadowColor = UIColor.black.cgColor
@@ -286,11 +287,8 @@ class VideoVC: UIViewController {
                     self.pauseImageView.isHidden = true
                 }
             } else {
-                let alert = UIAlertController(title: "No Video Selected",
-                                              message: "Please select an video before proceeding.",
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.present(alert, animated: true)
+                let snackbar = CustomSnackbar(message: "Please select a video.", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -426,7 +424,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddVideoCollectionViewCell", for: indexPath) as! AddVideoCollectionViewCell
                 cell.imageView.image = UIImage(named: "AddVideo")
-                cell.addAudioLabel.text = "Add \n video prank"
+                cell.addAudioLabel.text = "Add video"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCustomCollectionViewCell", for: indexPath) as! VideoCustomCollectionViewCell
@@ -441,11 +439,17 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterCollectionViewCell", for: indexPath) as! VideoCharacterCollectionViewCell
-                let character = viewModel.categorys[indexPath.item]
-                if let url = URL(string: character.categoryImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderVideo"))
+                let category = viewModel.categorys[indexPath.item]
+                if let url = URL(string: category.categoryImage) {
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderVideo")) { image, error, cacheType, imageURL in
+                        if image != nil {
+                            cell.categoryName.text = "\(category.categoryName) Video"
+                            cell.categoryName.isHidden = false
+                        } else {
+                            cell.categoryName.isHidden = true
+                        }
+                    }
                 }
-                cell.categoryName.text = "\(character.categoryName) Video"
                 return cell
             }
         }
@@ -488,6 +492,18 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             self.videoImageView.isHidden = false
             self.pauseImageView.isHidden = true
         }
+    }
+    
+    func deselectCharacterCell() {
+        if let selectedCell = selectedVideoCategoryCell {
+            videoCharacterCollectionView.deselectItem(at: selectedCell, animated: false)
+            selectedVideoCategoryCell = nil
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        deselectCharacterCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

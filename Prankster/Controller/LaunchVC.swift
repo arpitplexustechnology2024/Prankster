@@ -71,11 +71,11 @@ class LaunchVC: UIViewController {
             
             if let actionKey = self.passedActionKey {
                 switch actionKey {
-                case "MoreActionKey":
-                    self.navigateToMoreAppVC(shouldNavigateToMoreApp: true)
-                case "SpinnerActionKey":
-                    self.navigateToSpinnerVC(shouldNavigateToSpinner: true)
-                case "PrankActionKey":
+                case "AudioActionKey":
+                    self.navigateToHomeVC()
+                case "VideoActionKey":
+                    self.navigateToHomeVC()
+                case "ImageActionKey":
                     self.navigateToHomeVC()
                 default:
                     self.navigateToHomeVC()
@@ -88,18 +88,6 @@ class LaunchVC: UIViewController {
     
     func navigateToHomeVC() {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "HomeVC")
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    func navigateToSpinnerVC(shouldNavigateToSpinner: Bool = false) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "HomeVC") as! HomeVC
-        vc.shouldNavigateToSpinner = shouldNavigateToSpinner
-        self.navigationController?.pushViewController(vc, animated: true)
-    }
-    
-    func navigateToMoreAppVC(shouldNavigateToMoreApp: Bool = false) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "HomeVC") as! HomeVC
-        vc.shouldNavigateToMoreApp = shouldNavigateToMoreApp
         self.navigationController?.pushViewController(vc, animated: true)
     }
 }

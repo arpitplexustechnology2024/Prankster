@@ -121,6 +121,25 @@ class PremiumBottomVC: UIViewController, SKPaymentTransactionObserver, SKProduct
         checkSubscriptionStatus()
         setupPremiumViewTapGestures()
         SKPaymentQueue.default().add(self)
+        
+        setPurchasedOrDefaultPlan()
+    }
+    
+    private func setPurchasedOrDefaultPlan() {
+        if let purchasedPlanType = UserDefaults.standard.string(forKey: "purchasedPlanType") {
+            switch purchasedPlanType {
+            case weeklySubscriptionID:
+                weeklyViewTapped()
+            case monthlySubscriptionID:
+                monthlyViewTapped()
+            case yearlySubscriptionID:
+                lifetimeViewTapped()
+            default:
+                monthlyViewTapped()
+            }
+        } else {
+            monthlyViewTapped()
+        }
     }
     
     deinit {
@@ -303,6 +322,8 @@ class PremiumBottomVC: UIViewController, SKPaymentTransactionObserver, SKProduct
         let calendar = Calendar.current
         var expirationDate: Date?
         
+        UserDefaults.standard.set(transaction.payment.productIdentifier, forKey: "purchasedPlanType")
+        
         switch transaction.payment.productIdentifier {
         case weeklySubscriptionID:
             expirationDate = calendar.date(byAdding: .weekOfYear, value: 1, to: Date())
@@ -322,13 +343,15 @@ class PremiumBottomVC: UIViewController, SKPaymentTransactionObserver, SKProduct
         
         if let receiptURL = Bundle.main.appStoreReceiptURL,
            let receiptData = try? Data(contentsOf: receiptURL) {
-            let receiptString = receiptData.base64EncodedString()
+            _ = receiptData.base64EncodedString()
         }
     }
     
     private func handleRestored(_ transaction: SKPaymentTransaction) {
         let calendar = Calendar.current
         var expirationDate: Date?
+        
+        UserDefaults.standard.set(transaction.payment.productIdentifier, forKey: "purchasedPlanType")
         
         switch transaction.payment.productIdentifier {
         case weeklySubscriptionID:
@@ -463,18 +486,18 @@ extension PremiumBottomVC {
             self.popularViewHeightConstraints.constant = 30
             self.populareViewWidthConstraints.constant = 87
             self.bGImageHeightConstraints.constant = 400
-            self.bestOfferLabel.font = UIFont(name: "Avenir-Heavy", size: 12)
-            self.topRatedLabel.font = UIFont(name: "Avenir-Heavy", size: 12)
-            self.populareLabel.font = UIFont(name: "Avenir-Heavy", size: 12)
-            self.weeklyLabel.font = UIFont(name: "Avenir-Heavy", size: 12)
-            self.monthlyLabel.font = UIFont(name: "Avenir-Heavy", size: 12)
-            self.yearlyLabel.font = UIFont(name: "Avenir-Heavy", size: 12)
+            self.bestOfferLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
+            self.topRatedLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
+            self.populareLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
+            self.weeklyLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
+            self.monthlyLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
+            self.yearlyLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
             self.weeklyPriceLabel.font = UIFont(name: "Avenir-Heavy", size: 23)
             self.monthlyPriceLabel.font = UIFont(name: "Avenir-Heavy", size: 23)
             self.yearlyPriceLabel.font = UIFont(name: "Avenir-Heavy", size: 23)
-            self.weekStrikethrought.font = UIFont(name: "Avenir-Heavy", size: 10)
-            self.monthlyStrikethrought.font = UIFont(name: "Avenir-Heavy", size: 10)
-            self.ligetimeStrikethrounght.font = UIFont(name: "Avenir-Heavy", size: 10)
+            self.weekStrikethrought.font = UIFont(name: "Avenir-Heavy", size: 12)
+            self.monthlyStrikethrought.font = UIFont(name: "Avenir-Heavy", size: 12)
+            self.ligetimeStrikethrounght.font = UIFont(name: "Avenir-Heavy", size: 12)
             self.featurstext01.font = UIFont(name: "Avenir-Heavy", size: 17)
             self.featurstext02.font = UIFont(name: "Avenir-Heavy", size: 17)
             self.featurstext03.font = UIFont(name: "Avenir-Heavy", size: 17)
@@ -487,7 +510,7 @@ extension PremiumBottomVC {
                 self.featurstext01Constraints.constant = 20
                 self.featurstext02Constraints.constant = 32.33
                 self.featurstext03Constraints.constant = 32.33
-                self.featurstext04Constraints.constant = 32.33
+                self.featurstext04Constraints.constant = 22.33
                 self.featurs01HeightConstraints.constant = 60
                 self.featurs01WidthConstraints.constant = 40
                 self.featurs02HeightConstraints.constant = 60
@@ -508,7 +531,7 @@ extension PremiumBottomVC {
                 self.featurstext01Constraints.constant = 25
                 self.featurstext02Constraints.constant = 47.33
                 self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 47.33
+                self.featurstext04Constraints.constant = 37.33
             case 2622:
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 10
@@ -516,7 +539,7 @@ extension PremiumBottomVC {
                 self.featurstext01Constraints.constant = 25
                 self.featurstext02Constraints.constant = 47.33
                 self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 47.33
+                self.featurstext04Constraints.constant = 37.33
             case 2688, 2886, 2796, 2778, 2868, 2869:
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 10
@@ -524,7 +547,7 @@ extension PremiumBottomVC {
                 self.featurstext01Constraints.constant = 25
                 self.featurstext02Constraints.constant = 47.33
                 self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 47.33
+                self.featurstext04Constraints.constant = 37.33
                 self.bGImageHeightConstraints.constant = 450
             default:
                 self.emojiStarckView.spacing = -10
@@ -533,7 +556,7 @@ extension PremiumBottomVC {
                 self.featurstext01Constraints.constant = 25
                 self.featurstext02Constraints.constant = 47.33
                 self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 47.33
+                self.featurstext04Constraints.constant = 37.33
             }
         } else {
             

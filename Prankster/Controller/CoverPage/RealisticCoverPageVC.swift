@@ -61,8 +61,16 @@ class RealisticCoverPageVC: UIViewController {
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
+            let currentIndex = self.selectedIndex
+            
             self.realisticCoverAllCollectionView.reloadData()
             self.realisticCoverSlideCollectionview.reloadData()
+            
+            let indexPath = IndexPath(item: currentIndex, section: 0)
+            self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            
+            self.selectedIndex = currentIndex
         }
     }
     
@@ -79,7 +87,7 @@ class RealisticCoverPageVC: UIViewController {
         searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
         searchbarBlurView.clipsToBounds = true
         searchbarBlurView.layer.masksToBounds = true
-
+        
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
         }
@@ -223,42 +231,47 @@ class RealisticCoverPageVC: UIViewController {
     }
     
     private func filterContent(with searchText: String) {
-        isSearchActive = !searchText.isEmpty
-        
-        if searchText.isEmpty {
-            filteredRealisticCoverPages = viewModel.realisticCoverPages
-        } else {
-            filteredRealisticCoverPages = viewModel.realisticCoverPages.filter { coverPage in
-                let nameMatch = coverPage.coverName.lowercased().contains(searchText.lowercased())
-                let tagMatch = coverPage.tagName.contains { tag in
-                    tag.lowercased().contains(searchText.lowercased())
-                }
-                return nameMatch || tagMatch
-            }
-        }
-        
-        DispatchQueue.main.async {
-            self.realisticCoverAllCollectionView.reloadData()
-            self.realisticCoverSlideCollectionview.reloadData()
-            
-            if self.filteredRealisticCoverPages.isEmpty && !searchText.isEmpty {
-                self.showNoDataView()
-            } else {
-                self.hideNoDataView()
-                
-                if !self.filteredRealisticCoverPages.isEmpty {
-                    self.selectedIndex = 0
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    
-                    self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                    self.realisticCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                    
-                    self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                    self.realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                }
-            }
-        }
-    }
+           isSearchActive = !searchText.isEmpty
+           
+           if searchText.isEmpty {
+               filteredRealisticCoverPages = viewModel.realisticCoverPages
+           } else {
+               filteredRealisticCoverPages = viewModel.realisticCoverPages.filter { coverPage in
+                   let nameMatch = coverPage.coverName.lowercased().contains(searchText.lowercased())
+                   let tagMatch = coverPage.tagName.contains { tag in
+                       tag.lowercased().contains(searchText.lowercased())
+                   }
+                   return nameMatch || tagMatch
+               }
+           }
+           
+           DispatchQueue.main.async {
+               self.selectedIndex = 0
+               
+               self.realisticCoverAllCollectionView.reloadData()
+               self.realisticCoverSlideCollectionview.reloadData()
+               
+               if self.filteredRealisticCoverPages.isEmpty && !searchText.isEmpty {
+                   self.showNoDataView()
+               } else {
+                   self.hideNoDataView()
+                   
+                   if !self.filteredRealisticCoverPages.isEmpty {
+                       let indexPath = IndexPath(item: 0, section: 0)
+                       
+                       if self.realisticCoverAllCollectionView.numberOfItems(inSection: 0) > 0 {
+                           self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                           self.realisticCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                       }
+                       
+                       if self.realisticCoverSlideCollectionview.numberOfItems(inSection: 0) > 0 {
+                           self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                           self.realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                       }
+                   }
+               }
+           }
+       }
 }
 
 extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -312,6 +325,9 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        guard indexPath.item < currentDataSource.count else { return }
+        
         selectedIndex = indexPath.item
         
         if collectionView == realisticCoverAllCollectionView {
@@ -324,8 +340,8 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = 80
-        let height: CGFloat = 104
+        let width: CGFloat = 90
+        let height: CGFloat = 90
         
         if collectionView == realisticCoverAllCollectionView {
             return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
@@ -333,26 +349,6 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
             return CGSize(width: width, height: height)
         }
         return CGSize(width: width, height: height)
-    }
-    
-    
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionFooter {
-            let footer = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: LoadingFooterView.reuseIdentifier,
-                for: indexPath
-            ) as! LoadingFooterView
-            
-            if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.realisticCoverPages.isEmpty {
-                footer.startAnimating()
-            } else {
-                footer.stopAnimating()
-            }
-            
-            return footer
-        }
-        return UICollectionReusableView()
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -366,12 +362,18 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
             let pageWidth = scrollView.bounds.width
             let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
             
+            guard currentPage >= 0 && currentPage < currentDataSource.count else { return }
+            
             if currentPage != selectedIndex {
                 selectedIndex = currentPage
                 
                 let indexPath = IndexPath(item: currentPage, section: 0)
-                realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                DispatchQueue.main.async {
+                    if currentPage < self.currentDataSource.count {
+                        self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                }
             }
         }
     }

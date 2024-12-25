@@ -236,6 +236,8 @@ class ImageCategoryAllVC: UIViewController {
         }
         
         DispatchQueue.main.async {
+            self.selectedIndex = 0
+            
             self.imageCharacterAllCollectionView.reloadData()
             self.imageCharacterSlideCollectionview.reloadData()
             
@@ -245,14 +247,17 @@ class ImageCategoryAllVC: UIViewController {
                 self.hideNoDataView()
                 
                 if !self.filteredImages.isEmpty {
-                    self.selectedIndex = 0
                     let indexPath = IndexPath(item: 0, section: 0)
                     
-                    self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                    self.imageCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.imageCharacterAllCollectionView.numberOfItems(inSection: 0) > 0 {
+                        self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.imageCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
                     
-                    self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                    self.imageCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.imageCharacterSlideCollectionview.numberOfItems(inSection: 0) > 0 {
+                        self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.imageCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
                 }
             }
         }
@@ -307,6 +312,8 @@ extension ImageCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < currentDataSource.count else { return }
+        
         selectedIndex = indexPath.item
         
         if collectionView == imageCharacterAllCollectionView {
@@ -319,8 +326,8 @@ extension ImageCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = 80
-        let height: CGFloat = 104
+        let width: CGFloat = 90
+        let height: CGFloat = 90
         
         if collectionView == imageCharacterAllCollectionView {
             return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
@@ -359,12 +366,18 @@ extension ImageCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
             let pageWidth = scrollView.bounds.width
             let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
             
+            guard currentPage >= 0 && currentPage < currentDataSource.count else { return }
+            
             if currentPage != selectedIndex {
                 selectedIndex = currentPage
                 
                 let indexPath = IndexPath(item: currentPage, section: 0)
-                imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                imageCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                DispatchQueue.main.async {
+                    if currentPage < self.currentDataSource.count {
+                        self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.imageCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                }
             }
         }
     }

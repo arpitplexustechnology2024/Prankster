@@ -108,7 +108,8 @@ class CoverPageVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.coverImageView.loadGif(name: "CoverGIF")
+      //  self.coverImageView.loadGif(name: "CoverGIF")
+        self.coverImageView.image = UIImage(named: "Pranksters")
         self.coverImageView.layer.cornerRadius = 8
         self.coverView.layer.cornerRadius = 8
         self.coverView.layer.shadowColor = UIColor.black.cgColor
@@ -154,69 +155,52 @@ class CoverPageVC: UIViewController {
     
     // MARK: - Done Button
     @IBAction func btnDoneTapped(_ sender: UIButton) {
+        
         if selectedCoverImageURL != nil || selectedCoverImageFile != nil {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             
             switch viewType {
             case .audio:
                 if let nextVC = storyboard.instantiateViewController(identifier: "AudioVC") as? AudioVC {
-                    if let imageURL = selectedCoverImageURL, let imageName = selectedCoverImageName {
-                        nextVC.selectedCoverImageURL = imageURL
-                        nextVC.selectedCoverImageName = imageName
-                    }
-                    if let imageFile = selectedCoverImageFile, let imageName = selectedCoverImageName {
-                        nextVC.selectedCoverImageFile = imageFile
-                        nextVC.selectedCoverImageName = imageName
-                    }
+                    let url = selectedCoverImageURL
+                    let name = selectedCoverImageName
+                    let file = selectedCoverImageFile
+                    nextVC.selectedCoverImageURL = url
+                    nextVC.selectedCoverImageName = name
+                    nextVC.selectedCoverImageFile = file
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
                 
             case .video:
                 if let nextVC = storyboard.instantiateViewController(identifier: "VideoVC") as? VideoVC {
-                    if let imageURL = selectedCoverImageURL, let imageName = selectedCoverImageName {
-                        nextVC.selectedCoverImageURL = imageURL
-                        nextVC.selectedCoverImageName = imageName
-                    }
-                    if let imageFile = selectedCoverImageFile, let imageName = selectedCoverImageName {
-                        nextVC.selectedCoverImageFile = imageFile
-                        nextVC.selectedCoverImageName = imageName
-                    }
+                    let url = selectedCoverImageURL
+                    let name = selectedCoverImageName
+                    let file = selectedCoverImageFile
+                    nextVC.selectedCoverImageURL = url
+                    nextVC.selectedCoverImageName = name
+                    nextVC.selectedCoverImageFile = file
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
                 
             case .image:
                 if let nextVC = storyboard.instantiateViewController(identifier: "ImageVC") as? ImageVC {
-                    if let imageURL = selectedCoverImageURL, let imageName = selectedCoverImageName {
-                        nextVC.selectedCoverImageURL = imageURL
-                        nextVC.selectedCoverImageName = imageName
-                    }
-                    if let imageFile = selectedCoverImageFile, let imageName = selectedCoverImageName {
-                        nextVC.selectedCoverImageFile = imageFile
-                        nextVC.selectedCoverImageName = imageName
-                    }
+                    let url = selectedCoverImageURL
+                    let name = selectedCoverImageName
+                    let file = selectedCoverImageFile
+                    nextVC.selectedCoverImageURL = url
+                    nextVC.selectedCoverImageName = name
+                    nextVC.selectedCoverImageFile = file
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
             }
         } else {
-            let alert = UIAlertController(title: "No Cover Selected",
-                                          message: "Please select a cover before proceeding.",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            self.present(alert, animated: true)
+            let snackbar = CustomSnackbar(message: "Please select a cover image.", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
-    }
-    
-    // MARK: - Custom All Data Show Button
-    @IBAction func btnCoverPage1ShowAllTapped(_ sender: UIButton) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let customCoverAllVC = storyboard.instantiateViewController(withIdentifier: "CustomCoverPageVC") as? CustomCoverPageVC {
-            customCoverAllVC.allCustomCovers = Array(customCoverImages)
-            self.navigationController?.pushViewController(customCoverAllVC, animated: true)
-        }
     }
     
     // MARK: - Emoji All Data Show Button
@@ -425,7 +409,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddCoverPageCollectionCell", for: indexPath) as! AddCoverPageCollectionCell
                 cell.imageView.image = UIImage(systemName: "plus")
-                cell.addCoverPageLabel.text = "Add \n cover image"
+                cell.addCoverPageLabel.text = "Add cover"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CoverPage1CollectionCell", for: indexPath) as! CoverPage1CollectionCell
@@ -490,12 +474,14 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
         } else if collectionView == emojiCollectionView {
             let coverPageData = emojiViewModel.emojiCoverPages[indexPath.item]
             self.selectedCoverImageURL = coverPageData.coverURL
+            self.selectedCoverImageName = coverPageData.coverName
             print("Emoji Cover URL: \(coverPageData.coverURL)")
             self.selectedCoverImageFile = nil
             handleCellSelection(coverPageData: coverPageData, collectionView: collectionView, indexPath: indexPath)
         } else if collectionView == realisticCollectionView {
             let coverPageData = realisticViewModel.realisticCoverPages[indexPath.item]
             self.selectedCoverImageURL = coverPageData.coverURL
+            self.selectedCoverImageName = coverPageData.coverName
             print("Realistic Cover URL: \(coverPageData.coverURL)")
             self.selectedCoverImageFile = nil
             handleCellSelection(coverPageData: coverPageData, collectionView: collectionView, indexPath: indexPath)
@@ -701,9 +687,9 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
         
         switch feature {
         case "camera":
-            messageKey = "We need access to your camera to set the profile picture."
+            messageKey = "We need access to your camera to set the cover image."
         case "photo library":
-            messageKey = "We need access to your photo library to set the profile picture."
+            messageKey = "We need access to your photo library to set the cover image."
         default:
             messageKey = "SnackbarDefaultPermissionAccess"
         }

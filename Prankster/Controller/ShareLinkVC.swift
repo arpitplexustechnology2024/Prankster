@@ -31,6 +31,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var selectedCoverFile: Data?
     var selectedPranktype: String?
     var selectedFileType: String?
+    var selectedImage: String?
     private var isPlaying = false
     var coverImageURL: String?
     var prankDataURL: String?
@@ -109,18 +110,38 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 self.loadImage(from: coverImageUrl, into: self.prankImageView)
             }
         }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            bottomConstraints.constant = 100
+        } else {
+            bottomConstraints.constant = 75
+        }
+        
         if isConnectedToInternet() {
-            if let bannerAdID = adsViewModel.getAdID(type: .banner) {
-                print("Banner Ad ID: \(bannerAdID)")
-                bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    bottomConstraints.constant = 16
+                } else {
+                    bottomConstraints.constant = 16
+                }
             } else {
-                print("No Banner Ad ID found")
-            }
-            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-            } else {
-                print("No Interstitial Ad ID found")
+                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+                    print("Banner Ad ID: \(bannerAdID)")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+                } else {
+                    print("No Banner Ad ID found")
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        bottomConstraints.constant = 16
+                    } else {
+                        bottomConstraints.constant = 16
+                    }
+                }
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -130,12 +151,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.prankNameLabel.isEditable = false
         self.prankNameLabel.delegate = self
         self.prankNameLabel.returnKeyType = .done
-        
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            bottomConstraints.constant = 100
-        } else {
-            bottomConstraints.constant = 75
-        }
     }
     
     // MARK: - checkInternetAndFetchData
@@ -179,12 +194,13 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         let name = selectedName ?? "Unnamed Prank"
         let type = selectedPranktype ?? "Unknown"
         let fileType = selectedFileType ?? ""
+        let imageURL = selectedImage ?? ""
         
         prankImageView.showShimmer()
         prankNameLabel.showShimmer()
         nameChangeButton.showShimmer()
         
-        viewModel.createPrank(coverImage: coverImageFile, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL, fileType: fileType) { [weak self] success in
+        viewModel.createPrank(coverImage: coverImageFile, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL, imageURL: imageURL, fileType: fileType) { [weak self] success in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 if success {
@@ -248,7 +264,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             }
         }
     }
-    
     
     @objc private func togglePlayPause() {
         if isConnectedToInternet() {
@@ -430,17 +445,30 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             noInternetView.isHidden = true
             hideNoDataView()
             checkInternetAndFetchData()
-            if let bannerAdID = adsViewModel.getAdID(type: .banner) {
-                print("Banner Ad ID: \(bannerAdID)")
-                bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    bottomConstraints.constant = 16
+                } else {
+                    bottomConstraints.constant = 16
+                }
             } else {
-                print("No Banner Ad ID found")
-            }
-            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-            } else {
-                print("No Interstitial Ad ID found")
+                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+                    print("Banner Ad ID: \(bannerAdID)")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+                } else {
+                    print("No Banner Ad ID found")
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        bottomConstraints.constant = 16
+                    } else {
+                        bottomConstraints.constant = 16
+                    }
+                }
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -557,6 +585,9 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
         
+        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
+                                adsViewModel.getAdID(type: .interstitial) == nil
+        
         switch tappedView.tag {
         case 0: // Copy link
             if let prankLink = prankLink {
@@ -565,34 +596,58 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 snackbar.show(in: self.view, duration: 3.0)
             }
         case 1:  // WhatsApp Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareWhatsAppMessage()
+            if shouldShareDirectly {
+                self.shareWhatsAppMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareWhatsAppMessage()
+                }
             }
         case 2:  // Instagram Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareInstagramMessage()
+            if shouldShareDirectly {
+                self.shareInstagramMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareInstagramMessage()
+                }
             }
         case 3:  // Instagram Story
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+            if shouldShareDirectly {
+                self.NavigateToShareSnapchat(sharePrank: "Instagram")
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                }
             }
         case 4:   // Snapchat Story
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            if shouldShareDirectly {
+                self.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                }
             }
         case 5:    // Telegram Message
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareTelegramMessage()
+            if shouldShareDirectly {
+                self.shareTelegramMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareTelegramMessage()
+                }
             }
         case 6:  // More
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shareSnapchatMessage()
+            if shouldShareDirectly {
+                self.shareMoreMessage()
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shareMoreMessage()
+                }
             }
         default:
             break
@@ -659,7 +714,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         }
     }
     
-    private func shareSnapchatMessage() {
+    private func shareMoreMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
         let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"

@@ -8,22 +8,27 @@
 import UIKit
 
 class BetterLuckVC: UIViewController {
+    
+    @IBOutlet weak var betterLuckImageView: UIImageView!
+    @IBOutlet weak var betterLunkLabel: UILabel!
+    
+    private var blurEffectView: UIVisualEffectView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setupBlurEffect()
+        self.betterLuckImageView.layer.cornerRadius = 18
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func setupBlurEffect() {
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.frame = view.bounds
+        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        view.insertSubview(blurEffectView, at: 0)
     }
-    */
-
+    
+    @IBAction func btnDoneTapped(_ sender: UIButton) {
+        self.dismiss(animated: true)
+    }
 }

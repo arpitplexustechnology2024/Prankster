@@ -14,11 +14,11 @@ import MobileCoreServices
 
 struct CustomAudio: Codable {
     let fileName: String
-    let imageFileName: String
+    let imageURL: String
     
-    init(fileName: String, imageFileName: String) {
+    init(fileName: String, imageURL: String) {
         self.fileName = fileName
-        self.imageFileName = imageFileName
+        self.imageURL = imageURL
     }
 }
 
@@ -56,8 +56,17 @@ class AudioVC: UIViewController {
     private var selectedAudioData: CategoryAllData?
     private var selectedAudioCharacterCell: IndexPath?
     private var noInternetView: NoInternetBottombarView!
-    private let defaultImages = ["image-1", "image 1", "image-1", "image 1", "MusicAudio05"]
-    private var customAudios: [(url: URL, image: UIImage?)] = [] {
+    
+    
+    private let defaultImageURLs = [
+        "https://pslink.world/api/public/images/audio1.png",
+        "https://pslink.world/api/public/images/audio2.png",
+        "https://pslink.world/api/public/images/audio3.png",
+        "https://pslink.world/api/public/images/audio4.png",
+        "https://pslink.world/api/public/images/audio5.png"
+    ]
+    
+    private var customAudios: [(url: URL, imageURL: String)] = [] {
         didSet {
             saveAudios()
         }
@@ -125,7 +134,8 @@ class AudioVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 28
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.audioImageView.loadGif(name: "AudioGIF")
+        self.audioImageView.image = UIImage(named: "Pranksters")
+        // self.audioImageView.loadGif(name: "AudioGIF")
         self.audioImageView.layer.cornerRadius = 8
         
         self.audioShowView.layer.cornerRadius = 8
@@ -269,17 +279,20 @@ class AudioVC: UIViewController {
     @IBAction func btnDoneTapped(_ sender: UIButton) {
         if isConnectedToInternet() {
             var audioURLToPass: String?
+            var audioImageToPass: String?
             var audioFileToPass: Data?
             
             if let selectedIndex = selectedAudioIndex {
                 let audioData = customAudios[selectedIndex]
                 if let fileData = try? Data(contentsOf: audioData.url) {
                     audioFileToPass = fileData
+                    audioImageToPass = audioData.imageURL
                     audioURLToPass = nil
                 }
             }
             else if let selectedData = selectedAudioData {
                 audioURLToPass = selectedData.file
+                audioImageToPass = selectedData.image
                 audioFileToPass = nil
             }
             
@@ -288,6 +301,7 @@ class AudioVC: UIViewController {
                 if let nextVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as? ShareLinkVC {
                     nextVC.selectedURL = audioURLToPass
                     nextVC.selectedFile = audioFileToPass
+                    nextVC.selectedImage = audioImageToPass
                     nextVC.selectedName = selectedCoverImageName
                     nextVC.selectedCoverURL = selectedCoverImageURL
                     nextVC.selectedCoverFile = selectedCoverImageFile
@@ -297,11 +311,8 @@ class AudioVC: UIViewController {
                     self.navigationController?.pushViewController(nextVC, animated: true)
                 }
             } else {
-                let alert = UIAlertController(title: "No Audio Selected",
-                                              message: "Please select an audio before proceeding.",
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                self.present(alert, animated: true)
+                let snackbar = CustomSnackbar(message: "Please select a audio.", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -371,12 +382,14 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddAudioCollectionCell", for: indexPath) as! AddAudioCollectionCell
                 cell.imageView.image = UIImage(named: "AddAudio")
-                cell.addAudioLabel.text = "Add \n audio prank"
+                cell.addAudioLabel.text = "Add audio"
                 return cell
             } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCustomCollectionCell", for: indexPath) as! AudioCustomCollectionCell
                 let audioData = customAudios[indexPath.item - 1]
-                cell.imageView.image = audioData.image ?? getRandomDefaultImage()
+                if let url = URL(string: audioData.imageURL) {
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio"))
+                }
                 return cell
             }
         } else if collectionView == audioCharacterCollectionView {
@@ -388,9 +401,15 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterCollectionCell", for: indexPath) as! AudioCharacterCollectionCell
                 let category = viewModel.categorys[indexPath.item]
                 if let url = URL(string: category.categoryImage) {
-                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio"))
+                    cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio")) { image, error, cacheType, imageURL in
+                        if image != nil {
+                            cell.categoryName.text = "\(category.categoryName) Sound"
+                            cell.categoryName.isHidden = false
+                        } else {
+                            cell.categoryName.isHidden = true
+                        }
+                    }
                 }
-                cell.categoryName.text = "\(category.categoryName) Sound"
                 return cell
             }
         }
@@ -416,7 +435,9 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                     player.stop()
                     timer?.invalidate()
                 }
-                audioImageView.image = audioData.image
+                if let url = URL(string: audioData.imageURL) {
+                    audioImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio"))
+                }
                 setupAudioPlayer(with: audioData.url)
                 audioPlayer?.play()
                 isPlaying = true
@@ -434,6 +455,18 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             vc.categoryId = category.categoryID
             self.navigationController?.pushViewController(vc, animated: true)
         }
+    }
+    
+    func deselectCharacterCell() {
+        if let selectedCell = selectedAudioCharacterCell {
+            audioCharacterCollectionView.deselectItem(at: selectedCell, animated: false)
+            selectedAudioCharacterCell = nil
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        deselectCharacterCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -492,8 +525,7 @@ extension AudioVC {
     private func saveAudios() {
         let audioData = customAudios.map { audio -> CustomAudio in
             let fileName = audio.url.lastPathComponent
-            let imageFileName = audio.image?.accessibilityIdentifier ?? defaultImages[0]
-            return CustomAudio(fileName: fileName, imageFileName: imageFileName)
+            return CustomAudio(fileName: fileName, imageURL: audio.imageURL)
         }
         
         if let encoded = try? JSONEncoder().encode(audioData) {
@@ -511,9 +543,7 @@ extension AudioVC {
         customAudios = savedAudios.compactMap { savedAudio in
             let audioUrl = documentsDirectory.appendingPathComponent(savedAudio.fileName)
             if FileManager.default.fileExists(atPath: audioUrl.path) {
-                let image = UIImage(named: savedAudio.imageFileName)
-                image?.accessibilityIdentifier = savedAudio.imageFileName
-                return (url: audioUrl, image: image)
+                return (url: audioUrl, imageURL: savedAudio.imageURL)
             } else {
                 print("File not found: \(audioUrl.path)")
                 return nil
@@ -632,9 +662,9 @@ extension AudioVC: UIDocumentPickerDelegate {
                     try FileManager.default.removeItem(at: destinationURL)
                 }
                 try FileManager.default.copyItem(at: selectedURL, to: destinationURL)
-                let randomImage = self.getRandomDefaultImage()
+                let randomImageURL = self.getRandomImageURL()
                 
-                self.customAudios.insert((url: destinationURL, image: randomImage), at: 0)
+                self.customAudios.insert((url: destinationURL, imageURL: randomImageURL), at: 0)
                 
                 DispatchQueue.main.async {
                     self.audioCustomCollectionView.reloadData()
@@ -651,12 +681,9 @@ extension AudioVC: UIDocumentPickerDelegate {
     }
     
     //MARK: - getRandomDefaultImage
-    private func getRandomDefaultImage() -> UIImage? {
-        let randomIndex = Int.random(in: 0..<defaultImages.count)
-        let imageName = defaultImages[randomIndex]
-        let image = UIImage(named: imageName)
-        image?.accessibilityIdentifier = imageName
-        return image
+    private func getRandomImageURL() -> String {
+        let randomIndex = Int.random(in: 0..<defaultImageURLs.count)
+        return defaultImageURLs[randomIndex]
     }
 }
 
@@ -675,8 +702,8 @@ extension AudioVC: AVAudioPlayerDelegate {
 extension AudioVC: SaveRecordingDelegate {
     func didSaveRecording(audioURL: URL, name: String) {
         self.showLottieLoader()
-        let randomImage = getRandomDefaultImage()
-        self.customAudios.insert((url: audioURL, image: randomImage), at: 0)
+        let randomImageURL = getRandomImageURL()
+        self.customAudios.insert((url: audioURL, imageURL: randomImageURL), at: 0)
         
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback)

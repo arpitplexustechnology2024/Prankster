@@ -11,7 +11,7 @@ import Foundation
 class SpinnerViewModel {
     private let spinService: SpinnerAPIProtocol
     var onDataUpdate: ((SpinnerResponse?) -> Void)?
-    var onError: ((String) -> Void)?
+    var onError: ((SpinnerError) -> Void)?
     
     init(spinService: SpinnerAPIManger = SpinnerAPIManger()) {
         self.spinService = spinService
@@ -23,7 +23,7 @@ class SpinnerViewModel {
             case .success(let response):
                 self?.onDataUpdate?(response)
             case .failure(let error):
-                self?.onError?(error.localizedDescription)
+                self?.onError?(error)
             }
         }
     }

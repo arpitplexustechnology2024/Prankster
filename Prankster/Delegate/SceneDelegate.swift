@@ -11,9 +11,9 @@ import FBSDKCoreKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     enum ActionType: String {
-        case prankAction     = "PrankAction"
-        case spinnerAction   = "SpinnerAction"
-        case moreAction      = "MoreAction"
+        case audioAction   = "AudioAction"
+        case videoAction   = "VideoAction"
+        case imageAction   = "ImageAction"
     }
 
     var window: UIWindow?
@@ -74,12 +74,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func handleShortCutItem(shortcutItem: UIApplicationShortcutItem) -> Bool {
         if let actionTypeValue = ActionType(rawValue: shortcutItem.type) {
             switch actionTypeValue {
-            case .prankAction:
-                self.navigateToLaunchVC(actionKey: "PrankActionKey")
-            case .spinnerAction:
-                self.navigateToLaunchVC(actionKey: "SpinnerActionKey")
-            case .moreAction:
-                self.navigateToLaunchVC(actionKey: "MoreActionKey")
+            case .audioAction:
+                self.navigateToLaunchVC(actionKey: "AudioActionKey")
+            case .videoAction:
+                self.navigateToLaunchVC(actionKey: "VideoActionKey")
+            case .imageAction:
+                self.navigateToLaunchVC(actionKey: "ImageActionKey")
             }
         }
         return true

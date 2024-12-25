@@ -66,37 +66,3 @@ class RealisticAPIService: RealisticAPIServiceProtocol {
             }
     }
 }
-
-// MARK: - FileUploadAPIServiceProtocol
-protocol FileUploadAPIServiceProtocol {
-    func uploadFile(file: Data, typeId: Int, completion: @escaping (Result<UserDataUpload, Error>) -> Void)
-}
-
-// MARK: - FileUploadAPIService
-class FileUploadAPIService: FileUploadAPIServiceProtocol {
-    static let shared = FileUploadAPIService()
-    private init() {}
-    
-    func uploadFile(file: Data, typeId: Int, completion: @escaping (Result<UserDataUpload, Error>) -> Void) {
-        let url = "https://pslink.world/api/users/upload"
-        
-        // Create multipart form data
-        AF.upload(multipartFormData: { multipartFormData in
-            // Add file data
-            multipartFormData.append(file, withName: "File", fileName: "file.jpg", mimeType: "image/jpeg")
-            
-            // Add typeId as string
-            if let typeIdData = String(typeId).data(using: .utf8) {
-                multipartFormData.append(typeIdData, withName: "TypeId")
-            }
-        }, to: url, method: .post)
-        .responseDecodable(of: UserDataUpload.self) { response in
-            switch response.result {
-            case .success(let uploadResponse):
-                completion(.success(uploadResponse))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-}

@@ -86,8 +86,16 @@ class AudioCategoryAllVC: UIViewController {
     
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
+            let currentIndex = self.selectedIndex
+            
             self.audioCharacterAllCollectionView.reloadData()
             self.audioCharacterSlideCollectionview.reloadData()
+            
+            let indexPath = IndexPath(item: currentIndex, section: 0)
+            self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            
+            self.selectedIndex = currentIndex
         }
     }
     
@@ -294,6 +302,8 @@ class AudioCategoryAllVC: UIViewController {
         }
         
         DispatchQueue.main.async {
+            self.selectedIndex = 0
+            
             self.audioCharacterAllCollectionView.reloadData()
             self.audioCharacterSlideCollectionview.reloadData()
             
@@ -303,14 +313,17 @@ class AudioCategoryAllVC: UIViewController {
                 self.hideNoDataView()
                 
                 if !self.filteredAudios.isEmpty {
-                    self.selectedIndex = 0
                     let indexPath = IndexPath(item: 0, section: 0)
                     
-                    self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                    self.audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.audioCharacterAllCollectionView.numberOfItems(inSection: 0) > 0 {
+                        self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
                     
-                    self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                    self.audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.audioCharacterSlideCollectionview.numberOfItems(inSection: 0) > 0 {
+                        self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
                     
                     if !self.filteredAudios.isEmpty {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -373,6 +386,8 @@ extension AudioCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard indexPath.item < currentDataSource.count else { return }
+        
         selectedIndex = indexPath.item
         
         if collectionView == audioCharacterAllCollectionView {
@@ -385,8 +400,8 @@ extension AudioCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = 80
-        let height: CGFloat = 104
+        let width: CGFloat = 90
+        let height: CGFloat = 90
         
         if collectionView == audioCharacterAllCollectionView {
             return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
@@ -403,24 +418,6 @@ extension AudioCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        if kind == UICollectionView.elementKindSectionFooter {
-            let footer = collectionView.dequeueReusableSupplementaryView(
-                ofKind: kind,
-                withReuseIdentifier: LoadingFooterView.reuseIdentifier,
-                for: indexPath
-            ) as! LoadingFooterView
-            if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
-                footer.startAnimating()
-            } else {
-                footer.stopAnimating()
-            }
-            
-            return footer
-        }
-        return UICollectionReusableView()
-    }
-    
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if scrollView == audioCharacterAllCollectionView {
             NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(scrollingEnded), object: nil)
@@ -428,12 +425,18 @@ extension AudioCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
             let pageWidth = scrollView.bounds.width
             let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
             
+            guard currentPage >= 0 && currentPage < currentDataSource.count else { return }
+            
             if currentPage != selectedIndex {
                 selectedIndex = currentPage
                 
                 let indexPath = IndexPath(item: currentPage, section: 0)
-                audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                DispatchQueue.main.async {
+                    if currentPage < self.currentDataSource.count {
+                        self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                }
             }
         }
     }
