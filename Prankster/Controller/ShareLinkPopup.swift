@@ -357,7 +357,7 @@ class ShareLinkPopup: UIViewController {
         
         switch tappedView.tag {
         case 0: // Copy link
-            if let prankLink = prankLink {
+            if let prankLink = prankShareURL {
                 UIPasteboard.general.string = prankLink
                 let snackbar = CustomSnackbar(message: "Link copied to clipboard!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
@@ -423,12 +423,14 @@ class ShareLinkPopup: UIViewController {
     
     private func NavigateToShareSnapchat(sharePrank: String?) {
         guard let prankLink = prankShareURL,
+              let prankName = prankName,
               let coverImageURL = coverImageURL else { return }
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let bottomSheetVC = storyboard.instantiateViewController(withIdentifier: "ShareBottomVC") as! ShareBottomVC
         bottomSheetVC.coverImageURL = coverImageURL
         bottomSheetVC.prankLink = prankLink
+        bottomSheetVC.prankName = prankName
         bottomSheetVC.sharePrank = sharePrank
         if UIDevice.current.userInterfaceIdiom == .pad {
             bottomSheetVC.modalPresentationStyle = .formSheet
@@ -441,9 +443,9 @@ class ShareLinkPopup: UIViewController {
     }
     
     private func shareWhatsAppMessage() {
-        guard let prankLink = coverImageURL,
+        guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
         let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
         if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -470,7 +472,7 @@ class ShareLinkPopup: UIViewController {
     private func shareTelegramMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let telegramMessage = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
+        let telegramMessage = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
         let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -484,7 +486,7 @@ class ShareLinkPopup: UIViewController {
     private func shareMoreMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
         let itemsToShare: [Any] = [message]
         let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
         if let popoverController = activityVC.popoverPresentationController {

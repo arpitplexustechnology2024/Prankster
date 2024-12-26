@@ -72,6 +72,13 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.setupKeyboardObservers()
         self.hideKeyboardTappedAround()
         
+        print("PrankURL:- \(selectedURL ?? "")")
+        print("PrankFile:- \(selectedFile ?? Data())")
+        print("PrankName:- \(selectedName ?? "")")
+        print("PrankType:- \(selectedPranktype ?? "")")
+        print("CoverImageURL:- \(selectedCoverURL ?? "")")
+        print("CoverImageFile:- \(selectedCoverFile ?? Data())")
+        print("prankImage:- \(selectedImage ?? "")")
     }
     
     func rateUs() {
@@ -200,6 +207,14 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         prankImageView.showShimmer()
         prankNameLabel.showShimmer()
         nameChangeButton.showShimmer()
+        
+        print("PrankURL:- \(fileURL)")
+        print("PrankFile:- \(file)")
+        print("PrankName:- \(name)")
+        print("PrankType:- \(type)")
+        print("CoverImageURL:- \(coverImageURL)")
+        print("CoverImageFile:- \(coverImageFile)")
+        print("prankImage:- \(imageURL)")
         
         viewModel.createPrank(coverImage: coverImageFile, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL, imageURL: imageURL, fileType: fileType) { [weak self] success in
             guard let self = self else { return }
@@ -412,16 +427,12 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         noDataView.isHidden = true
         self.shareView.addSubview(noDataView)
         noDataView.translatesAutoresizingMaskIntoConstraints = false
-        let bottomConstant: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 100 : 75
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noDataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noDataView.topAnchor.constraint(equalTo: navigationbarView.topAnchor),
-            noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: bottomConstant)
+            noDataView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor),
+            noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
         ])
-        noDataView.layer.cornerRadius = 15
-        noDataView.layer.masksToBounds = true
-        noDataView.layoutIfNeeded()
     }
     
     // MARK: - setupNoInternetView
@@ -434,12 +445,9 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noInternetView.topAnchor.constraint(equalTo: navigationbarView.topAnchor),
+            noInternetView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor),
             noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-        noInternetView.layer.cornerRadius = 15
-        noInternetView.layer.masksToBounds = true
-        noInternetView.layoutIfNeeded()
     }
     
     // MARK: - retryButtonTapped
@@ -593,7 +601,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         
         switch tappedView.tag {
         case 0: // Copy link
-            if let prankLink = prankLink {
+            if let prankLink = prankShareURL {
                 UIPasteboard.general.string = prankLink
                 let snackbar = CustomSnackbar(message: "Link copied to clipboard!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
@@ -659,12 +667,14 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     private func NavigateToShareSnapchat(sharePrank: String?) {
         guard let prankLink = prankShareURL,
+              let prankName = prankName,
               let coverImageURL = coverImageURL else { return }
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let bottomSheetVC = storyboard.instantiateViewController(withIdentifier: "ShareBottomVC") as! ShareBottomVC
         bottomSheetVC.coverImageURL = coverImageURL
         bottomSheetVC.prankLink = prankLink
+        bottomSheetVC.prankName = prankName
         bottomSheetVC.sharePrank = sharePrank
         if UIDevice.current.userInterfaceIdiom == .pad {
             bottomSheetVC.modalPresentationStyle = .formSheet
@@ -678,8 +688,9 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     private func shareWhatsAppMessage() {
         guard let prankLink = prankShareURL,
+              let prankLink = coverImageURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
         let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
         if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -706,7 +717,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     private func shareTelegramMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let telegramMessage = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
+        let telegramMessage = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
         let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -719,17 +730,22 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     private func shareMoreMessage() {
         guard let prankLink = prankShareURL,
+              let coverImage = coverImageURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n🔗 Check this out:\n\(prankLink)"
-        let itemsToShare: [Any] = [message]
+        
+        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
+        let itemsToShare: [Any] = [message, coverImage]
         let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
+        
         if let popoverController = activityVC.popoverPresentationController {
             popoverController.sourceView = self.view
             popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
             popoverController.permittedArrowDirections = []
         }
+        
         self.present(activityVC, animated: true, completion: nil)
     }
+
     
     // MARK: - btnNameChangeTapped
     @IBAction func btnNameChangeTapped(_ sender: UIButton) {

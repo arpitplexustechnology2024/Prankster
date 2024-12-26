@@ -55,18 +55,18 @@ class PrankAPIManager: PrankAPIProtocol {
         
         AF.upload(multipartFormData: { multipartFormData in
             multipartFormData.append(type.data(using: .utf8)!, withName: "Type")
-            
             multipartFormData.append(name.data(using: .utf8)!, withName: "Name")
-            
             multipartFormData.append(coverImageURL.data(using: .utf8)!, withName: "CoverImageURL")
-            
             multipartFormData.append(fileURL.data(using: .utf8)!, withName: "FileURL")
-            
-            multipartFormData.append(coverImage, withName: "CoverImage", fileName: "coverImage.jpg", mimeType: "image/jpeg")
-            
-            multipartFormData.append(file, withName: "File", fileName: fileName, mimeType: mimeType)
-            
             multipartFormData.append(imageURL.data(using: .utf8)!, withName: "ImageURL")
+            
+            if coverImage.count > 0 {
+                multipartFormData.append(coverImage, withName: "CoverImage", fileName: "coverImage.jpg", mimeType: "image/jpeg")
+            }
+            
+            if file.count > 0 {
+                multipartFormData.append(file, withName: "File", fileName: fileName, mimeType: mimeType)
+            }
             
         }, to: url, method: .post).responseDecodable(of: PrankCreateResponse.self) { response in
             switch response.result {

@@ -134,7 +134,7 @@ class AudioVC: UIViewController {
         self.bottomScrollView.layer.cornerRadius = 20
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-         self.audioImageView.loadGif(name: "AudioGIF")
+        self.audioImageView.loadGif(name: "AudioGIF")
         self.audioImageView.layer.cornerRadius = 8
         
         self.audioShowView.layer.cornerRadius = 8
@@ -659,32 +659,49 @@ extension AudioVC: UIDocumentPickerDelegate {
         
         self.showLottieLoader()
         
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
+        do {
+            let audioPlayer = try AVAudioPlayer(contentsOf: selectedURL)
+            let durationInSeconds = audioPlayer.duration
             
-            let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let destinationURL = documentsDirectory.appendingPathComponent(selectedURL.lastPathComponent)
-            
-            do {
-                if FileManager.default.fileExists(atPath: destinationURL.path) {
-                    try FileManager.default.removeItem(at: destinationURL)
-                }
-                try FileManager.default.copyItem(at: selectedURL, to: destinationURL)
-                let randomImageURL = self.getRandomImageURL()
-                
-                self.customAudios.insert((url: destinationURL, imageURL: randomImageURL), at: 0)
-                
+            if durationInSeconds > 16.0 {
                 DispatchQueue.main.async {
-                    self.audioCustomCollectionView.reloadData()
                     self.hideLottieLoader()
-                    let indexPath = IndexPath(item: 1, section: 0)
-                    self.audioCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                    self.collectionView(self.audioCustomCollectionView, didSelectItemAt: indexPath)
+                    let snackbar = CustomSnackbar(message: "please select a max 15 seconds audio file.", backgroundColor: .snackbar)
+                    snackbar.show(in: self.view, duration: 3.0)
                 }
-            } catch {
-                print("Error copying file: \(error)")
-                self.hideLottieLoader()
+                return
             }
+            
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                
+                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                let destinationURL = documentsDirectory.appendingPathComponent(selectedURL.lastPathComponent)
+                
+                do {
+                    if FileManager.default.fileExists(atPath: destinationURL.path) {
+                        try FileManager.default.removeItem(at: destinationURL)
+                    }
+                    try FileManager.default.copyItem(at: selectedURL, to: destinationURL)
+                    let randomImageURL = self.getRandomImageURL()
+                    
+                    self.customAudios.insert((url: destinationURL, imageURL: randomImageURL), at: 0)
+                    
+                    DispatchQueue.main.async {
+                        self.audioCustomCollectionView.reloadData()
+                        self.hideLottieLoader()
+                        let indexPath = IndexPath(item: 1, section: 0)
+                        self.audioCustomCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.collectionView(self.audioCustomCollectionView, didSelectItemAt: indexPath)
+                    }
+                } catch {
+                    print("Error copying file: \(error)")
+                    self.hideLottieLoader()
+                }
+            }
+        } catch {
+            print("Error checking audio duration: \(error)")
+            self.hideLottieLoader()
         }
     }
     

@@ -445,6 +445,7 @@ class SpinnerVC: UIViewController {
     }
     
     @IBAction func btnBackTapped(_ sender: UIButton) {
+        guard !isSpinning else { return }
         self.navigationController?.popViewController(animated: true)
     }
     
@@ -455,6 +456,7 @@ class SpinnerVC: UIViewController {
     }
     
     @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
+        guard !isSpinning else { return }
         if gesture.state == .recognized {
             self.navigationController?.popViewController(animated: true)
         }
@@ -485,7 +487,7 @@ extension SpinnerVC: UIViewControllerTransitioningDelegate {
             presentedViewController: presented,
             presenting: presenting
         )
-        customPresentationController.heightPercentage = 0.3
+        customPresentationController.heightPercentage = 0.4
         return customPresentationController
     }
 }

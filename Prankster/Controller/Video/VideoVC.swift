@@ -618,6 +618,7 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         picker.videoQuality = .typeHigh
         picker.allowsEditing = true
         
+        
         present(picker, animated: true)
     }
     
@@ -653,9 +654,28 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         videoImageView.isHidden = true
         showLottieLoader()
-        picker.dismiss(animated: true)
         
-        guard let videoURL = info[.mediaURL] as? URL else { return }
+        guard let videoURL = info[.mediaURL] as? URL else {
+            picker.dismiss(animated: true)
+            return
+        }
+        
+        let asset = AVAsset(url: videoURL)
+        let duration = CMTimeGetSeconds(asset.duration)
+        
+        if duration > 16.0 {
+            picker.dismiss(animated: true) {
+                let snackbar = CustomSnackbar(message: "Please select a max 15 seconds video file.", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
+                
+                self.videoImageView.isHidden = false
+                self.pauseImageView.isHidden = true
+                self.hideLottieLoader()
+            }
+            return
+        }
+        
+        picker.dismiss(animated: true)
         
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let fileName = "\(UUID().uuidString).mp4"

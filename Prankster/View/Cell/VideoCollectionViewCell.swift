@@ -99,6 +99,12 @@ class VideoCharacterCollectionViewCell: UICollectionViewCell {
         categoryName.layer.shadowOffset = CGSize(width: 0, height: 2)
         categoryName.layer.shadowRadius = 5
         categoryName.layer.shadowOpacity = 0.5
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            categoryName.font = UIFont(name: "KLEPHON", size: 32)
+        } else {
+            categoryName.font = UIFont(name: "KLEPHON", size: 21)
+        }
     }
     
     override var isSelected: Bool {
