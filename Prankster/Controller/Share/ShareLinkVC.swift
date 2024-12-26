@@ -71,14 +71,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.addContentToStackView()
         self.setupKeyboardObservers()
         self.hideKeyboardTappedAround()
-        
-        print("PrankURL:- \(selectedURL ?? "")")
-        print("PrankFile:- \(selectedFile ?? Data())")
-        print("PrankName:- \(selectedName ?? "")")
-        print("PrankType:- \(selectedPranktype ?? "")")
-        print("CoverImageURL:- \(selectedCoverURL ?? "")")
-        print("CoverImageFile:- \(selectedCoverFile ?? Data())")
-        print("prankImage:- \(selectedImage ?? "")")
     }
     
     func rateUs() {
@@ -207,14 +199,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         prankImageView.showShimmer()
         prankNameLabel.showShimmer()
         nameChangeButton.showShimmer()
-        
-        print("PrankURL:- \(fileURL)")
-        print("PrankFile:- \(file)")
-        print("PrankName:- \(name)")
-        print("PrankType:- \(type)")
-        print("CoverImageURL:- \(coverImageURL)")
-        print("CoverImageFile:- \(coverImageFile)")
-        print("prankImage:- \(imageURL)")
         
         viewModel.createPrank(coverImage: coverImageFile, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL, imageURL: imageURL, fileType: fileType) { [weak self] success in
             guard let self = self else { return }

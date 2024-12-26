@@ -373,6 +373,47 @@
 			path = LightXIB;
 			sourceTree = "<group>";
 		};
+		BD6D3D372D1E179000EF045E /* Spinner */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68B682D0931F800834D9B /* SpinnerVC.swift */,
+				BDC68B652D0931F800834D9B /* SpinnerDataVC.swift */,
+				BDC68B662D0931F800834D9B /* SpinnerPreviewVC.swift */,
+				BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */,
+			);
+			path = Spinner;
+			sourceTree = "<group>";
+		};
+		BD6D3D382D1E17AD00EF045E /* Premium */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68B612D0931F800834D9B /* PremiumVC.swift */,
+				BDC68B602D0931F800834D9B /* PremiumPopupVC.swift */,
+				BDC68B622D0931F800834D9B /* PremiumBottomVC.swift */,
+			);
+			path = Premium;
+			sourceTree = "<group>";
+		};
+		BD6D3D392D1E17BD00EF045E /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68B642D0931F800834D9B /* ShareLinkVC.swift */,
+				BDC68B692D0931F800834D9B /* ShareBottomVC.swift */,
+				BDC68B672D0931F800834D9B /* ViewLinkVC.swift */,
+				BDC68B632D0931F800834D9B /* ShareLinkPopup.swift */,
+			);
+			path = Share;
+			sourceTree = "<group>";
+		};
+		BD6D3D3A2D1E17E000EF045E /* Storyboard */ = {
+			isa = PBXGroup;
+			children = (
+				BDC68B2E2D0931F800834D9B /* Main.storyboard */,
+				BDC68B302D0931F800834D9B /* LaunchScreen.storyboard */,
+			);
+			path = Storyboard;
+			sourceTree = "<group>";
+		};
 		BDC68A6E2D092D0400834D9B = {
 			isa = PBXGroup;
 			children = (
@@ -412,8 +453,8 @@
 				BDC68B4B2D0931F800834D9B /* View */,
 				BDC68B6A2D0931F800834D9B /* Controller */,
 				BDC68AAC2D092D0C00834D9B /* Assets.xcassets */,
-				BDC68AAD2D092D0C00834D9B /* Info.plist */,
 				BDC68B252D092E8900834D9B /* Color.xcassets */,
+				BDC68AAD2D092D0C00834D9B /* Info.plist */,
 				BDC68B262D092E8900834D9B /* GoogleService-Info.plist */,
 			);
 			path = Prankster;
@@ -600,8 +641,7 @@
 			children = (
 				BDC68B3E2D0931F800834D9B /* Cell */,
 				BDC68B4A2D0931F800834D9B /* XIB */,
-				BDC68B2E2D0931F800834D9B /* Main.storyboard */,
-				BDC68B302D0931F800834D9B /* LaunchScreen.storyboard */,
+				BD6D3D3A2D1E17E000EF045E /* Storyboard */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -653,21 +693,13 @@
 				BDC68B5E2D0931F800834D9B /* HomeVC.swift */,
 				BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */,
 				BDC68B5F2D0931F800834D9B /* MoreAppVC.swift */,
-				BDC68B682D0931F800834D9B /* SpinnerVC.swift */,
-				BDC68B652D0931F800834D9B /* SpinnerDataVC.swift */,
-				BDC68B662D0931F800834D9B /* SpinnerPreviewVC.swift */,
-				BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */,
+				BD6D3D372D1E179000EF045E /* Spinner */,
+				BD6D3D382D1E17AD00EF045E /* Premium */,
 				BDC68B562D0931F800834D9B /* CoverPage */,
 				BDC68B512D0931F800834D9B /* Audio */,
 				BDC68B5C2D0931F800834D9B /* Video */,
 				BDC68B592D0931F800834D9B /* Image */,
-				BDC68B612D0931F800834D9B /* PremiumVC.swift */,
-				BDC68B602D0931F800834D9B /* PremiumPopupVC.swift */,
-				BDC68B622D0931F800834D9B /* PremiumBottomVC.swift */,
-				BDC68B642D0931F800834D9B /* ShareLinkVC.swift */,
-				BDC68B692D0931F800834D9B /* ShareBottomVC.swift */,
-				BDC68B672D0931F800834D9B /* ViewLinkVC.swift */,
-				BDC68B632D0931F800834D9B /* ShareLinkPopup.swift */,
+				BD6D3D392D1E17BD00EF045E /* Share */,
 			);
 			path = Controller;
 			sourceTree = "<group>";

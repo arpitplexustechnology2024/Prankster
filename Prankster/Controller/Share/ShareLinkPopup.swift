@@ -48,7 +48,6 @@ class ShareLinkPopup: UIViewController {
             viewHeightsConstraints.constant = 600
         }
         
-        
         if let coverImageUrl = self.coverImageURL {
             self.loadImage(from: coverImageUrl, into: self.imageView)
             UserDefaults.standard.set(coverImageUrl, forKey: "CoverImage")
