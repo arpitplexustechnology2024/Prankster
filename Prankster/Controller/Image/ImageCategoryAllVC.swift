@@ -75,14 +75,24 @@ class ImageCategoryAllVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search image name"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = searchbar.frame.height / 2
+        searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
-        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.layer.cornerRadius = 10
         searchbarBlurView.clipsToBounds = true
         searchbarBlurView.layer.masksToBounds = true
         
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
+            textField.attributedPlaceholder = NSAttributedString(
+                string: "Search image name",
+                attributes: [.foregroundColor: UIColor.white]
+            )
+        }
+        
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField,
+           let leftIconView = textField.leftView as? UIImageView {
+            leftIconView.tintColor = .white
+            leftIconView.image = leftIconView.image?.withRenderingMode(.alwaysTemplate)
         }
     }
     
@@ -105,7 +115,14 @@ class ImageCategoryAllVC: UIViewController {
         self.imageCharacterSlideCollectionview.dataSource = self
         self.imageCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.imageCharacterSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        
+        self.imageCharacterSlideCollectionview.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
+        if let layout = imageCharacterSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 16, height: imageCharacterSlideCollectionview.frame.height)
+        }
     }
     
     // MARK: - fetchAllImages
@@ -128,8 +145,7 @@ class ImageCategoryAllVC: UIViewController {
                         
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.imageCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            self.imageCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {

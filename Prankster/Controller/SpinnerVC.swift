@@ -125,6 +125,7 @@ class SpinnerVC: UIViewController {
                 rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
             } else {
                 print("No Reward Ad ID found")
+                self.proceedWithSpinning()
             }
         }
         rewardAdUtility.onRewardEarned = { [weak self] in
@@ -205,6 +206,7 @@ class SpinnerVC: UIViewController {
                 vc.file = response.data.file
                 vc.link = response.data.shareURL
                 vc.type = response.data.type
+                vc.image = response.data.image
                 vc.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
                 self?.present(vc, animated: true)
@@ -212,28 +214,10 @@ class SpinnerVC: UIViewController {
         }
         
         spinViewModel.onError = { error in
-            self.handleSpinnerError(error)
-        }
-    }
-    
-    func handleSpinnerError(_ error: SpinnerError) {
-        DispatchQueue.main.async {
-            switch error {
-            case .betterLuckNextTime:
-                print("Better luck next time!")
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "BetterLuckVC") as! BetterLuckVC
-                vc.modalTransitionStyle = .crossDissolve
-                vc.modalPresentationStyle = .overCurrentContext
-                self.present(vc, animated: true)
-            case .noDataFound:
-                print("No data found")
-            case .typeIdRequired:
-                print("Type ID is required")
-            case .notFound:
-                print("Not found")
-            case .unknown(let message):
-                print("Unknown error: \(message)")
-            }
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "BetterLuckVC") as! BetterLuckVC
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            self.present(vc, animated: true)
         }
     }
     
@@ -479,10 +463,8 @@ class SpinnerVC: UIViewController {
     @IBAction func btnShowReward(_ sender: UIButton) {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerDataVC") as! SpinnerDataVC
         vc.spinnerResponseData = self.spinnerResponseData
-        if let sheet = vc.sheetPresentationController {
-            sheet.detents = [.medium()]
-            sheet.prefersGrabberVisible = true
-        }
+        vc.modalPresentationStyle = .custom
+        vc.transitioningDelegate = self
         self.present(vc, animated: true)
     }
     
@@ -494,5 +476,16 @@ class SpinnerVC: UIViewController {
         } else {
             print(" - - - - - - Rating view in not present - - - -")
         }
+    }
+}
+
+extension SpinnerVC: UIViewControllerTransitioningDelegate {
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        let customPresentationController = CustomePresentationController(
+            presentedViewController: presented,
+            presenting: presenting
+        )
+        customPresentationController.heightPercentage = 0.3
+        return customPresentationController
     }
 }

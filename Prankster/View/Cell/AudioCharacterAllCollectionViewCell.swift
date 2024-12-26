@@ -50,7 +50,6 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     private var currentIndexPath: IndexPath?
     private var audioDownloadTask: URLSessionDataTask?
     private var isAudioLoaded = false
-    private var nameBlurView: UIVisualEffectView!
     
     // MARK: - Lifecycle Methods
     override func awakeFromNib() {
@@ -64,15 +63,6 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true
         
-        let labelBlurEffect = UIBlurEffect(style: .light)
-        nameBlurView = UIVisualEffectView(effect: labelBlurEffect)
-        nameBlurView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        
-        audioLabel.backgroundColor = .clear
-        audioLabel.textColor = .white
-        audioLabel.layer.masksToBounds = true
-        
-        contentView.insertSubview(nameBlurView, belowSubview: audioLabel)
         
         DoneButton.layer.shadowColor = UIColor.black.cgColor
         DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
@@ -86,6 +76,25 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(tapGesture)
+        
+        // Adding blur effect to imageName label background
+           let blurEffect = UIBlurEffect(style: .light)
+           let blurEffectView = UIVisualEffectView(effect: blurEffect)
+           blurEffectView.clipsToBounds = true
+           blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+           contentView.insertSubview(blurEffectView, belowSubview: audioLabel)
+           
+           NSLayoutConstraint.activate([
+               blurEffectView.leadingAnchor.constraint(equalTo: audioLabel.leadingAnchor, constant: -8),
+               blurEffectView.trailingAnchor.constraint(equalTo: audioLabel.trailingAnchor, constant: 8),
+               blurEffectView.topAnchor.constraint(equalTo: audioLabel.topAnchor, constant: -4),
+               blurEffectView.bottomAnchor.constraint(equalTo: audioLabel.bottomAnchor, constant: 4)
+           ])
+        
+        // Update corner radius after layout
+        DispatchQueue.main.async {
+            blurEffectView.layer.cornerRadius = blurEffectView.frame.height / 2
+        }
     }
     
     override init(frame: CGRect) {
@@ -103,6 +112,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         
         let displayName = categoryAllData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : categoryAllData.name
         self.audioLabel.text = "  \(displayName)  "
+        self.audioLabel.sizeToFit()
         
         if let imageURL = URL(string: categoryAllData.image) {
             imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderAudio")) { [weak self] image, _, _, _ in
@@ -196,11 +206,6 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        let padding: CGFloat = 4
-        nameBlurView.frame = audioLabel.frame.insetBy(dx: -padding, dy: -padding)
-        nameBlurView.layer.cornerRadius = nameBlurView.frame.height / 2
-        nameBlurView.layer.masksToBounds = true
     }
     
     @objc private func imageViewTapped() {

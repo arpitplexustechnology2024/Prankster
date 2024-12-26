@@ -132,14 +132,24 @@ class AudioCategoryAllVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search audio or artist name"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = searchbar.frame.height / 2
+        searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
-        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.layer.cornerRadius = 10
         searchbarBlurView.clipsToBounds = true
         searchbarBlurView.layer.masksToBounds = true
         
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
+            textField.attributedPlaceholder = NSAttributedString(
+                string: "Search audio or artist name",
+                attributes: [.foregroundColor: UIColor.white]
+            )
+        }
+        
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField,
+           let leftIconView = textField.leftView as? UIImageView {
+            leftIconView.tintColor = .white
+            leftIconView.image = leftIconView.image?.withRenderingMode(.alwaysTemplate)
         }
     }
     
@@ -163,6 +173,14 @@ class AudioCategoryAllVC: UIViewController {
         self.audioCharacterAllCollectionView.isPagingEnabled = true
         self.audioCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.audioCharacterSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.audioCharacterSlideCollectionview.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
+        if let layout = audioCharacterSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 16, height: audioCharacterSlideCollectionview.frame.height)
+        }
     }
     
     // MARK: - fetchAllAudios
@@ -185,8 +203,7 @@ class AudioCategoryAllVC: UIViewController {
                         
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                             
                             if !self.isLoadingMore {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

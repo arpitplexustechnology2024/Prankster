@@ -88,13 +88,12 @@ class ImageVC: UIViewController {
         self.bottomView.layer.shadowOpacity = 0.5
         self.bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
         self.bottomView.layer.shadowRadius = 12
-        self.bottomView.layer.cornerRadius = 28
+        self.bottomView.layer.cornerRadius = 20
         self.bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        self.bottomScrollView.layer.cornerRadius = 28
+        self.bottomScrollView.layer.cornerRadius = 20
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        // self.ImageImageView.loadGif(name: "ImageGIF")
-        self.ImageImageView.image = UIImage(named: "Pranksters")
+         self.ImageImageView.loadGif(name: "ImageGIF")
         self.ImageImageView.layer.cornerRadius = 8
         self.imageShowView.layer.cornerRadius = 8
         self.imageShowView.layer.shadowColor = UIColor.black.cgColor
@@ -112,9 +111,9 @@ class ImageVC: UIViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
             self.coverImageViewWidthConstraint.constant = 230
-            self.scrollViewHeightConstraint.constant = 680
+            self.scrollViewHeightConstraint.constant = 830
             self.imageCustomHeightConstraint.constant = 180
-            self.imageCharacterHeightConstraint.constant = 360
+            self.imageCharacterHeightConstraint.constant = 575
         } else {
             self.coverImageViewHeightConstraint.constant = 240
             self.coverImageViewWidthConstraint.constant = 190
@@ -360,7 +359,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 if let url = URL(string: category.categoryImage) {
                     cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio")) { image, error, cacheType, imageURL in
                         if image != nil {
-                            cell.categoryName.text = "\(category.categoryName) Image"
+                            cell.categoryName.text = "\(category.categoryName) \n Image"
                             cell.categoryName.isHidden = false
                         } else {
                             cell.categoryName.isHidden = true
@@ -419,10 +418,12 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         super.viewWillAppear(animated)
         deselectCharacterCell()
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 155 : 115
         let height: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 165 : 125
+        let width1: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 260 : 115
+        let height1: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 270 : 125
         
         if collectionView == imageCustomCollectionView {
             if indexPath.item == 0 {
@@ -430,7 +431,7 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             }
             return CGSize(width: width, height: height)
         } else if collectionView == imageCharacterCollectionView {
-            return CGSize(width: width, height: height)
+            return CGSize(width: width1, height: height1)
         }
         return CGSize(width: width, height: height)
     }

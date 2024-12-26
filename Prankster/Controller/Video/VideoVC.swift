@@ -107,13 +107,12 @@ class VideoVC: UIViewController {
         self.bottomView.layer.shadowOpacity = 0.5
         self.bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
         self.bottomView.layer.shadowRadius = 12
-        self.bottomView.layer.cornerRadius = 28
+        self.bottomView.layer.cornerRadius = 20
         self.bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        self.bottomScrollView.layer.cornerRadius = 28
+        self.bottomScrollView.layer.cornerRadius = 20
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-      //  self.videoImageView.loadGif(name: "VideoGIF")
-        self.videoImageView.image = UIImage(named: "Pranksters")
+        self.videoImageView.loadGif(name: "VideoGIF")
         self.videoImageView.layer.cornerRadius = 8
         self.videoShowView.layer.cornerRadius = 8
         self.videoShowView.layer.shadowColor = UIColor.black.cgColor
@@ -131,9 +130,9 @@ class VideoVC: UIViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
             self.coverImageViewWidthConstraint.constant = 230
-            self.scrollViewHeightConstraint.constant = 680
+            self.scrollViewHeightConstraint.constant = 830
             self.videoCustomHeightConstraint.constant = 180
-            self.videoCharacterHeightConstraint.constant = 360
+            self.videoCharacterHeightConstraint.constant = 575
         } else {
             self.coverImageViewHeightConstraint.constant = 240
             self.coverImageViewWidthConstraint.constant = 190
@@ -443,7 +442,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 if let url = URL(string: category.categoryImage) {
                     cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderVideo")) { image, error, cacheType, imageURL in
                         if image != nil {
-                            cell.categoryName.text = "\(category.categoryName) Video"
+                            cell.categoryName.text = "\(category.categoryName) \n Video"
                             cell.categoryName.isHidden = false
                         } else {
                             cell.categoryName.isHidden = true
@@ -470,7 +469,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 videoImageView.isHidden = true
                 showLottieLoader()
                 let videoURL = customVideos[indexPath.item - 1]
-                playCustomVideo(url: videoURL, autoPlay: true)
+                playCustomVideo(url: videoURL, autoPlay: false)
                 selectedVideoIndex = indexPath.item - 1
                 
                 let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -509,6 +508,8 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 155 : 115
         let height: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 165 : 125
+        let width1: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 260 : 115
+        let height1: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 270 : 125
         
         if collectionView == videoCustomCollectionView {
             if indexPath.item == 0 {
@@ -516,7 +517,7 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             }
             return CGSize(width: width, height: height)
         } else if collectionView == videoCharacterCollectionView {
-            return CGSize(width: width, height: height)
+            return CGSize(width: width1, height: height1)
         }
         return CGSize(width: width, height: height)
     }

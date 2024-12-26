@@ -22,6 +22,7 @@ class SpinnerPreviewVC: UIViewController {
     var type: String?
     var name: String?
     var link: String?
+    var image: String?
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -103,7 +104,9 @@ class SpinnerPreviewVC: UIViewController {
             audioPlayer?.delegate = self
             
             DispatchQueue.main.async {
-                self.prankImageView.image = UIImage(named: "audioPrankImage")
+                if let audioImageUrl = self.image {
+                    self.loadImage(from: audioImageUrl, into: self.prankImageView)
+                }
                 self.playPauseImageView.isHidden = true
             }
         } catch {

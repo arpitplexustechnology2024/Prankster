@@ -157,9 +157,9 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
         let lifetimeTapGesture = UITapGestureRecognizer(target: self, action: #selector(lifetimeViewTapped))
         premiumLifeTimeView.addGestureRecognizer(lifetimeTapGesture)
         
-        doneImage01.isHidden = true
-        doneImage02.isHidden = true
-        doneImage03.isHidden = true
+        doneImage01.image = UIImage(named: "RadioCircle")
+        doneImage02.image = UIImage(named: "RadioCircle")
+        doneImage03.image = UIImage(named: "RadioCircle")
     }
     
     @objc private func weeklyViewTapped() {
@@ -175,16 +175,16 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
     }
     
     private func updateSelectedPremiumView(view: UIView, option: PremiumOption) {
-        doneImage01.isHidden = true
-        doneImage02.isHidden = true
-        doneImage03.isHidden = true
+        doneImage01.image = UIImage(named: "RadioCircle")
+        doneImage02.image = UIImage(named: "RadioCircle")
+        doneImage03.image = UIImage(named: "RadioCircle")
         switch option {
         case .weekly:
-            doneImage01.isHidden = false
+            doneImage01.image = UIImage(named: "Yespremium")
         case .monthly:
-            doneImage02.isHidden = false
+            doneImage02.image = UIImage(named: "Yespremium")
         case .yearly:
-            doneImage03.isHidden = false
+            doneImage03.image = UIImage(named: "Yespremium")
         }
         selectedPremiumOption = option
     }
@@ -573,7 +573,7 @@ extension PremiumVC {
             self.featurstext01Constraints.constant = 55
             self.featurstext02Constraints.constant = 65.33
             self.featurstext03Constraints.constant = 65.33
-            self.featurstext04Constraints.constant = 65.33
+            self.featurstext04Constraints.constant = 50.33
             self.featurs01HeightConstraints.constant = 110
             self.featurs01WidthConstraints.constant = 74
             self.featurs02HeightConstraints.constant = 110

@@ -82,14 +82,24 @@ class EmojiCoverPageVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search cover image"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = searchbar.frame.height / 2
+        searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
-        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.layer.cornerRadius = 10
         searchbarBlurView.clipsToBounds = true
         searchbarBlurView.layer.masksToBounds = true
-
+        
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
+            textField.attributedPlaceholder = NSAttributedString(
+                string: "Search cover image",
+                attributes: [.foregroundColor: UIColor.white]
+            )
+        }
+        
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField,
+           let leftIconView = textField.leftView as? UIImageView {
+            leftIconView.tintColor = .white
+            leftIconView.image = leftIconView.image?.withRenderingMode(.alwaysTemplate)
         }
     }
     
@@ -112,6 +122,14 @@ class EmojiCoverPageVC: UIViewController {
         self.emojiCoverAllCollectionView.isPagingEnabled = true
         self.emojiCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.emojiCoverSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.emojiCoverSlideCollectionview.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
+        if let layout = emojiCoverSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 16, height: emojiCoverSlideCollectionview.frame.height)
+        }
     }
     
     func fetchAllCoverPages() {
@@ -133,8 +151,7 @@ class EmojiCoverPageVC: UIViewController {
                         
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {

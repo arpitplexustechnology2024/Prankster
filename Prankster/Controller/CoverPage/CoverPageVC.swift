@@ -103,13 +103,12 @@ class CoverPageVC: UIViewController {
         self.bottomView.layer.shadowOpacity = 0.5
         self.bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
         self.bottomView.layer.shadowRadius = 12
-        self.bottomView.layer.cornerRadius = 28
+        self.bottomView.layer.cornerRadius = 20
         self.bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        self.bottomScrollView.layer.cornerRadius = 28
+        self.bottomScrollView.layer.cornerRadius = 20
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-      //  self.coverImageView.loadGif(name: "CoverGIF")
-        self.coverImageView.image = UIImage(named: "Pranksters")
+        self.coverImageView.loadGif(name: "CoverGIF")
         self.coverImageView.layer.cornerRadius = 8
         self.coverView.layer.cornerRadius = 8
         self.coverView.layer.shadowColor = UIColor.black.cgColor
@@ -331,32 +330,13 @@ class CoverPageVC: UIViewController {
         coverImageView.isHidden = false
     }
     // MARK: - updateSelectedImage
-    func updateSelectedImage(with coverData: CoverPageData, customImage: UIImage? = nil) {
+    func updateSelectedImage(with coverData: CoverPageData) {
         showLottieLoader()
         selectedCoverImageData = coverData
         selectedCoverImageURL = coverData.coverURL
         selectedCoverImageName = coverData.coverName
         
-        
-        if let customImage = customImage {
-            self.coverImageView.image = customImage
-            self.selectedCustomImage = customImage
-            self.hideLottieLoader()
-            
-            let temporaryDirectory = NSTemporaryDirectory()
-            let fileName = "\(UUID().uuidString).jpg"
-            let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
-            
-            if let imageData = customImage.jpegData(compressionQuality: 1.0) {
-                try? imageData.write(to: fileURL)
-                if let fileData = try? Data(contentsOf: fileURL) {
-                    self.selectedCoverImageFile = fileData
-                    self.selectedCoverImageURL = nil
-                    self.selectedCoverImageName = "Custom Cover Image"
-                }
-                print("Custom Cover Image URL: \(fileURL.absoluteString)")
-            }
-        } else if let url = URL(string: coverData.coverURL) {
+         if let url = URL(string: coverData.coverURL) {
             coverImageView.sd_setImage(with: url) { [weak self] (image, error, cacheType, imageURL) in
                 self?.hideLottieLoader()
                 if let error = error {
@@ -408,7 +388,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
         if collectionView == customCoverCollectionView {
             if indexPath.item == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AddCoverPageCollectionCell", for: indexPath) as! AddCoverPageCollectionCell
-                cell.imageView.image = UIImage(systemName: "plus")
+                cell.imageView.image = UIImage(named: "AddCover")
                 cell.addCoverPageLabel.text = "Add cover"
                 return cell
             } else {

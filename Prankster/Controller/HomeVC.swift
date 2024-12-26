@@ -328,11 +328,15 @@ extension HomeVC {
     @objc private func shareAppTapped() {
         hideDropdown()
         let appURL = URL(string: "https://apps.apple.com/us/app/6739135275")!
-        
-        let activityViewController = UIActivityViewController(activityItems: [appURL], applicationActivities: nil)
-        activityViewController.popoverPresentationController?.sourceView = self.view
-        
-        present(activityViewController, animated: true, completion: nil)
+        let message = "👇🏻 Download prankster app 👇🏻:\n \(appURL)"
+        let itemsToShare: [Any] = [message]
+        let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
+        if let popoverController = activityVC.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+        self.present(activityVC, animated: true, completion: nil)
     }
 }
 

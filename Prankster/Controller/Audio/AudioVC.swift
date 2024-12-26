@@ -128,14 +128,13 @@ class AudioVC: UIViewController {
         self.bottomView.layer.shadowOpacity = 0.5
         self.bottomView.layer.shadowOffset = CGSize(width: 0, height: 5)
         self.bottomView.layer.shadowRadius = 12
-        self.bottomView.layer.cornerRadius = 28
+        self.bottomView.layer.cornerRadius = 20
         self.bottomView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.bottomScrollView.layer.cornerRadius = 28
+        self.bottomScrollView.layer.cornerRadius = 20
         self.bottomScrollView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         
-        self.audioImageView.image = UIImage(named: "Pranksters")
-        // self.audioImageView.loadGif(name: "AudioGIF")
+         self.audioImageView.loadGif(name: "AudioGIF")
         self.audioImageView.layer.cornerRadius = 8
         
         self.audioShowView.layer.cornerRadius = 8
@@ -153,9 +152,9 @@ class AudioVC: UIViewController {
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.coverImageViewHeightConstraint.constant = 280
             self.coverImageViewWidthConstraint.constant = 230
-            self.scrollViewHeightConstraint.constant = 680
+            self.scrollViewHeightConstraint.constant = 830
             self.audioCustomHeightConstraint.constant = 180
-            self.audioCharacterHeightConstraint.constant = 360
+            self.audioCharacterHeightConstraint.constant = 575
         } else {
             self.coverImageViewHeightConstraint.constant = 240
             self.coverImageViewWidthConstraint.constant = 190
@@ -403,7 +402,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 if let url = URL(string: category.categoryImage) {
                     cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio")) { image, error, cacheType, imageURL in
                         if image != nil {
-                            cell.categoryName.text = "\(category.categoryName) Sound"
+                            cell.categoryName.text = "\(category.categoryName) \n Sound"
                             cell.categoryName.isHidden = false
                         } else {
                             cell.categoryName.isHidden = true
@@ -439,9 +438,8 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                     audioImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio"))
                 }
                 setupAudioPlayer(with: audioData.url)
-                audioPlayer?.play()
-                isPlaying = true
-                self.PauseImageView.isHidden = true
+                audioPlayer?.stop()
+                isPlaying = false
             }
         } else if collectionView == audioCharacterCollectionView {
             if let previousCustomCell = selectedAudioCustomCell {
@@ -472,6 +470,8 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 155 : 115
         let height: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 165 : 125
+        let width1: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 260 : 115
+        let height1: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 270 : 125
         
         if collectionView == audioCustomCollectionView {
             if indexPath.item == 0 {
@@ -479,7 +479,7 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             }
             return CGSize(width: width, height: height)
         } else if collectionView == audioCharacterCollectionView {
-            return CGSize(width: width, height: height)
+            return CGSize(width: width1, height: height1)
         }
         return CGSize(width: width, height: height)
     }
@@ -495,9 +495,11 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         let recorderAction = UIAlertAction(title: "Recorder", style: .default) { [weak self] _ in
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CustomRecoderVC") as! CustomRecoderVC
             vc.delegate = self
-            if let sheet = vc.sheetPresentationController {
-                sheet.detents = [.large()]
-                sheet.prefersGrabberVisible = true
+            if #available(iOS 15.0, *) {
+                if let sheet = vc.sheetPresentationController {
+                    sheet.detents = [.large()]
+                    sheet.prefersGrabberVisible = true
+                }
             }
             self?.present(vc, animated: true)
         }
@@ -578,8 +580,9 @@ extension AudioVC {
             audioPlayer = try AVAudioPlayer(contentsOf: url)
             audioPlayer?.delegate = self
             audioPlayer?.prepareToPlay()
-            audioPlayer?.play()
-            isPlaying = true
+            audioPlayer?.stop()
+            isPlaying = false
+            self.PauseImageView.isHidden = false
         } catch {
             print("Error setting up audio player: \(error)")
         }
@@ -610,8 +613,7 @@ extension AudioVC {
                     self.audioPlayer = try AVAudioPlayer(data: audioData)
                     self.audioPlayer?.delegate = self
                     self.audioPlayer?.prepareToPlay()
-                    self.audioPlayer?.play()
-                    self.isPlaying = true
+                    self.PauseImageView.isHidden = false
                     self.hideLottieLoader()
                 } catch {
                     self.hideLottieLoader()
@@ -622,6 +624,13 @@ extension AudioVC {
     }
     
     func playSelectedAudio(_ audioData: CategoryAllData) {
+        
+        if let currentPlayer = self.audioPlayer {
+            currentPlayer.stop()
+            self.isPlaying = false
+            self.PauseImageView.isHidden = false
+        }
+        
         if let previousCustomCell = selectedAudioCustomCell {
             audioCustomCollectionView.deselectItem(at: previousCustomCell, animated: false)
             selectedAudioCustomCell = nil
@@ -634,7 +643,6 @@ extension AudioVC {
         if let url = URL(string: audioData.image) {
             audioImageView.sd_setImage(with: url, placeholderImage: UIImage(named: "placeholder")) { [weak self] _, _, _, _ in
                 self?.hideLottieLoader()
-                self?.PauseImageView.isHidden = true
             }
         }
         if let audioUrl = URL(string: audioData.file!) {

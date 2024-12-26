@@ -16,7 +16,7 @@ class CustomSnackbar: UIView {
         super.init(frame: CGRect.zero)
         
         self.backgroundColor = backgroundColor
-        self.layer.cornerRadius = 4
+        self.layer.cornerRadius = 6
         self.clipsToBounds = true
         
         // Set up the message label
@@ -91,7 +91,7 @@ class Snackbar: UIView {
         super.init(frame: CGRect.zero)
         
         self.backgroundColor = backgroundColor
-        self.layer.cornerRadius = 4
+        self.layer.cornerRadius = 6
         self.clipsToBounds = true
         
         // Set up the message label
@@ -106,8 +106,8 @@ class Snackbar: UIView {
         
         // Set up the action button
         actionButton = UIButton(type: .system)
-        actionButton.setTitleColor(.snackbarLabel, for: .normal)
-        actionButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 15)
+        actionButton.setTitleColor(.snackbarAction, for: .normal)
+        actionButton.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         actionButton.translatesAutoresizingMaskIntoConstraints = false
         actionButton.isHidden = true
         self.addSubview(actionButton)
@@ -120,7 +120,7 @@ class Snackbar: UIView {
             actionButton.leadingAnchor.constraint(greaterThanOrEqualTo: messageLabel.trailingAnchor, constant: 8),
             actionButton.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -8),
             actionButton.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 80)
+            actionButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 66)
         ])
     }
     
@@ -142,7 +142,7 @@ class Snackbar: UIView {
         NSLayoutConstraint.activate([
             self.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             self.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            self.heightAnchor.constraint(greaterThanOrEqualToConstant: 55),
+            self.heightAnchor.constraint(greaterThanOrEqualToConstant: 68),
             snackbarBottomConstraint
         ])
         

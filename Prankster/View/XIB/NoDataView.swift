@@ -67,6 +67,10 @@ class NoDataView: UIView {
                 labelTopConstraint.constant = 30
                 lottieViewTopConstraint.constant = 50
             }
+        } else {
+            lottieViewHeightConstraint.constant = 400
+            labelTopConstraint.constant = 50
+            lottieViewTopConstraint.constant = 200
         }
     }
 }

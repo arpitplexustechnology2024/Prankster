@@ -20,7 +20,6 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var premiumButton: UIButton!
     weak var delegate: EmojiCoverAllCollectionViewCellDelegate?
     private var coverPageData: CoverPageData?
-    private var nameBlurView: UIVisualEffectView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,16 +32,6 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true
         
-        let labelBlurEffect = UIBlurEffect(style: .light)
-        nameBlurView = UIVisualEffectView(effect: labelBlurEffect)
-        nameBlurView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
- 
-        imageName.backgroundColor = .clear
-        imageName.textColor = .white
-        imageName.layer.masksToBounds = true
-        
-        contentView.insertSubview(nameBlurView, belowSubview: imageName)
-        
         DoneButton.layer.shadowColor = UIColor.black.cgColor
         DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
         DoneButton.layer.shadowRadius = 3.24
@@ -51,21 +40,37 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
         
         DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         premiumButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        
+        // Adding blur effect to imageName label background
+           let blurEffect = UIBlurEffect(style: .light)
+           let blurEffectView = UIVisualEffectView(effect: blurEffect)
+           blurEffectView.clipsToBounds = true
+           blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+           contentView.insertSubview(blurEffectView, belowSubview: imageName)
+           
+           NSLayoutConstraint.activate([
+               blurEffectView.leadingAnchor.constraint(equalTo: imageName.leadingAnchor, constant: -8),
+               blurEffectView.trailingAnchor.constraint(equalTo: imageName.trailingAnchor, constant: 8),
+               blurEffectView.topAnchor.constraint(equalTo: imageName.topAnchor, constant: -4),
+               blurEffectView.bottomAnchor.constraint(equalTo: imageName.bottomAnchor, constant: 4)
+           ])
+        
+        // Update corner radius after layout
+        DispatchQueue.main.async {
+            blurEffectView.layer.cornerRadius = blurEffectView.frame.height / 2
+        }
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        let padding: CGFloat = 4
-        nameBlurView.frame = imageName.frame.insetBy(dx: -padding, dy: -padding)
-        nameBlurView.layer.cornerRadius = nameBlurView.frame.height / 2
-        nameBlurView.layer.masksToBounds = true
+    
     }
     
     func configure(with coverPageData: CoverPageData) {
         self.coverPageData = coverPageData
         let displayName = coverPageData.coverName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.coverName
         self.imageName.text = "  \(displayName)  "
+        self.imageName.sizeToFit()
         
         if let imageURL = URL(string: coverPageData.coverURL) {
             imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { [weak self] image, _, _, _ in

@@ -15,6 +15,7 @@ class ViewLinkVC: UIViewController {
     var pranks: [PrankCreateData] = []
     private var noDataView: NoDataLightView!
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSwipeGesture()
@@ -130,6 +131,7 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         vc.prankLink = prank.link
         vc.prankShareURL = prank.shareURL
         vc.prankType = prank.type
+        vc.prankImage = prank.image
         vc.modalTransitionStyle = .crossDissolve
         vc.modalPresentationStyle = .overCurrentContext
         self.present(vc, animated: true)

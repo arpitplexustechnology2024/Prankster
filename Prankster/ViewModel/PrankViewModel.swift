@@ -18,6 +18,7 @@ class PrankViewModel {
     var createPrankCoverImage: String?
     var createPrankData: String?
     var createPrankID: String?
+    var createPrankImage: String?
     var createPrankResponse: PrankCreateResponse?
     
     init(apiService: PrankAPIProtocol = PrankAPIManager.shared) {
@@ -46,6 +47,7 @@ class PrankViewModel {
                     self.createPrankData = response.data.file
                     self.createPrankName = response.data.name
                     self.createPrankID = response.data.id
+                    self.createPrankImage = response.data.image
                     self.createPrankResponse = response
                     completion(true)
                 case .failure(let error):

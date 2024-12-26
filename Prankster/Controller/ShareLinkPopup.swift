@@ -16,6 +16,7 @@ class ShareLinkPopup: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var shareView: UIView!
     @IBOutlet weak var playPauseImageView: UIImageView!
+    @IBOutlet weak var viewHeightsConstraints: NSLayoutConstraint!
     
     var coverImageURL: String?
     var prankDataURL: String?
@@ -23,6 +24,7 @@ class ShareLinkPopup: UIViewController {
     var prankLink: String?
     var prankShareURL: String?
     var prankType: String?
+    var prankImage: String?
     private var isPlaying = false
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
@@ -38,6 +40,14 @@ class ShareLinkPopup: UIViewController {
         self.setupScrollView()
         self.setupBlurEffect()
         self.addContentToStackView()
+        
+        let screenHeight = UIScreen.main.nativeBounds.height
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            viewHeightsConstraints.constant = 360
+        } else {
+            viewHeightsConstraints.constant = 600
+        }
+        
         
         if let coverImageUrl = self.coverImageURL {
             self.loadImage(from: coverImageUrl, into: self.imageView)
@@ -157,7 +167,9 @@ class ShareLinkPopup: UIViewController {
                                     self.audioPlayer?.prepareToPlay()
                                     self.audioPlayer?.play()
                                     self.audioPlayer?.delegate = self
-                                    self.imageView.image = UIImage(named: "audioPrankImage")
+                                    if let audioImageUrl = self.prankImage {
+                                        self.loadImage(from: audioImageUrl, into: self.imageView)
+                                    }
                                     self.playPauseImageView.isHidden = true
                                 } catch {
                                     print("Error creating audio player: \(error)")
@@ -167,12 +179,16 @@ class ShareLinkPopup: UIViewController {
                         }.resume()
                     } else {
                         audioPlayer?.play()
-                        imageView.image = UIImage(named: "audioPrankImage")
+                        if let audioImageUrl = self.prankImage {
+                            self.loadImage(from: audioImageUrl, into: self.imageView)
+                        }
                         playPauseImageView.isHidden = true
                     }
                 } else {
                     audioPlayer?.pause()
-                    imageView.image = UIImage(named: "audioPrankImage")
+                    if let audioImageUrl = self.prankImage {
+                        self.loadImage(from: audioImageUrl, into: self.imageView)
+                    }
                     playPauseImageView.image = UIImage(named: "PlayButton")
                     playPauseImageView.isHidden = false
                 }

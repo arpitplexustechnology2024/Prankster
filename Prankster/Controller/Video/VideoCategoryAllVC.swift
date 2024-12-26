@@ -132,14 +132,24 @@ class VideoCategoryAllVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search video or artist name"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = searchbar.frame.height / 2
+        searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
-        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.layer.cornerRadius = 10
         searchbarBlurView.clipsToBounds = true
         searchbarBlurView.layer.masksToBounds = true
         
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
+            textField.attributedPlaceholder = NSAttributedString(
+                string: "Search video or artist name",
+                attributes: [.foregroundColor: UIColor.white]
+            )
+        }
+        
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField,
+           let leftIconView = textField.leftView as? UIImageView {
+            leftIconView.tintColor = .white
+            leftIconView.image = leftIconView.image?.withRenderingMode(.alwaysTemplate)
         }
     }
     
@@ -162,6 +172,14 @@ class VideoCategoryAllVC: UIViewController {
         self.videoCharacterSliderCollectionView.dataSource = self
         self.videoCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.videoCharacterSliderCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.videoCharacterSliderCollectionView.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
+        if let layout = videoCharacterSliderCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 16, height: videoCharacterSliderCollectionView.frame.height)
+        }
     }
     
     // MARK: - fetchAllVideos
@@ -184,8 +202,7 @@ class VideoCategoryAllVC: UIViewController {
                         
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.videoCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
                             
                             if !self.isLoadingMore {
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

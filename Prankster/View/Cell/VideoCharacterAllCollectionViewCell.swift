@@ -9,20 +9,6 @@ import UIKit
 import SDWebImage
 import AVFoundation
 
-// MARK: - Global VideoMute Manager
-class GlobalVideoMuteManager {
-    static let shared = GlobalVideoMuteManager()
-    private init() {}
-    
-    var isMutedGlobally = true
-    var muteStatusChangeHandlers: [() -> Void] = []
-    
-    func toggleGlobalMuteStatus() {
-        isMutedGlobally = !isMutedGlobally
-        muteStatusChangeHandlers.forEach { $0() }
-    }
-}
-
 // MARK: - Video Playback Manager
 class VideoPlaybackManager {
     static let shared = VideoPlaybackManager()
@@ -52,7 +38,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var DoneButton: UIButton!
     @IBOutlet weak var imageName: UILabel!
     @IBOutlet weak var playPauseImageView: UIImageView!
-    @IBOutlet weak var muteButton: UIButton!
     @IBOutlet weak var premiumButton: UIButton!
     
     // MARK: - Properties
@@ -65,14 +50,11 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     private var isPlaying = false
     private var isVideoLoaded = false
     private var lastPausedTime: CMTime?
-    private var isMuted = false
-    private var nameBlurView: UIVisualEffectView!
     
     // MARK: - Lifecycle Methods
     override func awakeFromNib() {
         super.awakeFromNib()
         setupUI()
-        setupGlobalMuteObserver()
     }
     
     // MARK: - Setup Methods
@@ -82,16 +64,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true
         
-        let labelBlurEffect = UIBlurEffect(style: .light)
-        nameBlurView = UIVisualEffectView(effect: labelBlurEffect)
-        nameBlurView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
-        
-        imageName.backgroundColor = .clear
-        imageName.textColor = .white
-        imageName.layer.masksToBounds = true
-        
-        contentView.insertSubview(nameBlurView, belowSubview: imageName)
-        
         DoneButton.layer.shadowColor = UIColor.black.cgColor
         DoneButton.layer.shadowOffset = CGSize(width: 0, height: 3)
         DoneButton.layer.shadowRadius = 3.24
@@ -100,14 +72,29 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         
         DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         premiumButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        muteButton.addTarget(self, action: #selector(muteButtonTapped), for: .touchUpInside)
-        muteButton.setImage(UIImage(named: "UnmuteIcon"), for: .normal)
-        muteButton.isHidden = true
-        muteButton.layer.cornerRadius = muteButton.frame.height / 2
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(tapGesture)
+        
+        // Adding blur effect to imageName label background
+           let blurEffect = UIBlurEffect(style: .light)
+           let blurEffectView = UIVisualEffectView(effect: blurEffect)
+           blurEffectView.clipsToBounds = true
+           blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+           contentView.insertSubview(blurEffectView, belowSubview: imageName)
+           
+           NSLayoutConstraint.activate([
+               blurEffectView.leadingAnchor.constraint(equalTo: imageName.leadingAnchor, constant: -8),
+               blurEffectView.trailingAnchor.constraint(equalTo: imageName.trailingAnchor, constant: 8),
+               blurEffectView.topAnchor.constraint(equalTo: imageName.topAnchor, constant: -4),
+               blurEffectView.bottomAnchor.constraint(equalTo: imageName.bottomAnchor, constant: 4)
+           ])
+        
+        // Update corner radius after layout
+        DispatchQueue.main.async {
+            blurEffectView.layer.cornerRadius = blurEffectView.frame.height / 2
+        }
     }
     
     override init(frame: CGRect) {
@@ -125,6 +112,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         self.currentIndexPath = indexPath
         let displayName = coverPageData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.name
         self.imageName.text = "  \(displayName)  "
+        self.imageName.sizeToFit()
         
         if coverPageData.premium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
             self.premiumButton.isHidden = false
@@ -137,8 +125,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         if let videoURL = URL(string: coverPageData.file ?? "N/A") {
             setupVideo(with: videoURL)
         }
-        player?.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
-        updateMuteButtonImage()
     }
     
     private func setupVideo(with url: URL) {
@@ -168,7 +154,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         guard isVideoLoaded, let player = player else {
             return
         }
-        player.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
         AudioPlaybackManager.shared.stopCurrentPlayback()
         
         if let pausedTime = lastPausedTime {
@@ -178,7 +163,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         player.play()
         self.playPauseImageView.isHidden = true
         isPlaying = true
-        muteButton.isHidden = false
         
         VideoPlaybackManager.shared.currentlyPlayingCell = self
         VideoPlaybackManager.shared.currentlyPlayingIndexPath = currentIndexPath
@@ -191,7 +175,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         showPauseImage()
         isPlaying = false
         imageViewTimer?.invalidate()
-        muteButton.isHidden = true
         lastPausedTime = currentTime
     }
     
@@ -222,10 +205,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    @objc private func muteButtonTapped() {
-        GlobalVideoMuteManager.shared.toggleGlobalMuteStatus()
-    }
-    
     @objc private func playerDidFinishPlaying() {
         stopVideo()
         lastPausedTime = nil
@@ -235,11 +214,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer?.frame = imageView.bounds
-        
-        let padding: CGFloat = 4
-        nameBlurView.frame = imageName.frame.insetBy(dx: -padding, dy: -padding)
-        nameBlurView.layer.cornerRadius = nameBlurView.frame.height / 2
-        nameBlurView.layer.masksToBounds = true
     }
     
     
@@ -254,21 +228,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         playerLayer = nil
         isVideoLoaded = false
         lastPausedTime = nil
-        GlobalVideoMuteManager.shared.muteStatusChangeHandlers.removeAll { $0 as? () -> Void == nil }
-    }
-    
-    private func setupGlobalMuteObserver() {
-        let handler = { [weak self] in
-            guard let self = self, let player = self.player else { return }
-            player.isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
-            self.updateMuteButtonImage()
-        }
-        GlobalVideoMuteManager.shared.muteStatusChangeHandlers.append(handler)
-    }
-    
-    private func updateMuteButtonImage() {
-        let isMuted = GlobalVideoMuteManager.shared.isMutedGlobally
-        muteButton.setImage(UIImage(named: isMuted ? "Mute" : "Unmute"), for: .normal)
     }
 }
 

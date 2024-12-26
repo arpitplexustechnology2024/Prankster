@@ -37,6 +37,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var prankDataURL: String?
     var prankName: String?
     var prankLink: String?
+    var prankAudioImage: String?
     var prankShareURL: String?
     var sharePrank: Bool = false
     private let adsViewModel = AdsViewModel()
@@ -45,9 +46,9 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     private var playerLayer: AVPlayerLayer?
     var bannerAdUtility = BannerAdUtility()
     private var viewModel = PrankViewModel()
-    private var noDataView: NoDataBottomBarView!
+    private var noDataView: NoDataView!
     let interstitialAdUtility = InterstitialAdUtility()
-    private var noInternetView: NoInternetBottombarView!
+    private var noInternetView: NoInternetView!
     
     let stackView: UIStackView = {
         let stack = UIStackView()
@@ -219,6 +220,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     self.prankLink = self.viewModel.createPrankShareURL
                     self.prankShareURL = self.viewModel.createPrankShareURL
                     self.prankNameLabel.text = self.prankName
+                    self.prankAudioImage = self.viewModel.createPrankImage
                     
                     if let coverImageUrl = self.coverImageURL {
                         self.loadImage(from: coverImageUrl, into: self.prankImageView)
@@ -289,7 +291,9 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                                     self.audioPlayer?.prepareToPlay()
                                     self.audioPlayer?.play()
                                     self.audioPlayer?.delegate = self
-                                    self.prankImageView.image = UIImage(named: "audioPrankImage")
+                                    if let audioImageUrl = self.prankAudioImage {
+                                        self.loadImage(from: audioImageUrl, into: self.prankImageView)
+                                    }
                                     self.playPauseImageView.isHidden = true
                                 } catch {
                                     print("Error creating audio player: \(error)")
@@ -299,12 +303,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                         }.resume()
                     } else {
                         audioPlayer?.play()
-                        prankImageView.image = UIImage(named: "audioPrankImage")
                         playPauseImageView.isHidden = true
                     }
                 } else {
                     audioPlayer?.pause()
-                    prankImageView.image = UIImage(named: "audioPrankImage")
                     playPauseImageView.image = UIImage(named: "PlayButton")
                     playPauseImageView.isHidden = false
                 }
@@ -405,16 +407,17 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     // MARK: - setupNoDataView
     private func setupNoDataView() {
-        noDataView = NoDataBottomBarView()
+        noDataView = NoDataView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
         self.shareView.addSubview(noDataView)
         noDataView.translatesAutoresizingMaskIntoConstraints = false
+        let bottomConstant: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 100 : 75
         NSLayoutConstraint.activate([
-            noDataView.leadingAnchor.constraint(equalTo: shareView.leadingAnchor),
-            noDataView.trailingAnchor.constraint(equalTo: shareView.trailingAnchor),
-            noDataView.topAnchor.constraint(equalTo: shareView.topAnchor),
-            noDataView.bottomAnchor.constraint(equalTo: shareView.bottomAnchor)
+            noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noDataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noDataView.topAnchor.constraint(equalTo: navigationbarView.topAnchor),
+            noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: bottomConstant)
         ])
         noDataView.layer.cornerRadius = 15
         noDataView.layer.masksToBounds = true
@@ -423,16 +426,16 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     // MARK: - setupNoInternetView
     func setupNoInternetView() {
-        noInternetView = NoInternetBottombarView()
+        noInternetView = NoInternetView()
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
         noInternetView.isHidden = true
         self.shareView.addSubview(noInternetView)
         noInternetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            noInternetView.leadingAnchor.constraint(equalTo: shareView.leadingAnchor),
-            noInternetView.trailingAnchor.constraint(equalTo: shareView.trailingAnchor),
-            noInternetView.topAnchor.constraint(equalTo: shareView.topAnchor),
-            noInternetView.bottomAnchor.constraint(equalTo: shareView.bottomAnchor)
+            noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noInternetView.topAnchor.constraint(equalTo: navigationbarView.topAnchor),
+            noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         noInternetView.layer.cornerRadius = 15
         noInternetView.layer.masksToBounds = true
@@ -838,6 +841,7 @@ extension ShareLinkVC {
             link: viewModel.createPrankLink ?? "",
             coverImage: viewModel.createPrankCoverImage ?? "", shareURL: viewModel.createPrankShareURL ?? "",
             file: viewModel.createPrankData ?? "",
+            image: viewModel.createPrankImage ?? "",
             type: selectedPranktype ?? "",
             name: viewModel.createPrankName ?? ""
         )

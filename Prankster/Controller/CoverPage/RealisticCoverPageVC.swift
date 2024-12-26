@@ -82,14 +82,24 @@ class RealisticCoverPageVC: UIViewController {
         searchbar.delegate = self
         searchbar.placeholder = "Search cover image"
         searchbar.backgroundImage = UIImage()
-        searchbar.layer.cornerRadius = searchbar.frame.height / 2
+        searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
-        searchbarBlurView.layer.cornerRadius = searchbarBlurView.frame.height / 2
+        searchbarBlurView.layer.cornerRadius = 10
         searchbarBlurView.clipsToBounds = true
         searchbarBlurView.layer.masksToBounds = true
         
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
+            textField.attributedPlaceholder = NSAttributedString(
+                string: "Search cover image",
+                attributes: [.foregroundColor: UIColor.white]
+            )
+        }
+        
+        if let textField = searchbar.value(forKey: "searchField") as? UITextField,
+           let leftIconView = textField.leftView as? UIImageView {
+            leftIconView.tintColor = .white
+            leftIconView.image = leftIconView.image?.withRenderingMode(.alwaysTemplate)
         }
     }
     
@@ -112,6 +122,14 @@ class RealisticCoverPageVC: UIViewController {
         self.realisticCoverSlideCollectionview.dataSource = self
         self.realisticCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.realisticCoverSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.realisticCoverSlideCollectionview.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
+        if let layout = realisticCoverSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 16, height: realisticCoverSlideCollectionview.frame.height)
+        }
     }
     
     func fetchAllCoverPages() {
@@ -133,8 +151,7 @@ class RealisticCoverPageVC: UIViewController {
                         
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
@@ -231,47 +248,47 @@ class RealisticCoverPageVC: UIViewController {
     }
     
     private func filterContent(with searchText: String) {
-           isSearchActive = !searchText.isEmpty
-           
-           if searchText.isEmpty {
-               filteredRealisticCoverPages = viewModel.realisticCoverPages
-           } else {
-               filteredRealisticCoverPages = viewModel.realisticCoverPages.filter { coverPage in
-                   let nameMatch = coverPage.coverName.lowercased().contains(searchText.lowercased())
-                   let tagMatch = coverPage.tagName.contains { tag in
-                       tag.lowercased().contains(searchText.lowercased())
-                   }
-                   return nameMatch || tagMatch
-               }
-           }
-           
-           DispatchQueue.main.async {
-               self.selectedIndex = 0
-               
-               self.realisticCoverAllCollectionView.reloadData()
-               self.realisticCoverSlideCollectionview.reloadData()
-               
-               if self.filteredRealisticCoverPages.isEmpty && !searchText.isEmpty {
-                   self.showNoDataView()
-               } else {
-                   self.hideNoDataView()
-                   
-                   if !self.filteredRealisticCoverPages.isEmpty {
-                       let indexPath = IndexPath(item: 0, section: 0)
-                       
-                       if self.realisticCoverAllCollectionView.numberOfItems(inSection: 0) > 0 {
-                           self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                           self.realisticCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                       }
-                       
-                       if self.realisticCoverSlideCollectionview.numberOfItems(inSection: 0) > 0 {
-                           self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                           self.realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                       }
-                   }
-               }
-           }
-       }
+        isSearchActive = !searchText.isEmpty
+        
+        if searchText.isEmpty {
+            filteredRealisticCoverPages = viewModel.realisticCoverPages
+        } else {
+            filteredRealisticCoverPages = viewModel.realisticCoverPages.filter { coverPage in
+                let nameMatch = coverPage.coverName.lowercased().contains(searchText.lowercased())
+                let tagMatch = coverPage.tagName.contains { tag in
+                    tag.lowercased().contains(searchText.lowercased())
+                }
+                return nameMatch || tagMatch
+            }
+        }
+        
+        DispatchQueue.main.async {
+            self.selectedIndex = 0
+            
+            self.realisticCoverAllCollectionView.reloadData()
+            self.realisticCoverSlideCollectionview.reloadData()
+            
+            if self.filteredRealisticCoverPages.isEmpty && !searchText.isEmpty {
+                self.showNoDataView()
+            } else {
+                self.hideNoDataView()
+                
+                if !self.filteredRealisticCoverPages.isEmpty {
+                    let indexPath = IndexPath(item: 0, section: 0)
+                    
+                    if self.realisticCoverAllCollectionView.numberOfItems(inSection: 0) > 0 {
+                        self.realisticCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.realisticCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                    
+                    if self.realisticCoverSlideCollectionview.numberOfItems(inSection: 0) > 0 {
+                        self.realisticCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.realisticCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                }
+            }
+        }
+    }
 }
 
 extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {

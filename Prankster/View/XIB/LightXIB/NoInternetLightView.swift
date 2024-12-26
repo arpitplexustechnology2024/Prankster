@@ -75,6 +75,10 @@ class NoInternetLightView: UIView {
                 lottieViewTopConstraint.constant = 50
                 retryButtonTopConstraint.constant = 30
             }
+        } else {
+            lottieViewHeightConstraint.constant = 500
+            labelTopConstraint.constant = 50
+            lottieViewTopConstraint.constant = 150
         }
     }
 }

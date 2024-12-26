@@ -38,12 +38,12 @@ class ShareBottomVC: UIViewController {
             loadGif(named: snapGIF[snapCurrentGifIndex])
         }
         
-        NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
+       // NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     @objc func appMovedToBackground() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-            UIPasteboard.general.string = self.prankLink
+           // UIPasteboard.general.string = self.prankLink
         }
     }
     
@@ -116,8 +116,6 @@ class ShareBottomVC: UIViewController {
               let coverImageURL = coverImageURL else { return }
         
         if let urlScheme = URL(string: "instagram-stories://share?source_application=com.prank.memes.fun"), UIApplication.shared.canOpenURL(urlScheme) {
-            
-            UIPasteboard.general.string = prankLink
             
             let screenSize = UIScreen.main.bounds.size
             let targetAspectRatio: CGFloat = 9.0 / 16.0

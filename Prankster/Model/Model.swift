@@ -113,7 +113,7 @@ struct PrankCreateResponse: Codable {
 struct PrankCreateData: Codable {
     let id: String
     let link: String
-    let coverImage, shareURL, file: String
+    let coverImage, shareURL, file, image: String
     let type, name: String
     
     enum CodingKeys: String, CodingKey {
@@ -122,6 +122,7 @@ struct PrankCreateData: Codable {
         case coverImage = "CoverImage"
         case shareURL = "ShareURL"
         case file = "File"
+        case image = "Image"
         case type = "Type"
         case name = "Name"
     }
@@ -140,7 +141,7 @@ struct SpinnerResponse: Codable {
     let data: SpinnerData
 }
 struct SpinnerData: Codable {
-    let link, coverImage, shareURL, file: String
+    let link, coverImage, shareURL, file, image: String
     let type, name: String
     
     enum CodingKeys: String, CodingKey {
@@ -148,6 +149,7 @@ struct SpinnerData: Codable {
         case coverImage = "CoverImage"
         case shareURL = "ShareURL"
         case file = "File"
+        case image = "Image"
         case type = "Type"
         case name = "Name"
     }
