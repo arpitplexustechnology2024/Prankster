@@ -49,7 +49,7 @@ extension SpinnerDataVC: UICollectionViewDelegate, UICollectionViewDataSource, U
         let spinData = spinnerResponseData[indexPath.item]
         cell.configure(with: spinData) { [weak self] selectedSpinData in
             guard let self = self, let spinData = selectedSpinData else { return }
-            self.dismiss(animated: true) { [self] in
+            self.dismiss(animated: true) {
                 if let window = UIApplication.shared.windows.first {
                     if let rootViewController = window.rootViewController as? UINavigationController {
                         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerPreviewVC") as! SpinnerPreviewVC

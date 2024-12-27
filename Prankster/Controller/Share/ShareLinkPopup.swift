@@ -41,7 +41,6 @@ class ShareLinkPopup: UIViewController {
         self.setupBlurEffect()
         self.addContentToStackView()
         
-        let screenHeight = UIScreen.main.nativeBounds.height
         if UIDevice.current.userInterfaceIdiom == .phone {
             viewHeightsConstraints.constant = 360
         } else {
@@ -352,7 +351,7 @@ class ShareLinkPopup: UIViewController {
         guard let tappedView = gesture.view else { return }
         
         let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
-                                adsViewModel.getAdID(type: .interstitial) == nil
+        adsViewModel.getAdID(type: .interstitial) == nil
         
         switch tappedView.tag {
         case 0: // Copy link
@@ -443,16 +442,33 @@ class ShareLinkPopup: UIViewController {
     
     private func shareWhatsAppMessage() {
         guard let prankLink = prankShareURL,
+              let coverImageURL = coverImageURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
-        let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
-        if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        } else {
-            if let appStoreURL = URL(string: "https://apps.apple.com/us/app/whatsapp-messenger/id310633997") {
-                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+        
+        let message = "\(prankName)\n\n👇🏻 Tap on the link 👇🏻:\n\(prankLink)"
+        DispatchQueue.global().async {
+            if let url = URL(string: coverImageURL),
+               let imageData = try? Data(contentsOf: url),
+               let image = UIImage(data: imageData) {
+                
+                DispatchQueue.main.async {
+                    let activityItems: [Any] = [message, image]
+                    let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+                    activityVC.excludedActivityTypes = [.airDrop, .addToReadingList, .message, .mail, .saveToCameraRoll]
+                    if let topController = self.topViewController() {
+                        topController.present(activityVC, animated: true, completion: nil)
+                    }
+                }
             }
         }
+    }
+    
+    private func topViewController() -> UIViewController? {
+        var topController = UIApplication.shared.keyWindow?.rootViewController
+        while let presentedController = topController?.presentedViewController {
+            topController = presentedController
+        }
+        return topController
     }
     
     private func shareInstagramMessage() {
@@ -471,7 +487,7 @@ class ShareLinkPopup: UIViewController {
     private func shareTelegramMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let telegramMessage = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
+        let telegramMessage = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
         let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -485,7 +501,7 @@ class ShareLinkPopup: UIViewController {
     private func shareMoreMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
         let itemsToShare: [Any] = [message]
         let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
         if let popoverController = activityVC.popoverPresentationController {

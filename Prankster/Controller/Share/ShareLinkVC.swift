@@ -674,7 +674,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         guard let prankLink = prankShareURL,
               let prankLink = coverImageURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
         let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
         if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -701,7 +701,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     private func shareTelegramMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let telegramMessage = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
+        let telegramMessage = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
         let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -714,12 +714,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     private func shareMoreMessage() {
         guard let prankLink = prankShareURL,
-              let coverImage = coverImageURL,
               let prankName = prankName else { return }
         
-        let message = "\(prankName)\n\n👇🏻 Check this out 👇🏻:\n\(prankLink)"
-        let itemsToShare: [Any] = [message, coverImage]
-        let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
+        let message = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
+        let activityVC = UIActivityViewController(activityItems: [message], applicationActivities: nil)
         
         if let popoverController = activityVC.popoverPresentationController {
             popoverController.sourceView = self.view

@@ -47,11 +47,8 @@ class SaveRecordingPopup: UIViewController, UITextFieldDelegate {
               let audioName = TextFiled.text,
               !audioName.isEmpty else {
             
-            let alert = UIAlertController(title: "Error",
-                                          message: "Please enter a name for your recording",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
+            let snackbar = CustomSnackbar(message: "Please enter a name for your recording.", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
             return
         }
         
@@ -65,11 +62,6 @@ class SaveRecordingPopup: UIViewController, UITextFieldDelegate {
             self.dismiss(animated: true)
         } catch {
             print("Error saving audio file: \(error)")
-            let alert = UIAlertController(title: "Error",
-                                          message: "Failed to save recording",
-                                          preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-            present(alert, animated: true)
         }
     }
     

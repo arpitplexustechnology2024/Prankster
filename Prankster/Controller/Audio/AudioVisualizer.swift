@@ -41,7 +41,6 @@ class AudioVisualizer: UIView {
     }
     
     private func setupStaticRightWaveform() {
-   //     let maxVisibleBars = Int(bounds.width / 2 / (barWidth + barSpacing))
         
         rightPoints = []
         for _ in 0..<maxBars {
