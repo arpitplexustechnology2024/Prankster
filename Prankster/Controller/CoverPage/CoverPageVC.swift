@@ -36,7 +36,6 @@ class CoverPageVC: UIViewController {
     
     // MARK: - variable
     var isLoading = true
-    var selectedIndex: Int = 0
     var selectedCustomImage: UIImage?
     var selectedCoverImageURL: String?
     var selectedCoverImageFile: Data?
