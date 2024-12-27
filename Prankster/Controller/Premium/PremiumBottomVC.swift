@@ -103,9 +103,9 @@ class PremiumBottomVC: UIViewController, SKPaymentTransactionObserver, SKProduct
     private var selectedPremiumOption: PremiumOption?
     
     // Product IDs for auto-renewable subscriptions
-    private let weeklySubscriptionID = "com.prank.memes.week"
-    private let monthlySubscriptionID = "com.prank.memes.month"
-    private let yearlySubscriptionID = "com.prank.memes.year"
+    private let weeklySubscriptionID = "com.prank.memes.wk"
+    private let monthlySubscriptionID = "com.prank.memes.mt"
+    private let yearlySubscriptionID = "com.prank.memes.yr"
     
     // Product variables
     private var weeklySubscription: SKProduct?
