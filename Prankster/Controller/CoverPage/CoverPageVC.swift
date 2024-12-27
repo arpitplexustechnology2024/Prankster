@@ -671,7 +671,7 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
         case "photo library":
             messageKey = "We need access to your photo library to set the cover image."
         default:
-            messageKey = "SnackbarDefaultPermissionAccess"
+            messageKey = "We need access to your camera to set the cover image."
         }
         
         let localizedMessage = NSLocalizedString(messageKey, comment: "")

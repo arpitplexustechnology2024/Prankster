@@ -631,7 +631,7 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         case "photo library":
             messageKey = "We need access to your photo library to select a video."
         default:
-            messageKey = "SnackbarDefaultPermissionAccess"
+            messageKey = "We need access to your camera to record a video."
         }
         
         let localizedMessage = NSLocalizedString(messageKey, comment: "")

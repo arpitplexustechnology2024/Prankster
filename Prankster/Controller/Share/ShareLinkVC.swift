@@ -672,17 +672,33 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     private func shareWhatsAppMessage() {
         guard let prankLink = prankShareURL,
-              let prankLink = coverImageURL,
+              let coverImageURL = coverImageURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
-        let whatsappURL = URL(string: "whatsapp://send?text=\(message.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")")
-        if let url = whatsappURL, UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        } else {
-            if let appStoreURL = URL(string: "https://apps.apple.com/us/app/whatsapp-messenger/id310633997") {
-                UIApplication.shared.open(appStoreURL, options: [:], completionHandler: nil)
+        
+        let message = "\(prankName)\n\n👇🏻 Tap on the link 👇🏻:\n\(prankLink)"
+        DispatchQueue.global().async {
+            if let url = URL(string: coverImageURL),
+               let imageData = try? Data(contentsOf: url),
+               let image = UIImage(data: imageData) {
+                
+                DispatchQueue.main.async {
+                    let activityItems: [Any] = [message, image]
+                    let activityVC = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+                    activityVC.excludedActivityTypes = [.airDrop, .addToReadingList, .message, .mail, .saveToCameraRoll]
+                    if let topController = self.topViewController() {
+                        topController.present(activityVC, animated: true, completion: nil)
+                    }
+                }
             }
         }
+    }
+    
+    private func topViewController() -> UIViewController? {
+        var topController = UIApplication.shared.keyWindow?.rootViewController
+        while let presentedController = topController?.presentedViewController {
+            topController = presentedController
+        }
+        return topController
     }
     
     private func shareInstagramMessage() {
