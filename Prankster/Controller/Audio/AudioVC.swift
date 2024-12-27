@@ -389,6 +389,11 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 if let url = URL(string: audioData.imageURL) {
                     cell.imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "PlaceholderAudio"))
                 }
+                
+                if let selectedCell = selectedAudioCustomCell {
+                    cell.isSelected = selectedCell == indexPath
+                }
+                
                 return cell
             }
         } else if collectionView == audioCharacterCollectionView {
@@ -420,12 +425,21 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 showAudioOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
             } else {
+                if indexPath == selectedAudioCustomCell {
+                    return
+                }
+                
                 if let previousCharacterCell = selectedAudioCharacterCell {
                     audioCharacterCollectionView.deselectItem(at: previousCharacterCell, animated: true)
                     selectedAudioCharacterCell = nil
                 }
                 
+                if let previousCell = selectedAudioCustomCell {
+                    collectionView.deselectItem(at: previousCell, animated: true)
+                }
+                
                 selectedAudioCustomCell = indexPath
+                collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
                 let audioData = customAudios[indexPath.item - 1]
                 selectedAudioIndex = indexPath.item - 1
                 print("Custom Audio File URL:", audioData.url)
@@ -442,11 +456,6 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 isPlaying = false
             }
         } else if collectionView == audioCharacterCollectionView {
-            if let previousCustomCell = selectedAudioCustomCell {
-                audioCustomCollectionView.deselectItem(at: previousCustomCell, animated: true)
-                selectedAudioCustomCell = nil
-            }
-            
             selectedAudioCharacterCell = indexPath
             let category = viewModel.categorys[indexPath.item]
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioCategoryAllVC") as! AudioCategoryAllVC
@@ -454,6 +463,13 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+        if collectionView == audioCustomCollectionView {
+                return indexPath.item == 0 || indexPath != selectedAudioCustomCell
+            }
+            return true
+        }
     
     func deselectCharacterCell() {
         if let selectedCell = selectedAudioCharacterCell {

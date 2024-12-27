@@ -62,12 +62,12 @@ class VideoVC: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        stopVideo()
+        pauseVideo()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        stopVideo()
+        pauseVideo()
     }
     
     // MARK: - viewDidLoad
@@ -282,8 +282,6 @@ class VideoVC: UIViewController {
                     nextVC.selectedFileType = "mp4"
                     nextVC.sharePrank = true
                     self.navigationController?.pushViewController(nextVC, animated: true)
-                    self.videoImageView.isHidden = false
-                    self.pauseImageView.isHidden = true
                 }
             } else {
                 let snackbar = CustomSnackbar(message: "Please select a video.", backgroundColor: .snackbar)
@@ -298,14 +296,6 @@ class VideoVC: UIViewController {
     // MARK: - btnBackTapped
     @IBAction func btnBackTapped(_ sender: UIButton) {
         self.navigationController?.popViewController(animated: true)
-    }
-    
-    private func stopVideo() {
-        player?.pause()
-        player = nil
-        playerLayer?.removeFromSuperlayer()
-        playerLayer = nil
-        isPlaying = false
     }
     
     deinit {
@@ -363,7 +353,7 @@ class VideoVC: UIViewController {
         
         if let videoURLString = coverData.file,
            let videoURL = URL(string: videoURLString) {
-            stopVideo()
+            pauseVideo()
             
             let playerItem = AVPlayerItem(url: videoURL)
             player = AVPlayer(playerItem: playerItem)
@@ -429,6 +419,11 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCustomCollectionViewCell", for: indexPath) as! VideoCustomCollectionViewCell
                 let videoURL = customVideos[indexPath.item - 1]
                 cell.setThumbnail(for: videoURL)
+                
+                if let selectedCell = selectedVideoCustomCell {
+                    cell.isSelected = selectedCell == indexPath
+                }
+                
                 return cell
             }
         } else if collectionView == videoCharacterCollectionView {
@@ -461,11 +456,22 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
             if indexPath.item == 0 {
                 showVideoOptionsActionSheet(sourceView: collectionView.cellForItem(at: indexPath)!)
             } else {
+                
+                if indexPath == selectedVideoCustomCell {
+                    return
+                }
+                
                 if let previousCharacterCell = selectedVideoCategoryCell {
                     videoCharacterCollectionView.deselectItem(at: previousCharacterCell, animated: true)
                     selectedVideoCategoryCell = nil
                 }
+                
+                if let previousCell = selectedVideoCustomCell {
+                    collectionView.deselectItem(at: previousCell, animated: true)
+                }
+                
                 selectedVideoCustomCell = indexPath
+                collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
                 videoImageView.isHidden = true
                 showLottieLoader()
                 let videoURL = customVideos[indexPath.item - 1]
@@ -479,19 +485,20 @@ extension VideoVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 hideLottieLoader()
             }
         } else if collectionView == videoCharacterCollectionView {
-            if let previousCustomCell = selectedVideoCustomCell {
-                videoCustomCollectionView.deselectItem(at: previousCustomCell, animated: true)
-                selectedVideoCustomCell = nil
-            }
             selectedVideoCategoryCell = indexPath
             let character = viewModel.categorys[indexPath.item]
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "VideoCategoryAllVC") as! VideoCategoryAllVC
             vc.categoryId = character.categoryID
             self.navigationController?.pushViewController(vc, animated: true)
-            self.videoImageView.isHidden = false
-            self.pauseImageView.isHidden = true
         }
     }
+    
+    func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+            if collectionView == videoCustomCollectionView {
+                return indexPath.item == 0 || indexPath != selectedVideoCustomCell
+            }
+            return true
+        }
     
     func deselectCharacterCell() {
         if let selectedCell = selectedVideoCategoryCell {
@@ -534,17 +541,12 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
         
         let cameraAction = UIAlertAction(title: "Camera", style: .default) { [weak self] _ in
             self?.openVideoCamera()
-            self?.stopVideo()
-            self?.videoImageView.isHidden = false
-            self?.pauseImageView.isHidden = true
-            
+            self?.pauseVideo()
         }
         
         let galleryAction = UIAlertAction(title: "Gallery", style: .default) { [weak self] _ in
             self?.openVideoGallery()
-            self?.stopVideo()
-            self?.videoImageView.isHidden = false
-            self?.pauseImageView.isHidden = true
+            self?.pauseVideo()
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
@@ -667,9 +669,6 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
             picker.dismiss(animated: true) {
                 let snackbar = CustomSnackbar(message: "Please select a max 15 seconds video file.", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
-                
-                self.videoImageView.isHidden = false
-                self.pauseImageView.isHidden = true
                 self.hideLottieLoader()
             }
             return
@@ -704,8 +703,6 @@ extension VideoVC: UIImagePickerControllerDelegate, UINavigationControllerDelega
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true)
-        self.videoImageView.isHidden = false
-        self.pauseImageView.isHidden = true
     }
     
     func playCustomVideo(url: URL, autoPlay: Bool = false) {

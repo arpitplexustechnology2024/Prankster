@@ -395,10 +395,6 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
                 hideLottieLoader()
             }
         } else if collectionView == imageCharacterCollectionView {
-            if let previousCustomCell = selectedImageCustomCell {
-                imageCustomCollectionView.deselectItem(at: previousCustomCell, animated: true)
-                selectedImageCustomCell = nil
-            }
             selectedImageCategoryCell = indexPath
             let category = viewModel.categorys[indexPath.item]
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCategoryAllVC") as! ImageCategoryAllVC
