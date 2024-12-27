@@ -675,7 +675,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
               let coverImageURL = coverImageURL,
               let prankName = prankName else { return }
         
-        let message = "\(prankName)\n\n👇🏻 Tap on the link 👇🏻:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
         DispatchQueue.global().async {
             if let url = URL(string: coverImageURL),
                let imageData = try? Data(contentsOf: url),

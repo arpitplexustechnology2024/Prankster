@@ -371,7 +371,7 @@ extension HomeVC {
             if let error = error {
                 print("Error scheduling notification: \(error.localizedDescription)")
             } else {
-                print("Notification scheduled for 5:00 PM daily")
+                print("Notification scheduled for 10:00 AM daily")
             }
         }
     }
