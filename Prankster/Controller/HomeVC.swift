@@ -31,7 +31,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     
     private var dropdownView: UIView?
     private var isDropdownVisible = false
-    private let adsViewModel = AdsViewModel()
     
     let notificationMessages = [
         (title: "Sex Prank", body: "Create sex prank & share it & capture funny moments."),
@@ -45,7 +44,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.loadAds()
         self.seupViewAction()
         self.requestNotificationPermission()
         self.navigationbarView.addBottomShadow()
@@ -372,20 +370,6 @@ extension HomeVC {
                 print("Error scheduling notification: \(error.localizedDescription)")
             } else {
                 print("Notification scheduled for 10:00 AM daily")
-            }
-        }
-    }
-    
-    func loadAds() {
-        adsViewModel.fetchAds { [weak self] success in
-            if success {
-                print("Ads loaded successfully")
-                let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
-                print("Saved Ad Names: \(savedNames)")
-                print("Saved Ad IDs: \(savedIDs)")
-            } else {
-                print("Failed to load ads")
-                self?.adsViewModel.removeAdsFromUserDefaults()
             }
         }
     }

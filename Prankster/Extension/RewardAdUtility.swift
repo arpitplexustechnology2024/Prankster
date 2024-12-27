@@ -34,6 +34,7 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
     func showRewardedAd() {
         guard let rewardedAd = rewardedAd, let rootViewController = rootViewController else {
             print("Ad wasn't ready.")
+            
             return
         }
         rewardedAd.present(fromRootViewController: rootViewController) { [weak self] in

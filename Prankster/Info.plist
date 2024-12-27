@@ -276,25 +276,25 @@
         <array>
             <dict>
                 <key>UIApplicationShortcutItemIconFile</key>
-                <string>Prank</string>
+                <string>AudioShort</string>
                 <key>UIApplicationShortcutItemTitle</key>
-                <string>Create Audio Prank</string>
+                <string>Audio Prank</string>
                 <key>UIApplicationShortcutItemType</key>
                 <string>AudioAction</string>
             </dict>
             <dict>
                 <key>UIApplicationShortcutItemIconFile</key>
-                <string>Spiner</string>
+                <string>ImageShort</string>
                 <key>UIApplicationShortcutItemTitle</key>
-                <string>Create Video Prank</string>
+                <string>Video Prank</string>
                 <key>UIApplicationShortcutItemType</key>
                 <string>VideoAction</string>
             </dict>
             <dict>
                 <key>UIApplicationShortcutItemIconFile</key>
-                <string>More App</string>
+                <string>VideoShort</string>
                 <key>UIApplicationShortcutItemTitle</key>
-                <string>Create Image Prank</string>
+                <string>Image Prank</string>
                 <key>UIApplicationShortcutItemType</key>
                 <string>ImageAction</string>
             </dict>

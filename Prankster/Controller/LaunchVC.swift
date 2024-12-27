@@ -25,12 +25,14 @@ class LaunchVC: UIViewController {
     
     @IBOutlet weak var launchImageView: UIImageView!
     @IBOutlet weak var loadingActivityIndicator: UIActivityIndicatorView!
+    private let adsViewModel = AdsViewModel()
     
     var passedActionKey: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
+        self.loadAds()
     }
     
     func trackSnapchatInstall() {
@@ -89,5 +91,18 @@ class LaunchVC: UIViewController {
     func navigateToHomeVC() {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "HomeVC")
         self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func loadAds() {
+        adsViewModel.fetchAds { [weak self] success in
+            if success {
+                print("Ads loaded successfully")
+                let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
+                print("Saved Ad Names: \(savedNames)")
+                print("Saved Ad IDs: \(savedIDs)")
+            } else {
+                print("Failed to load ads")
+            }
+        }
     }
 }
