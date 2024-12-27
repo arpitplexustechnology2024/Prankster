@@ -2986,7 +2986,7 @@ Images, Audio &amp; Videos</string>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iAt-XQ-pa2">
-                                        <rect key="frame" x="314" y="483" width="48" height="48"/>
+                                        <rect key="frame" x="314" y="493" width="48" height="48"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="48" id="IZb-kf-dnD"/>
                                             <constraint firstAttribute="width" constant="48" id="K1F-8x-OZh"/>
@@ -3008,7 +3008,7 @@ Images, Audio &amp; Videos</string>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="sth-dg-kNs" secondAttribute="bottom" constant="8" id="D0M-93-1MW"/>
-                                    <constraint firstItem="iAt-XQ-pa2" firstAttribute="top" secondItem="Wdr-kF-Eix" secondAttribute="bottom" constant="8" symbolic="YES" id="KDY-8Q-CgM"/>
+                                    <constraint firstItem="iAt-XQ-pa2" firstAttribute="top" secondItem="Wdr-kF-Eix" secondAttribute="bottom" constant="18" id="KDY-8Q-CgM"/>
                                     <constraint firstItem="Wdr-kF-Eix" firstAttribute="leading" secondItem="nvI-e3-FUt" secondAttribute="leading" constant="8" id="Lci-ds-My4"/>
                                     <constraint firstItem="Wdr-kF-Eix" firstAttribute="top" secondItem="nvI-e3-FUt" secondAttribute="top" constant="8" id="QOk-JL-hGr"/>
                                     <constraint firstAttribute="trailing" secondItem="iAt-XQ-pa2" secondAttribute="trailing" constant="8" id="S87-li-Qys"/>

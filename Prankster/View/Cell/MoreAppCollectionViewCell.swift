@@ -52,7 +52,7 @@ class MoreAppCollectionViewCell: UICollectionViewCell {
         More_App_Label.text = moreData.appName
         
         if let logoURL = URL(string: moreData.logo) {
-            More_App_LogoImage.sd_setImage(with: logoURL, placeholderImage: UIImage(named: "Pranksters"))
+            More_App_LogoImage.sd_setImage(with: logoURL, placeholderImage: UIImage(named: "PlaceholderImage"))
         } else {
             More_App_LogoImage.image = UIImage(named: "Pranksters")
         }
