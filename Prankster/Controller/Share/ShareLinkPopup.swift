@@ -445,7 +445,7 @@ class ShareLinkPopup: UIViewController {
               let coverImageURL = coverImageURL,
               let prankName = prankName else { return }
         
-        let message = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 tap on link 👇🏻:\n\(prankLink)"
         DispatchQueue.global().async {
             if let url = URL(string: coverImageURL),
                let imageData = try? Data(contentsOf: url),
@@ -487,7 +487,7 @@ class ShareLinkPopup: UIViewController {
     private func shareTelegramMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let telegramMessage = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
+        let telegramMessage = "\(prankName)\n\n👇🏻 tap on link 👇🏻:\n\(prankLink)"
         let encodedMessage = telegramMessage.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
         if let url = URL(string: "tg://msg?text=\(encodedMessage ?? "")"), UIApplication.shared.canOpenURL(url) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -501,7 +501,7 @@ class ShareLinkPopup: UIViewController {
     private func shareMoreMessage() {
         guard let prankLink = prankShareURL,
               let prankName = prankName else { return }
-        let message = "\(prankName)\n\n👇🏻 tap on  link 👇🏻:\n\(prankLink)"
+        let message = "\(prankName)\n\n👇🏻 tap on link 👇🏻:\n\(prankLink)"
         let itemsToShare: [Any] = [message]
         let activityVC = UIActivityViewController(activityItems: itemsToShare, applicationActivities: nil)
         if let popoverController = activityVC.popoverPresentationController {
