@@ -285,7 +285,7 @@
 		</dict>
 		<dict>
 			<key>UIApplicationShortcutItemIconFile</key>
-			<string>ImageShort</string>
+			<string>VideoShort</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>Video Prank</string>
 			<key>UIApplicationShortcutItemType</key>
@@ -293,7 +293,7 @@
 		</dict>
 		<dict>
 			<key>UIApplicationShortcutItemIconFile</key>
-			<string>VideoShort</string>
+			<string>ImageShort</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>Image Prank</string>
 			<key>UIApplicationShortcutItemType</key>
