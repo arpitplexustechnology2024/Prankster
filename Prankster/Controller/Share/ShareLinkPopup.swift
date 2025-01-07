@@ -352,7 +352,7 @@ class ShareLinkPopup: UIViewController {
         
         let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
         adsViewModel.getAdID(type: .interstitial) == nil
-        
+         
         switch tappedView.tag {
         case 0: // Copy link
             if let prankLink = prankShareURL {

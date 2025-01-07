@@ -73,7 +73,7 @@ class ImageCategoryAllVC: UIViewController {
     
     private func setupSearchBar() {
         searchbar.delegate = self
-        searchbar.placeholder = "Search image name"
+        searchbar.placeholder = "Search audio or artist name"
         searchbar.backgroundImage = UIImage()
         searchbar.layer.cornerRadius = 10
         searchbar.clipsToBounds = true
@@ -84,7 +84,7 @@ class ImageCategoryAllVC: UIViewController {
         if let textField = searchbar.value(forKey: "searchField") as? UITextField {
             textField.textColor = .white
             textField.attributedPlaceholder = NSAttributedString(
-                string: "Search image name",
+                string: "Search audio or artist name",
                 attributes: [.foregroundColor: UIColor.white]
             )
         }

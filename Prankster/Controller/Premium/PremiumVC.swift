@@ -8,8 +8,9 @@
 import UIKit
 import StoreKit
 import Alamofire
+import SafariServices
 
-class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsRequestDelegate {
+class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsRequestDelegate, UITextViewDelegate {
     
     @IBOutlet weak var premiumImage: UIImageView!
     @IBOutlet weak var premiumButton: UIButton!
@@ -61,6 +62,8 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
     @IBOutlet weak var premiumWeeklyView: UIView!
     @IBOutlet weak var premiumMonthlyView: UIView!
     @IBOutlet weak var premiumLifeTimeView: UIView!
+    
+    @IBOutlet weak var termsofUseLabel: UITextView!
     
     @IBOutlet weak var weekStrikethrought: UILabel! {
         didSet {
@@ -117,6 +120,8 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
         setupSwipeGesture()
         checkSubscriptionStatus()
         setupPremiumViewTapGestures()
+        setupPrivacyPolicyLabel()
+        termsofUseLabel.delegate = self
         SKPaymentQueue.default().add(self)
         
         setPurchasedOrDefaultPlan()
@@ -444,6 +449,40 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
         if gesture.state == .recognized {
             self.navigationController?.popViewController(animated: true)
         }
+    }
+    
+    func setupPrivacyPolicyLabel() {
+        let text = "Features can change at any time. Payment will be charged to your App Store account. Renews at the full price after the introductory offer period. Your subscription will auto-renew at your selected interval until you cancel in App Store settings. Amount of the charge may change with notice. Cancel anytime. By tapping \"App Store\", you are agreeing to the Prankster Subscription Terms & Privacy Policy and also the auto renewal."
+        
+        let attributedString = NSMutableAttributedString(string: text)
+        
+        let fullTextRange = NSRange(location: 0, length: text.count)
+        attributedString.addAttribute(.foregroundColor, value: #colorLiteral(red: 0.6666666667, green: 0.6666666667, blue: 0.6666666667, alpha: 1), range: fullTextRange)
+        attributedString.addAttribute(.font, value: UIFont(name: "Avenir-Medium", size: 11)!, range: fullTextRange)
+        
+        let termsRange = (text as NSString).range(of: "Terms")
+        attributedString.addAttribute(.foregroundColor, value: #colorLiteral(red: 0, green: 0.5019607843, blue: 1, alpha: 1), range: termsRange)
+        attributedString.addAttribute(.font, value: UIFont(name: "Avenir-Heavy", size: 12)!, range: termsRange)
+        attributedString.addAttribute(.link, value: "https://pslink.world/termsofuse", range: termsRange)
+        
+        let privacyPolicyRange = (text as NSString).range(of: "Privacy Policy")
+        attributedString.addAttribute(.foregroundColor, value: #colorLiteral(red: 0, green: 0.5019607843, blue: 1, alpha: 1), range: privacyPolicyRange)
+        attributedString.addAttribute(.font, value: UIFont(name: "Avenir-Heavy", size: 12)!, range: privacyPolicyRange)
+        attributedString.addAttribute(.link, value: "https://pslink.world/privacy-policy", range: privacyPolicyRange)
+        
+        termsofUseLabel.attributedText = attributedString
+        termsofUseLabel.isSelectable = true
+        termsofUseLabel.isEditable = false
+        termsofUseLabel.textAlignment = .center
+    }
+    
+    func textView(_ textView: UITextView, shouldInteractWith url: URL, in range: NSRange, interaction: UITextItemInteraction) -> Bool {
+        if url.absoluteString == "https://pslink.world/termsofuse" || url.absoluteString == "https://pslink.world/privacy-policy" {
+            let safariVC = SFSafariViewController(url: url)
+            present(safariVC, animated: true, completion: nil)
+            return false
+        }
+        return true
     }
 }
 

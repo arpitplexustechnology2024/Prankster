@@ -257,6 +257,7 @@ class SpinnerPreviewVC: UIViewController {
                 vc.prankDataURL = self.file
                 vc.prankShareURL = self.link
                 vc.selectedPranktype = self.type
+                vc.prankAudioImage = self.image
                 vc.sharePrank = false
                 navigationController.pushViewController(vc, animated: true)
             }

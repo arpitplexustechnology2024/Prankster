@@ -58,6 +58,7 @@ extension SpinnerDataVC: UICollectionViewDelegate, UICollectionViewDataSource, U
                         vc.file = spinData.file
                         vc.link = spinData.link
                         vc.type = spinData.type
+                        vc.image = spinData.image
                         vc.modalTransitionStyle = .crossDissolve
                         vc.modalPresentationStyle = .overCurrentContext
                         rootViewController.present(vc, animated: true)
@@ -87,6 +88,7 @@ extension SpinnerDataVC: UICollectionViewDelegate, UICollectionViewDataSource, U
                 vc.prankDataURL = prank.file
                 vc.prankShareURL = prank.shareURL
                 vc.selectedPranktype = prank.type
+                vc.prankAudioImage = prank.image
                 vc.sharePrank = false
                 navigationController.pushViewController(vc, animated: true)
             }

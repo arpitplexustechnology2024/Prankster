@@ -223,10 +223,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     
                     if let coverImageUrl = self.coverImageURL {
                         self.loadImage(from: coverImageUrl, into: self.prankImageView)
-                        UserDefaults.standard.set(coverImageUrl, forKey: "CoverImage")
-                        NotificationCenter.default.post(name: Notification.Name("PrankInfoUpdated"), object: coverImageUrl)
                     }
-                    UserDefaults.standard.set(self.prankName, forKey: "Name")
                     
                     self.playPauseImageView.image = UIImage(named: "PlayButton")
                     self.playPauseImageView.isUserInteractionEnabled = true

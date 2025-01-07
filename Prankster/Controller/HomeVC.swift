@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 enum CoverViewType {
     case audio
@@ -22,6 +23,23 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     @IBOutlet weak var premiumView: UIView!
     @IBOutlet weak var moreAppView: UIView!
     @IBOutlet weak var spinerButton: UIButton!
+    @IBOutlet weak var audiotitleLabel: UILabel!
+    @IBOutlet weak var audiodescriptionLabel: UILabel!
+    @IBOutlet weak var videotitleLabel: UILabel!
+    @IBOutlet weak var videodescriptionLabel: UILabel!
+    @IBOutlet weak var imagetitleLabel: UILabel!
+    @IBOutlet weak var imagedescriptionLabel: UILabel!
+    @IBOutlet weak var premiumtitleLabel: UILabel!
+    @IBOutlet weak var premiumdescriptionLabel: UILabel!
+    @IBOutlet weak var viewtitleLabel: UILabel!
+    @IBOutlet weak var viewdescriptionLabel: UILabel!
+    
+    @IBOutlet weak var audioImageHeightsConstraints: NSLayoutConstraint!
+    @IBOutlet weak var videoImageHeightsConstraints: NSLayoutConstraint!
+    @IBOutlet weak var imageImageHeightsConstraints: NSLayoutConstraint!
+    @IBOutlet weak var premiumImageHeightsConstraints: NSLayoutConstraint!
+    @IBOutlet weak var viewImageHeightsConstraints: NSLayoutConstraint!
+    
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var audioHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var videoHeightConstraint: NSLayoutConstraint!
@@ -57,12 +75,27 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.moreAppView.layer.cornerRadius = 15
         
         if UIDevice.current.userInterfaceIdiom == .pad {
-            scrollViewHeightConstraint.constant = 810
-            audioHeightConstraint.constant = 140
-            videoHeightConstraint.constant = 140
-            imageHeightConstraint.constant = 140
-            premiumHeightConstraint.constant = 140
-            moreAppHeightConstraint.constant = 140
+            scrollViewHeightConstraint.constant = 1200
+            audioHeightConstraint.constant = 200
+            videoHeightConstraint.constant = 200
+            imageHeightConstraint.constant = 200
+            premiumHeightConstraint.constant = 200
+            moreAppHeightConstraint.constant = 200
+            audioImageHeightsConstraints.constant = 120
+            videoImageHeightsConstraints.constant = 120
+            imageImageHeightsConstraints.constant = 120
+            premiumImageHeightsConstraints.constant = 120
+            viewImageHeightsConstraints.constant = 120
+            audiotitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
+            audiodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
+            videotitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
+            videodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
+            imagetitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
+            imagedescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
+            premiumtitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
+            premiumdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
+            viewtitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
+            viewdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
         } else {
             scrollViewHeightConstraint.constant = 730
             audioHeightConstraint.constant = 120
@@ -70,6 +103,21 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             imageHeightConstraint.constant = 120
             premiumHeightConstraint.constant = 120
             moreAppHeightConstraint.constant = 120
+            audioImageHeightsConstraints.constant = 75
+            videoImageHeightsConstraints.constant = 75
+            imageImageHeightsConstraints.constant = 75
+            premiumImageHeightsConstraints.constant = 75
+            viewImageHeightsConstraints.constant = 75
+            audiotitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
+            audiodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
+            videotitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
+            videodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
+            imagetitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
+            imagedescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
+            premiumtitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
+            premiumdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
+            viewtitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
+            viewdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
         }
         self.view.layoutIfNeeded()
     }
@@ -253,6 +301,12 @@ extension HomeVC {
             action: #selector(privacyPolicyTapped)
         )
         
+        let termsButton = createOptionButton(
+            title: "Terms of use",
+            icon: "TermsOfUse",
+            action: #selector(termsofuseTapped)
+        )
+        
         let shareButton = createOptionButton(
             title: "Share app",
             icon: "ShareApp",
@@ -260,6 +314,7 @@ extension HomeVC {
         )
         
         stackView.addArrangedSubview(privacyButton)
+        stackView.addArrangedSubview(termsButton)
         stackView.addArrangedSubview(createSeparator())
         stackView.addArrangedSubview(shareButton)
     }
@@ -321,6 +376,16 @@ extension HomeVC {
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PrivacyPolicyVC") as! PrivacyPolicyVC
         vc.modalPresentationStyle = .pageSheet
         self.present(vc, animated: true, completion: nil)
+    }
+    
+    @objc private func termsofuseTapped() {
+        hideDropdown()
+        if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
+            let safariVC = SFSafariViewController(url: url)
+            present(safariVC, animated: true, completion: nil)
+        } else {
+            print("Invalid URL")
+        }
     }
     
     @objc private func shareAppTapped() {

@@ -125,7 +125,6 @@ class SpinnerVC: UIViewController {
                 rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
             } else {
                 print("No Reward Ad ID found")
-                self.proceedWithSpinning()
             }
         }
         rewardAdUtility.onRewardEarned = { [weak self] in
@@ -135,9 +134,11 @@ class SpinnerVC: UIViewController {
         
         let screenHeight = UIScreen.main.nativeBounds.height
         if UIDevice.current.userInterfaceIdiom == .phone {
+            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 24)
             spinnerbuttonWidghConstraints.constant = 230
             spinnerbuttonHeightConstraints.constant = 110
             bannerHeightConstraints.constant = 90
+            spinTextHeightConstraints.constant = 56
             switch screenHeight {
             case 1334:
                 topHeightConstraints.constant = 10
@@ -177,17 +178,14 @@ class SpinnerVC: UIViewController {
                 spinnerGeightConstraints.constant = 300
             }
         } else {
-            switch screenHeight {
-            case 2360:
-                topHeightConstraints.constant = 120
-                bannerHeightConstraints.constant = 170
-                spinnerGeightConstraints.constant = 400
-                spinnerWidghConstraints.constant = 400
-                spinnerbuttonWidghConstraints.constant = 330
-                spinnerbuttonHeightConstraints.constant = 150
-            default:
-                break
-            }
+            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 34)
+            spinTextHeightConstraints.constant = 80
+            topHeightConstraints.constant = 150
+            bannerHeightConstraints.constant = 150
+            spinnerGeightConstraints.constant = 400
+            spinnerWidghConstraints.constant = 400
+            spinnerbuttonWidghConstraints.constant = 330
+            spinnerbuttonHeightConstraints.constant = 150
         }
     }
     
@@ -412,7 +410,7 @@ class SpinnerVC: UIViewController {
             let hours = Int(remainingTime) / 3600
             let minutes = (Int(remainingTime) % 3600) / 60
             spinLabel.text = String(format: "New spin \n%02dh:%02dm", hours, minutes)
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
+            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 25)
             
             updateSpinButtonState()
         }

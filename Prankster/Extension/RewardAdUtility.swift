@@ -23,6 +23,7 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
         GADRewardedAd.load(withAdUnitID: adUnitID, request: GADRequest()) { [weak self] ad, error in
             if let error = error {
                 print("Rewarded ad failed to load with error: \(error.localizedDescription)")
+                self?.onRewardEarned?()
                 return
             }
             self?.rewardedAd = ad
@@ -34,7 +35,7 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
     func showRewardedAd() {
         guard let rewardedAd = rewardedAd, let rootViewController = rootViewController else {
             print("Ad wasn't ready.")
-            
+            self.onRewardEarned?()
             return
         }
         rewardedAd.present(fromRootViewController: rootViewController) { [weak self] in
@@ -49,6 +50,7 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
         print("Ad did fail to present full screen content: \(error.localizedDescription)")
         if let adUnitID = adUnitID {
             loadRewardedAd(adUnitID: adUnitID, rootViewController: rootViewController!)
+            self.onRewardEarned?()
         }
     }
     
