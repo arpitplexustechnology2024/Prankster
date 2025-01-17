@@ -14,7 +14,7 @@ class PremiumPopupVC: UIViewController {
     @IBOutlet weak var premiumView: UIView!
     @IBOutlet weak var watchAdButton: UIButton!
     private let rewardAdUtility = RewardAdUtility()
-    private let adsViewModel = AdsViewModel()
+   // private let adsViewModel = AdsViewModel()
     private var itemIDToUnlock: Int?
     
     override func viewDidLoad() {
@@ -24,12 +24,12 @@ class PremiumPopupVC: UIViewController {
         self.watchAdButton.layer.cornerRadius = 8
         setupTapGesture()
         if isConnectedToInternet() {
-            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                print("Reward Ad ID: \(rewardAdID)")
-                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-            } else {
-                print("No Reward Ad ID found")
-            }
+//            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+//                print("Reward Ad ID: \(rewardAdID)")
+                rewardAdUtility.loadRewardedAd(adUnitID: "ca-app-pub-7719542074975419/4831306268", rootViewController: self)
+//            } else {
+//                print("No Reward Ad ID found")
+//            }
         }
         rewardAdUtility.onRewardEarned = { [weak self] in
             if let itemID = self?.itemIDToUnlock {

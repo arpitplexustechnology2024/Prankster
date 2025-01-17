@@ -8,5 +8,9 @@
 	<array>
 		<string>group.com.prank.memes.fun.onesignal</string>
 	</array>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)com.prank.memes.fun</string>
+	</array>
 </dict>
 </plist>

@@ -378,7 +378,6 @@ class PremiumBottomVC: UIViewController, SKPaymentTransactionObserver, SKProduct
         if queue.transactions.isEmpty {
             let snackbar = CustomSnackbar(message: "You have not Subscription.", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
-            self.dismiss(animated: true)
         }
     }
     
@@ -508,14 +507,18 @@ extension PremiumBottomVC {
             self.premiumLifeTimeView.addGradientBorder(colors: [UIColor(hex: "#B094E0"),UIColor(hex: "#CAA3FD")],width: 4.0,cornerRadius: 10)
             popularView.setHorizontalGradientBackground( colorLeft: UIColor(hex: "#B094E0"), colorRight: UIColor(hex: "#CAA3FD"))
             
-            self.featurs01HeightConstraints.constant = 80
-            self.featurs01WidthConstraints.constant = 60
-            self.featurs02HeightConstraints.constant = 80
-            self.featurs02WidthConstraints.constant = 60
-            self.featurs03HeightConstraints.constant = 80
-            self.featurs03WidthConstraints.constant = 60
-            self.featurs04HeightConstraints.constant = 53
-            self.featurs04WidthConstraints.constant = 60
+            self.featurstext01Constraints.constant = 18
+            self.featurstext02Constraints.constant = 27.33
+            self.featurstext03Constraints.constant = 27.33
+            self.featurstext04Constraints.constant = 18.33
+            self.featurs01HeightConstraints.constant = 60
+            self.featurs01WidthConstraints.constant = 40
+            self.featurs02HeightConstraints.constant = 60
+            self.featurs02WidthConstraints.constant = 40
+            self.featurs03HeightConstraints.constant = 60
+            self.featurs03WidthConstraints.constant = 40
+            self.featurs04HeightConstraints.constant = 40
+            self.featurs04WidthConstraints.constant = 40
             self.premiumViewHeightConstraints.constant = 100
             self.PremiumViewScrollWidthConstraints.constant = 500
             self.bestOfferViewHeightConstraints.constant = 30
@@ -524,7 +527,7 @@ extension PremiumBottomVC {
             self.topRatedViewWidthConstraints.constant = 87
             self.popularViewHeightConstraints.constant = 30
             self.populareViewWidthConstraints.constant = 87
-            self.bGImageHeightConstraints.constant = 400
+            self.bGImageHeightConstraints.constant = 350
             self.bestOfferLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
             self.topRatedLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
             self.populareLabel.font = UIFont(name: "Avenir-Heavy", size: 14)
@@ -546,56 +549,14 @@ extension PremiumBottomVC {
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 8
                 self.premiymBottomConstraints.constant = 8
-                self.featurstext01Constraints.constant = 20
-                self.featurstext02Constraints.constant = 32.33
-                self.featurstext03Constraints.constant = 32.33
-                self.featurstext04Constraints.constant = 22.33
-                self.featurs01HeightConstraints.constant = 60
-                self.featurs01WidthConstraints.constant = 40
-                self.featurs02HeightConstraints.constant = 60
-                self.featurs02WidthConstraints.constant = 40
-                self.featurs03HeightConstraints.constant = 60
-                self.featurs03WidthConstraints.constant = 40
-                self.featurs04HeightConstraints.constant = 40
-                self.featurs04WidthConstraints.constant = 40
-                self.bGImageHeightConstraints.constant = 350
                 self.featurstext01.font = UIFont(name: "Avenir-Heavy", size: 13)
                 self.featurstext02.font = UIFont(name: "Avenir-Heavy", size: 13)
                 self.featurstext03.font = UIFont(name: "Avenir-Heavy", size: 13)
                 self.featurstext04.font = UIFont(name: "Avenir-Heavy", size: 13)
-            case 2532, 2556, 2436:
-                self.emojiStarckView.spacing = -10
-                self.emojiBottomConstraints.constant = 10
-                self.premiymBottomConstraints.constant = 10
-                self.featurstext01Constraints.constant = 25
-                self.featurstext02Constraints.constant = 47.33
-                self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 37.33
-            case 2622:
-                self.emojiStarckView.spacing = -10
-                self.emojiBottomConstraints.constant = 10
-                self.premiymBottomConstraints.constant = 10
-                self.featurstext01Constraints.constant = 25
-                self.featurstext02Constraints.constant = 47.33
-                self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 37.33
-            case 2688, 2886, 2796, 2778, 2868, 2869:
-                self.emojiStarckView.spacing = -10
-                self.emojiBottomConstraints.constant = 10
-                self.premiymBottomConstraints.constant = 10
-                self.featurstext01Constraints.constant = 25
-                self.featurstext02Constraints.constant = 47.33
-                self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 37.33
-                self.bGImageHeightConstraints.constant = 450
             default:
                 self.emojiStarckView.spacing = -10
                 self.emojiBottomConstraints.constant = 10
                 self.premiymBottomConstraints.constant = 10
-                self.featurstext01Constraints.constant = 25
-                self.featurstext02Constraints.constant = 47.33
-                self.featurstext03Constraints.constant = 47.33
-                self.featurstext04Constraints.constant = 37.33
             }
         } else {
             
@@ -649,7 +610,6 @@ extension PremiumBottomVC {
             self.featurstext02.font = UIFont(name: "Avenir-Heavy", size: 23)
             self.featurstext03.font = UIFont(name: "Avenir-Heavy", size: 23)
             self.featurstext04.font = UIFont(name: "Avenir-Heavy", size: 23)
-            
         }
     }
 }

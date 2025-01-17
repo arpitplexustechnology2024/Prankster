@@ -8,54 +8,41 @@
 import UIKit
 import FBSDKCoreKit
 import CommonCrypto
-
-extension String {
-    func sha256() -> String {
-        guard let data = self.data(using: .utf8) else { return "" }
-        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        data.withUnsafeBytes {
-            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &hash)
-        }
-        return hash.map { String(format: "%02x", $0) }.joined()
-    }
-}
-
+import WebKit
+import FirebaseAnalytics
 
 class LaunchVC: UIViewController {
     
     @IBOutlet weak var launchImageView: UIImageView!
     @IBOutlet weak var loadingActivityIndicator: UIActivityIndicatorView!
-    private let adsViewModel = AdsViewModel()
+    //  private let adsViewModel = AdsViewModel()
     
     var passedActionKey: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.loadAds()
+        self.trackAppInstall()
+        //  self.loadAds()
     }
     
-    func trackSnapchatInstall() {
-        let clickId = SnapchatEventTracker.shared.retrieveSnapchatClickId()
+    private func trackAppInstall() {
+        let defaults = UserDefaults.standard
+        let isFirstLaunch = !defaults.bool(forKey: "HasLaunchedBefore")
         
-        guard let clickId = clickId, !clickId.isEmpty else {
-            print("❌ Snapchat Click ID is empty. Install event tracking aborted.")
-            return
-        }
-        
-        let hashedIpAddress = "123.456.789.012".sha256()
-        let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
-        
-        SnapchatEventTracker.shared.trackAppInstall(hashedIpAddress: hashedIpAddress, userAgent: userAgent) { result in
-            switch result {
-            case .success:
-                print("✅ Snapchat install event tracked successfully")
-            case .failure(let error):
-                print("❌ Failed to track Snapchat install event: \(error)")
-            }
+        if isFirstLaunch {
+            Analytics.logEvent("first_Open_iOS", parameters: [
+                "install_time": Date().timeIntervalSince1970,
+                "ios_version": UIDevice.current.systemVersion,
+                "device_model": UIDevice.current.model
+            ])
+            
+            Analytics.setUserProperty("true", forName: "is_new_user")
+            
+            defaults.set(true, forKey: "HasLaunchedBefore")
+            defaults.set(Date(), forKey: "InstallDate")
         }
     }
-
     
     func setupUI() {
         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -93,16 +80,16 @@ class LaunchVC: UIViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    func loadAds() {
-        adsViewModel.fetchAds { [weak self] success in
-            if success {
-                print("Ads loaded successfully")
-                let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
-                print("Saved Ad Names: \(savedNames)")
-                print("Saved Ad IDs: \(savedIDs)")
-            } else {
-                print("Failed to load ads")
-            }
-        }
-    }
+    //    func loadAds() {
+    //        adsViewModel.fetchAds { [weak self] success in
+    //            if success {
+    //                print("Ads loaded successfully")
+    //                let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
+    //                print("Saved Ad Names: \(savedNames)")
+    //                print("Saved Ad IDs: \(savedIDs)")
+    //            } else {
+    //                print("Failed to load ads")
+    //            }
+    //        }
+    //    }
 }

@@ -40,7 +40,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var prankAudioImage: String?
     var prankShareURL: String?
     var sharePrank: Bool = false
-    private let adsViewModel = AdsViewModel()
+  //  private let adsViewModel = AdsViewModel()
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -125,23 +125,23 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     bottomConstraints.constant = 16
                 }
             } else {
-                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
-                    print("Banner Ad ID: \(bannerAdID)")
-                    bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
-                } else {
-                    print("No Banner Ad ID found")
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        bottomConstraints.constant = 16
-                    } else {
-                        bottomConstraints.constant = 16
-                    }
-                }
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
+//                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+//                    print("Banner Ad ID: \(bannerAdID)")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-7719542074975419/5604529555")
+//                } else {
+//                    print("No Banner Ad ID found")
+//                    if UIDevice.current.userInterfaceIdiom == .pad {
+//                        bottomConstraints.constant = 16
+//                    } else {
+//                        bottomConstraints.constant = 16
+//                    }
+//                }
+//                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+//                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
+//                } else {
+//                    print("No Interstitial Ad ID found")
+//                }
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -444,23 +444,23 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     bottomConstraints.constant = 16
                 }
             } else {
-                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
-                    print("Banner Ad ID: \(bannerAdID)")
-                    bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
-                } else {
-                    print("No Banner Ad ID found")
-                    if UIDevice.current.userInterfaceIdiom == .pad {
-                        bottomConstraints.constant = 16
-                    } else {
-                        bottomConstraints.constant = 16
-                    }
-                }
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
+//                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+//                    print("Banner Ad ID: \(bannerAdID)")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-7719542074975419/5604529555")
+//                } else {
+//                    print("No Banner Ad ID found")
+//                    if UIDevice.current.userInterfaceIdiom == .pad {
+//                        bottomConstraints.constant = 16
+//                    } else {
+//                        bottomConstraints.constant = 16
+//                    }
+//                }
+//                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+//                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
+//                } else {
+//                    print("No Interstitial Ad ID found")
+//                }
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -577,8 +577,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
         
-        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
-                                adsViewModel.getAdID(type: .interstitial) == nil
+        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) /* ||
+                                adsViewModel.getAdID(type: .interstitial) == nil */
         
         switch tappedView.tag {
         case 0: // Copy link
@@ -740,7 +740,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         
         self.present(activityVC, animated: true, completion: nil)
     }
-
     
     // MARK: - btnNameChangeTapped
     @IBAction func btnNameChangeTapped(_ sender: UIButton) {

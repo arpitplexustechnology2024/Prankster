@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import FirebaseAnalytics
 
 extension UIView {
     func addBottomShadow() {
@@ -224,5 +225,41 @@ class PaddedLabel: UILabel {
         let size = super.intrinsicContentSize
         return CGSize(width: size.width + textInsets.left + textInsets.right,
                       height: size.height + textInsets.top + textInsets.bottom)
+    }
+}
+
+
+class AnalyticsManager {
+    static let shared = AnalyticsManager()
+    
+    private init() {}
+    
+    // Get days since install
+    func getDaysSinceInstall() -> Int? {
+        if let installDate = UserDefaults.standard.object(forKey: "InstallDate") as? Date {
+            return Calendar.current.dateComponents([.day], from: installDate, to: Date()).day
+        }
+        return nil
+    }
+    
+    // Track app open
+    func trackAppOpen() {
+        if let daysSinceInstall = getDaysSinceInstall() {
+            Analytics.logEvent("app_open", parameters: [
+                "days_since_install": daysSinceInstall
+            ])
+        }
+    }
+    
+    // Previous methods remain same...
+    func logScreen(name: String, className: String) {
+        Analytics.logEvent(AnalyticsEventScreenView, parameters: [
+            AnalyticsParameterScreenName: name,
+            AnalyticsParameterScreenClass: className
+        ])
+    }
+    
+    func logEvent(name: String, parameters: [String: Any]? = nil) {
+        Analytics.logEvent(name, parameters: parameters)
     }
 }

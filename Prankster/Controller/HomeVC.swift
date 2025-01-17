@@ -314,6 +314,7 @@ extension HomeVC {
         )
         
         stackView.addArrangedSubview(privacyButton)
+        stackView.addArrangedSubview(createSeparator())
         stackView.addArrangedSubview(termsButton)
         stackView.addArrangedSubview(createSeparator())
         stackView.addArrangedSubview(shareButton)
@@ -419,8 +420,8 @@ extension HomeVC {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         let content = UNMutableNotificationContent()
         let randomMessage = notificationMessages.randomElement()!
-        content.title = NSLocalizedString(randomMessage.title, comment: "")
-        content.body = NSLocalizedString(randomMessage.body, comment: "")
+        content.title = randomMessage.title
+        content.body = randomMessage.body
         content.sound = UNNotificationSound.default
         
         var dateComponents = DateComponents()

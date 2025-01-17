@@ -68,7 +68,7 @@ class SpinnerVC: UIViewController {
     private var spinViewModel: SpinnerViewModel!
     private let timerKey = "nextSpinAvailableTime"
     private let rewardAdUtility = RewardAdUtility()
-    private let adsViewModel = AdsViewModel()
+  //  private let adsViewModel = AdsViewModel()
     private var currentSpinButtonState: SpinButtonState = .spin
     
     var remainingSpins: Int {
@@ -120,12 +120,12 @@ class SpinnerVC: UIViewController {
         updateSpinLabel()
         startTimerLabelUpdate()
         if isConnectedToInternet() {
-            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                print("Reward Ad ID: \(rewardAdID)")
-                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-            } else {
-                print("No Reward Ad ID found")
-            }
+//            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+//                print("Reward Ad ID: \(rewardAdID)")
+                rewardAdUtility.loadRewardedAd(adUnitID: "ca-app-pub-7719542074975419/4831306268", rootViewController: self)
+//            } else {
+//                print("No Reward Ad ID found")
+//            }
         }
         rewardAdUtility.onRewardEarned = { [weak self] in
             self?.proceedWithSpinning()
@@ -134,7 +134,6 @@ class SpinnerVC: UIViewController {
         
         let screenHeight = UIScreen.main.nativeBounds.height
         if UIDevice.current.userInterfaceIdiom == .phone {
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 24)
             spinnerbuttonWidghConstraints.constant = 230
             spinnerbuttonHeightConstraints.constant = 110
             bannerHeightConstraints.constant = 90
@@ -410,7 +409,7 @@ class SpinnerVC: UIViewController {
             let hours = Int(remainingTime) / 3600
             let minutes = (Int(remainingTime) % 3600) / 60
             spinLabel.text = String(format: "New spin \n%02dh:%02dm", hours, minutes)
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 25)
+            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
             
             updateSpinButtonState()
         }

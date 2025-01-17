@@ -23,6 +23,7 @@ target 'Prankster' do
   pod 'FirebaseAuth'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/Core'
+  pod 'Firebase/Analytics'
   pod 'Firebase/InAppMessaging'
   pod 'FBSDKCoreKit'
   pod 'OneSignal'

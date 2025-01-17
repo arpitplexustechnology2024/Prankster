@@ -30,7 +30,7 @@ class ShareLinkPopup: UIViewController {
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var blurEffectView: UIVisualEffectView!
-    private let adsViewModel = AdsViewModel()
+  //  private let adsViewModel = AdsViewModel()
     let interstitialAdUtility = InterstitialAdUtility()
     
     override func viewDidLoad() {
@@ -70,12 +70,12 @@ class ShareLinkPopup: UIViewController {
         self.view.addGestureRecognizer(viewTapGesture)
         
         if isConnectedToInternet() {
-            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-            } else {
-                print("No Interstitial Ad ID found")
-            }
+//            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+//                print("Interstitial Ad ID: \(interstitialAdID)")
+                interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
+//            } else {
+//                print("No Interstitial Ad ID found")
+//            }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
@@ -350,8 +350,8 @@ class ShareLinkPopup: UIViewController {
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
         
-        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
-        adsViewModel.getAdID(type: .interstitial) == nil
+        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) /* ||
+        adsViewModel.getAdID(type: .interstitial) == nil */
          
         switch tappedView.tag {
         case 0: // Copy link

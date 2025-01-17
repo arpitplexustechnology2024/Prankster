@@ -375,7 +375,6 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
         if queue.transactions.isEmpty {
             let snackbar = CustomSnackbar(message: "No active subscription.", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
-            self.dismiss(animated: true)
         }
     }
     
