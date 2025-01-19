@@ -14,6 +14,7 @@ import OneSignalFramework
 import FBSDKCoreKit
 import AppTrackingTransparency
 import AdSupport
+import GoogleMobileAds
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -26,9 +27,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Settings.shared.isAdvertiserIDCollectionEnabled = true
         Settings.shared.loggingBehaviors = [LoggingBehavior.appEvents,LoggingBehavior.networkRequests]
         FirebaseApp.configure()
+
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         OneSignal.initialize("d8e64d76-dc16-444f-af2d-1bb802f7bc44", withLaunchOptions: launchOptions)
-        
         checkNotificationAuthorization()
         setupAppLifecycleObservers()
         checkForUpdate()
@@ -109,31 +110,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return .all
     }
     
-    //    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-    //        print("Incoming URL: \(url.absoluteString)")
-    //        if let clickID = url.queryParameters?["ScCid"] ?? url.queryParameters?["click_id"] {
-    //            print("Click ID: \(clickID)")
-    //            UserDefaults.standard.set(clickID, forKey: "SnapchatClickID")
-    //        }
-    //        ApplicationDelegate.shared.application( app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
-    //        return true
-    //    }
-    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        print("----------APP Install Deep Link generate---------)")
+        print("APP Install Deep Link :- \(url.absoluteString)")
+        
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: true) {
             for queryItem in components.queryItems ?? [] {
-                if queryItem.name == "click_id", let clickID = queryItem.value, !clickID.isEmpty {
-                    print("Captured Click ID: \(clickID)")
+                if queryItem.name == "utm_source", let source = queryItem.value, source.lowercased() == "snapchat" {
+                    print("App opened from Snapchat")
                     
-                    let hashedIpAddress = "123.456.789.012".sha256()
-                    let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
-                    
-                    SnapchatAPIManager.shared.sendConversionEvent(clickID: clickID, userAgent: userAgent, userIPAddress: hashedIpAddress) { success, error in
-                        DispatchQueue.main.async {
-                            if success {
-                                print("Event sent successfully!")
-                            } else {
-                                print("Failed to send event: \(error ?? "Unknown error")")
+                    if let clickID = components.queryItems?.first(where: { $0.name == "click_id" })?.value, !clickID.isEmpty {
+                        print("Captured Click ID: \(clickID)")
+                        
+                        let hashedIpAddress = "123.456.789.012".sha256()
+                        let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
+                        
+                        SnapchatAPIManager.shared.sendConversionEvent(clickID: clickID, userAgent: userAgent, userIPAddress: hashedIpAddress) { success, error in
+                            DispatchQueue.main.async {
+                                if success {
+                                    print("Event sent successfully!")
+                                } else {
+                                    print("Failed to send event: \(error ?? "Unknown error")")
+                                }
                             }
                         }
                     }
@@ -141,9 +139,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         
-        ApplicationDelegate.shared.application( app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+        ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+        
         return true
     }
+
     
     
     // MARK: UISceneSession Lifecycle
@@ -238,17 +238,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Settings.shared.isAutoLogAppEventsEnabled = true
     }
 }
-
-//extension URL {
-//    var queryParameters: [String: String]? {
-//        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
-//              let queryItems = components.queryItems else {
-//            return nil
-//        }
-//        var parameters: [String: String] = [:]
-//        for item in queryItems {
-//            parameters[item.name] = item.value
-//        }
-//        return parameters
-//    }
-//}
