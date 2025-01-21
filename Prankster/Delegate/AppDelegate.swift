@@ -27,7 +27,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Settings.shared.isAdvertiserIDCollectionEnabled = true
         Settings.shared.loggingBehaviors = [LoggingBehavior.appEvents,LoggingBehavior.networkRequests]
         FirebaseApp.configure()
-
+        Analytics.setAnalyticsCollectionEnabled(true)
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         OneSignal.initialize("d8e64d76-dc16-444f-af2d-1bb802f7bc44", withLaunchOptions: launchOptions)
         checkNotificationAuthorization()
@@ -143,7 +145,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
-
+    
     
     
     // MARK: UISceneSession Lifecycle
@@ -217,6 +219,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { _ in
             self.openAppStoreForUpdate()
         }))
+        
+        alert.addAction(UIAlertAction(title: "Later", style: .cancel, handler: nil))
         
         if let topController = UIApplication.shared.keyWindow?.rootViewController {
             topController.present(alert, animated: true, completion: nil)

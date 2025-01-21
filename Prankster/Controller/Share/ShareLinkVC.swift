@@ -70,7 +70,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.setupNoInternetView()
         self.addContentToStackView()
         self.setupKeyboardObservers()
-        self.hideKeyboardTappedAround()
     }
     
     func rateUs() {
