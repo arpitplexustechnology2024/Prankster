@@ -22,19 +22,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        
+        // Meta Analytics
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
         Settings.shared.isAutoLogAppEventsEnabled = true
         Settings.shared.isAdvertiserIDCollectionEnabled = true
         Settings.shared.loggingBehaviors = [LoggingBehavior.appEvents,LoggingBehavior.networkRequests]
+        
+        // Firebase Analytics
         FirebaseApp.configure()
         Analytics.setAnalyticsCollectionEnabled(true)
         GADMobileAds.sharedInstance().start(completionHandler: nil)
         
+        // Onesignal
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         OneSignal.initialize("d8e64d76-dc16-444f-af2d-1bb802f7bc44", withLaunchOptions: launchOptions)
+        
+        // function call
         checkNotificationAuthorization()
         setupAppLifecycleObservers()
-        checkForUpdate()
+        
         return true
     }
     
@@ -145,8 +152,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
-    
-    
     
     // MARK: UISceneSession Lifecycle
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
