@@ -7,6 +7,7 @@
 
 import UIKit
 import SafariServices
+import Alamofire
 
 enum CoverViewType {
     case audio
@@ -20,8 +21,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     @IBOutlet weak var audioView: UIView!
     @IBOutlet weak var videoView: UIView!
     @IBOutlet weak var imageView: UIView!
+    @IBOutlet weak var nativeSmallAd: UIView!
     @IBOutlet weak var premiumView: UIView!
-    @IBOutlet weak var moreAppView: UIView!
+    @IBOutlet weak var spinnerView: UIView!
+    @IBOutlet weak var recentView: UIView!
     @IBOutlet weak var spinerButton: UIButton!
     @IBOutlet weak var audiotitleLabel: UILabel!
     @IBOutlet weak var audiodescriptionLabel: UILabel!
@@ -33,22 +36,32 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     @IBOutlet weak var premiumdescriptionLabel: UILabel!
     @IBOutlet weak var viewtitleLabel: UILabel!
     @IBOutlet weak var viewdescriptionLabel: UILabel!
+    @IBOutlet weak var spinnertitleLabel: UILabel!
+    @IBOutlet weak var spinnerdescriptionLabel: UILabel!
     
     @IBOutlet weak var audioImageHeightsConstraints: NSLayoutConstraint!
     @IBOutlet weak var videoImageHeightsConstraints: NSLayoutConstraint!
     @IBOutlet weak var imageImageHeightsConstraints: NSLayoutConstraint!
     @IBOutlet weak var premiumImageHeightsConstraints: NSLayoutConstraint!
     @IBOutlet weak var viewImageHeightsConstraints: NSLayoutConstraint!
+    @IBOutlet weak var spinnerImageHeightsConstraints: NSLayoutConstraint!
     
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var audioHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var videoHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var imageHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var premiumHeightConstraint: NSLayoutConstraint!
-    @IBOutlet weak var moreAppHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var recentHeightConstraint: NSLayoutConstraint!
+    
+    @IBOutlet weak var spinnerHeightConstraint: NSLayoutConstraint!
     
     private var dropdownView: UIView?
     private var isDropdownVisible = false
+    
+    private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
+    private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
+    let interstitialAdUtility = InterstitialAdUtility()
+    let shouldOpenDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1)
     
     let notificationMessages = [
         (title: "Sex Prank", body: "Create sex prank & share it & capture funny moments."),
@@ -64,7 +77,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.setupUI()
         self.seupViewAction()
         self.requestNotificationPermission()
-        self.navigationbarView.addBottomShadow()
     }
     
     func setupUI() {
@@ -72,42 +84,58 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.videoView.layer.cornerRadius = 15
         self.imageView.layer.cornerRadius = 15
         self.premiumView.layer.cornerRadius = 15
-        self.moreAppView.layer.cornerRadius = 15
+        self.spinnerView.layer.cornerRadius = 15
+        self.recentView.layer.cornerRadius = 15
         
         if UIDevice.current.userInterfaceIdiom == .pad {
-            scrollViewHeightConstraint.constant = 1200
-            audioHeightConstraint.constant = 200
-            videoHeightConstraint.constant = 200
-            imageHeightConstraint.constant = 200
-            premiumHeightConstraint.constant = 200
-            moreAppHeightConstraint.constant = 200
-            audioImageHeightsConstraints.constant = 120
-            videoImageHeightsConstraints.constant = 120
-            imageImageHeightsConstraints.constant = 120
-            premiumImageHeightsConstraints.constant = 120
-            viewImageHeightsConstraints.constant = 120
-            audiotitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
-            audiodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
-            videotitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
-            videodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
-            imagetitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
-            imagedescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
-            premiumtitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
-            premiumdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
-            viewtitleLabel.font = UIFont(name: "Avenir-Black", size: 40.0)
-            viewdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 30.0)
+            scrollViewHeightConstraint.constant = 1180
+            audioHeightConstraint.constant = 150
+            videoHeightConstraint.constant = 150
+            imageHeightConstraint.constant = 150
+            premiumHeightConstraint.constant = 150
+            recentHeightConstraint.constant = 150
+            spinnerHeightConstraint.constant = 150
+            audioImageHeightsConstraints.constant = 100
+            videoImageHeightsConstraints.constant = 100
+            imageImageHeightsConstraints.constant = 100
+            premiumImageHeightsConstraints.constant = 100
+            viewImageHeightsConstraints.constant = 100
+            spinnerImageHeightsConstraints.constant = 100
+            audiotitleLabel.font = UIFont(name: "Avenir-Black", size: 30.0)
+            audiodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 20.0)
+            videotitleLabel.font = UIFont(name: "Avenir-Black", size: 30.0)
+            videodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 20.0)
+            imagetitleLabel.font = UIFont(name: "Avenir-Black", size: 30.0)
+            imagedescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 20.0)
+            premiumtitleLabel.font = UIFont(name: "Avenir-Black", size: 30.0)
+            premiumdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 20.0)
+            viewtitleLabel.font = UIFont(name: "Avenir-Black", size: 30.0)
+            viewdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 20.0)
+            spinnertitleLabel.font = UIFont(name: "Avenir-Black", size: 30.0)
+            spinnerdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 20.0)
+            if isConnectedToInternet() {
+                if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+                    nativeSmallAd.isHidden = true
+                } else {
+                    nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: "ca-app-pub-3940256099942544/3986624511", rootViewController: self, nativeAdPlaceholder: nativeSmallAd)
+                }
+            } else {
+                nativeSmallAd.isHidden = true
+            }
         } else {
-            scrollViewHeightConstraint.constant = 730
+            scrollViewHeightConstraint.constant = 1000
             audioHeightConstraint.constant = 120
             videoHeightConstraint.constant = 120
             imageHeightConstraint.constant = 120
             premiumHeightConstraint.constant = 120
-            moreAppHeightConstraint.constant = 120
+            recentHeightConstraint.constant = 120
+            spinnerHeightConstraint.constant = 120
             audioImageHeightsConstraints.constant = 75
             videoImageHeightsConstraints.constant = 75
             imageImageHeightsConstraints.constant = 75
             premiumImageHeightsConstraints.constant = 75
             viewImageHeightsConstraints.constant = 75
+            spinnerImageHeightsConstraints.constant = 75
             audiotitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
             audiodescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
             videotitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
@@ -118,8 +146,34 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             premiumdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
             viewtitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
             viewdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
+            spinnertitleLabel.font = UIFont(name: "Avenir-Black", size: 25.0)
+            spinnerdescriptionLabel.font = UIFont(name: "Avenir-Medium", size: 17.0)
+            if isConnectedToInternet() {
+                if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+                    nativeSmallAd.isHidden = true
+                } else {
+                    nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: "ca-app-pub-3940256099942544/3986624511", rootViewController: self, nativeAdPlaceholder: nativeSmallAd)
+                }
+            } else {
+                nativeSmallAd.isHidden = true
+            }
         }
         self.view.layoutIfNeeded()
+        
+        if isConnectedToInternet() {
+            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+            } else {
+                interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
+            }
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    private func isConnectedToInternet() -> Bool {
+        let networkManager = NetworkReachabilityManager()
+        return networkManager?.isReachable ?? false
     }
     
     func seupViewAction() {
@@ -128,7 +182,8 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             (videoView, #selector(btnVideoTapped)),
             (imageView, #selector(btnImageTapped)),
             (premiumView, #selector(btnPremiumTapped)),
-            (moreAppView, #selector(btnViewLinkTapped)),
+            (recentView, #selector(btnViewLinkTapped)),
+            (spinnerView, #selector(btnSpinnerTapped)),
         ]
         
         tapGestureActions.forEach { view, action in
@@ -143,9 +198,18 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
-            vc.viewType = .audio
-            self.navigationController?.pushViewController(vc, animated: true)
+            if shouldOpenDirectly {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                vc.viewType = .audio
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                    vc.viewType = .audio
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }
     }
     
@@ -153,9 +217,19 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
-            vc.viewType = .video
-            self.navigationController?.pushViewController(vc, animated: true)
+            
+            if shouldOpenDirectly {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                vc.viewType = .video
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                    vc.viewType = .video
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }
     }
     
@@ -163,35 +237,70 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
-            vc.viewType = .image
-            self.navigationController?.pushViewController(vc, animated: true)
+            if shouldOpenDirectly {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                vc.viewType = .image
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                    vc.viewType = .image
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }
     }
     
     @objc func btnPremiumTapped(_ sender: UIButton) {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
-        self.navigationController?.pushViewController(premiumVC, animated: true)
+        if isDropdownVisible {
+            hideDropdown()
+        } else {
+            if shouldOpenDirectly {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
+        }
     }
     
     @objc func btnViewLinkTapped(_ sender: UITapGestureRecognizer) {
         if isDropdownVisible {
             hideDropdown()
         } else {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
-            self.navigationController?.pushViewController(vc, animated: true)
+            if shouldOpenDirectly {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }
     }
     
-    
-    
-    @IBAction func btnSpinnerTapped(_ sender: UIButton) {
+    @objc func btnSpinnerTapped(_ sender: UITapGestureRecognizer) {
         if isDropdownVisible {
             hideDropdown()
-            return
+        } else {
+            if shouldOpenDirectly {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
+                    self?.navigationController?.pushViewController(vc, animated: true)
+                }
+            }
         }
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
-        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @IBAction func btnMoreAppTapped(_ sender: UIButton) {
@@ -219,9 +328,9 @@ extension HomeVC {
         guard dropdownView == nil else { return }
         
         let dropdownView = UIView()
-        dropdownView.backgroundColor = .comman
+        dropdownView.backgroundColor = .background
         dropdownView.layer.cornerRadius = 12
-        dropdownView.layer.shadowColor = UIColor.icon.cgColor
+        dropdownView.layer.shadowColor = UIColor.white.cgColor
         dropdownView.layer.shadowOffset = CGSize(width: 0, height: 2)
         dropdownView.layer.shadowRadius = 4
         dropdownView.layer.shadowOpacity = 0.1
@@ -307,17 +416,9 @@ extension HomeVC {
             action: #selector(termsofuseTapped)
         )
         
-        let shareButton = createOptionButton(
-            title: "Share app",
-            icon: "ShareApp",
-            action: #selector(shareAppTapped)
-        )
-        
         stackView.addArrangedSubview(privacyButton)
         stackView.addArrangedSubview(createSeparator())
         stackView.addArrangedSubview(termsButton)
-        stackView.addArrangedSubview(createSeparator())
-        stackView.addArrangedSubview(shareButton)
     }
     
     private func createOptionButton(title: String, icon: String, action: Selector) -> UIButton {
@@ -325,12 +426,12 @@ extension HomeVC {
         button.backgroundColor = .clear
         
         let imageView = UIImageView(image: UIImage(named: icon))
-        imageView.tintColor = .black
+        imageView.tintColor = .white
         imageView.contentMode = .scaleAspectFit
         
         let label = UILabel()
         label.text = title
-        label.textColor = .icon
+        label.textColor = .white
         label.numberOfLines = 0
         label.font = UIFont(name: "Avenir-Medium", size: 16)
         
@@ -374,9 +475,15 @@ extension HomeVC {
     
     @objc private func privacyPolicyTapped() {
         hideDropdown()
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PrivacyPolicyVC") as! PrivacyPolicyVC
-        vc.modalPresentationStyle = .pageSheet
-        self.present(vc, animated: true, completion: nil)
+        if let url = URL(string: "https://pslink.world/privacy-policy") {
+            let safariVC = SFSafariViewController(url: url)
+            present(safariVC, animated: true, completion: nil)
+        } else {
+            print("Invalid URL")
+        }
+        //        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PrivacyPolicyVC") as! PrivacyPolicyVC
+        //        vc.modalPresentationStyle = .pageSheet
+        //        self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func termsofuseTapped() {
@@ -387,18 +494,6 @@ extension HomeVC {
         } else {
             print("Invalid URL")
         }
-    }
-    
-    @objc private func shareAppTapped() {
-        hideDropdown()
-        let appURL = URL(string: "https://apps.apple.com/us/app/6739135275")!
-        let activityVC = UIActivityViewController(activityItems: [appURL], applicationActivities: nil)
-        if let popoverController = activityVC.popoverPresentationController {
-            popoverController.sourceView = self.view
-            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-            popoverController.permittedArrowDirections = []
-        }
-        self.present(activityVC, animated: true, completion: nil)
     }
 }
 
@@ -440,4 +535,3 @@ extension HomeVC {
         }
     }
 }
-

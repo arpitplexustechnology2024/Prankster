@@ -21,6 +21,10 @@ class NativeSmallIpadAdUtility: NSObject {
         self.rootViewController = rootViewController
         self.nativeAdPlaceholder = nativeAdPlaceholder
         super.init()
+        
+        // Initially hide the ad placeholder
+        nativeAdPlaceholder.isHidden = true
+        
         loadAd()
     }
     
@@ -54,6 +58,8 @@ extension NativeSmallIpadAdUtility: GADAdLoaderDelegate, GADNativeAdLoaderDelega
     
     func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
         print("Failed to receive ad with error: \(error.localizedDescription)")
+        // Optionally, keep the placeholder hidden if ad loading fails
+        nativeAdPlaceholder?.isHidden = true
     }
     
     func adLoader(_ adLoader: GADAdLoader, didReceive nativeAd: GADNativeAd) {
@@ -102,6 +108,12 @@ extension NativeSmallIpadAdUtility: GADAdLoaderDelegate, GADNativeAdLoaderDelega
         
         nativeAdView.callToActionView?.isUserInteractionEnabled = false
         nativeAdView.nativeAd = nativeAd
+        
+        // Show the ad placeholder once the ad is loaded
+        nativeAdPlaceholder?.isHidden = false
+        UIView.animate(withDuration: 0.3) {
+            self.nativeAdPlaceholder?.alpha = 1.0
+        }
     }
 }
 

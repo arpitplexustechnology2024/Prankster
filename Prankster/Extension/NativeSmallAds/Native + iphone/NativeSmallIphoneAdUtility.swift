@@ -98,6 +98,9 @@ extension NativeSmallIphoneAdUtility: GADAdLoaderDelegate, GADNativeAdLoaderDele
         
         // Show the ad placeholder once the ad is loaded
         nativeAdPlaceholder?.isHidden = false
+        UIView.animate(withDuration: 0.3) {
+            self.nativeAdPlaceholder?.alpha = 1.0
+        }
     }
 }
 

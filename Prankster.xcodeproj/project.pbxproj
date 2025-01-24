@@ -18,6 +18,8 @@
 		BD0EB56E2D1628BB00F47B8E /* NoInternetLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */; };
 		BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */; };
 		BD0EB5702D1628BB00F47B8E /* NoInternetLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */; };
+		BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */; };
+		BD7663842D432905007ADD37 /* NativeSmallIpadAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7663832D432905007ADD37 /* NativeSmallIpadAdUtility.swift */; };
 		BD8454A32D17924200E23DE6 /* Insta4.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD8454A22D17924200E23DE6 /* Insta4.gif */; };
 		BD8454AB2D1799C000E23DE6 /* Insta3.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD8454AA2D1799C000E23DE6 /* Insta3.gif */; };
 		BD8454AF2D179D6A00E23DE6 /* Snap5.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD8454AD2D179D6A00E23DE6 /* Snap5.gif */; };
@@ -123,6 +125,8 @@
 		BDC68B9D2D0931F900834D9B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B2E2D0931F800834D9B /* Main.storyboard */; };
 		BDCD59F82D1B8D5400DF5330 /* BetterLuckVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */; };
 		BDE0912B2D0D31E300C76820 /* PrivacyPolicyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */; };
+		BDE586222D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDE586212D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib */; };
+		BDE586242D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE586232D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift */; };
 		FC4EF9998A05D8F6312151BD /* Pods_PranksterTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D982D927F0340D60CBA877E /* Pods_PranksterTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -180,6 +184,8 @@
 		BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoDataLightView.xib; sourceTree = "<group>"; };
 		BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetLightView.swift; sourceTree = "<group>"; };
 		BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoInternetLightView.xib; sourceTree = "<group>"; };
+		BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIpadAdView.xib; sourceTree = "<group>"; };
+		BD7663832D432905007ADD37 /* NativeSmallIpadAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSmallIpadAdUtility.swift; sourceTree = "<group>"; };
 		BD8454A22D17924200E23DE6 /* Insta4.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Insta4.gif; sourceTree = "<group>"; };
 		BD8454AA2D1799C000E23DE6 /* Insta3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Insta3.gif; sourceTree = "<group>"; };
 		BD8454AC2D179D6A00E23DE6 /* Snap3.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Snap3.gif; sourceTree = "<group>"; };
@@ -291,6 +297,8 @@
 		BDC68B692D0931F800834D9B /* ShareBottomVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareBottomVC.swift; sourceTree = "<group>"; };
 		BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BetterLuckVC.swift; sourceTree = "<group>"; };
 		BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyVC.swift; sourceTree = "<group>"; };
+		BDE586212D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIphoneAdView.xib; sourceTree = "<group>"; };
+		BDE586232D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSmallIphoneAdUtility.swift; sourceTree = "<group>"; };
 		C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prankster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A7BA264A3D9F5D5F56F594 /* Pods-PranksterTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.release.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.release.xcconfig"; sourceTree = "<group>"; };
 		DBE85015E495927229BA9144 /* Pods-PranksterTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.debug.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -414,6 +422,33 @@
 			path = Storyboard;
 			sourceTree = "<group>";
 		};
+		BD76637F2D4328BD007ADD37 /* Native + iphone */ = {
+			isa = PBXGroup;
+			children = (
+				BDE586212D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib */,
+				BDE586232D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift */,
+			);
+			path = "Native + iphone";
+			sourceTree = "<group>";
+		};
+		BD7663802D4328D0007ADD37 /* Native + ipad */ = {
+			isa = PBXGroup;
+			children = (
+				BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */,
+				BD7663832D432905007ADD37 /* NativeSmallIpadAdUtility.swift */,
+			);
+			path = "Native + ipad";
+			sourceTree = "<group>";
+		};
+		BD7663852D432B06007ADD37 /* NativeSmallAds */ = {
+			isa = PBXGroup;
+			children = (
+				BD76637F2D4328BD007ADD37 /* Native + iphone */,
+				BD7663802D4328D0007ADD37 /* Native + ipad */,
+			);
+			path = NativeSmallAds;
+			sourceTree = "<group>";
+		};
 		BDC68A6E2D092D0400834D9B = {
 			isa = PBXGroup;
 			children = (
@@ -502,6 +537,7 @@
 				BDC68AE42D092E4B00834D9B /* UIImage+GIF.swift */,
 				BDC68AE62D092E4B00834D9B /* Alert.swift */,
 				BDC68AE72D092E4B00834D9B /* SnapchatEventTracker.swift */,
+				BD7663852D432B06007ADD37 /* NativeSmallAds */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -846,6 +882,7 @@
 				BDB3398F2D0D2C1C001684D8 /* Insta1.gif in Resources */,
 				BDC68B982D0931F900834D9B /* NoDataView.xib in Resources */,
 				BD02C7E22D1C84FF0054E85B /* ImageGIF.gif in Resources */,
+				BDE586222D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib in Resources */,
 				BD02C7E32D1C84FF0054E85B /* AudioGIF.gif in Resources */,
 				BDC68B992D0931F900834D9B /* NoInternetBottombarView.xib in Resources */,
 				BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */,
@@ -854,6 +891,7 @@
 				BDC68B9B2D0931F900834D9B /* NoDataBottomBarView.xib in Resources */,
 				BDC68B9C2D0931F900834D9B /* LaunchScreen.storyboard in Resources */,
 				BD02C7E52D1C8AA20054E85B /* VideoGIF.gif in Resources */,
+				BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */,
 				BDC68B9D2D0931F900834D9B /* Main.storyboard in Resources */,
 				BDC68B202D092E4B00834D9B /* Loading.json in Resources */,
 				BD8454AF2D179D6A00E23DE6 /* Snap5.gif in Resources */,
@@ -1098,6 +1136,7 @@
 				BDC68B0D2D092E4B00834D9B /* SpinnerAPI.swift in Sources */,
 				BDC68B0E2D092E4B00834D9B /* SFWConfiguration.swift in Sources */,
 				BDC68B0F2D092E4B00834D9B /* StaticFunction.swift in Sources */,
+				BDE586242D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift in Sources */,
 				BDC68B102D092E4B00834D9B /* MoreAppAPI.swift in Sources */,
 				BDC68B112D092E4B00834D9B /* Model.swift in Sources */,
 				BDC68B122D092E4B00834D9B /* PrankViewModel.swift in Sources */,
@@ -1126,6 +1165,7 @@
 				BD0EB56E2D1628BB00F47B8E /* NoInternetLightView.swift in Sources */,
 				BDC68B782D0931F900834D9B /* ImageCategoryAllVC.swift in Sources */,
 				BDC68B792D0931F900834D9B /* AudioCategoryAllVC.swift in Sources */,
+				BD7663842D432905007ADD37 /* NativeSmallIpadAdUtility.swift in Sources */,
 				BDC68B7A2D0931F900834D9B /* PremiumBottomVC.swift in Sources */,
 				BDC68B7B2D0931F900834D9B /* AudioCharacterAllCollectionViewCell.swift in Sources */,
 				BDC68B7C2D0931F900834D9B /* SpinnerPreviewVC.swift in Sources */,
