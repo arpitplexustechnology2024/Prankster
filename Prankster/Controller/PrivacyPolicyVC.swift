@@ -12,13 +12,15 @@ class PrivacyPolicyVC: UIViewController {
     
     @IBOutlet weak var privacyPolicyWebView: WKWebView!
     
+    var linkURL: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
     }
     
     func setupUI() {
-        if let url = URL(string: "https://pslink.world/privacy-policy") {
+        if let url = URL(string: linkURL!) {
             let request = URLRequest(url: url)
             privacyPolicyWebView.load(request)
         }

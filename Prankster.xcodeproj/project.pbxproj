@@ -18,6 +18,9 @@
 		BD0EB56E2D1628BB00F47B8E /* NoInternetLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */; };
 		BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */; };
 		BD0EB5702D1628BB00F47B8E /* NoInternetLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */; };
+		BD686C392D44157000B9F03C /* AppOpenAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */; };
+		BD686C3B2D44358400B9F03C /* CoverPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C3A2D44358400B9F03C /* CoverPage.swift */; };
+		BD686C3D2D445CB100B9F03C /* ChipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C3C2D445CB100B9F03C /* ChipButton.swift */; };
 		BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */; };
 		BD7663842D432905007ADD37 /* NativeSmallIpadAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7663832D432905007ADD37 /* NativeSmallIpadAdUtility.swift */; };
 		BD8454A32D17924200E23DE6 /* Insta4.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD8454A22D17924200E23DE6 /* Insta4.gif */; };
@@ -184,6 +187,9 @@
 		BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoDataLightView.xib; sourceTree = "<group>"; };
 		BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetLightView.swift; sourceTree = "<group>"; };
 		BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoInternetLightView.xib; sourceTree = "<group>"; };
+		BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdUtility.swift; sourceTree = "<group>"; };
+		BD686C3A2D44358400B9F03C /* CoverPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverPage.swift; sourceTree = "<group>"; };
+		BD686C3C2D445CB100B9F03C /* ChipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChipButton.swift; sourceTree = "<group>"; };
 		BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIpadAdView.xib; sourceTree = "<group>"; };
 		BD7663832D432905007ADD37 /* NativeSmallIpadAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSmallIpadAdUtility.swift; sourceTree = "<group>"; };
 		BD8454A22D17924200E23DE6 /* Insta4.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Insta4.gif; sourceTree = "<group>"; };
@@ -527,6 +533,7 @@
 				BDC68ADA2D092E4B00834D9B /* BannerAdUtility.swift */,
 				BDC68ADB2D092E4B00834D9B /* Extension.swift */,
 				BDC68ADC2D092E4B00834D9B /* InterstitialAdUtility.swift */,
+				BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */,
 				BDC68ADD2D092E4B00834D9B /* LoadingFooterView.swift */,
 				BDC68ADE2D092E4B00834D9B /* premiumManager.swift */,
 				BDC68ADF2D092E4B00834D9B /* RewardAdUtility.swift */,
@@ -538,6 +545,7 @@
 				BDC68AE62D092E4B00834D9B /* Alert.swift */,
 				BDC68AE72D092E4B00834D9B /* SnapchatEventTracker.swift */,
 				BD7663852D432B06007ADD37 /* NativeSmallAds */,
+				BD686C3C2D445CB100B9F03C /* ChipButton.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -700,6 +708,7 @@
 				BDC68B522D0931F800834D9B /* CoverPageVC.swift */,
 				BDC68B542D0931F800834D9B /* EmojiCoverPageVC.swift */,
 				BDC68B552D0931F800834D9B /* RealisticCoverPageVC.swift */,
+				BD686C3A2D44358400B9F03C /* CoverPage.swift */,
 			);
 			path = CoverPage;
 			sourceTree = "<group>";
@@ -1143,12 +1152,14 @@
 				BDC68B132D092E4B00834D9B /* premiumManager.swift in Sources */,
 				BDC68B142D092E4B00834D9B /* Extension.swift in Sources */,
 				BDC68B152D092E4B00834D9B /* CategoryAllAPI.swift in Sources */,
+				BD686C3B2D44358400B9F03C /* CoverPage.swift in Sources */,
 				BDC68B162D092E4B00834D9B /* Alert.swift in Sources */,
 				BDC68B172D092E4B00834D9B /* Skeleton.swift in Sources */,
 				BDC68B182D092E4B00834D9B /* SnapchatEventTracker.swift in Sources */,
 				BDC68B192D092E4B00834D9B /* Snackbar.swift in Sources */,
 				BDC68B1A2D092E4B00834D9B /* InterstitialAdUtility.swift in Sources */,
 				BDC68B1B2D092E4B00834D9B /* CoverPageViewModel.swift in Sources */,
+				BD686C3D2D445CB100B9F03C /* ChipButton.swift in Sources */,
 				BDC68B1C2D092E4B00834D9B /* RewardAdUtility.swift in Sources */,
 				BDC68B6B2D0931F900834D9B /* ViewLinkVC.swift in Sources */,
 				BDC68B6C2D0931F900834D9B /* VideoVC.swift in Sources */,
@@ -1174,6 +1185,7 @@
 				BDC68B7F2D0931F900834D9B /* VideoCharacterAllCollectionViewCell.swift in Sources */,
 				BDC68B802D0931F900834D9B /* PremiumPopupVC.swift in Sources */,
 				BDC68B812D0931F900834D9B /* AudioCollectionViewCell.swift in Sources */,
+				BD686C392D44157000B9F03C /* AppOpenAdUtility.swift in Sources */,
 				BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */,
 				BDC68B822D0931F900834D9B /* ShareBottomVC.swift in Sources */,
 				BDC68B832D0931F900834D9B /* SaveRecordingPopup.swift in Sources */,

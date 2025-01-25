@@ -10,20 +10,29 @@ import FBSDKCoreKit
 import CommonCrypto
 import WebKit
 import FirebaseAnalytics
+import GoogleMobileAds
 
-class LaunchVC: UIViewController {
+class LaunchVC: UIViewController, AppOpenAdManagerDelegate {
     
     @IBOutlet weak var launchImageView: UIImageView!
     @IBOutlet weak var loadingActivityIndicator: UIActivityIndicatorView!
-    //  private let adsViewModel = AdsViewModel()
+    private let adsViewModel = AdsViewModel()
     
     var passedActionKey: String?
+    var secondsRemaining: Int = 5
+    var countdownTimer: Timer?
+    private var isMobileAdsStartCalled = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
         self.trackAppInstall()
-        //  self.loadAds()
+        self.loadAds()
+        
+        // MARK: - App Open Ads Show
+        AppOpenAdManager.shared.appOpenAdManagerDelegate = self
+        startGoogleMobileAdsSDK()
+        countdownTimer = Timer.scheduledTimer(timeInterval: 1.0,target: self,selector: #selector(LaunchVC.decrementCounter),userInfo: nil,repeats: true)
     }
     
     private func trackAppInstall() {
@@ -80,16 +89,44 @@ class LaunchVC: UIViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
-    //    func loadAds() {
-    //        adsViewModel.fetchAds { [weak self] success in
-    //            if success {
-    //                print("Ads loaded successfully")
-    //                let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
-    //                print("Saved Ad Names: \(savedNames)")
-    //                print("Saved Ad IDs: \(savedIDs)")
-    //            } else {
-    //                print("Failed to load ads")
-    //            }
-    //        }
-    //    }
+    // MARK: - loadAds
+    func loadAds() {
+        adsViewModel.fetchAds { [weak self] success in
+            if success {
+                print("Ads loaded successfully")
+                let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
+                print("Saved Ad Names: \(savedNames)")
+                print("Saved Ad IDs: \(savedIDs)")
+            } else {
+                print("Failed to load ads")
+            }
+        }
+    }
+    
+    
+    // MARK: - App Open Ads code
+    @objc func decrementCounter() {
+        secondsRemaining -= 1
+        guard secondsRemaining <= 0 else {
+            return
+        }
+        countdownTimer?.invalidate()
+        AppOpenAdManager.shared.showAdIfAvailable()
+    }
+    
+    private func startGoogleMobileAdsSDK() {
+        DispatchQueue.main.async {
+            guard !self.isMobileAdsStartCalled else { return }
+            self.isMobileAdsStartCalled = true
+            GADMobileAds.sharedInstance().start()
+            Task {
+                await AppOpenAdManager.shared.loadAd()
+            }
+        }
+    }
+    
+    // MARK: AppOpenAdManagerDelegate
+    func appOpenAdManagerAdDidComplete(_ appOpenAdManager: AppOpenAdManager) {
+        print("App open Ads Show")
+    }
 }

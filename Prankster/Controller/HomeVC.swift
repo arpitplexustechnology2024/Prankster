@@ -16,8 +16,7 @@ enum CoverViewType {
 }
 
 class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
-    
-    @IBOutlet weak var navigationbarView: UIView!
+
     @IBOutlet weak var audioView: UIView!
     @IBOutlet weak var videoView: UIView!
     @IBOutlet weak var imageView: UIView!
@@ -25,7 +24,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     @IBOutlet weak var premiumView: UIView!
     @IBOutlet weak var spinnerView: UIView!
     @IBOutlet weak var recentView: UIView!
-    @IBOutlet weak var spinerButton: UIButton!
     @IBOutlet weak var audiotitleLabel: UILabel!
     @IBOutlet weak var audiodescriptionLabel: UILabel!
     @IBOutlet weak var videotitleLabel: UILabel!
@@ -61,7 +59,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
     let interstitialAdUtility = InterstitialAdUtility()
-    let shouldOpenDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1)
+    private let adsViewModel = AdsViewModel()
     
     let notificationMessages = [
         (title: "Sex Prank", body: "Create sex prank & share it & capture funny moments."),
@@ -77,6 +75,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.setupUI()
         self.seupViewAction()
         self.requestNotificationPermission()
+        self.navigationItem.hidesBackButton = true
     }
     
     func setupUI() {
@@ -117,10 +116,18 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
                 if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                     nativeSmallAd.isHidden = true
                 } else {
-                    nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: "ca-app-pub-3940256099942544/3986624511", rootViewController: self, nativeAdPlaceholder: nativeSmallAd)
+                    if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+                        print("Native Ad ID: \(nativeAdID)")
+                        nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAd)
+                    } else {
+                        print("No Native Ad ID found")
+                        nativeSmallAd.isHidden = true
+                        scrollViewHeightConstraint.constant = 1000
+                    }
                 }
             } else {
                 nativeSmallAd.isHidden = true
+                scrollViewHeightConstraint.constant = 1000
             }
         } else {
             scrollViewHeightConstraint.constant = 1000
@@ -152,10 +159,18 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
                 if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                     nativeSmallAd.isHidden = true
                 } else {
-                    nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: "ca-app-pub-3940256099942544/3986624511", rootViewController: self, nativeAdPlaceholder: nativeSmallAd)
+                    if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+                        print("Native Ad ID: \(nativeAdID)")
+                        nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAd)
+                    } else {
+                        print("No Native Ad ID found")
+                        nativeSmallAd.isHidden = true
+                        scrollViewHeightConstraint.constant = 850
+                    }
                 }
             } else {
                 nativeSmallAd.isHidden = true
+                scrollViewHeightConstraint.constant = 850
             }
         }
         self.view.layoutIfNeeded()
@@ -163,11 +178,13 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isConnectedToInternet() {
             if PremiumManager.shared.isContentUnlocked(itemID: -1) {
             } else {
-                interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
             }
-        } else {
-            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
@@ -198,6 +215,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
+            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+            let hasInternet = isConnectedToInternet()
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+            
             if shouldOpenDirectly {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
                 vc.viewType = .audio
@@ -217,6 +238,9 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
+            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+            let hasInternet = isConnectedToInternet()
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
@@ -237,6 +261,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
+            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+            let hasInternet = isConnectedToInternet()
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+            
             if shouldOpenDirectly {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
                 vc.viewType = .image
@@ -256,6 +284,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
+            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+            let hasInternet = isConnectedToInternet()
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+            
             if shouldOpenDirectly {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -273,6 +305,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
+            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+            let hasInternet = isConnectedToInternet()
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+            
             if shouldOpenDirectly {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -290,6 +326,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         if isDropdownVisible {
             hideDropdown()
         } else {
+            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+            let hasInternet = isConnectedToInternet()
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+            
             if shouldOpenDirectly {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
                 self.navigationController?.pushViewController(vc, animated: true)
@@ -303,7 +343,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         }
     }
     
-    @IBAction func btnMoreAppTapped(_ sender: UIButton) {
+    @IBAction func btnMoreAppTapped(_ sender: UIBarButtonItem) {
         if isDropdownVisible {
             hideDropdown()
             return
@@ -313,7 +353,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         
     }
     
-    @IBAction func btnDropDownTapped(_ sender: UIButton) {
+    @IBAction func btnDropDownTapped(_ sender: UIBarButtonItem) {
         if isDropdownVisible {
             hideDropdown()
         } else {
@@ -324,7 +364,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
 
 // MARK: - Dropdown Implementation
 extension HomeVC {
-    private func showDropdown(_ sender: UIButton) {
+    private func showDropdown(_ sender: UIBarButtonItem) {
         guard dropdownView == nil else { return }
         
         let dropdownView = UIView()
@@ -340,7 +380,7 @@ extension HomeVC {
         
         dropdownView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            dropdownView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor, constant: 8),
+            dropdownView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             dropdownView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             dropdownView.widthAnchor.constraint(equalToConstant: 204),
         ])
@@ -416,9 +456,17 @@ extension HomeVC {
             action: #selector(termsofuseTapped)
         )
         
+        let shareButton = createOptionButton(
+            title: "Share app",
+            icon: "ShareApp",
+            action: #selector(shareAppTapped)
+        )
+        
         stackView.addArrangedSubview(privacyButton)
         stackView.addArrangedSubview(createSeparator())
         stackView.addArrangedSubview(termsButton)
+        stackView.addArrangedSubview(createSeparator())
+        stackView.addArrangedSubview(shareButton)
     }
     
     private func createOptionButton(title: String, icon: String, action: Selector) -> UIButton {
@@ -461,8 +509,20 @@ extension HomeVC {
     private func createSeparator() -> UIView {
         let separator = UIView()
         separator.backgroundColor = .systemGray5
-        separator.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        return separator
+        let containerView = UIView()
+        containerView.addSubview(separator)
+        
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            separator.heightAnchor.constraint(equalToConstant: 1),
+            separator.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            separator.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            separator.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16)
+        ])
+        
+        return containerView
     }
     
     @objc private func handleTapOutside(_ gesture: UITapGestureRecognizer) {
@@ -475,25 +535,30 @@ extension HomeVC {
     
     @objc private func privacyPolicyTapped() {
         hideDropdown()
-        if let url = URL(string: "https://pslink.world/privacy-policy") {
-            let safariVC = SFSafariViewController(url: url)
-            present(safariVC, animated: true, completion: nil)
-        } else {
-            print("Invalid URL")
-        }
-        //        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PrivacyPolicyVC") as! PrivacyPolicyVC
-        //        vc.modalPresentationStyle = .pageSheet
-        //        self.present(vc, animated: true, completion: nil)
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PrivacyPolicyVC") as! PrivacyPolicyVC
+        vc.modalPresentationStyle = .pageSheet
+        vc.linkURL = "https://pslink.world/privacy-policy"
+        self.present(vc, animated: true, completion: nil)
     }
     
     @objc private func termsofuseTapped() {
         hideDropdown()
-        if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
-            let safariVC = SFSafariViewController(url: url)
-            present(safariVC, animated: true, completion: nil)
-        } else {
-            print("Invalid URL")
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PrivacyPolicyVC") as! PrivacyPolicyVC
+        vc.modalPresentationStyle = .pageSheet
+        vc.linkURL = "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+        self.present(vc, animated: true, completion: nil)
+    }
+    
+    @objc private func shareAppTapped() {
+        hideDropdown()
+        let appURL = URL(string: "https://apps.apple.com/us/app/6739135275")!
+        let activityVC = UIActivityViewController(activityItems: [appURL], applicationActivities: nil)
+        if let popoverController = activityVC.popoverPresentationController {
+            popoverController.sourceView = self.view
+            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
         }
+        self.present(activityVC, animated: true, completion: nil)
     }
 }
 

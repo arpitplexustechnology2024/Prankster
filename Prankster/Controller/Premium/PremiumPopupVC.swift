@@ -19,9 +19,9 @@ class PremiumPopupVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.premiumView.layer.cornerRadius = 13
-        self.premiumButton.layer.cornerRadius = 8
-        self.watchAdButton.layer.cornerRadius = 8
+        self.premiumView.layer.cornerRadius = 8
+        self.premiumButton.layer.cornerRadius = 5
+        self.watchAdButton.layer.cornerRadius = 5
         setupTapGesture()
         if isConnectedToInternet() {
 //            if let rewardAdID = adsViewModel.getAdID(type: .reward) {

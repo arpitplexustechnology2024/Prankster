@@ -37,7 +37,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Onesignal
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         OneSignal.initialize("d8e64d76-dc16-444f-af2d-1bb802f7bc44", withLaunchOptions: launchOptions)
-        
         // function call
         checkNotificationAuthorization()
         setupAppLifecycleObservers()
@@ -245,5 +244,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         checkNotificationAuthorization()
         checkForUpdate()
         Settings.shared.isAutoLogAppEventsEnabled = true
+        AppOpenAdManager.shared.showAdIfAvailable()
     }
 }
