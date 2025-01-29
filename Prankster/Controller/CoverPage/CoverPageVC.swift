@@ -11,6 +11,7 @@ import SDWebImage
 import Photos
 import Lottie
 
+@available(iOS 15.0, *)
 class CoverPageVC: UIViewController {
     
     // MARK: - outlet
@@ -67,13 +68,13 @@ class CoverPageVC: UIViewController {
         self.navigationbarView.addBottomShadow()
         
         NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(handlePremiumContentUnlocked),
-                name: NSNotification.Name("PremiumContentUnlocked"),
-                object: nil
-            )
+            self,
+            selector: #selector(handlePremiumContentUnlocked),
+            name: NSNotification.Name("PremiumContentUnlocked"),
+            object: nil
+        )
     }
-    
+
     @objc private func handlePremiumContentUnlocked() {
         DispatchQueue.main.async {
             self.realisticCollectionView.reloadData()
@@ -372,6 +373,7 @@ class CoverPageVC: UIViewController {
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
+@available(iOS 15.0, *)
 extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == customCoverCollectionView {
@@ -421,6 +423,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
         }
         return UICollectionViewCell()
     }
+
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard !isLoading else { return }
@@ -564,6 +567,7 @@ extension CoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIC
 }
 
 // MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
+@available(iOS 15.0, *)
 extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: - Show ImageOptions ActionSheet
@@ -758,6 +762,7 @@ extension CoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDe
     }
 }
 
+@available(iOS 15.0, *)
 extension CoverPageVC: UIViewControllerTransitioningDelegate {
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return CustomPresentationController(presentedViewController: presented, presenting: presenting)

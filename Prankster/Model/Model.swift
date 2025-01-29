@@ -176,3 +176,34 @@ struct AdsData: Codable {
         case adsID = "AdsId"
     }
 }
+
+struct DownloadGIFModel {
+    let image: UIImage?
+}
+
+
+
+struct Social: Codable {
+    let status: Int
+    let message: String
+    let data: String
+    
+    enum CodingKeys: String, CodingKey {
+        case status
+        case message
+        case data
+    }
+}
+
+
+struct TagName: Codable {
+    let status: Int
+    let message: String
+    let data: [String]
+    
+    enum CodingKeys: String, CodingKey {
+        case status
+        case message
+        case data
+    }
+}

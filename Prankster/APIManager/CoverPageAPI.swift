@@ -19,7 +19,7 @@ class EmojiAPIService: EmojiAPIServiceProtocol {
     private init() {}
     
     func fetchCoverPages(page: Int, completion: @escaping (Result<CoverPage, Error>) -> Void) {
-        let url = "https://pslink.world/api/cover/emoji"
+        let url = "https://pslink.world/api/cover/changes"
         
         let parameters: [String: Any] = [
             "page": page
@@ -49,7 +49,7 @@ class RealisticAPIService: RealisticAPIServiceProtocol {
     private init() {}
     
     func fetchRealisticCoverPages(page: Int, completion: @escaping (Result<CoverPage, any Error>) -> Void) {
-        let url = "https://pslink.world/api/cover/realistic"
+        let url = "https://pslink.world/api/cover/changes"
         
         let parameters: [String: Any] = [
             "page": page

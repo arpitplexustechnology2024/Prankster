@@ -396,6 +396,7 @@ extension RealisticCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSo
     }
 }
 
+@available(iOS 15.0, *)
 extension RealisticCoverPageVC: RealisticCoverAllCollectionViewCellDelegate {
     func didTapDoneButton(for coverPageData: CoverPageData) {
         if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {

@@ -13,8 +13,8 @@ class PremiumPopupVC: UIViewController {
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var premiumView: UIView!
     @IBOutlet weak var watchAdButton: UIButton!
-    private let rewardAdUtility = RewardAdUtility()
-   // private let adsViewModel = AdsViewModel()
+    let interstitialAdUtility = InterstitialAdUtility()
+    private let adsViewModel = AdsViewModel()
     private var itemIDToUnlock: Int?
     
     override func viewDidLoad() {
@@ -24,14 +24,14 @@ class PremiumPopupVC: UIViewController {
         self.watchAdButton.layer.cornerRadius = 5
         setupTapGesture()
         if isConnectedToInternet() {
-//            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-//                print("Reward Ad ID: \(rewardAdID)")
-                rewardAdUtility.loadRewardedAd(adUnitID: "ca-app-pub-7719542074975419/4831306268", rootViewController: self)
-//            } else {
-//                print("No Reward Ad ID found")
-//            }
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                print("Interstitial Ad ID: \(interstitialAdID)")
+                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+            } else {
+                print("No Interstitial Ad ID found")
+            }
         }
-        rewardAdUtility.onRewardEarned = { [weak self] in
+        interstitialAdUtility.onInterstitialEarned = { [weak self] in
             if let itemID = self?.itemIDToUnlock {
                 PremiumManager.shared.temporarilyUnlockContent(itemID: itemID)
                 self?.dismiss(animated: true) {
@@ -67,7 +67,7 @@ class PremiumPopupVC: UIViewController {
     
     @IBAction func btnWatchAdTapped(_ sender: UIButton) {
         if isConnectedToInternet() {
-            rewardAdUtility.showRewardedAd()
+            interstitialAdUtility.showInterstitialAd()
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)

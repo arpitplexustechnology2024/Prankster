@@ -239,6 +239,25 @@ class CovertopCollectionViewCell: UICollectionViewCell {
 
     }
     
+    func configure(with coverPageData: CoverPageData) {
+        self.coverPageData = coverPageData
+        let displayName = coverPageData.coverName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.coverName
+        self.imageName.text =  "  \(displayName)  "
+        self.imageName.sizeToFit()
+        
+        if let imageURL = URL(string: coverPageData.coverURL) {
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "PlaceholderImage")) { [weak self] image, _, _, _ in
+                if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
+                    self?.premiumButton.isHidden = false
+                    self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
+                } else {
+                    self?.premiumButton.isHidden = true
+                    self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
+                }
+            }
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()

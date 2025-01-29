@@ -15,6 +15,7 @@ enum CoverViewType {
     case image
 }
 
+@available(iOS 15.0, *)
 class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
 
     @IBOutlet weak var audioView: UIView!
@@ -75,7 +76,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.setupUI()
         self.seupViewAction()
         self.requestNotificationPermission()
-        self.navigationItem.hidesBackButton = true
+        PremiumManager.shared.clearTemporaryUnlocks()
     }
     
     func setupUI() {
@@ -226,7 +227,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             } else {
                 interstitialAdUtility.showInterstitialAd()
                 interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
                     vc.viewType = .audio
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -249,7 +250,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             } else {
                 interstitialAdUtility.showInterstitialAd()
                 interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
                     vc.viewType = .video
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -272,7 +273,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             } else {
                 interstitialAdUtility.showInterstitialAd()
                 interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
                     vc.viewType = .image
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
@@ -343,7 +344,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         }
     }
     
-    @IBAction func btnMoreAppTapped(_ sender: UIBarButtonItem) {
+    @IBAction func btnMoreAppTapped(_ sender: UIButton) {
         if isDropdownVisible {
             hideDropdown()
             return
@@ -353,7 +354,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         
     }
     
-    @IBAction func btnDropDownTapped(_ sender: UIBarButtonItem) {
+    @IBAction func btnDropDownTapped(_ sender: UIButton) {
         if isDropdownVisible {
             hideDropdown()
         } else {
@@ -363,8 +364,9 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
 }
 
 // MARK: - Dropdown Implementation
+@available(iOS 15.0, *)
 extension HomeVC {
-    private func showDropdown(_ sender: UIBarButtonItem) {
+    private func showDropdown(_ sender: UIButton) {
         guard dropdownView == nil else { return }
         
         let dropdownView = UIView()
@@ -563,6 +565,7 @@ extension HomeVC {
 }
 
 // MARK: - Local Notification
+@available(iOS 15.0, *)
 extension HomeVC {
     
     func requestNotificationPermission() {

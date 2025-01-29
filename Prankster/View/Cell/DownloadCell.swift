@@ -5,4 +5,13 @@
 //  Created by Arpit iOS Dev. on 27/01/25.
 //
 
-import Foundation
+import UIKit
+
+class DownloadImageCell: UICollectionViewCell {
+    
+    @IBOutlet weak var imageView: UIImageView!
+    
+    func setupCell(_ item: DownloadGIFModel) {
+        imageView.image = item.image
+    }
+}
