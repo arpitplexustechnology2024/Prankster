@@ -11,7 +11,7 @@ import Lottie
 
 class NoInternetLightView: UIView {
     
-    @IBOutlet weak var lottieView: LottieAnimationView!
+    @IBOutlet weak var lottieView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var retryButton: UIButton!
     @IBOutlet weak var lottieViewTopConstraint: NSLayoutConstraint!
@@ -40,14 +40,6 @@ class NoInternetLightView: UIView {
         addSubview(view)
         
         adjustConstraints()
-        setupLottieLoader()
-    }
-    
-    private func setupLottieLoader() {
-        lottieView.loopMode = .loop
-        lottieView.contentMode = .scaleAspectFit
-        lottieView.animation = LottieAnimation.named("NoInternet")
-        lottieView.play()
     }
     
     private func adjustConstraints() {

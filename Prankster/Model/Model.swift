@@ -177,6 +177,8 @@ struct AdsData: Codable {
     }
 }
 
+
+
 struct DownloadGIFModel {
     let image: UIImage?
 }

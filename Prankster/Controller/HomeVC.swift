@@ -8,6 +8,7 @@
 import UIKit
 import SafariServices
 import Alamofire
+import GoogleMobileAds
 
 enum CoverViewType {
     case audio
@@ -16,7 +17,7 @@ enum CoverViewType {
 }
 
 @available(iOS 15.0, *)
-class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
+class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpenAdManagerDelegate {
 
     @IBOutlet weak var audioView: UIView!
     @IBOutlet weak var videoView: UIView!
@@ -37,6 +38,8 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     @IBOutlet weak var viewdescriptionLabel: UILabel!
     @IBOutlet weak var spinnertitleLabel: UILabel!
     @IBOutlet weak var spinnerdescriptionLabel: UILabel!
+    @IBOutlet weak var dropDownButton: UIButton!
+    @IBOutlet weak var moreAppButton: UIButton!
     
     @IBOutlet weak var audioImageHeightsConstraints: NSLayoutConstraint!
     @IBOutlet weak var videoImageHeightsConstraints: NSLayoutConstraint!
@@ -62,6 +65,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
     let interstitialAdUtility = InterstitialAdUtility()
     private let adsViewModel = AdsViewModel()
     
+    var secondsRemaining: Int = 5
+    var countdownTimer: Timer?
+    private var isMobileAdsStartCalled = false
+    
     let notificationMessages = [
         (title: "Sex Prank", body: "Create sex prank & share it & capture funny moments."),
         (title: "फाट साउंड प्रैंक", body: "आपका फ्रेंड क्लास मैं है उसके साथ फनी फाट साउंड प्रैंक करो"),
@@ -76,7 +83,37 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
         self.setupUI()
         self.seupViewAction()
         self.requestNotificationPermission()
-        PremiumManager.shared.clearTemporaryUnlocks()
+        
+        // MARK: - App Open Ads Show
+        AppOpenAdManager.shared.appOpenAdManagerDelegate = self
+        startGoogleMobileAdsSDK()
+        countdownTimer = Timer.scheduledTimer(timeInterval: 0.3,target: self,selector: #selector(HomeVC.decrementCounter),userInfo: nil,repeats: true)
+    }
+    
+    // MARK: - App Open Ads code
+    @objc func decrementCounter() {
+        secondsRemaining -= 1
+        guard secondsRemaining <= 0 else {
+            return
+        }
+        countdownTimer?.invalidate()
+        AppOpenAdManager.shared.showAdIfAvailable()
+    }
+    
+    private func startGoogleMobileAdsSDK() {
+        DispatchQueue.main.async {
+            guard !self.isMobileAdsStartCalled else { return }
+            self.isMobileAdsStartCalled = true
+            GADMobileAds.sharedInstance().start()
+            Task {
+                await AppOpenAdManager.shared.loadAd()
+            }
+        }
+    }
+    
+    // MARK: AppOpenAdManagerDelegate
+    func appOpenAdManagerAdDidComplete(_ appOpenAdManager: AppOpenAdManager) {
+        print("App open Ads Show")
     }
     
     func setupUI() {
@@ -221,7 +258,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
                 vc.viewType = .audio
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -244,7 +281,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
                 vc.viewType = .video
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -267,7 +304,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate {
             let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPageVC") as! CoverPageVC
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
                 vc.viewType = .image
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
@@ -382,7 +419,7 @@ extension HomeVC {
         
         dropdownView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            dropdownView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            dropdownView.topAnchor.constraint(equalTo: dropDownButton.bottomAnchor, constant: 16),
             dropdownView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             dropdownView.widthAnchor.constraint(equalToConstant: 204),
         ])

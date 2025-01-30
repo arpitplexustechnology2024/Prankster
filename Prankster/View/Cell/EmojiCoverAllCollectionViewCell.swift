@@ -9,12 +9,14 @@
 import UIKit
 import SDWebImage
 import GoogleMobileAds
+import Alamofire
 
 protocol emojiCoverAllCollectionViewCellDelegate: AnyObject {
     func didTapPremiumIcon(for coverPageData: CoverPageData)
     func didTapDoneButton(for coverPageData: CoverPageData)
 }
 
+@available(iOS 15.0, *)
 class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     
     // MARK: - IBOutlets
@@ -32,6 +34,8 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var adContainerView: UIView!
     private var nativeMediumAdUtility: NativeMediumAdUtility?
+    
+    private let adsViewModel = AdsViewModel()
     
     // MARK: - Lifecycle Methods
     override func awakeFromNib() {
@@ -66,6 +70,12 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
         
         premiumActionButton.addTarget(self, action: #selector(premiumButtonClicked), for: .touchUpInside)
     }
+    
+    @IBAction func doneButtonClicked(_ sender: UIButton) {
+        guard let coverPageData = coverPageData else { return }
+        delegate?.didTapDoneButton(for: coverPageData)
+    }
+
     
     private func setupUI() {
         // ImageView Setup
@@ -116,9 +126,22 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = true
             
-            nativeMediumAdUtility = NativeMediumAdUtility(adUnitID: "ca-app-pub-3940256099942544/3986624511",
-                                                         rootViewController: UIApplication.shared.keyWindow?.rootViewController ?? UIViewController(),
-                                                         nativeAdPlaceholder: adContainerView)
+            if let parentVC = self.parentViewController as? EmojiCoverPageVC,
+                       let preloadedAdView = parentVC.preloadedNativeAdView {
+                        // Remove any existing subviews
+                        adContainerView.subviews.forEach { $0.removeFromSuperview() }
+                        
+                        // Add the preloaded ad view
+                        adContainerView.addSubview(preloadedAdView)
+                        preloadedAdView.translatesAutoresizingMaskIntoConstraints = false
+                        
+                        NSLayoutConstraint.activate([
+                            preloadedAdView.topAnchor.constraint(equalTo: adContainerView.topAnchor),
+                            preloadedAdView.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor),
+                            preloadedAdView.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor),
+                            preloadedAdView.bottomAnchor.constraint(equalTo: adContainerView.bottomAnchor)
+                        ])
+                    }
             
         } else {
             self.adContainerView.isHidden = true
@@ -136,17 +159,23 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
                     if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
                         self?.premiumButton.isHidden = false
                         self?.premiumActionButton.isHidden = false
+                        self?.DoneButton.isHidden = true
                         self?.applyBlurEffect()
-                        self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
                     } else {
                         self?.premiumButton.isHidden = true
                         self?.premiumActionButton.isHidden = true
                         self?.removeBlurEffect()
+                        self?.DoneButton.isHidden = false
                         self?.DoneButton.setImage(UIImage(named: "selectYesButton"), for: .normal)
                     }
                 }
             }
         }
+    }
+    
+    private func isConnectedToInternet() -> Bool {
+        let networkManager = NetworkReachabilityManager()
+        return networkManager?.isReachable ?? false
     }
     
     // MARK: - Blur Effect Methods
@@ -239,19 +268,19 @@ class EmojiCoverSliderCollectionViewCell: UICollectionViewCell {
     
     func configure(with coverPageData: CoverPageData) {
         self.coverPageData = coverPageData
-            if let imageURL = URL(string: coverPageData.coverURL) {
-                imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "imageplacholder")) { image, _, _, _ in
-                    self.originalImage = image
-                    
-                    if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
-                        self.premiumIconImageView.isHidden = false
-                        self.applyBlurEffect()
-                    } else {
-                        self.premiumIconImageView.isHidden = true
-                        self.removeBlurEffect()
-                    }
+        if let imageURL = URL(string: coverPageData.coverURL) {
+            imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "imageplacholder")) { image, _, _, _ in
+                self.originalImage = image
+                
+                if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
+                    self.premiumIconImageView.isHidden = false
+                    self.applyBlurEffect()
+                } else {
+                    self.premiumIconImageView.isHidden = true
+                    self.removeBlurEffect()
                 }
             }
+        }
     }
     
     func applyBlurEffect() {
@@ -277,11 +306,10 @@ class EmojiCoverSliderCollectionViewCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             layer.borderWidth = isSelected ? 3 : 0
-            layer.borderColor = isSelected ? UIColor.white.cgColor : nil
+            layer.borderColor = isSelected ? #colorLiteral(red: 1, green: 0.8470588235, blue: 0, alpha: 1) : nil
         }
     }
 }
-
 
 // MARK: - LoadingView.swift
 class LoadingView: UIView {

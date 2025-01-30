@@ -11,10 +11,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NoDataLightView" customModule="Prankster" customModuleProvider="target">
             <connections>
-                <outlet property="labelTopConstraint" destination="LRM-CF-lE2" id="BcU-cV-SqP"/>
-                <outlet property="lottieView" destination="VIq-Ny-d2c" id="vnn-hE-8C3"/>
-                <outlet property="lottieViewHeightConstraint" destination="RpE-yw-n4K" id="mhz-UA-VFM"/>
-                <outlet property="lottieViewTopConstraint" destination="SfF-2A-bai" id="tbR-MV-7Rk"/>
+                <outlet property="labelTopConstraint" destination="Nih-ad-P0e" id="XX2-la-I1f"/>
+                <outlet property="lottieView" destination="bpf-Gh-T7E" id="rUa-4J-toO"/>
+                <outlet property="lottieViewHeightConstraint" destination="adi-vV-eqM" id="YJ4-DB-iZS"/>
+                <outlet property="lottieViewTopConstraint" destination="nl6-HK-Mlt" id="Jd1-Ot-bO3"/>
                 <outlet property="titleLabel" destination="z5D-XC-TkX" id="zPc-eh-hvZ"/>
             </connections>
         </placeholder>
@@ -29,27 +29,27 @@
                     <nil key="textColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VIq-Ny-d2c" customClass="LottieAnimationView" customModule="Lottie">
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="No data" translatesAutoresizingMaskIntoConstraints="NO" id="bpf-Gh-T7E">
                     <rect key="frame" x="53" y="129" width="287" height="287"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="287" id="RpE-yw-n4K"/>
+                        <constraint firstAttribute="height" constant="287" id="adi-vV-eqM"/>
                     </constraints>
-                </view>
+                </imageView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="4wa-EH-lQO"/>
             <color key="backgroundColor" name="comman"/>
             <constraints>
-                <constraint firstItem="VIq-Ny-d2c" firstAttribute="leading" secondItem="4wa-EH-lQO" secondAttribute="leading" constant="53" id="41O-13-Wc9"/>
-                <constraint firstItem="z5D-XC-TkX" firstAttribute="top" secondItem="VIq-Ny-d2c" secondAttribute="bottom" constant="50" id="LRM-CF-lE2"/>
-                <constraint firstItem="VIq-Ny-d2c" firstAttribute="top" secondItem="4wa-EH-lQO" secondAttribute="top" constant="70" id="SfF-2A-bai"/>
-                <constraint firstItem="4wa-EH-lQO" firstAttribute="trailing" secondItem="VIq-Ny-d2c" secondAttribute="trailing" constant="53" id="fcK-tH-qgb"/>
+                <constraint firstItem="4wa-EH-lQO" firstAttribute="trailing" secondItem="bpf-Gh-T7E" secondAttribute="trailing" constant="53" id="NWl-9x-vzx"/>
+                <constraint firstItem="bpf-Gh-T7E" firstAttribute="leading" secondItem="4wa-EH-lQO" secondAttribute="leading" constant="53" id="NcN-Dz-I7g"/>
+                <constraint firstItem="z5D-XC-TkX" firstAttribute="top" secondItem="bpf-Gh-T7E" secondAttribute="bottom" constant="50" id="Nih-ad-P0e"/>
+                <constraint firstItem="bpf-Gh-T7E" firstAttribute="top" secondItem="4wa-EH-lQO" secondAttribute="top" constant="70" id="nl6-HK-Mlt"/>
                 <constraint firstItem="z5D-XC-TkX" firstAttribute="centerX" secondItem="8Rf-4Q-1Nn" secondAttribute="centerX" id="rTD-4o-vAu"/>
             </constraints>
             <point key="canvasLocation" x="806.87022900763361" y="-6.3380281690140849"/>
         </view>
     </objects>
     <resources>
+        <image name="No data" width="1205" height="1060"/>
         <namedColor name="comman">
             <color red="0.96862745098039216" green="0.94901960784313721" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

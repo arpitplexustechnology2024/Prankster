@@ -68,13 +68,13 @@ class ChipSelectorView: UIView {
         stackView.axis = .horizontal
         stackView.spacing = 8
         stackView.alignment = .center
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
-            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
+            stackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -5),
             stackView.topAnchor.constraint(equalTo: topAnchor),
             stackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             stackView.heightAnchor.constraint(equalTo: heightAnchor)
@@ -82,7 +82,7 @@ class ChipSelectorView: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add cover image 📸", "Realistic cover image 😂"]
+        let titles = ["Add cover image 📸", "Rational cover image 😂"]
         
         for title in titles {
             let chip = ChipButton()

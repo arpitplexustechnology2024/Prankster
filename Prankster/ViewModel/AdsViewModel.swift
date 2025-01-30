@@ -20,31 +20,44 @@ enum AdType: String {
 // MARK: - AdsViewModel
 class AdsViewModel {
     private let apiService: AdsAPIProtocol
+    private var isAdsEnabled: Bool = false
     
     init(apiService: AdsAPIProtocol = AdsAPIManger.shared) {
         self.apiService = apiService
+        self.isAdsEnabled = UserDefaults.standard.bool(forKey: "isAdsEnabled")
     }
     
-    // MARK: - Fetch Ads Method
     func fetchAds(completion: @escaping (Bool) -> Void) {
         apiService.fetchAds { [weak self] result in
             switch result {
             case .success(let adsResponse):
+                // Store the ads status
+                self?.isAdsEnabled = adsResponse.adsStatus
+                UserDefaults.standard.set(adsResponse.adsStatus, forKey: "isAdsEnabled")
+                
                 if adsResponse.adsStatus {
                     let adsNames = adsResponse.data.map { $0.adsName }
                     let adsIDs = adsResponse.data.map { $0.adsID }
-                    
                     self?.saveAdsToUserDefaults(names: adsNames, ids: adsIDs)
                     completion(true)
                 } else {
+                    self?.removeAdsFromUserDefaults()
                     completion(false)
                 }
                 
             case .failure(let error):
                 print("Ads Fetch Error: \(error.localizedDescription)")
+                // On failure, keep the existing ads status and data
+                // Don't remove anything from UserDefaults
+                // Just return false to indicate fetch failed
                 completion(false)
             }
         }
+    }
+    
+    // Check if ads should be shown
+    func shouldShowAds() -> Bool {
+        return isAdsEnabled && UserDefaults.standard.bool(forKey: "isAdsEnabled")
     }
     
     // MARK: - UserDefaults Storage
@@ -75,14 +88,12 @@ class AdsViewModel {
     // MARK: - Retrieve Saved Ads
     func getSavedAds() -> (names: [String], ids: [String]) {
         let defaults = UserDefaults.standard
-        
         let savedNames = defaults.stringArray(forKey: "savedAdsNames") ?? []
         let savedIDs = defaults.stringArray(forKey: "savedAdsIDs") ?? []
-        
         return (savedNames, savedIDs)
     }
     
-    // MARK: - Save Specific Ad ID for Different Ad Types
+    // MARK: - Save Specific Ad ID
     func saveAdID(type: AdType, adID: String) {
         let defaults = UserDefaults.standard
         defaults.set(adID, forKey: type.rawValue)
@@ -90,10 +101,14 @@ class AdsViewModel {
     
     // MARK: - Retrieve Specific Ad ID
     func getAdID(type: AdType) -> String? {
+        guard shouldShowAds() else {
+            return nil
+        }
         let defaults = UserDefaults.standard
         return defaults.string(forKey: type.rawValue)
     }
     
+    // MARK: - Remove All Ads
     func removeAdsFromUserDefaults() {
         let defaults = UserDefaults.standard
         

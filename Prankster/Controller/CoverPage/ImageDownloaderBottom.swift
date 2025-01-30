@@ -70,7 +70,12 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
         self.hideKeyboardTappedAround()
         self.setupKeyboardObservers()
         self.downloadButton.layer.cornerRadius = downloadButton.layer.frame.height / 2
+        self.pasteBUTTON.layer.cornerRadius = pasteBUTTON.layer.frame.height / 2
+        self.pasteBUTTON.layer.borderWidth = 1
+        self.pasteBUTTON.layer.borderColor = #colorLiteral(red: 1, green: 0.8470588235, blue: 0, alpha: 1)
         self.searchView.layer.cornerRadius = 14
+        self.previewImageView.layer.cornerRadius = 10
+        self.CancelButton.isHidden = true
         self.previewImageView.isHidden = true
         self.doneButton.isHidden = true
         self.doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
@@ -214,12 +219,14 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
         URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
-                    self?.showError(error.localizedDescription)
+                    print(error.localizedDescription)
+                    //  self?.showError(error.localizedDescription)
                     return
                 }
                 
                 guard let data = data, let image = UIImage(data: data) else {
-                    self?.showError("Failed to load image")
+                    print("Failed to load image")
+                    //  self?.showError("Failed to load image")
                     return
                 }
                 
@@ -236,14 +243,34 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
     }
     
     private func showDownloadedImage(_ image: UIImage) {
-        collectionView.isHidden = true
-        pageControl.isHidden = true
-        
-        previewImageView.image = image
-        previewImageView.isHidden = false
-        doneButton.isHidden = false
-        
-        stopLoading()
+        ImageProcessingManager.shared.processImage(image) { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let compressedImage):
+                    // Only show preview if image is within size limit
+                    self.collectionView.isHidden = true
+                    self.pageControl.isHidden = true
+                    self.previewImageView.image = compressedImage
+                    self.previewImageView.isHidden = false
+                    self.doneButton.isHidden = false
+                    
+                case .failure(let error):
+                    // Show error and reset UI
+                    let snackbar = CustomSnackbar(message: error.message, backgroundColor: .snackbar)
+                    snackbar.show(in: self.view, duration: 3.0)
+                    
+                    // Reset UI state
+                    self.previewImageView.image = nil
+                    self.previewImageView.isHidden = true
+                    self.doneButton.isHidden = true
+                    self.collectionView.isHidden = false
+                    self.pageControl.isHidden = false
+                }
+                self.stopLoading()
+            }
+        }
     }
     
     private func showError(_ message: String) {
@@ -255,6 +282,7 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
     @IBAction func btnPasteTapped(_ sender: UIButton) {
         if let pastedText = UIPasteboard.general.string {
             searchTextField.text = pastedText
+            CancelButton.isHidden = false
         } else {
             print("No text found in clipboard.")
         }
@@ -263,28 +291,60 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
     @IBAction func btnDownloadTapped(_ sender: UIButton) {
         startLoading()
         
-        interstitialAdUtility.showInterstitialAd()
-        interstitialAdUtility.onInterstitialEarned = { [weak self] in
-            guard let urlToDownload = self?.searchTextField.text, !urlToDownload.isEmpty else {
-                self?.stopLoading()
-                self?.showError("Please enter a valid URL")
-                return
-            }
-            
-            self?.socialViewModule.fetchSocial(url: urlToDownload) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let socialResponse):
-                        print("Social Download successfully: \(socialResponse.data)")
-                        self?.downloadedImageUrl = socialResponse.data  // Store the URL
-                        self?.loadImageFromURL(socialResponse.data)
-                    case .failure(let error):
-                        print("Failed to Social Download: \(error.localizedDescription)")
+        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil)
+        
+        if isConnectedToInternet() {
+            if shouldOpenDirectly {
+                guard let urlToDownload = self.searchTextField.text, !urlToDownload.isEmpty else {
+                    self.stopLoading()
+                    self.showError("Please enter a valid URL")
+                    return
+                }
+                
+                self.socialViewModule.fetchSocial(url: urlToDownload) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let socialResponse):
+                            print("Social Download successfully: \(socialResponse.data)")
+                            self.downloadedImageUrl = socialResponse.data  // Store the URL
+                            self.loadImageFromURL(socialResponse.data)
+                        case .failure(let error):
+                            print("Failed to Social Download: \(error.localizedDescription)")
+                            self.stopLoading()
+                            self.showError("Downloading Failed")
+                        }
+                    }
+                }
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    guard let urlToDownload = self?.searchTextField.text, !urlToDownload.isEmpty else {
                         self?.stopLoading()
-                        self?.showError("Downloading Failed")
+                        self?.showError("Please enter a valid URL")
+                        return
+                    }
+                    
+                    self?.socialViewModule.fetchSocial(url: urlToDownload) { result in
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success(let socialResponse):
+                                print("Social Download successfully: \(socialResponse.data)")
+                                self?.downloadedImageUrl = socialResponse.data
+                                self?.loadImageFromURL(socialResponse.data)
+                            case .failure(let error):
+                                print("Failed to Social Download: \(error.localizedDescription)")
+                                self?.stopLoading()
+                                self?.showError("Downloading Failed")
+                            }
+                        }
                     }
                 }
             }
+        } else {
+            self.stopLoading()
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     

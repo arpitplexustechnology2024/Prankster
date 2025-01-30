@@ -14,7 +14,7 @@ class NativeMediumAdUtility: NSObject {
     private var loadingView: LoadingView?
     private var adLoader: GADAdLoader?
     private weak var rootViewController: UIViewController?
-    private var nativeAdView: GADNativeAdView?
+    var nativeAdView: GADNativeAdView?
     private var nativeAd: GADNativeAd?
     
     var nativeAdPlaceholder: UIView
@@ -48,7 +48,7 @@ class NativeMediumAdUtility: NSObject {
             loadingView!.centerXAnchor.constraint(equalTo: nativeAdPlaceholder.centerXAnchor),
             loadingView!.centerYAnchor.constraint(equalTo: nativeAdPlaceholder.centerYAnchor),
             loadingView!.widthAnchor.constraint(equalToConstant: 200),
-            loadingView!.heightAnchor.constraint(equalToConstant: 120)
+            loadingView!.heightAnchor.constraint(equalToConstant: 100)
         ])
     }
     

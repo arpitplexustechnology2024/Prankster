@@ -265,15 +265,14 @@ class AnalyticsManager {
 }
 
 
-// Helper extension to find view controller from cell
 extension UIView {
-    func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while let nextResponder = responder?.next {
-            if let viewController = nextResponder as? UIViewController {
+    var parentViewController: UIViewController? {
+        var parentResponder: UIResponder? = self
+        while parentResponder != nil {
+            parentResponder = parentResponder?.next
+            if let viewController = parentResponder as? UIViewController {
                 return viewController
             }
-            responder = nextResponder
         }
         return nil
     }

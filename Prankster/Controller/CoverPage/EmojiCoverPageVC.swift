@@ -9,6 +9,7 @@ import UIKit
 import Alamofire
 import AVFoundation
 import Photos
+import GoogleMobileAds
 
 @available(iOS 15.0, *)
 class EmojiCoverPageVC: UIViewController {
@@ -33,6 +34,8 @@ class EmojiCoverPageVC: UIViewController {
     private var suggestions: [String] = []
     
     private var tagViewModule : TagViewModule!
+    let interstitialAdUtility = InterstitialAdUtility()
+    private let adsViewModel = AdsViewModel()
     
     init(tagViewModule: TagViewModule) {
         self.tagViewModule = tagViewModule
@@ -61,6 +64,11 @@ class EmojiCoverPageVC: UIViewController {
     private var isLoadingMore = false
     private var selectedIndex: Int = 0
     
+    private var isScrollingFromSliderSelection = false
+    private var nativeMediumAdUtility: NativeMediumAdUtility?
+    var preloadedNativeAdView: GADNativeAdView?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
@@ -71,8 +79,9 @@ class EmojiCoverPageVC: UIViewController {
         self.setupNoInternetView()
         self.setupCollectionView()
         self.hideKeyboardTappedAround()
-        self.fetchTagData()
+        self.checkInternetAndFetchData()
         self.filteredEmojiCoverPages = viewModel.emojiCoverPages
+        PremiumManager.shared.clearTemporaryUnlocks()
         
         NotificationCenter.default.addObserver( self, selector: #selector(handlePremiumContentUnlocked), name: NSNotification.Name("PremiumContentUnlocked"), object: nil)
         
@@ -87,31 +96,28 @@ class EmojiCoverPageVC: UIViewController {
         }
     }
     
-    private func fetchTagData() {
-        tagViewModule.fetchTag(id: "4") { [weak self] result in
-            switch result {
-            case .success(let tagResponse):
-                // Use the array directly
-                self?.suggestions = tagResponse.data
-                self?.suggestionCollectionView.reloadData()
-            case .failure(let error):
-                print("Error fetching tags: \(error.localizedDescription)")
-                // Handle error appropriately
-                self?.searchMainViewHeightConstarints.constant = 0
-                self?.searchMainView.isHidden = true
-                self?.popularLabel.isHidden = true
-                self?.suggestionCollectionView.isHidden = true
-                self?.cancelButton.isHidden = true
-                
-                // Restore corner radius when cancel is tapped
-                self?.searchMainView.layer.cornerRadius = 10
-                self?.searchBarView.layer.cornerRadius = 10
-                self?.searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-                
-                UIView.animate(withDuration: 0.3) {
-                    self?.view.layoutIfNeeded()
+    private func preloadNativeAd() {
+        if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+            print("Preloading Native Ad with ID: \(nativeAdID)")
+            // Create a temporary container for preloading
+            let tempAdContainer = UIView(frame: .zero)
+            
+            nativeMediumAdUtility = NativeMediumAdUtility(
+                adUnitID: nativeAdID,
+                rootViewController: self,
+                nativeAdPlaceholder: tempAdContainer
+            ) { [weak self] success in
+                if success {
+                    // Store the preloaded ad view
+                    if let adView = self?.nativeMediumAdUtility?.nativeAdView {
+                        self?.preloadedNativeAdView = adView
+                    }
+                } else {
+                    print("Failed to preload native ad")
                 }
             }
+        } else {
+            print("No Native Ad ID found for preloading")
         }
     }
     
@@ -196,10 +202,10 @@ class EmojiCoverPageVC: UIViewController {
             guard let self = self else { return }
             
             if selectedType == "Add cover image 📸" {
+                // Add cover image વાળી chip માટેનો existing code
                 self.addcoverView.isHidden = false
                 self.noInternetView.isHidden = true
                 self.noDataView.isHidden = true
-                
                 self.searchBarView.isHidden = true
                 self.coverImageLabel.isHidden = false
                 
@@ -214,21 +220,47 @@ class EmojiCoverPageVC: UIViewController {
                 }
                 
             } else {
-                self.addcoverView.isHidden = true
-                
-                self.searchBarView.isHidden = false
-                self.coverImageLabel.isHidden = true
-                
-                emojiCoverAllCollectionView.reloadData()
-                emojiCoverSlideCollectionview.reloadData()
-                
-                self.checkInternetAndFetchData()
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                    self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                    self.selectedIndex = 0
+                // બીજી chip select થાય ત્યારે internet check કરો
+                if self.isConnectedToInternet() {
+                    // Internet છે તો normal flow
+                    self.addcoverView.isHidden = true
+                    self.searchBarView.isHidden = false
+                    self.coverImageLabel.isHidden = true
+                    
+                    emojiCoverAllCollectionView.reloadData()
+                    emojiCoverSlideCollectionview.reloadData()
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.selectedIndex = 0
+                    }
+                } else {
+                    // Internet નથી તો No Internet View બતાવો
+                    self.addcoverView.isHidden = true
+                    self.searchBarView.isHidden = false
+                    self.coverImageLabel.isHidden = true
+                    self.showNoInternetView()
+                    
+                    // Empty arrays set કરો જેથી UI crash ન થાય
+                    self.viewModel.emojiCoverPages = []
+                    self.filteredEmojiCoverPages = []
+                    
+                    emojiCoverAllCollectionView.reloadData()
+                    emojiCoverSlideCollectionview.reloadData()
+                }
+            }
+        }
+        
+        if isConnectedToInternet() {
+            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+            } else {
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
                 }
             }
         }
@@ -241,6 +273,8 @@ class EmojiCoverPageVC: UIViewController {
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
             fetchAllCoverPages()
+            self.fetchTagData()
+            self.preloadNativeAd()
             self.noInternetView?.isHidden = true
             self.hideNoDataView()
             // Ensure search views stay on top
@@ -252,6 +286,33 @@ class EmojiCoverPageVC: UIViewController {
             // Ensure search views stay on top
             self.view.bringSubviewToFront(self.searchBarView)
             self.view.bringSubviewToFront(self.searchMainView)
+        }
+    }
+    
+    private func fetchTagData() {
+        tagViewModule.fetchTag(id: "4") { [weak self] result in
+            switch result {
+            case .success(let tagResponse):
+                // Use the array directly
+                self?.suggestions = tagResponse.data
+                self?.suggestionCollectionView.reloadData()
+            case .failure(let error):
+                print("Error fetching tags: \(error.localizedDescription)")
+                // Handle error appropriately
+                self?.searchMainViewHeightConstarints.constant = 0
+                self?.searchMainView.isHidden = true
+                self?.popularLabel.isHidden = true
+                self?.suggestionCollectionView.isHidden = true
+                self?.cancelButton.isHidden = true
+                
+                self?.searchMainView.layer.cornerRadius = 10
+                self?.searchBarView.layer.cornerRadius = 10
+                self?.searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+                
+                UIView.animate(withDuration: 0.3) {
+                    self?.view.layoutIfNeeded()
+                }
+            }
         }
     }
     
@@ -343,7 +404,7 @@ class EmojiCoverPageVC: UIViewController {
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noInternetView.topAnchor.constraint(equalTo: chipSelector.bottomAnchor),
+            noInternetView.topAnchor.constraint(equalTo: backButton.bottomAnchor),
             noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -353,6 +414,15 @@ class EmojiCoverPageVC: UIViewController {
             noInternetView.isHidden = true
             hideNoDataView()
             checkInternetAndFetchData()
+            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+            } else {
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
+            }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
@@ -447,54 +517,110 @@ class EmojiCoverPageVC: UIViewController {
     }
     
     @IBAction func btnAddCoverImageTapped(_ sender: UIButton) {
-        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupVC") as! PopupVC
-        popupVC.modalPresentationStyle = .overCurrentContext
-        popupVC.modalTransitionStyle = .crossDissolve
+        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+        let hasInternet = isConnectedToInternet()
+        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
-        popupVC.cameraCallback = { [weak self] in
-            self?.btnCameraTapped()
-        }
-        
-        popupVC.downloaderCallback = { [weak self] in
-            guard let self = self else { return }
-            // Present ImageDownloaderBottom
-            let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
-            downloaderVC.modalPresentationStyle = .pageSheet
+        if shouldOpenDirectly {
+            let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupVC") as! PopupVC
+            popupVC.modalPresentationStyle = .overCurrentContext
+            popupVC.modalTransitionStyle = .crossDissolve
             
-            if let sheet = downloaderVC.sheetPresentationController {
-                sheet.detents = [.large()]
+            popupVC.cameraCallback = { [weak self] in
+                self?.btnCameraTapped()
             }
             
-            downloaderVC.imageDownloadedCallback = { [weak self] (downloadedImage, imageUrl) in
+            popupVC.downloaderCallback = { [weak self] in
                 guard let self = self else { return }
+                // Present ImageDownloaderBottom
+                let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
+                downloaderVC.modalPresentationStyle = .pageSheet
                 
-                if let image = downloadedImage {
-                    self.customCoverImages.insert(image, at: 0)
-                    self.selectedCoverIndex = 0
-                    self.saveImages()
+                if let sheet = downloaderVC.sheetPresentationController {
+                    sheet.detents = [.large()]
+                }
+                
+                downloaderVC.imageDownloadedCallback = { [weak self] (downloadedImage, imageUrl) in
+                    guard let self = self else { return }
                     
-                    DispatchQueue.main.async {
-                        self.emojiCoverSlideCollectionview.reloadData()
-                        self.emojiCoverAllCollectionView.reloadData()
+                    if let image = downloadedImage {
+                        self.customCoverImages.insert(image, at: 0)
+                        self.selectedCoverIndex = 0
+                        self.saveImages()
                         
-                        let indexPath = IndexPath(item: 0, section: 0)
-                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.selectedCustomCoverIndex = indexPath
-                        self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        DispatchQueue.main.async {
+                            self.emojiCoverSlideCollectionview.reloadData()
+                            self.emojiCoverAllCollectionView.reloadData()
+                            
+                            let indexPath = IndexPath(item: 0, section: 0)
+                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.selectedCustomCoverIndex = indexPath
+                            self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                            self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        }
                     }
                 }
+                self.present(downloaderVC, animated: true)
             }
             
-            self.present(downloaderVC, animated: true)
+            popupVC.galleryCallback = { [weak self] in
+                self?.btnGalleryTapped()
+            }
+            present(popupVC, animated: true)
+        } else {
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupVC") as! PopupVC
+                popupVC.modalPresentationStyle = .overCurrentContext
+                popupVC.modalTransitionStyle = .crossDissolve
+                
+                popupVC.cameraCallback = { [weak self] in
+                    self?.btnCameraTapped()
+                }
+                
+                popupVC.downloaderCallback = { [weak self] in
+                    guard let self = self else { return }
+                    // Present ImageDownloaderBottom
+                    let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
+                    downloaderVC.modalPresentationStyle = .pageSheet
+                    
+                    if let sheet = downloaderVC.sheetPresentationController {
+                        sheet.detents = [.large()]
+                    }
+                    
+                    downloaderVC.imageDownloadedCallback = { [weak self] (downloadedImage, imageUrl) in
+                        guard let self = self else { return }
+                        
+                        if let image = downloadedImage {
+                            self.customCoverImages.insert(image, at: 0)
+                            self.selectedCoverIndex = 0
+                            self.saveImages()
+                            
+                            DispatchQueue.main.async {
+                                self.emojiCoverSlideCollectionview.reloadData()
+                                self.emojiCoverAllCollectionView.reloadData()
+                                
+                                let indexPath = IndexPath(item: 0, section: 0)
+                                self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                                self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                                self.selectedCustomCoverIndex = indexPath
+                                self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                                self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                            }
+                        }
+                    }
+                    
+                    self.present(downloaderVC, animated: true)
+                }
+                
+                popupVC.galleryCallback = { [weak self] in
+                    self?.btnGalleryTapped()
+                }
+                
+                self?.present(popupVC, animated: true)
+            }
         }
-        
-        popupVC.galleryCallback = { [weak self] in
-            self?.btnGalleryTapped()
-        }
-        
-        present(popupVC, animated: true)
     }
 }
 
@@ -527,17 +653,19 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
             
             if selectedChipTitle == "Add cover image 📸" {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
-                cell.imageName.text = customCoverImages.isEmpty ? "Funny name" : "Custom image \(indexPath.item + 1)"
+                cell.imageName.text = customCoverImages.isEmpty ? "Funny name" : "  Custom image \(indexPath.item + 1)  "
                 
                 if customCoverImages.isEmpty {
                     cell.imageView.loadGif(name: "CoverGIF")
                     cell.blurImageView.loadGif(name: "CoverGIF")
                     cell.applyBackgroundBlurEffect()
+                    cell.DoneButton.isHidden = true
                 } else {
                     let image = customCoverImages[indexPath.item]
                     cell.imageView.image = image
                     cell.originalImage = image
                     cell.applyBackgroundBlurEffect()
+                    cell.DoneButton.isHidden = false
                 }
                 cell.adContainerView.isHidden = true
                 cell.premiumButton.isHidden = true
@@ -568,7 +696,6 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverSliderCollectionViewCell", for: indexPath) as! EmojiCoverSliderCollectionViewCell
                 cell.imageView.image = customCoverImages.isEmpty ? UIImage(named: "imageplacholder") : customCoverImages[indexPath.item]
                 cell.premiumIconImageView.isHidden = true
-                
                 if customCoverImages.isEmpty {
                     cell.isSelected = false
                     cell.layer.borderWidth = 0
@@ -636,12 +763,17 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
                     
                     return
                 }
-                emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            } else {
-                emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
             }
+            
+            isScrollingFromSliderSelection = true
+            
+            emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.isScrollingFromSliderSelection = false
+            }
+            
             
         } else if collectionView == emojiCoverAllCollectionView {
             
@@ -655,6 +787,7 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
             searchMainView.isHidden = true
             popularLabel.isHidden = true
             suggestionCollectionView.isHidden = true
+            cancelButton.isHidden = false
             
             // Reset corner radius when a suggestion is selected
             searchMainView.layer.cornerRadius = 10
@@ -720,47 +853,87 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView == emojiCoverAllCollectionView {
-            let selectedChipTitle = chipSelector.getSelectedChipTitle()
+        // Skip animation if scrolling from slider selection
+        guard scrollView == emojiCoverAllCollectionView, !isScrollingFromSliderSelection else { return }
+        
+        let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
+        let pageWidth = scrollView.frame.width
+        
+        // Apply diagonal swipe animation only for user-initiated scrolling
+        for cell in emojiCoverAllCollectionView.visibleCells {
+            let cellCenterX = cell.center.x
+            let distanceFromCenter = centerX - cellCenterX
             
-            if selectedChipTitle == "Add cover image 📸" {
-                let pageWidth = scrollView.bounds.width
-                let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
-                
-                guard currentPage >= 0 && currentPage < customCoverImages.count else { return }
-                
-                if currentPage != selectedIndex {
-                    selectedIndex = currentPage
-                    
-                    let indexPath = IndexPath(item: currentPage, section: 0)
-                    DispatchQueue.main.async {
-                        if currentPage < self.customCoverImages.count {
-                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                            self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        }
-                    }
-                }
-                
-            } else {
-                
-                let pageWidth = scrollView.bounds.width
-                let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
-                
-                guard currentPage >= 0 && currentPage < currentDataSource.count else { return }
-                
-                if currentPage != selectedIndex {
-                    selectedIndex = currentPage
-                    
-                    let indexPath = IndexPath(item: currentPage, section: 0)
-                    DispatchQueue.main.async {
-                        if currentPage < self.currentDataSource.count {
-                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                            self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        }
-                    }
+            // Calculate how far we've moved from center as a percentage
+            let swipeProgress = distanceFromCenter / pageWidth
+            
+            // Calculate translation and rotation
+            let translationX = -distanceFromCenter
+            let translationY = abs(distanceFromCenter) * 0.3
+            let rotation = swipeProgress * (CGFloat.pi / 8)
+            
+            // Combine transforms
+            var transform = CGAffineTransform.identity
+            transform = transform.translatedBy(x: translationX, y: translationY)
+            transform = transform.rotated(by: rotation)
+            
+            // Apply transform
+            cell.transform = transform
+        }
+        
+        // Update slider collection view position
+        let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
+        
+        let selectedChipTitle = chipSelector.getSelectedChipTitle()
+        
+        if selectedChipTitle == "Add cover image 📸" {
+            guard currentPage >= 0 && currentPage < customCoverImages.count else { return }
+        } else {
+            guard currentPage >= 0 && currentPage < currentDataSource.count else { return }
+        }
+        
+        if currentPage != selectedIndex {
+            selectedIndex = currentPage
+            
+            let indexPath = IndexPath(item: currentPage, section: 0)
+            DispatchQueue.main.async {
+                self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            }
+        }
+    }
+    
+    // Reset animation when scrolling ends
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        guard scrollView == emojiCoverAllCollectionView else { return }
+        
+        UIView.animate(withDuration: 0.3) {
+            for cell in self.emojiCoverAllCollectionView.visibleCells {
+                cell.transform = .identity
+            }
+        }
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard scrollView == emojiCoverAllCollectionView else { return }
+        
+        if !decelerate {
+            UIView.animate(withDuration: 0.3) {
+                for cell in self.emojiCoverAllCollectionView.visibleCells {
+                    cell.transform = .identity
                 }
             }
         }
+    }
+    
+    // For smooth page snapping
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        guard scrollView == emojiCoverAllCollectionView else { return }
+        
+        let pageWidth = scrollView.frame.width
+        let targetXContentOffset = targetContentOffset.pointee.x
+        let newTargetOffset = round(targetXContentOffset / pageWidth) * pageWidth
+        
+        targetContentOffset.pointee = CGPoint(x: newTargetOffset, y: targetContentOffset.pointee.y)
     }
 }
 
@@ -866,26 +1039,30 @@ extension EmojiCoverPageVC: UIImagePickerControllerDelegate, UINavigationControl
     // MARK: - UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
-            let temporaryDirectory = NSTemporaryDirectory()
-            let fileName = "\(UUID().uuidString).jpg"
-            let fileURL = URL(fileURLWithPath: temporaryDirectory).appendingPathComponent(fileName)
-            print("Custom Cover Image URL: \(fileURL.absoluteString)")
-            
-            customCoverImages.insert(selectedImage, at: 0)
-            selectedCoverIndex = 0
-            saveImages()
-            
-            DispatchQueue.main.async { [weak self] in
+            ImageProcessingManager.shared.processImage(selectedImage) { [weak self] result in
                 guard let self = self else { return }
                 
-                self.emojiCoverSlideCollectionview.reloadData()
-                self.emojiCoverAllCollectionView.reloadData()
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                self.selectedCustomCoverIndex = indexPath
-                self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                switch result {
+                case .success(let compressedImage):
+                    self.customCoverImages.insert(compressedImage, at: 0)
+                    self.selectedCoverIndex = 0
+                    self.saveImages()
+                    
+                    DispatchQueue.main.async {
+                        self.emojiCoverSlideCollectionview.reloadData()
+                        self.emojiCoverAllCollectionView.reloadData()
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.selectedCustomCoverIndex = indexPath
+                        self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                    
+                case .failure(let error):
+                    let snackbar = Snackbar(message: error.message, backgroundColor: .snackbar)
+                    snackbar.show(in: self.view, duration: 3.0)
+                }
             }
         }
         dismiss(animated: true, completion: nil)
@@ -982,7 +1159,6 @@ extension EmojiCoverPageVC: UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        // Show the cancel button if there is text
         if let text = textField.text, !text.isEmpty {
             cancelButton.isHidden = false
         } else {
@@ -1000,6 +1176,7 @@ extension EmojiCoverPageVC: UITextFieldDelegate {
 
 @available(iOS 15.0, *)
 extension EmojiCoverPageVC: emojiCoverAllCollectionViewCellDelegate {
+    
     func didTapPremiumIcon(for coverpageData: CoverPageData) {
         presentPremiumViewController(for: coverpageData)
     }
@@ -1013,6 +1190,13 @@ extension EmojiCoverPageVC: emojiCoverAllCollectionViewCellDelegate {
     }
     
     func didTapDoneButton(for coverPageData: CoverPageData) {
-        print("Done Button Tapped")
+        let selectedChipTitle = chipSelector.getSelectedChipTitle()
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as! LanguageVC
+        if selectedChipTitle == "Add cover image 📸" {
+            
+        } else {
+            vc.coverImageUrl = coverPageData.coverURL
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
     }
 }

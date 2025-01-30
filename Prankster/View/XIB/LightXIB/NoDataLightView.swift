@@ -11,7 +11,7 @@ import Lottie
 
 class NoDataLightView: UIView {
     
-    @IBOutlet weak var lottieView: LottieAnimationView!
+    @IBOutlet weak var lottieView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var lottieViewTopConstraint: NSLayoutConstraint!
     @IBOutlet weak var labelTopConstraint: NSLayoutConstraint!
@@ -36,14 +36,6 @@ class NoDataLightView: UIView {
         addSubview(view)
         
         adjustConstraints()
-        setupLottieLoader()
-    }
-    
-    private func setupLottieLoader() {
-        lottieView.loopMode = .loop
-        lottieView.contentMode = .scaleAspectFit
-        lottieView.animation = LottieAnimation.named("Nodata")
-        lottieView.play()
     }
 
     private func adjustConstraints() {

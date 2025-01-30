@@ -18,6 +18,7 @@
 		BD0EB56E2D1628BB00F47B8E /* NoInternetLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */; };
 		BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */; };
 		BD0EB5702D1628BB00F47B8E /* NoInternetLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */; };
+		BD1D1C1B2D4B160F0078B6EC /* ImageCompress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1D1C1A2D4B160F0078B6EC /* ImageCompress.swift */; };
 		BD686C392D44157000B9F03C /* AppOpenAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */; };
 		BD686C3D2D445CB100B9F03C /* ChipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C3C2D445CB100B9F03C /* ChipButton.swift */; };
 		BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */; };
@@ -30,7 +31,7 @@
 		BD8C71512D4960A900ED2575 /* PopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71502D4960A900ED2575 /* PopupVC.swift */; };
 		BD8C71532D49706100ED2575 /* TagAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71522D49706100ED2575 /* TagAPI.swift */; };
 		BD8C71552D49712900ED2575 /* TagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71542D49712900ED2575 /* TagViewModel.swift */; };
-		BD8C71572D4978C500ED2575 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71562D4978C500ED2575 /* SearchVC.swift */; };
+		BD8C71572D4978C500ED2575 /* LanguageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71562D4978C500ED2575 /* LanguageVC.swift */; };
 		BD8C71592D498EA900ED2575 /* SearchCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71582D498EA900ED2575 /* SearchCollectionVC.swift */; };
 		BDADD19B2D11F22E00BDF838 /* AdsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */; };
 		BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */; };
@@ -198,6 +199,7 @@
 		BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoDataLightView.xib; sourceTree = "<group>"; };
 		BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetLightView.swift; sourceTree = "<group>"; };
 		BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoInternetLightView.xib; sourceTree = "<group>"; };
+		BD1D1C1A2D4B160F0078B6EC /* ImageCompress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompress.swift; sourceTree = "<group>"; };
 		BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdUtility.swift; sourceTree = "<group>"; };
 		BD686C3C2D445CB100B9F03C /* ChipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChipButton.swift; sourceTree = "<group>"; };
 		BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIpadAdView.xib; sourceTree = "<group>"; };
@@ -210,7 +212,7 @@
 		BD8C71502D4960A900ED2575 /* PopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupVC.swift; sourceTree = "<group>"; };
 		BD8C71522D49706100ED2575 /* TagAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagAPI.swift; sourceTree = "<group>"; };
 		BD8C71542D49712900ED2575 /* TagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagViewModel.swift; sourceTree = "<group>"; };
-		BD8C71562D4978C500ED2575 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
+		BD8C71562D4978C500ED2575 /* LanguageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageVC.swift; sourceTree = "<group>"; };
 		BD8C71582D498EA900ED2575 /* SearchCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionVC.swift; sourceTree = "<group>"; };
 		BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsAPI.swift; sourceTree = "<group>"; };
 		BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsViewModel.swift; sourceTree = "<group>"; };
@@ -570,6 +572,7 @@
 				BDDF893C2D47FB5E00B59EC4 /* NativeMediumAdUtility.swift */,
 				BD7663852D432B06007ADD37 /* NativeSmallAds */,
 				BD686C3C2D445CB100B9F03C /* ChipButton.swift */,
+				BD1D1C1A2D4B160F0078B6EC /* ImageCompress.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -739,8 +742,9 @@
 				BDC68B542D0931F800834D9B /* EmojiCoverPageVC.swift */,
 				BDC68B552D0931F800834D9B /* RealisticCoverPageVC.swift */,
 				BDDFC2732D487C2800C2A707 /* ImageDownloaderBottom.swift */,
-				BD8C71562D4978C500ED2575 /* SearchVC.swift */,
+				BD8C71562D4978C500ED2575 /* LanguageVC.swift */,
 				BD8C71582D498EA900ED2575 /* SearchCollectionVC.swift */,
+				BD8C71502D4960A900ED2575 /* PopupVC.swift */,
 			);
 			path = CoverPage;
 			sourceTree = "<group>";
@@ -773,7 +777,6 @@
 				BD6D3D372D1E179000EF045E /* Spinner */,
 				BD6D3D382D1E17AD00EF045E /* Premium */,
 				BDC68B562D0931F800834D9B /* CoverPage */,
-				BD8C71502D4960A900ED2575 /* PopupVC.swift */,
 				BDC68B512D0931F800834D9B /* Audio */,
 				BDC68B5C2D0931F800834D9B /* Video */,
 				BDC68B592D0931F800834D9B /* Image */,
@@ -1231,7 +1234,7 @@
 				BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */,
 				BDC68B822D0931F900834D9B /* ShareBottomVC.swift in Sources */,
 				BDC68B832D0931F900834D9B /* SaveRecordingPopup.swift in Sources */,
-				BD8C71572D4978C500ED2575 /* SearchVC.swift in Sources */,
+				BD8C71572D4978C500ED2575 /* LanguageVC.swift in Sources */,
 				BDC68B842D0931F900834D9B /* CoverPageCollectionViewCell.swift in Sources */,
 				BDC68B852D0931F900834D9B /* CoverPageVC.swift in Sources */,
 				BDC68B862D0931F900834D9B /* LaunchVC.swift in Sources */,
@@ -1245,6 +1248,7 @@
 				BDC68B8D2D0931F900834D9B /* MoreAppVC.swift in Sources */,
 				BDC68B8E2D0931F900834D9B /* EmojiCoverAllCollectionViewCell.swift in Sources */,
 				BDDFC2782D48806100C2A707 /* DownloadCell.swift in Sources */,
+				BD1D1C1B2D4B160F0078B6EC /* ImageCompress.swift in Sources */,
 				BDC68B8F2D0931F900834D9B /* NoDataBottomBarView.swift in Sources */,
 				BDC68B902D0931F900834D9B /* NoDataView.swift in Sources */,
 				BDC68B912D0931F900834D9B /* SpinnerVC.swift in Sources */,

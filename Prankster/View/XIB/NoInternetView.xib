@@ -10,10 +10,10 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="NoInternetView" customModule="Prankster" customModuleProvider="target">
             <connections>
-                <outlet property="labelTopConstraint" destination="rvH-Og-iH6" id="erI-wH-bGt"/>
-                <outlet property="lottieView" destination="tSt-5D-mCL" id="ONK-q2-20P"/>
-                <outlet property="lottieViewHeightConstraint" destination="lvu-HO-bXs" id="TJU-JF-gzf"/>
-                <outlet property="lottieViewTopConstraint" destination="riR-8L-Pft" id="GOe-Zo-2E6"/>
+                <outlet property="labelTopConstraint" destination="9aU-Ew-gUo" id="9YO-Dk-aKB"/>
+                <outlet property="lottieView" destination="KsF-IB-bBQ" id="tpa-Q0-Uwn"/>
+                <outlet property="lottieViewHeightConstraint" destination="FB2-dI-Tog" id="ISc-2w-wBo"/>
+                <outlet property="lottieViewTopConstraint" destination="RCS-E6-E2B" id="w31-6b-Iml"/>
                 <outlet property="retryButton" destination="9AT-lE-uDB" id="3zT-kX-gOo"/>
                 <outlet property="retryButtonTopConstraint" destination="hCf-n9-ORl" id="ZLo-IR-r9b"/>
                 <outlet property="titleLabel" destination="RyX-eb-ATe" id="pfi-8Z-vtK"/>
@@ -39,29 +39,29 @@
                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                     <state key="normal" image="restore"/>
                 </button>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tSt-5D-mCL" customClass="LottieAnimationView" customModule="Lottie">
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="No Internet" translatesAutoresizingMaskIntoConstraints="NO" id="KsF-IB-bBQ">
                     <rect key="frame" x="53" y="129" width="287" height="287"/>
-                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="287" id="lvu-HO-bXs"/>
+                        <constraint firstAttribute="height" constant="287" id="FB2-dI-Tog"/>
                     </constraints>
-                </view>
+                </imageView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <color key="backgroundColor" red="0.10980392160000001" green="0.10980392160000001" blue="0.10980392160000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
                 <constraint firstItem="RyX-eb-ATe" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="4NQ-0Z-HEL"/>
-                <constraint firstItem="tSt-5D-mCL" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="53" id="5wp-2g-946"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="tSt-5D-mCL" secondAttribute="trailing" constant="53" id="6OH-TD-Zsp"/>
+                <constraint firstItem="RyX-eb-ATe" firstAttribute="top" secondItem="KsF-IB-bBQ" secondAttribute="bottom" constant="50" id="9aU-Ew-gUo"/>
+                <constraint firstItem="KsF-IB-bBQ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="53" id="9e5-r7-YUZ"/>
+                <constraint firstItem="KsF-IB-bBQ" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="70" id="RCS-E6-E2B"/>
                 <constraint firstItem="9AT-lE-uDB" firstAttribute="top" secondItem="RyX-eb-ATe" secondAttribute="bottom" constant="60" id="hCf-n9-ORl"/>
-                <constraint firstItem="tSt-5D-mCL" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="70" id="riR-8L-Pft"/>
-                <constraint firstItem="RyX-eb-ATe" firstAttribute="top" secondItem="tSt-5D-mCL" secondAttribute="bottom" constant="50" id="rvH-Og-iH6"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="KsF-IB-bBQ" secondAttribute="trailing" constant="53" id="nYs-yC-eLk"/>
                 <constraint firstItem="9AT-lE-uDB" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="vZu-8H-bv5"/>
             </constraints>
             <point key="canvasLocation" x="118" y="-27"/>
         </view>
     </objects>
     <resources>
+        <image name="No Internet" width="1206" height="1060"/>
         <image name="restore" width="500" height="500"/>
     </resources>
 </document>
