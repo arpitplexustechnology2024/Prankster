@@ -1,5 +1,5 @@
 //
-//  EmojiCoverPageVC.swift
+//  CoverPrankVC.swift
 //  Pranksters
 //
 //  Created by Arpit iOS Dev. on 11/11/24.
@@ -12,7 +12,7 @@ import Photos
 import GoogleMobileAds
 
 @available(iOS 15.0, *)
-class EmojiCoverPageVC: UIViewController {
+class CoverPrankVC: UIViewController {
     
     @IBOutlet weak var chipSelector: ChipSelectorView!
     @IBOutlet weak var emojiCoverAllCollectionView: UICollectionView!
@@ -67,7 +67,6 @@ class EmojiCoverPageVC: UIViewController {
     private var isScrollingFromSliderSelection = false
     private var nativeMediumAdUtility: NativeMediumAdUtility?
     var preloadedNativeAdView: GADNativeAdView?
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -213,10 +212,12 @@ class EmojiCoverPageVC: UIViewController {
                 emojiCoverSlideCollectionview.reloadData()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    let indexPath = IndexPath(item: 0, section: 0)
-                    self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                    self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                    self.selectedIndex = 0
+                    if !self.customCoverImages.isEmpty {
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.selectedIndex = 0
+                    }
                 }
                 
             } else {
@@ -231,10 +232,12 @@ class EmojiCoverPageVC: UIViewController {
                     emojiCoverSlideCollectionview.reloadData()
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                        let indexPath = IndexPath(item: 0, section: 0)
-                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.selectedIndex = 0
+                        if !self.currentDataSource.isEmpty {
+                            let indexPath = IndexPath(item: 0, section: 0)
+                            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                            self.selectedIndex = 0
+                        }
                     }
                 } else {
                     // Internet નથી તો No Internet View બતાવો
@@ -324,14 +327,6 @@ class EmojiCoverPageVC: UIViewController {
         self.emojiCoverAllCollectionView.isPagingEnabled = true
         self.emojiCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.emojiCoverSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.emojiCoverSlideCollectionview.register(
-            LoadingFooterView.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: LoadingFooterView.reuseIdentifier
-        )
-        if let layout = emojiCoverSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: 16, height: emojiCoverSlideCollectionview.frame.height)
-        }
     }
     
     func fetchAllCoverPages() {
@@ -625,7 +620,7 @@ class EmojiCoverPageVC: UIViewController {
 }
 
 @available(iOS 15.0, *)
-extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == emojiCoverAllCollectionView {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
@@ -939,7 +934,7 @@ extension EmojiCoverPageVC: UICollectionViewDelegate, UICollectionViewDataSource
 
 // MARK: - UIImagePickerControllerDelegate, UINavigationControllerDelegate
 @available(iOS 15.0, *)
-extension EmojiCoverPageVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     // MARK: - Camera Button
     func btnCameraTapped() {
@@ -1094,7 +1089,7 @@ extension EmojiCoverPageVC: UIImagePickerControllerDelegate, UINavigationControl
 }
 
 @available(iOS 15.0, *)
-extension EmojiCoverPageVC: UITextFieldDelegate {
+extension CoverPrankVC: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         // Show the hidden UI elements immediately when textfield is tapped
         if isConnectedToInternet() {
@@ -1175,7 +1170,7 @@ extension EmojiCoverPageVC: UITextFieldDelegate {
 }
 
 @available(iOS 15.0, *)
-extension EmojiCoverPageVC: emojiCoverAllCollectionViewCellDelegate {
+extension CoverPrankVC: emojiCoverAllCollectionViewCellDelegate {
     
     func didTapPremiumIcon(for coverpageData: CoverPageData) {
         presentPremiumViewController(for: coverpageData)
@@ -1193,7 +1188,7 @@ extension EmojiCoverPageVC: emojiCoverAllCollectionViewCellDelegate {
         let selectedChipTitle = chipSelector.getSelectedChipTitle()
         let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as! LanguageVC
         if selectedChipTitle == "Add cover image 📸" {
-            
+            self.navigationController?.pushViewController(vc, animated: true)
         } else {
             vc.coverImageUrl = coverPageData.coverURL
             self.navigationController?.pushViewController(vc, animated: true)
