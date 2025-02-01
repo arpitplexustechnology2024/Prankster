@@ -21,14 +21,14 @@ class CategoryAllViewModel {
         self.apiService = apiService
     }
     
-    func fetchAudioData(categoryId: Int, typeId: Int, completion: @escaping (Bool) -> Void) {
+    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, completion: @escaping (Bool) -> Void) {
         guard !isLoading && hasMorePages else {
             completion(false)
             return
         }
         
         isLoading = true
-        apiService.fetchAudioData(categoryId: categoryId, typeId: typeId, page: currentPage) { [weak self] result in
+        apiService.fetchAudioData(prankid: prankid, categoryId: categoryId, languageid: languageid, page: currentPage) { [weak self] result in
             guard let self = self else { return }
             self.isLoading = false
             switch result {
@@ -51,5 +51,6 @@ class CategoryAllViewModel {
         currentPage = 1
         audioData.removeAll()
         hasMorePages = true
+        isLoading = false
     }
-}
+} 

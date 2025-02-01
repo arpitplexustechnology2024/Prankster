@@ -397,9 +397,9 @@ extension ImageVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         } else if collectionView == imageCharacterCollectionView {
             selectedImageCategoryCell = indexPath
             let category = viewModel.categorys[indexPath.item]
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCategoryAllVC") as! ImageCategoryAllVC
-            vc.categoryId = category.categoryID
-            self.navigationController?.pushViewController(vc, animated: true)
+//            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ImageCategoryAllVC") as! ImageCategoryAllVC
+//            vc.categoryId = category.categoryID
+//            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     

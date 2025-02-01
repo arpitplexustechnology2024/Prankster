@@ -10,6 +10,7 @@ import SDWebImage
 import AVFoundation
 
 // MARK: - Video Playback Manager
+@available(iOS 15.0, *)
 class VideoPlaybackManager {
     static let shared = VideoPlaybackManager()
     private init() {}
@@ -31,6 +32,7 @@ protocol VideoCharacterAllCollectionViewCellDelegate: AnyObject {
 }
 
 // MARK: - Collection View Cell
+@available(iOS 15.0, *)
 class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     
     // MARK: - IBOutlets

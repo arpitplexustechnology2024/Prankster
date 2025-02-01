@@ -8,6 +8,7 @@
 import UIKit
 import Alamofire
 
+@available(iOS 15.0, *)
 class VideoCategoryAllVC: UIViewController {
     
     @IBOutlet weak var navigationbarView: UIView!
@@ -184,40 +185,40 @@ class VideoCategoryAllVC: UIViewController {
     
     // MARK: - fetchAllVideos
     func fetchAllVideos() {
-        guard !isLoadingMore else { return }
-        isLoadingMore = true
-        viewModel.fetchAudioData(categoryId: categoryId, typeId: typeId) { [weak self] success in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.isLoadingMore = false
-                if success {
-                    if self.viewModel.audioData.isEmpty {
-                        self.hideSkeletonLoader()
-                        self.showNoDataView()
-                    } else {
-                        self.hideSkeletonLoader()
-                        self.hideNoDataView()
-                        self.videoCharacterAllCollectionView.reloadData()
-                        self.videoCharacterSliderCollectionView.reloadData()
-                        
-                        if !self.currentDataSource.isEmpty {
-                            let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            
-                            if !self.isLoadingMore {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    self.playVisibleCell()
-                                }
-                            }
-                        }
-                    }
-                } else if let errorMessage = self.viewModel.errorMessage {
-                    self.hideSkeletonLoader()
-                    self.showNoDataView()
-                    print("Error fetching all cover pages: \(errorMessage)")
-                }
-            }
-        }
+//        guard !isLoadingMore else { return }
+//        isLoadingMore = true
+//        viewModel.fetchAudioData(categoryId: categoryId, typeId: typeId) { [weak self] success in
+//            guard let self = self else { return }
+//            DispatchQueue.main.async {
+//                self.isLoadingMore = false
+//                if success {
+//                    if self.viewModel.audioData.isEmpty {
+//                        self.hideSkeletonLoader()
+//                        self.showNoDataView()
+//                    } else {
+//                        self.hideSkeletonLoader()
+//                        self.hideNoDataView()
+//                        self.videoCharacterAllCollectionView.reloadData()
+//                        self.videoCharacterSliderCollectionView.reloadData()
+//                        
+//                        if !self.currentDataSource.isEmpty {
+//                            let indexPath = IndexPath(item: self.selectedIndex, section: 0)
+//                            self.videoCharacterSliderCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+//                            
+//                            if !self.isLoadingMore {
+//                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                                    self.playVisibleCell()
+//                                }
+//                            }
+//                        }
+//                    }
+//                } else if let errorMessage = self.viewModel.errorMessage {
+//                    self.hideSkeletonLoader()
+//                    self.showNoDataView()
+//                    print("Error fetching all cover pages: \(errorMessage)")
+//                }
+//            }
+//        }
     }
     
     @IBAction func btnBackTapped(_ sender: UIButton) {
@@ -353,6 +354,7 @@ class VideoCategoryAllVC: UIViewController {
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
+@available(iOS 15.0, *)
 extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if isLoading {
@@ -472,7 +474,8 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     // MARK: - VideoCharacterAllCollectionViewCellDelegate
-    extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
+@available(iOS 15.0, *)
+extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
         func didTapVideoPlayback(at indexPath: IndexPath) {
             guard let cell = videoCharacterAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell else {
                 return
@@ -518,7 +521,8 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     // MARK: - UISearchBarDelegate
-    extension VideoCategoryAllVC: UISearchBarDelegate {
+@available(iOS 15.0, *)
+extension VideoCategoryAllVC: UISearchBarDelegate {
         func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
             filterContent(with: searchText)
         }

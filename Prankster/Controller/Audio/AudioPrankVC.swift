@@ -25,7 +25,7 @@ struct CustomAudio: Codable {
 
 @available(iOS 15.0, *)
 class AudioPrankVC: UIViewController {
-    
+
     @IBOutlet weak var audioCharacterAllCollectionView: UICollectionView!
     @IBOutlet weak var audioCharacterSlideCollectionview: UICollectionView!
     
@@ -43,10 +43,10 @@ class AudioPrankVC: UIViewController {
     }
     private var selectedIndex: Int = 0
     
+    var languageid: Int = 0
+    
     private var currentCategoryId: Int = 0
     private var isFirstLoad: Bool = true
-    
-    var languageid: Int = 0
     
     @IBOutlet weak var chipSelector: AudioChipSelector!
     @IBOutlet weak var addcoverButton: UIButton!
@@ -492,7 +492,7 @@ class AudioPrankVC: UIViewController {
         guard !isLoadingMore else { return }
         isLoadingMore = true
         
-        viewModel.fetchAudioData(prankid: 1, categoryId: currentCategoryId, languageid: 1) { [weak self] success in
+        viewModel.fetchAudioData(prankid: 1, categoryId: currentCategoryId, languageid: languageid) { [weak self] success in
             guard let self = self else { return }
             
             DispatchQueue.main.async {
@@ -744,14 +744,14 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             return suggestions.count
         }
         
-        if isLoading {
-            return 8
-        }
-        
-        // Show custom audios for first chip (categoryId = 0), otherwise show API data
         if currentCategoryId == 0 {
             return (customAudios.isEmpty ? 1 : customAudios.count)
         } else {
+            
+            if isLoading {
+                return 8
+            }
+            
             return currentDataSource.count
         }
     }
@@ -860,53 +860,24 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == audioCharacterAllCollectionView {
-            if currentCategoryId == 0 {
-                // Handle custom audio selection
-                guard !customAudios.isEmpty else { return }
-                selectedIndex = indexPath.item
-                
-                audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            } else {
-                // Handle API data selection
-                guard indexPath.item < currentDataSource.count else { return }
-                selectedIndex = indexPath.item
-                
-                audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            }
+
         } else if collectionView == audioCharacterSlideCollectionview {
             if currentCategoryId == 0 {
                 // Handle custom audio selection
                 guard !customAudios.isEmpty else { return }
-                selectedIndex = indexPath.item
-                
-                isScrollingFromSliderSelection = true
-                
-                audioCharacterAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.isScrollingFromSliderSelection = false
-                }
-                
-                // Add slight delay to ensure proper playback
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                    self?.playVisibleCell()
-                }
-            } else {
-                // Handle API data selection
-                guard indexPath.item < currentDataSource.count else { return }
-                selectedIndex = indexPath.item
-                
-                isScrollingFromSliderSelection = true
-                
-                audioCharacterAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.isScrollingFromSliderSelection = false
-                }
+            }
+            isScrollingFromSliderSelection = true
+            
+            audioCharacterAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.isScrollingFromSliderSelection = false
+            }
+            
+            // Add slight delay to ensure proper playback
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.playVisibleCell()
             }
         } else {
             let selectedSuggestion = suggestions[indexPath.row]

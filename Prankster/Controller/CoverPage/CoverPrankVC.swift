@@ -33,6 +33,8 @@ class CoverPrankVC: UIViewController {
     
     private var suggestions: [String] = []
     
+    var buttonType: HomeVC.ButtonType?
+    
     private var tagViewModule : TagViewModule!
     let interstitialAdUtility = InterstitialAdUtility()
     private let adsViewModel = AdsViewModel()
@@ -83,6 +85,9 @@ class CoverPrankVC: UIViewController {
         PremiumManager.shared.clearTemporaryUnlocks()
         
         NotificationCenter.default.addObserver( self, selector: #selector(handlePremiumContentUnlocked), name: NSNotification.Name("PremiumContentUnlocked"), object: nil)
+        
+        emojiCoverAllCollectionView.reloadData()
+        emojiCoverSlideCollectionview.reloadData()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self = self else { return }
@@ -652,12 +657,13 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 if customCoverImages.isEmpty {
                     cell.imageView.loadGif(name: "CoverGIF")
-                    cell.blurImageView.loadGif(name: "CoverGIF")
+                    cell.imageView.contentMode = .scaleAspectFill
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = true
                 } else {
                     let image = customCoverImages[indexPath.item]
                     cell.imageView.image = image
+                    cell.imageView.contentMode = .scaleAspectFit
                     cell.originalImage = image
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = false
@@ -680,6 +686,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     
                     let coverPageData = currentDataSource[indexPath.row]
                     cell.configure(with: coverPageData)
+                    cell.imageView.contentMode = .scaleAspectFit
                     cell.delegate = self
                     return cell
                 }
@@ -1186,12 +1193,16 @@ extension CoverPrankVC: emojiCoverAllCollectionViewCellDelegate {
     
     func didTapDoneButton(for coverPageData: CoverPageData) {
         let selectedChipTitle = chipSelector.getSelectedChipTitle()
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as! LanguageVC
-        if selectedChipTitle == "Add cover image 📸" {
-            self.navigationController?.pushViewController(vc, animated: true)
-        } else {
-            vc.coverImageUrl = coverPageData.coverURL
-            self.navigationController?.pushViewController(vc, animated: true)
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as? LanguageVC {
+            if selectedChipTitle == "Add cover image 📸" {
+                vc.buttonType = buttonType
+                self.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                vc.coverImageUrl = coverPageData.coverURL
+                vc.coverimageName = coverPageData.coverName
+                vc.buttonType = buttonType
+                self.navigationController?.pushViewController(vc, animated: true)
+            }
         }
     }
 }

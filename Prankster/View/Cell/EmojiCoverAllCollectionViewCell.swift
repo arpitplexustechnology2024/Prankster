@@ -33,9 +33,6 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     var originalImage: UIImage?
     
     @IBOutlet weak var adContainerView: UIView!
-    private var nativeMediumAdUtility: NativeMediumAdUtility?
-    
-    private let adsViewModel = AdsViewModel()
     
     // MARK: - Lifecycle Methods
     override func awakeFromNib() {
@@ -64,8 +61,8 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             premiumActionButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             premiumActionButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            premiumActionButton.widthAnchor.constraint(equalToConstant: 64),
-            premiumActionButton.heightAnchor.constraint(equalToConstant: 64)
+            premiumActionButton.widthAnchor.constraint(equalToConstant: 80),
+            premiumActionButton.heightAnchor.constraint(equalToConstant: 80)
         ])
         
         premiumActionButton.addTarget(self, action: #selector(premiumButtonClicked), for: .touchUpInside)
@@ -126,7 +123,7 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = true
             
-            if let parentVC = self.parentViewController as? EmojiCoverPageVC,
+            if let parentVC = self.parentViewController as? CoverPrankVC,
                        let preloadedAdView = parentVC.preloadedNativeAdView {
                         // Remove any existing subviews
                         adContainerView.subviews.forEach { $0.removeFromSuperview() }
@@ -156,13 +153,17 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
                     
                     self?.applyBackgroundBlurEffect()
                     
-                    if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
+                    if coverPageData.coverPremium {
                         self?.premiumButton.isHidden = false
+                    } else {
+                        self?.premiumButton.isHidden = true
+                    }
+                    
+                    if coverPageData.coverPremium && !PremiumManager.shared.isContentUnlocked(itemID: coverPageData.itemID) {
                         self?.premiumActionButton.isHidden = false
                         self?.DoneButton.isHidden = true
                         self?.applyBlurEffect()
                     } else {
-                        self?.premiumButton.isHidden = true
                         self?.premiumActionButton.isHidden = true
                         self?.removeBlurEffect()
                         self?.DoneButton.isHidden = false

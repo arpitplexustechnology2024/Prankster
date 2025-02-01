@@ -18,7 +18,11 @@ enum CoverViewType {
 
 @available(iOS 15.0, *)
 class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpenAdManagerDelegate {
-
+    
+    enum ButtonType {
+        case audio, video, image
+    }
+    
     @IBOutlet weak var audioView: UIView!
     @IBOutlet weak var videoView: UIView!
     @IBOutlet weak var imageView: UIView!
@@ -258,15 +262,11 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
-                vc.viewType = .audio
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.navigateToCoverPrankVC(buttonType: .audio)
             } else {
                 interstitialAdUtility.showInterstitialAd()
                 interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
-                    vc.viewType = .audio
-                    self?.navigationController?.pushViewController(vc, animated: true)
+                    self?.navigateToCoverPrankVC(buttonType: .audio)
                 }
             }
         }
@@ -281,15 +281,11 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
-                vc.viewType = .video
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.navigateToCoverPrankVC(buttonType: .video)
             } else {
                 interstitialAdUtility.showInterstitialAd()
                 interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
-                    vc.viewType = .video
-                    self?.navigationController?.pushViewController(vc, animated: true)
+                    self?.navigateToCoverPrankVC(buttonType: .video)
                 }
             }
         }
@@ -304,15 +300,11 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
-                vc.viewType = .image
-                self.navigationController?.pushViewController(vc, animated: true)
+                self.navigateToCoverPrankVC(buttonType: .image)
             } else {
                 interstitialAdUtility.showInterstitialAd()
                 interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
-                    vc.viewType = .image
-                    self?.navigationController?.pushViewController(vc, animated: true)
+                    self?.navigateToCoverPrankVC(buttonType: .image)
                 }
             }
         }
@@ -398,6 +390,15 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             showDropdown(sender)
         }
     }
+    
+    func navigateToCoverPrankVC(buttonType: ButtonType) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let coverVC = storyboard.instantiateViewController(withIdentifier: "CoverPrankVC") as? CoverPrankVC {
+            coverVC.buttonType = buttonType
+            navigationController?.pushViewController(coverVC, animated: true)
+        }
+    }
+    
 }
 
 // MARK: - Dropdown Implementation

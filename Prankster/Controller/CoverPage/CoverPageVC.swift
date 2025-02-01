@@ -205,7 +205,7 @@ class CoverPageVC: UIViewController {
     
     // MARK: - Emoji All Data Show Button
     @IBAction func btnCoverPage2ShowAllTapped(_ sender: UIButton) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "EmojiCoverPageVC") as! EmojiCoverPageVC
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CoverPrankVC") as! CoverPrankVC
         self.navigationController?.pushViewController(vc, animated: true)
     }
     

@@ -12,15 +12,15 @@ import Lottie
 import AVFoundation
 import MobileCoreServices
 
-struct CustomAudio: Codable {
-    let fileName: String
-    let imageURL: String
-    
-    init(fileName: String, imageURL: String) {
-        self.fileName = fileName
-        self.imageURL = imageURL
-    }
-}
+//struct CustomAudio: Codable {
+//    let fileName: String
+//    let imageURL: String
+//    
+//    init(fileName: String, imageURL: String) {
+//        self.fileName = fileName
+//        self.imageURL = imageURL
+//    }
+//}
 
 class AudioVC: UIViewController {
     
@@ -458,9 +458,9 @@ extension AudioVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColle
         } else if collectionView == audioCharacterCollectionView {
             selectedAudioCharacterCell = indexPath
             let category = viewModel.categorys[indexPath.item]
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioCategoryAllVC") as! AudioCategoryAllVC
-            vc.categoryId = category.categoryID
-            self.navigationController?.pushViewController(vc, animated: true)
+//            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "AudioPrankVC") as! AudioPrankVC
+//            vc.categoryId = category.categoryID
+//            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     

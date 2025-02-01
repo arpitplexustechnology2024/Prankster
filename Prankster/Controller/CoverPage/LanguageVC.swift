@@ -8,6 +8,7 @@
 import UIKit
 import Alamofire
 
+@available(iOS 15.0, *)
 class LanguageVC: UIViewController {
     
     @IBOutlet weak var nativeSmallAds: UIView!
@@ -29,19 +30,17 @@ class LanguageVC: UIViewController {
     @IBOutlet weak var gujaratiRadio: UIButton!
     @IBOutlet weak var tamilRadio: UIButton!
     @IBOutlet weak var punjabiRadio: UIButton!
-    
-    
-    
     @IBOutlet var radioConstraints: [NSLayoutConstraint]!
-    
-    
     @IBOutlet var imageWidthConstraints: [NSLayoutConstraint]!
-    
-    
     @IBOutlet var languageLabel: [UILabel]!
     
     var selectedCoverImage: UIImage?
     var coverImageUrl: String?
+    var coverimageName: String?
+    
+    private var selectedLanguageId: Int?
+    
+    var buttonType: HomeVC.ButtonType?
     
     
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
@@ -80,6 +79,7 @@ class LanguageVC: UIViewController {
             for image in imageWidthConstraints {
                 image.constant = 68.5
             }
+            self.stackViewHeightConstraints.constant = 650
         } else {
             for button in radioConstraints {
                 button.constant = 20
@@ -90,6 +90,7 @@ class LanguageVC: UIViewController {
             for image in imageWidthConstraints {
                 image.constant = 35.33
             }
+            self.stackViewHeightConstraints.constant = 450
         }
     }
     
@@ -109,12 +110,13 @@ class LanguageVC: UIViewController {
     private func selectLanguage(for sender: UIButton?) {
         let languageViews = [hindiLanguage, englishLanguage, marathiLanguage, gujaratiLanguage, tamilLanguage, punjabiLanguage]
         let radioButtons = [hindiRadio, englishRadio, marathiRadio, gujaratiRadio, tamilRadio, punjabiRadio]
-        let languages = ["1", "2", "3", "4", "5", "6"]
+        let languages = [1, 2, 3, 4, 5, 6]  // Changed to Int array
         
         for (index, button) in radioButtons.enumerated() {
             if button == sender {
                 button?.setImage(UIImage(named: "RadioFill"), for: .normal)
                 languageViews[index]?.layer.borderColor = UIColor(hex: "#FBCE22").cgColor
+                selectedLanguageId = languages[index]  // Now assigning Int to Int
                 print("Selected Language: \(languages[index])")
             } else {
                 button?.setImage(UIImage(named: "Radio"), for: .normal)
@@ -160,6 +162,30 @@ class LanguageVC: UIViewController {
     @objc private func handleSwipe(_ gesture: UIScreenEdgePanGestureRecognizer) {
         if gesture.state == .recognized {
             self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    @IBAction func doneButtonTapped(_ sender: UIButton) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        switch buttonType {
+        case .audio:
+            if let audioCategoryVC = self.storyboard?.instantiateViewController(withIdentifier: "AudioPrankVC") as? AudioPrankVC {
+                audioCategoryVC.languageid = selectedLanguageId ?? 1
+                self.navigationController?.pushViewController(audioCategoryVC, animated: true)
+            }
+        case .video: break
+            //            if let audioCategoryVC = self.storyboard?.instantiateViewController(withIdentifier: "VideoPrankVC") as? VideoPrankVC {
+            //                audioCategoryVC.languageid = selectedLanguageId ?? 1
+            //                self.navigationController?.pushViewController(audioCategoryVC, animated: true)
+            //            }
+        case .image:
+            if let audioCategoryVC = self.storyboard?.instantiateViewController(withIdentifier: "ImagePrankVC") as? ImagePrankVC {
+                audioCategoryVC.languageid = selectedLanguageId ?? 1
+                self.navigationController?.pushViewController(audioCategoryVC, animated: true)
+            }
+        case .none:
+            break
         }
     }
     
