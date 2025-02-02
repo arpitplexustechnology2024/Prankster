@@ -161,10 +161,10 @@ class ImagePrankVC: UIViewController {
         searchBar.delegate = self
         searchBar.addTarget(self, action: #selector(searchTextFieldDidChange(_:)), for: .editingChanged)
         searchBar.returnKeyType = .search
-        searchBar.placeholder = "Search cover image"
+        searchBar.placeholder = "Search image or artist name"
         
         if let searchBar = searchBar {
-            let placeholderText = "Search cover image"
+            let placeholderText = "Search image or artist name"
             let attributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: UIColor.lightGray
             ]
@@ -329,6 +329,7 @@ class ImagePrankVC: UIViewController {
                 self.imageSlideCollectionview.reloadData()
                 
                 // Show loader
+                self.showSkeletonLoader()
                 
                 // Hide no data view before fetching
                 self.hideNoDataView()
@@ -479,15 +480,15 @@ class ImagePrankVC: UIViewController {
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
-            let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupVC") as! PopupVC
-            popupVC.modalPresentationStyle = .overCurrentContext
-            popupVC.modalTransitionStyle = .crossDissolve
+            let imagePopupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImagePopupVC") as! ImagePopupVC
+            imagePopupVC.modalPresentationStyle = .overCurrentContext
+            imagePopupVC.modalTransitionStyle = .crossDissolve
             
-            popupVC.cameraCallback = { [weak self] in
+            imagePopupVC.cameraCallback = { [weak self] in
                 self?.btnCameraTapped()
             }
             
-            popupVC.downloaderCallback = { [weak self] in
+            imagePopupVC.downloaderCallback = { [weak self] in
                 guard let self = self else { return }
                 // Present ImageDownloaderBottom
                 let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
@@ -521,22 +522,22 @@ class ImagePrankVC: UIViewController {
                 self.present(downloaderVC, animated: true)
             }
             
-            popupVC.galleryCallback = { [weak self] in
+            imagePopupVC.galleryCallback = { [weak self] in
                 self?.btnGalleryTapped()
             }
-            present(popupVC, animated: true)
+            present(imagePopupVC, animated: true)
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupVC") as! PopupVC
-                popupVC.modalPresentationStyle = .overCurrentContext
-                popupVC.modalTransitionStyle = .crossDissolve
+                let imagePopupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImagePopupVC") as! ImagePopupVC
+                imagePopupVC.modalPresentationStyle = .overCurrentContext
+                imagePopupVC.modalTransitionStyle = .crossDissolve
                 
-                popupVC.cameraCallback = { [weak self] in
+                imagePopupVC.cameraCallback = { [weak self] in
                     self?.btnCameraTapped()
                 }
                 
-                popupVC.downloaderCallback = { [weak self] in
+                imagePopupVC.downloaderCallback = { [weak self] in
                     guard let self = self else { return }
                     // Present ImageDownloaderBottom
                     let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
@@ -571,11 +572,11 @@ class ImagePrankVC: UIViewController {
                     self.present(downloaderVC, animated: true)
                 }
                 
-                popupVC.galleryCallback = { [weak self] in
+                imagePopupVC.galleryCallback = { [weak self] in
                     self?.btnGalleryTapped()
                 }
                 
-                self?.present(popupVC, animated: true)
+                self?.present(imagePopupVC, animated: true)
             }
         }
     }

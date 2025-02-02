@@ -89,7 +89,7 @@ class AudioPrankVC: UIViewController {
     private var customAudios: [(url: URL, imageURL: String)] = [] {
         didSet {
             saveAudios()
-            if currentCategoryId == 0 {  // Only reload if first chip is selected
+            if currentCategoryId == 0 {
                 audioCharacterAllCollectionView.reloadData()
                 audioCharacterSlideCollectionview.reloadData()
             }
@@ -130,6 +130,8 @@ class AudioPrankVC: UIViewController {
             name: NSNotification.Name("PremiumContentUnlocked"),
             object: nil
         )
+        
+        self.currentCategoryId = 0
         
         // Reload collection views with default data
         self.audioCharacterAllCollectionView.reloadData()
@@ -211,10 +213,10 @@ class AudioPrankVC: UIViewController {
         searchBar.delegate = self
         searchBar.addTarget(self, action: #selector(searchTextFieldDidChange(_:)), for: .editingChanged)
         searchBar.returnKeyType = .search
-        searchBar.placeholder = "Search cover image"
+        searchBar.placeholder = "Search audio or artist name"
         
         if let searchBar = searchBar {
-            let placeholderText = "Search cover image"
+            let placeholderText = "Search audio or artist name"
             let attributes: [NSAttributedString.Key: Any] = [
                 .foregroundColor: UIColor.lightGray
             ]
@@ -513,6 +515,7 @@ class AudioPrankVC: UIViewController {
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
                             self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 self.playVisibleCell()
@@ -619,11 +622,11 @@ class AudioPrankVC: UIViewController {
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
-            let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AudioPopupVC") as! AudioPopupVC
-            popupVC.modalPresentationStyle = .overCurrentContext
-            popupVC.modalTransitionStyle = .crossDissolve
+            let audioPopupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AudioPopupVC") as! AudioPopupVC
+            audioPopupVC.modalPresentationStyle = .overCurrentContext
+            audioPopupVC.modalTransitionStyle = .crossDissolve
             
-            popupVC.recorderCallback = { [weak self] in
+            audioPopupVC.recorderCallback = { [weak self] in
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CustomRecoderVC") as! CustomRecoderVC
                 vc.delegate = self
                 if #available(iOS 15.0, *) {
@@ -635,18 +638,18 @@ class AudioPrankVC: UIViewController {
                 self?.present(vc, animated: true)
             }
             
-            popupVC.mediaplayerCallback = { [weak self] in
+            audioPopupVC.mediaplayerCallback = { [weak self] in
                 self?.openMediaPicker()
             }
-            present(popupVC, animated: true)
+            present(audioPopupVC, animated: true)
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AudioPopupVC") as! AudioPopupVC
-                popupVC.modalPresentationStyle = .overCurrentContext
-                popupVC.modalTransitionStyle = .crossDissolve
+                let audioPopupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AudioPopupVC") as! AudioPopupVC
+                audioPopupVC.modalPresentationStyle = .overCurrentContext
+                audioPopupVC.modalTransitionStyle = .crossDissolve
                 
-                popupVC.recorderCallback = { [weak self] in
+                audioPopupVC.recorderCallback = { [weak self] in
                     let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "CustomRecoderVC") as! CustomRecoderVC
                     vc.delegate = self
                     if #available(iOS 15.0, *) {
@@ -658,11 +661,11 @@ class AudioPrankVC: UIViewController {
                     self?.present(vc, animated: true)
                 }
                 
-                popupVC.mediaplayerCallback = { [weak self] in
+                audioPopupVC.mediaplayerCallback = { [weak self] in
                     self?.openMediaPicker()
                 }
                 
-                self?.present(popupVC, animated: true)
+                self?.present(audioPopupVC, animated: true)
             }
         }
     }
@@ -1073,11 +1076,12 @@ extension AudioPrankVC: AudioAllCollectionViewCellDelegate {
     
     func didTapDoneButton(for categoryAllData: CategoryAllData) {
         AudioPlaybackManager.shared.stopCurrentPlayback()
-        if let navigationController = self.navigationController {
-            if let audioVC = navigationController.viewControllers.first(where: { $0 is AudioVC }) as? AudioVC {
-                audioVC.playSelectedAudio(categoryAllData)
-                navigationController.popToViewController(audioVC, animated: true)
-            }
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as! LanguageVC
+        if currentCategoryId == 0 {
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            vc.coverImageUrl = categoryAllData.file
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     

@@ -476,6 +476,10 @@ extension VideoCategoryAllVC: UICollectionViewDelegate, UICollectionViewDataSour
     // MARK: - VideoCharacterAllCollectionViewCellDelegate
 @available(iOS 15.0, *)
 extension VideoCategoryAllVC: VideoCharacterAllCollectionViewCellDelegate {
+    func didTapPremiumIcon(for categoryAllData: CategoryAllData) {
+        print("Premium")
+    }
+    
         func didTapVideoPlayback(at indexPath: IndexPath) {
             guard let cell = videoCharacterAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell else {
                 return

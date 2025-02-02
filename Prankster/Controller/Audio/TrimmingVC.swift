@@ -8,29 +8,60 @@
 import UIKit
 import AVFoundation
 
-class RangeSlider: UIView {
-    private let leftThumb = UIView()
-    private let rightThumb = UIView()
-    private let trackView = UIView()
-    private let selectedTrackView = UIView()
+class WaveformView: UIView {
+    private var samples: [Float] = []
+    private let waveColor: UIColor = .systemBlue
+    private let waveBackgroundColor: UIColor = .systemGray6
     
-    var minimumValue: Double = 0
-    var maximumValue: Double = 1
-    var leftValue: Double = 0 {
-        didSet {
-            updateLayout()
-        }
-    }
-    var rightValue: Double = 1 {
-        didSet {
-            updateLayout()
-        }
+    func setSamples(_ samples: [Float]) {
+        self.samples = samples
+        setNeedsDisplay()
     }
     
-    var onValuesChanged: ((Double, Double) -> Void)?
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        
+        // Draw background
+        context.setFillColor(waveBackgroundColor.cgColor)
+        context.fill(rect)
+        
+        // Draw waveform
+        context.setFillColor(waveColor.cgColor)
+        
+        let width = rect.width
+        let height = rect.height
+        let midY = height / 2
+        let sampleCount = samples.count
+        
+        let scaleFactor = width / CGFloat(sampleCount)
+        
+        for (index, sample) in samples.enumerated() {
+            let x = CGFloat(index) * scaleFactor
+            let sampleHeight = CGFloat(abs(sample)) * height
+            let rect = CGRect(x: x,
+                            y: midY - sampleHeight/2,
+                            width: scaleFactor,
+                            height: sampleHeight)
+            context.fill(rect)
+        }
+    }
+}
+
+class AudioTrimmerView: UIView {
+    private let waveformView = WaveformView()
+    private let leftFrame = UIView()
+    private let rightFrame = UIView()
+    private let frameWidth: CGFloat = 20
+    private var audioURL: URL?
     
-    private var activeThumb: UIView?
-    private var initialTouchPoint: CGPoint = .zero
+    var minimumDuration: Double = 1.0
+    var maximumDuration: Double = 15.0
+    
+    var startTime: Double = 0
+    var endTime: Double = 0
+    var totalDuration: Double = 0
+    
+    var onTimeRangeChanged: ((Double, Double) -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,124 +74,128 @@ class RangeSlider: UIView {
     }
     
     private func setupViews() {
-        // Track setup
-        trackView.backgroundColor = .systemGray5
-        addSubview(trackView)
+        // Waveform setup
+        waveformView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(waveformView)
         
-        // Selected track setup
-        selectedTrackView.backgroundColor = .systemBlue
-        addSubview(selectedTrackView)
-        
-        // Thumbs setup
-        [leftThumb, rightThumb].forEach { thumb in
-            thumb.backgroundColor = .white
-            thumb.layer.cornerRadius = 15
-            thumb.layer.shadowColor = UIColor.black.cgColor
-            thumb.layer.shadowOffset = CGSize(width: 0, height: 2)
-            thumb.layer.shadowRadius = 3
-            thumb.layer.shadowOpacity = 0.3
-            addSubview(thumb)
+        // Frames setup
+        [leftFrame, rightFrame].forEach { frame in
+            frame.translatesAutoresizingMaskIntoConstraints = false
+            frame.backgroundColor = .systemBlue.withAlphaComponent(0.3)
+            frame.layer.borderWidth = 2
+            frame.layer.borderColor = UIColor.systemBlue.cgColor
             
-            let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-            thumb.addGestureRecognizer(panGesture)
-            thumb.isUserInteractionEnabled = true
+            let panGesture = UIPanGestureRecognizer(target: self, action: #selector(handleFramePan(_:)))
+            frame.addGestureRecognizer(panGesture)
+            frame.isUserInteractionEnabled = true
+            
+            addSubview(frame)
         }
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
         
-        trackView.frame = CGRect(x: 0, y: (bounds.height - 4) / 2, width: bounds.width, height: 4)
-        trackView.layer.cornerRadius = 2
-        
-        leftThumb.frame.size = CGSize(width: 30, height: 30)
-        rightThumb.frame.size = CGSize(width: 30, height: 30)
-        
-        updateLayout()
-    }
-    
-    private func updateLayout() {
-        let trackWidth = bounds.width - 30
-        
-        let leftX = (trackWidth * CGFloat((leftValue - minimumValue) / (maximumValue - minimumValue)))
-        let rightX = (trackWidth * CGFloat((rightValue - minimumValue) / (maximumValue - minimumValue)))
-        
-        leftThumb.center.x = leftX + 15
-        leftThumb.center.y = bounds.height / 2
-        
-        rightThumb.center.x = rightX + 15
-        rightThumb.center.y = bounds.height / 2
-        
-        selectedTrackView.frame = CGRect(
-            x: leftThumb.center.x,
-            y: trackView.frame.minY,
-            width: rightThumb.center.x - leftThumb.center.x,
-            height: trackView.frame.height
-        )
-        selectedTrackView.layer.cornerRadius = 2
-    }
-    
-    @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
-        guard let thumb = gesture.view else { return }
-        
-        switch gesture.state {
-        case .began:
-            activeThumb = thumb
-            initialTouchPoint = gesture.location(in: self)
+        NSLayoutConstraint.activate([
+            waveformView.topAnchor.constraint(equalTo: topAnchor),
+            waveformView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            waveformView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            waveformView.trailingAnchor.constraint(equalTo: trailingAnchor),
             
-        case .changed:
-            let location = gesture.location(in: self)
-            let deltaX = location.x - initialTouchPoint.x
-            initialTouchPoint = location
+            leftFrame.topAnchor.constraint(equalTo: topAnchor),
+            leftFrame.bottomAnchor.constraint(equalTo: bottomAnchor),
+            leftFrame.widthAnchor.constraint(equalToConstant: frameWidth),
             
-            if thumb === leftThumb {
-                var newLeftValue = leftValue + Double(deltaX / bounds.width) * (maximumValue - minimumValue)
-                newLeftValue = max(minimumValue, min(newLeftValue, rightValue - 1))
-                leftValue = newLeftValue
-            } else {
-                var newRightValue = rightValue + Double(deltaX / bounds.width) * (maximumValue - minimumValue)
-                newRightValue = max(leftValue + 1, min(newRightValue, maximumValue))
-                rightValue = newRightValue
+            rightFrame.topAnchor.constraint(equalTo: topAnchor),
+            rightFrame.bottomAnchor.constraint(equalTo: bottomAnchor),
+            rightFrame.widthAnchor.constraint(equalToConstant: frameWidth)
+        ])
+    }
+    
+    func setAudioURL(_ url: URL) {
+        self.audioURL = url
+        loadAudioWaveform()
+        resetFramePositions()
+    }
+    
+    private func loadAudioWaveform() {
+        guard let audioURL = audioURL else { return }
+        
+        do {
+            let file = try AVAudioFile(forReading: audioURL)
+            let format = AVAudioFormat(standardFormatWithSampleRate: file.fileFormat.sampleRate,
+                                     channels: file.fileFormat.channelCount)
+            
+            guard let buffer = AVAudioPCMBuffer(pcmFormat: format!,
+                                              frameCapacity: AVAudioFrameCount(file.length)) else { return }
+            
+            try file.read(into: buffer)
+            
+            // Convert buffer to samples
+            var samples: [Float] = []
+            let channelData = buffer.floatChannelData?[0]
+            let frameLength = Int(buffer.frameLength)
+            
+            // Take every Nth sample to reduce data
+            let downsampleFactor = max(1, frameLength / 200)
+            
+            for i in stride(from: 0, to: frameLength, by: downsampleFactor) {
+                samples.append(channelData?[i] ?? 0)
             }
             
-            onValuesChanged?(leftValue, rightValue)
+            totalDuration = Double(file.length) / file.fileFormat.sampleRate
+            endTime = totalDuration
             
-        case .ended:
-            activeThumb = nil
+            DispatchQueue.main.async { [weak self] in
+                self?.waveformView.setSamples(samples)
+            }
             
-        default:
-            break
+        } catch {
+            print("Error loading audio file: \(error)")
         }
+    }
+    
+    private func resetFramePositions() {
+        leftFrame.frame.origin.x = 0
+        rightFrame.frame.origin.x = bounds.width - frameWidth
+    }
+    
+    @objc private func handleFramePan(_ gesture: UIPanGestureRecognizer) {
+        guard let frame = gesture.view else { return }
+        
+        let translation = gesture.translation(in: self)
+        gesture.setTranslation(.zero, in: self)
+        
+        let isLeftFrame = frame === leftFrame
+        var newX = frame.frame.origin.x + translation.x
+        
+        // Constrain movement
+        if isLeftFrame {
+            newX = max(0, min(newX, rightFrame.frame.origin.x - frameWidth))
+        } else {
+            newX = max(leftFrame.frame.origin.x + frameWidth, min(newX, bounds.width - frameWidth))
+        }
+        
+        frame.frame.origin.x = newX
+        
+        // Calculate times
+        let startRatio = leftFrame.frame.origin.x / bounds.width
+        let endRatio = (rightFrame.frame.origin.x + frameWidth) / bounds.width
+        
+        startTime = startRatio * totalDuration
+        endTime = endRatio * totalDuration
+        
+        onTimeRangeChanged?(startTime, endTime)
     }
 }
 
 class TrimmingVC: UIViewController {
+    private let audioTrimmerView = AudioTrimmerView()
+    private var audioPlayer: AVAudioPlayer?
     var audioURL: URL!
-        var delegate: SaveRecordingDelegate?
-        private var audioPlayer: AVAudioPlayer?
-        private let rangeSlider = RangeSlider()
-        private var audioDuration: Double = 0
+    var delegate: SaveRecordingDelegate?
     
     @IBOutlet weak var trimmingView: UIView!
-    
-    
-    @IBOutlet weak var doneButton: UIButton!
-    
     @IBOutlet weak var playButton: UIButton!
-    
+    @IBOutlet weak var doneButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
-    
     @IBOutlet weak var imageview: UIImageView!
-    
-//    init(audioURL: URL, delegate: SaveRecordingDelegate) {
-//        super.init(nibName: nil, bundle: nil)
-//        self.audioURL = audioURL
-//        self.delegate = delegate
-//    }
-    
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -169,47 +204,59 @@ class TrimmingVC: UIViewController {
     }
     
     private func setupUI() {
+        imageview.layer.cornerRadius = 10
         
-        self.imageview.layer.cornerRadius = 10
-        
-        // Range Slider Setup
-        rangeSlider.translatesAutoresizingMaskIntoConstraints = false
-        trimmingView.addSubview(rangeSlider)
+        audioTrimmerView.translatesAutoresizingMaskIntoConstraints = false
+        trimmingView.addSubview(audioTrimmerView)
         
         NSLayoutConstraint.activate([
-            rangeSlider.topAnchor.constraint(equalTo: trimmingView.topAnchor),
-            rangeSlider.bottomAnchor.constraint(equalTo: trimmingView.bottomAnchor),
-            rangeSlider.leadingAnchor.constraint(equalTo: trimmingView.leadingAnchor),
-            rangeSlider.trailingAnchor.constraint(equalTo: trimmingView.trailingAnchor),
+            audioTrimmerView.topAnchor.constraint(equalTo: trimmingView.topAnchor),
+            audioTrimmerView.bottomAnchor.constraint(equalTo: trimmingView.bottomAnchor),
+            audioTrimmerView.leadingAnchor.constraint(equalTo: trimmingView.leadingAnchor),
+            audioTrimmerView.trailingAnchor.constraint(equalTo: trimmingView.trailingAnchor)
         ])
+        
+        audioTrimmerView.onTimeRangeChanged = { [weak self] startTime, endTime in
+            // Handle time range updates
+            print("Start time: \(startTime), End time: \(endTime)")
+        }
     }
     
     private func setupAudioPlayer() {
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
-            audioDuration = audioPlayer?.duration ?? 0
-            rangeSlider.minimumValue = 0
-            rangeSlider.maximumValue = audioDuration
-            rangeSlider.leftValue = 0
-            rangeSlider.rightValue = audioDuration
+            audioTrimmerView.setAudioURL(audioURL)
         } catch {
             print("Error setting up audio player: \(error)")
         }
     }
     
     @IBAction func playButtonTapped(_ sender: Any) {
+        guard let player = audioPlayer else { return }
+        
+        if player.isPlaying {
+            player.pause()
+            playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        } else {
+            player.currentTime = audioTrimmerView.startTime
+            player.play()
+            playButton.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+            
+            // Stop playing when reaching end time
+            DispatchQueue.main.asyncAfter(deadline: .now() + (audioTrimmerView.endTime - audioTrimmerView.startTime)) {
+                player.pause()
+                self.playButton.setImage(UIImage(systemName: "play.fill"), for: .normal)
+            }
+        }
     }
     
-    
     @IBAction func doneButtonTapped(_ sender: Any) {
-        let trimmedDuration = rangeSlider.rightValue - rangeSlider.leftValue
+        let trimmedDuration = audioTrimmerView.endTime - audioTrimmerView.startTime
         
         if trimmedDuration <= 15.0 {
-            // Trim and save audio
             trimAudio { [weak self] trimmedURL in
                 guard let self = self else { return }
                 if let url = trimmedURL {
-                    // Main thread par delegate method call kariye
                     DispatchQueue.main.async {
                         self.delegate?.didSaveRecording(audioURL: url, name: url.lastPathComponent)
                         self.dismiss(animated: true)
@@ -231,11 +278,6 @@ class TrimmingVC: UIViewController {
         }
     }
     
-    
-    @IBAction func cancelButtonTapped(_ sender: Any) {
-        self.dismiss(animated: true)
-    }
-    
     private func trimAudio(completion: @escaping (URL?) -> Void) {
         let asset = AVAsset(url: audioURL)
         let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetAppleM4A)
@@ -244,11 +286,10 @@ class TrimmingVC: UIViewController {
         let trimmedFileName = "trimmed_\(Date().timeIntervalSince1970).m4a"
         let outputURL = documentsDirectory.appendingPathComponent(trimmedFileName)
         
-        // Delete existing file if needed
         try? FileManager.default.removeItem(at: outputURL)
         
-        let startTime = CMTime(seconds: rangeSlider.leftValue, preferredTimescale: 1000)
-        let endTime = CMTime(seconds: rangeSlider.rightValue, preferredTimescale: 1000)
+        let startTime = CMTime(seconds: audioTrimmerView.startTime, preferredTimescale: 1000)
+        let endTime = CMTime(seconds: audioTrimmerView.endTime, preferredTimescale: 1000)
         let timeRange = CMTimeRange(start: startTime, end: endTime)
         
         exportSession?.outputURL = outputURL
@@ -263,5 +304,9 @@ class TrimmingVC: UIViewController {
                 completion(nil)
             }
         }
+    }
+    
+    @IBAction func cancelButtonTapped(_ sender: Any) {
+        self.dismiss(animated: true)
     }
 }

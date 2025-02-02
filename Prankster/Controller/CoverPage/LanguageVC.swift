@@ -170,19 +170,19 @@ class LanguageVC: UIViewController {
         
         switch buttonType {
         case .audio:
-            if let audioCategoryVC = self.storyboard?.instantiateViewController(withIdentifier: "AudioPrankVC") as? AudioPrankVC {
-                audioCategoryVC.languageid = selectedLanguageId ?? 1
-                self.navigationController?.pushViewController(audioCategoryVC, animated: true)
+            if let VC = self.storyboard?.instantiateViewController(withIdentifier: "AudioPrankVC") as? AudioPrankVC {
+                VC.languageid = selectedLanguageId ?? 1
+                self.navigationController?.pushViewController(VC, animated: true)
             }
-        case .video: break
-            //            if let audioCategoryVC = self.storyboard?.instantiateViewController(withIdentifier: "VideoPrankVC") as? VideoPrankVC {
-            //                audioCategoryVC.languageid = selectedLanguageId ?? 1
-            //                self.navigationController?.pushViewController(audioCategoryVC, animated: true)
-            //            }
+        case .video:
+            if let VC = self.storyboard?.instantiateViewController(withIdentifier: "VideoPrankVC") as? VideoPrankVC {
+                VC.languageid = selectedLanguageId ?? 1
+                self.navigationController?.pushViewController(VC, animated: true)
+            }
         case .image:
-            if let audioCategoryVC = self.storyboard?.instantiateViewController(withIdentifier: "ImagePrankVC") as? ImagePrankVC {
-                audioCategoryVC.languageid = selectedLanguageId ?? 1
-                self.navigationController?.pushViewController(audioCategoryVC, animated: true)
+            if let VC = self.storyboard?.instantiateViewController(withIdentifier: "ImagePrankVC") as? ImagePrankVC {
+                VC.languageid = selectedLanguageId ?? 1
+                self.navigationController?.pushViewController(VC, animated: true)
             }
         case .none:
             break

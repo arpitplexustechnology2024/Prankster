@@ -7,6 +7,8 @@
 
 import UIKit
 
+
+//MARK: - Cover Page Chip
 class CoverChipButton: UIButton {
     var isChipSelected: Bool = false {
         didSet {
@@ -122,8 +124,10 @@ class ChipSelectorView: UIView {
 }
 
 
-import UIKit
 
+
+
+//MARK: - Audio Prank Chip
 class AudioChipButton: UIButton {
     var isChipSelected: Bool = false {
         didSet {
@@ -159,6 +163,7 @@ class AudioChipButton: UIButton {
     }
 }
 
+//MARK: - AudioChipSelector Class
 class AudioChipSelector: UIView {
     private var containerStackView: UIStackView!
     private var fixedChip: AudioChipButton!
@@ -285,6 +290,7 @@ class AudioChipSelector: UIView {
 
 import UIKit
 
+//MARK: - Image Prank Chip
 class ImageChipButton: UIButton {
     var isChipSelected: Bool = false {
         didSet {
@@ -320,6 +326,7 @@ class ImageChipButton: UIButton {
     }
 }
 
+//MARK: - ImageChipSelector Class
 class ImageChipSelector: UIView {
     private var containerStackView: UIStackView!
     private var fixedChip: ImageChipButton!
@@ -404,7 +411,7 @@ class ImageChipSelector: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add image Prank 🏞️", "Tranding image", "Nonveg image", "Hot image", "Funny image", "Horro image", "Celebrity image"]
+        let titles = ["Add image Prank 🏞️", "Tranding image", "Nonveg image", "Hot image", "Funny image", "Horror image", "Celebrity image"]
         
         // Setup fixed chip (custom data chip)
         fixedChip.setTitle(titles[0], for: .normal)
@@ -425,6 +432,168 @@ class ImageChipSelector: UIView {
     }
     
     @objc private func chipTapped(_ sender: ImageChipButton) {
+        guard !isSearchBarActive else { return }
+        
+        selectedChip?.isChipSelected = false
+        sender.isChipSelected = true
+        selectedChip = sender
+        
+        let selectedType = sender.titleLabel?.text ?? ""
+        onSelectionChanged?(selectedType)
+        
+        // Call new callback with category ID
+        onCategorySelected?(sender.tag)
+    }
+    
+    func setSearchBarActiveState(_ active: Bool) {
+        isSearchBarActive = active
+    }
+}
+
+
+//MARK: - Audio Prank Chip
+class VideoChipButton: UIButton {
+    var isChipSelected: Bool = false {
+        didSet {
+            updateAppearance()
+        }
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupButton()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupButton()
+    }
+    
+    private func setupButton() {
+        layer.cornerRadius = 8
+        titleLabel?.font = UIFont(name: "Avenir-Medium", size: 14)
+        contentEdgeInsets = UIEdgeInsets(top: 12, left: 20, bottom: 12, right: 20)
+        updateAppearance()
+    }
+    
+    private func updateAppearance() {
+        if isChipSelected {
+            backgroundColor = .white
+            setTitleColor(UIColor.black, for: .normal)
+        } else {
+            backgroundColor = #colorLiteral(red: 0.1529411765, green: 0.1529411765, blue: 0.1529411765, alpha: 1)
+            setTitleColor(UIColor.white, for: .normal)
+        }
+    }
+}
+
+
+//MARK: - VideoChipSelector Class
+class VideoChipSelector: UIView {
+    private var containerStackView: UIStackView!
+    private var fixedChip: VideoChipButton!
+    private var scrollView: UIScrollView!
+    private var scrollableStackView: UIStackView!
+    private var chips: [VideoChipButton] = []
+    private var selectedChip: VideoChipButton?
+    private var isSearchBarActive = false
+    var onSelectionChanged: ((String) -> Void)?
+    
+    private var categoryIDs: [Int] = [0, 1, 2, 3, 4, 5, 6] // First is 0 for custom data
+    var onCategorySelected: ((Int) -> Void)?
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupLayout()
+        setupChips()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupLayout()
+        setupChips()
+    }
+    
+    private func setupLayout() {
+        // Main horizontal stack view to hold fixed chip and scroll view
+        containerStackView = UIStackView()
+        containerStackView.axis = .horizontal
+        containerStackView.spacing = 12
+        containerStackView.alignment = .center
+        containerStackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(containerStackView)
+        
+        // Setup fixed chip
+        fixedChip = VideoChipButton()
+        fixedChip.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Setup scroll view for remaining chips
+        scrollView = UIScrollView()
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.alwaysBounceHorizontal = true
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Setup stack view inside scroll view
+        scrollableStackView = UIStackView()
+        scrollableStackView.axis = .horizontal
+        scrollableStackView.spacing = 8
+        scrollableStackView.alignment = .center
+        scrollableStackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Add views to hierarchy
+        containerStackView.addArrangedSubview(fixedChip)
+        containerStackView.addArrangedSubview(scrollView)
+        scrollView.addSubview(scrollableStackView)
+        
+        // Setup constraints
+        NSLayoutConstraint.activate([
+            // Container stack view constraints
+            containerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
+            containerStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            containerStackView.topAnchor.constraint(equalTo: topAnchor),
+            containerStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            // Scrollable stack view constraints
+            scrollableStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
+            scrollableStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
+            scrollableStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            scrollableStackView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            scrollableStackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
+        ])
+    }
+    
+    func selectDefaultChip() {
+        // Select the first chip (Add Audio Prank)
+        fixedChip.isChipSelected = true
+        selectedChip = fixedChip
+        
+        // Notify about default selection
+        onSelectionChanged?(fixedChip.titleLabel?.text ?? "")
+        onCategorySelected?(0)
+    }
+    
+    private func setupChips() {
+        let titles = ["Add Video Prank 🎧", "Tranding video", "Nonveg video", "Hot video", "Funny video", "Horror video", "Celebrity video"]
+        
+        // Setup fixed chip (custom data chip)
+        fixedChip.setTitle(titles[0], for: .normal)
+        fixedChip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
+        fixedChip.tag = 0  // Set tag for identifying category
+        fixedChip.isChipSelected = true
+        selectedChip = fixedChip
+        
+        // Setup scrollable chips with corresponding category IDs
+        for (index, title) in titles.dropFirst().enumerated() {
+            let chip = VideoChipButton()
+            chip.setTitle(title, for: .normal)
+            chip.tag = categoryIDs[index + 1]  // Set tag as category ID
+            chip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
+            scrollableStackView.addArrangedSubview(chip)
+            chips.append(chip)
+        }
+    }
+    
+    @objc private func chipTapped(_ sender: VideoChipButton) {
         guard !isSearchBarActive else { return }
         
         selectedChip?.isChipSelected = false

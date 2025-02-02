@@ -369,14 +369,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     }
     
     @objc private func imageViewTapped() {
-        guard let categoryAllData = categoryAllData else { return }
-        
-        // Check if content is premium and locked
-        if categoryAllData.premium && !PremiumManager.shared.isContentUnlocked(itemID: categoryAllData.itemID) {
-            delegate?.didTapPremiumIcon(for: categoryAllData)
-        } else {
-            toggleAudioPlayback()
-        }
+    toggleAudioPlayback()
     }
     
     override func prepareForReuse() {

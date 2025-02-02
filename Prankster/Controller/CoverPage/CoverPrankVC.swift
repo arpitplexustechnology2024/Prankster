@@ -522,7 +522,7 @@ class CoverPrankVC: UIViewController {
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
-            let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupVC") as! PopupVC
+            let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CoverPopupVC") as! CoverPopupVC
             popupVC.modalPresentationStyle = .overCurrentContext
             popupVC.modalTransitionStyle = .crossDissolve
             
@@ -571,7 +571,7 @@ class CoverPrankVC: UIViewController {
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PopupVC") as! PopupVC
+                let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "CoverPopupVC") as! CoverPopupVC
                 popupVC.modalPresentationStyle = .overCurrentContext
                 popupVC.modalTransitionStyle = .crossDissolve
                 

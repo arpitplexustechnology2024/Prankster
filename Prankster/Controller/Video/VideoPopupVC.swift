@@ -8,22 +8,47 @@
 import UIKit
 
 class VideoPopupVC: UIViewController {
-
+    
+    @IBOutlet weak var bgView: UIView!
+    @IBOutlet weak var galleryButton: UIButton!
+    @IBOutlet weak var downloaderButton: UIButton!
+    @IBOutlet weak var cameraButton: UIButton!
+    @IBOutlet weak var cancelButton: UIButton!
+    
+    
+    typealias ButtonCallback = () -> Void
+    var cameraCallback: ButtonCallback?
+    var galleryCallback: ButtonCallback?
+    var downloaderCallback: ButtonCallback?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        self.cancelButton.layer.cornerRadius = 12
+        self.cancelButton.layer.borderWidth = 1
+        self.cancelButton.layer.borderColor = UIColor.lightGray.cgColor
+        self.bgView.layer.cornerRadius = 16
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    @IBAction func btnCameraTapped(_ sender: UIButton) {
+        dismiss(animated: true) {
+            self.cameraCallback?()
+        }
     }
-    */
-
+    
+    @IBAction func btnDownaloderTapped(_ sender: UIButton) {
+        dismiss(animated: true) {
+            self.downloaderCallback?()
+        }
+    }
+    
+    @IBAction func btnGalleryTapped(_ sender: UIButton) {
+        dismiss(animated: true) {
+            self.galleryCallback?()
+        }
+    }
+    
+    @IBAction func btncanceltapped(_ sender: UIButton) {
+        dismiss(animated: true)
+    }
 }

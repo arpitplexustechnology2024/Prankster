@@ -19,6 +19,7 @@ class CustomRecoderVC: UIViewController {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Recorder"
+        label.textColor = .white
         label.font = .systemFont(ofSize: 24, weight: .bold)
         label.textAlignment = .center
         return label
@@ -27,6 +28,7 @@ class CustomRecoderVC: UIViewController {
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.text = "00:00"
+        label.textColor = .white
         label.font = .systemFont(ofSize: 40, weight: .regular)
         label.textAlignment = .center
         return label
@@ -37,7 +39,7 @@ class CustomRecoderVC: UIViewController {
     private let cancelButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "xmark"), for: .normal)
-        button.tintColor = .icon
+        button.tintColor = .white
         button.isEnabled = false
         button.backgroundColor = .recordeBtn
         return button
@@ -52,7 +54,7 @@ class CustomRecoderVC: UIViewController {
     private let saveButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(systemName: "checkmark"), for: .normal)
-        button.tintColor = .icon
+        button.tintColor = .white
         button.isEnabled = false
         button.backgroundColor = .recordeBtn
         return button
@@ -77,7 +79,7 @@ class CustomRecoderVC: UIViewController {
     
     // MARK: - UI Setup
     private func setupUI() {
-        view.backgroundColor = .comman
+        view.backgroundColor = .background
         
         [titleLabel, timeLabel, visualizer, cancelButton, recordButton, saveButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
