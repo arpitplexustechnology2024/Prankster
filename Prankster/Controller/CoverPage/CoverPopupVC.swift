@@ -1,5 +1,5 @@
 //
-//  PopupVC.swift
+//  CoverPopupVC.swift
 //  Prankster
 //
 //  Created by Arpit iOS Dev. on 28/01/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PopupVC: UIViewController {
+class CoverPopupVC: UIViewController {
     
     @IBOutlet weak var bgView: UIView!
     @IBOutlet weak var galleryButton: UIButton!
