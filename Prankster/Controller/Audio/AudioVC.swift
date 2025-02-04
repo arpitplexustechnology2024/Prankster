@@ -303,7 +303,7 @@ class AudioVC: UIViewController {
                     nextVC.selectedImage = audioImageToPass
                     nextVC.selectedName = selectedCoverImageName
                     nextVC.selectedCoverURL = selectedCoverImageURL
-                    nextVC.selectedCoverFile = selectedCoverImageFile
+                //    nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "audio"
                     nextVC.selectedFileType = "mp3"
                     nextVC.sharePrank = true

@@ -18,7 +18,7 @@ class PrankAPIManager: PrankAPIProtocol {
     private init() {}
     
     func createPrank(coverImage: Data, coverImageURL: String, type: String, name: String, file: Data, fileURL: String, imageURL: String, fileType: String, completion: @escaping (Result<PrankCreateResponse, Error>) -> Void) {
-        let url = "https://pslink.world/api/prank/create"
+        let url = "https://pslink.world/api/prank/create/changes"
         
         func getMimeType(for fileType: String) -> String {
             switch fileType.lowercased() {

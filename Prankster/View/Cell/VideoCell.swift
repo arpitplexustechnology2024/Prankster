@@ -27,8 +27,6 @@ class VideoPlaybackManager {
 
 // MARK: - Protocols
 protocol VideoCharacterAllCollectionViewCellDelegate: AnyObject {
-    func didTapDoneButton(for categoryAllData: CategoryAllData)
-    func didTapPremiumIcon(for categoryAllData: CategoryAllData)
     func didTapVideoPlayback(at indexPath: IndexPath)
 }
 
@@ -44,6 +42,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var blurImageView: UIImageView!
     
+    @IBOutlet weak var gifImageview: UIImageView!
     @IBOutlet weak var adContainerView: UIView!
     
     // MARK: - Properties
@@ -93,14 +92,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
             premiumActionButton.widthAnchor.constraint(equalToConstant: 80),
             premiumActionButton.heightAnchor.constraint(equalToConstant: 80)
         ])
-        
-        premiumActionButton.addTarget(self, action: #selector(premiumButtonClicked), for: .touchUpInside)
-    }
-    
-    // MARK: - Action Methods
-    @objc private func premiumButtonClicked() {
-        guard let categoryAllData = coverPageData else { return }
-        delegate?.didTapPremiumIcon(for: categoryAllData)
     }
     
     // MARK: - Setup Methods
@@ -114,6 +105,10 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         blurImageView.layer.cornerRadius = 20
         blurImageView.layer.masksToBounds = true
         
+        // BlurImageView Setup
+        gifImageview.layer.cornerRadius = 20
+        blurImageView.layer.masksToBounds = true
+        
         adContainerView.layer.cornerRadius = 20
         adContainerView.layer.masksToBounds = true
         adContainerView.isHidden = true
@@ -124,14 +119,12 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         DoneButton.layer.shadowOpacity = 0.3
         DoneButton.layer.masksToBounds = false
         
-        DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(tapGesture)
         
         // Adding blur effect to imageName label background
-        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialLight)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.clipsToBounds = true
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
@@ -226,7 +219,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
             self.adContainerView.isHidden = true
             
             let displayName = categoryAllData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : categoryAllData.name
-            self.imageName.text = "  \(displayName)  "
+            self.imageName.text = " \(displayName) "
             self.imageName.sizeToFit()
             
             if categoryAllData.premium {
@@ -377,13 +370,6 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     // MARK: - Action Methods
     @objc private func imageViewTapped() {
         toggleAudioPlayback()
-    }
-    
-    @objc private func doneButtonTapped() {
-        stopVideo()
-        if let coverPageData = coverPageData {
-            delegate?.didTapDoneButton(for: coverPageData)
-        }
     }
     
     @objc private func playerDidFinishPlaying() {
@@ -570,7 +556,7 @@ class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             layer.borderWidth = isSelected ? 3 : 0
-            layer.borderColor = isSelected ? UIColor.white.cgColor : nil
+            layer.borderColor = isSelected ? #colorLiteral(red: 1, green: 0.8470588235, blue: 0, alpha: 1) : nil
         }
     }
 }

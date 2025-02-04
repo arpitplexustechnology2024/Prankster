@@ -20,11 +20,16 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var searchView: UIView!
     @IBOutlet weak var adHeightConstaints: NSLayoutConstraint!
     @IBOutlet weak var CancelButton: UIButton!
-    @IBOutlet weak var previewImageView: UIImageView!
     @IBOutlet weak var doneButton: UIButton!
     
     @IBOutlet weak var customSwitchContainer: UIView!
     private var customSwitch: CustomSwitch!
+    
+    @IBOutlet weak var videoPlayerView: UIView! // નવો આઉટલેટ
+    
+    private var playerLayer: AVPlayerLayer?
+    private var player: AVPlayer?
+    
     
     // MARK: - Properties
     var videoDownloadedCallback: ((URL?, String?) -> Void)?
@@ -75,14 +80,14 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
         self.setupLoadingIndicator()
         self.hideKeyboardTappedAround()
         self.setupKeyboardObservers()
+        self.videoPlayerView.isHidden = true
+        self.videoPlayerView.layer.cornerRadius = 10
         self.downloadButton.layer.cornerRadius = downloadButton.layer.frame.height / 2
         self.pasteBUTTON.layer.cornerRadius = pasteBUTTON.layer.frame.height / 2
         self.pasteBUTTON.layer.borderWidth = 1
         self.pasteBUTTON.layer.borderColor = #colorLiteral(red: 1, green: 0.8470588235, blue: 0, alpha: 1)
         self.searchView.layer.cornerRadius = 14
-        self.previewImageView.layer.cornerRadius = 10
         self.CancelButton.isHidden = true
-        self.previewImageView.isHidden = true
         self.doneButton.isHidden = true
         self.doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         
@@ -147,8 +152,13 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
         stopAutoScrolling()
+        player?.pause()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        playerLayer?.frame = videoPlayerView.bounds
     }
     
     private func isConnectedToInternet() -> Bool {
@@ -198,9 +208,9 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     
     @objc func switchValueChanged(sender: CustomSwitch) {
         if sender.isSwitchOn {
-
+            
         } else {
- 
+            
         }
     }
     
@@ -229,71 +239,58 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
         downloadButton.isEnabled = true
     }
     
-    // MARK: - Video Processing Methods
-    private func loadVideoFromURL(_ urlString: String) {
-        guard let url = URL(string: urlString) else {
-            showError("Invalid video URL")
-            return
-        }
-        
-        let session = URLSession(configuration: .default)
-        let task = session.downloadTask(with: url) { [weak self] (tempLocalUrl, response, error) in
+    // MARK: - Video Handling Methods
+    private func handleVideoDownload(videoURL: URL) {
+        VideoProcessingManager.shared.downloadVideo(from: videoURL) { [weak self] result in
             DispatchQueue.main.async {
-                if let error = error {
-                    self?.showError("Download failed: \(error.localizedDescription)")
+                switch result {
+                case .success(let downloadedURL):
+                    self?.processDownloadedVideo(downloadedURL)
+                case .failure(let error):
                     self?.stopLoading()
-                    return
+                    self?.showError(error.message)
                 }
-                
-                guard let tempLocalUrl = tempLocalUrl else {
-                    self?.showError("Failed to download video")
-                    self?.stopLoading()
-                    return
-                }
-                
-                self?.processDownloadedVideo(tempLocalUrl)
             }
         }
-        task.resume()
     }
     
     private func processDownloadedVideo(_ url: URL) {
-        VideoProcessingManager.shared.processVideo(from: url) { [weak self] result in
+        VideoProcessingManager.shared.compressVideo(inputURL: url) { [weak self] result in
             DispatchQueue.main.async {
-                guard let self = self else { return }
-                
                 switch result {
                 case .success(let processedURL):
-                    self.downloadedVideoURL = processedURL
-                    self.downloadedVideoStringURL = url.absoluteString
-                    self.showDownloadedVideo(processedURL)
-                    
+                    self?.downloadedVideoURL = processedURL
+                    self?.setupVideoPlayer(with: processedURL)
                 case .failure(let error):
-                    self.showError(error.message)
-                    self.stopLoading()
+                    self?.stopLoading()
+                    self?.showError(error.message)
                 }
             }
         }
     }
     
-    private func showDownloadedVideo(_ url: URL) {
-        let asset = AVAsset(url: url)
-        let imageGenerator = AVAssetImageGenerator(asset: asset)
-        imageGenerator.appliesPreferredTrackTransform = true
+    private func setupVideoPlayer(with url: URL) {
+        // પહેલાનો પ્લેયર રિમૂવ કરો
+        playerLayer?.removeFromSuperlayer()
         
-        do {
-            let cgImage = try imageGenerator.copyCGImage(at: .zero, actualTime: nil)
-            let thumbnail = UIImage(cgImage: cgImage)
-            
-            collectionView.isHidden = true
-            pageControl.isHidden = true
-            previewImageView.image = thumbnail
-            previewImageView.isHidden = false
-            doneButton.isHidden = false
-            
-        } catch {
-            showError("Failed to generate video preview")
+        // નવો પ્લેયર સેટઅપ કરો
+        player = AVPlayer(url: url)
+        playerLayer = AVPlayerLayer(player: player)
+        playerLayer?.frame = videoPlayerView.bounds
+        playerLayer?.videoGravity = .resizeAspect
+        
+        if let playerLayer = playerLayer {
+            videoPlayerView.layer.addSublayer(playerLayer)
         }
+        
+        // UI અપડેટ કરો
+        collectionView.isHidden = true
+        pageControl.isHidden = true
+        videoPlayerView.isHidden = false
+        doneButton.isHidden = false
+        
+        // વીડિયો પ્લે કરો
+        player?.play()
         stopLoading()
     }
     
@@ -302,37 +299,6 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
         if let videoURL = downloadedVideoURL {
             videoDownloadedCallback?(videoURL, downloadedVideoStringURL)
             dismiss(animated: true)
-        }
-    }
-    
-    private func showDownloadedImage(_ image: UIImage) {
-        ImageProcessingManager.shared.processImage(image) { [weak self] result in
-            guard let self = self else { return }
-            
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let compressedImage):
-                    // Only show preview if image is within size limit
-                    self.collectionView.isHidden = true
-                    self.pageControl.isHidden = true
-                    self.previewImageView.image = compressedImage
-                    self.previewImageView.isHidden = false
-                    self.doneButton.isHidden = false
-                    
-                case .failure(let error):
-                    // Show error and reset UI
-                    let snackbar = CustomSnackbar(message: error.message, backgroundColor: .snackbar)
-                    snackbar.show(in: self.view, duration: 3.0)
-                    
-                    // Reset UI state
-                    self.previewImageView.image = nil
-                    self.previewImageView.isHidden = true
-                    self.doneButton.isHidden = true
-                    self.collectionView.isHidden = false
-                    self.pageControl.isHidden = false
-                }
-                self.stopLoading()
-            }
         }
     }
     
@@ -353,46 +319,57 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     
     @IBAction func btnDownloadTapped(_ sender: UIButton) {
         startLoading()
-        
-        if !isConnectedToInternet() {
-            stopLoading()
-            showError("Please turn on internet connection!")
+        guard let urlString = searchTextField.text, !urlString.isEmpty,
+              let videoURL = URL(string: urlString) else {
+            self.stopLoading()
+            showError("Please enter a valid URL")
             return
         }
         
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil)
         
-        if shouldOpenDirectly {
-            downloadVideo()
-        } else {
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.downloadVideo()
-            }
-        }
-    }
-    
-    private func downloadVideo() {
-        guard let urlToDownload = searchTextField.text, !urlToDownload.isEmpty else {
-            stopLoading()
-            showError("Please enter a valid URL")
-            return
-        }
-        
-        socialViewModule.fetchSocial(url: urlToDownload) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let socialResponse):
-                    print("Social Download successfully: \(socialResponse.data)")
-                    self?.downloadedVideoStringURL = socialResponse.data
-                    self?.loadVideoFromURL(socialResponse.data)
-                case .failure(let error):
-                    print("Failed to Social Download: \(error.localizedDescription)")
-                    self?.stopLoading()
-                    self?.showError("Downloading Failed")
+        if isConnectedToInternet() {
+            if shouldOpenDirectly {
+                self.socialViewModule.fetchSocial(url: urlString) { [weak self] result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let socialResponse):
+                            if let videoURL = URL(string: socialResponse.data) {
+                                self?.handleVideoDownload(videoURL: videoURL)
+                            } else {
+                                self?.stopLoading()
+                                self?.showError("Invalid video URL")
+                            }
+                        case .failure(let error):
+                            self?.stopLoading()
+                            self?.showError("Download Failed")
+                        }
+                    }
+                }
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.socialViewModule.fetchSocial(url: urlString) { result in
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success(let socialResponse):
+                                if let videoURL = URL(string: socialResponse.data) {
+                                    self?.handleVideoDownload(videoURL: videoURL)
+                                } else {
+                                    self?.stopLoading()
+                                    self?.showError("Invalid video URL")
+                                }
+                            case .failure(let error):
+                                self?.stopLoading()
+                                self?.showError("Download Failed")
+                            }
+                        }
+                    }
                 }
             }
+        } else {
+            showError("Please turn on internet connection!")
         }
     }
     

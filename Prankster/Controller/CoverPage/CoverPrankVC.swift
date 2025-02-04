@@ -11,6 +11,16 @@ import AVFoundation
 import Photos
 import GoogleMobileAds
 
+struct CustomCover {
+    let image: UIImage
+    let imageUrl: String?
+    
+    init(image: UIImage, imageUrl: String? = nil) {
+        self.image = image
+        self.imageUrl = imageUrl
+    }
+}
+
 @available(iOS 15.0, *)
 class CoverPrankVC: UIViewController {
     
@@ -51,7 +61,7 @@ class CoverPrankVC: UIViewController {
     
     var viewType: CoverViewType = .audio
     private var selectedCoverIndex: Int?
-    var customCoverImages: [UIImage] = []
+    var customCovers: [CustomCover] = []
     var selectedCustomCoverIndex: IndexPath?
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
@@ -73,7 +83,7 @@ class CoverPrankVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
-        self.loadSavedImages()
+        self.loadSavedCovers()
         self.setupNoDataView()
         self.setupSwipeGesture()
         self.showSkeletonLoader()
@@ -91,7 +101,7 @@ class CoverPrankVC: UIViewController {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             guard let self = self else { return }
-            if !self.customCoverImages.isEmpty {
+            if !self.customCovers.isEmpty {
                 let indexPath = IndexPath(item: 0, section: 0)
                 self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
                 self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
@@ -217,7 +227,7 @@ class CoverPrankVC: UIViewController {
                 emojiCoverSlideCollectionview.reloadData()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if !self.customCoverImages.isEmpty {
+                    if !self.customCovers.isEmpty {
                         let indexPath = IndexPath(item: 0, section: 0)
                         self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
                         self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
@@ -544,9 +554,10 @@ class CoverPrankVC: UIViewController {
                     guard let self = self else { return }
                     
                     if let image = downloadedImage {
-                        self.customCoverImages.insert(image, at: 0)
+                        let customCover = CustomCover(image: image, imageUrl: imageUrl)
+                        self.customCovers.insert(customCover, at: 0)
                         self.selectedCoverIndex = 0
-                        self.saveImages()
+                        self.saveCovers()
                         
                         DispatchQueue.main.async {
                             self.emojiCoverSlideCollectionview.reloadData()
@@ -593,9 +604,10 @@ class CoverPrankVC: UIViewController {
                         guard let self = self else { return }
                         
                         if let image = downloadedImage {
-                            self.customCoverImages.insert(image, at: 0)
+                            let customCover = CustomCover(image: image, imageUrl: imageUrl)
+                            self.customCovers.insert(customCover, at: 0)
                             self.selectedCoverIndex = 0
-                            self.saveImages()
+                            self.saveCovers()
                             
                             DispatchQueue.main.async {
                                 self.emojiCoverSlideCollectionview.reloadData()
@@ -630,17 +642,17 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if collectionView == emojiCoverAllCollectionView {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             if selectedChipTitle == "Add cover image 📸" {
-                return (customCoverImages.isEmpty ? 1 : customCoverImages.count)
+                return (customCovers.isEmpty ? 1 : customCovers.count)
             } else {
                 
-                return isLoading ? 8 : currentDataSource.count
+                return isLoading ? 4 : currentDataSource.count
             }
         } else if collectionView == emojiCoverSlideCollectionview {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             if selectedChipTitle == "Add cover image 📸" {
-                return (customCoverImages.isEmpty ? 4 : customCoverImages.count)
+                return (customCovers.isEmpty ? 1 : customCovers.count)
             } else {
-                return isLoading ? 8 : currentDataSource.count
+                return isLoading ? 4 : currentDataSource.count
             }
         } else {
             return suggestions.count
@@ -649,56 +661,68 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == emojiCoverAllCollectionView {
-            let selectedChipTitle = chipSelector.getSelectedChipTitle()
-            
-            if selectedChipTitle == "Add cover image 📸" {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
-                cell.imageName.text = customCoverImages.isEmpty ? "Funny name" : "  Custom image \(indexPath.item + 1)  "
+                let selectedChipTitle = chipSelector.getSelectedChipTitle()
                 
-                if customCoverImages.isEmpty {
-                    cell.imageView.loadGif(name: "CoverGIF")
-                    cell.imageView.contentMode = .scaleAspectFill
-                    cell.applyBackgroundBlurEffect()
-                    cell.DoneButton.isHidden = true
-                } else {
-                    let image = customCoverImages[indexPath.item]
-                    cell.imageView.image = image
-                    cell.imageView.contentMode = .scaleAspectFit
-                    cell.originalImage = image
-                    cell.applyBackgroundBlurEffect()
-                    cell.DoneButton.isHidden = false
-                }
-                cell.adContainerView.isHidden = true
-                cell.premiumButton.isHidden = true
-                cell.premiumActionButton.isHidden = true
-                return cell
-            } else {
-                if isLoading {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                    cell.isUserInteractionEnabled = false
+                if selectedChipTitle == "Add cover image 📸" {
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
+                    cell.imageName.text = customCovers.isEmpty ? " Tutorial " : " Custom image "
+                    
+                    if customCovers.isEmpty {
+                        cell.imageView.loadGif(name: "CoverGIF")
+                        cell.imageView.contentMode = .scaleAspectFill
+                        cell.applyBackgroundBlurEffect()
+                        cell.DoneButton.isHidden = true
+                    } else {
+                        let customCover = customCovers[indexPath.item]
+                        cell.imageView.image = customCover.image
+                        cell.originalImage = customCover.image
+                        cell.imageView.contentMode = .scaleAspectFit
+                        cell.applyBackgroundBlurEffect()
+                        cell.DoneButton.isHidden = false
+                        
+                        // Configure Done button action
+                        cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
+                        cell.DoneButton.tag = indexPath.item
+                    }
+                    cell.adContainerView.isHidden = true
+                    cell.premiumButton.isHidden = true
+                    cell.premiumActionButton.isHidden = true
                     return cell
                 } else {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
-                    
-                    guard indexPath.row < currentDataSource.count else {
+                    if isLoading {
+                        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
+                        cell.isUserInteractionEnabled = false
+                        return cell
+                    } else {
+                        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
+                        
+                        guard indexPath.row < currentDataSource.count else {
+                            return cell
+                        }
+                        
+                        let coverPageData = currentDataSource[indexPath.row]
+                        cell.configure(with: coverPageData)
+                        cell.imageView.contentMode = .scaleAspectFit
+                        
+                        // Configure Premium button action
+                        cell.premiumActionButton.tag = indexPath.row
+                        cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
+                        
+                        // Configure Done button action
+                        cell.DoneButton.tag = indexPath.row
+                        cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
+                        
                         return cell
                     }
-                    
-                    let coverPageData = currentDataSource[indexPath.row]
-                    cell.configure(with: coverPageData)
-                    cell.imageView.contentMode = .scaleAspectFit
-                    cell.delegate = self
-                    return cell
                 }
-            }
         } else if collectionView == emojiCoverSlideCollectionview {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             
             if selectedChipTitle == "Add cover image 📸" {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverSliderCollectionViewCell", for: indexPath) as! EmojiCoverSliderCollectionViewCell
-                cell.imageView.image = customCoverImages.isEmpty ? UIImage(named: "imageplacholder") : customCoverImages[indexPath.item]
+                cell.imageView.image = customCovers.isEmpty ? UIImage(named: "imageplacholder") : customCovers[indexPath.item].image
                 cell.premiumIconImageView.isHidden = true
-                if customCoverImages.isEmpty {
+                if customCovers.isEmpty {
                     cell.isSelected = false
                     cell.layer.borderWidth = 0
                     cell.layer.borderColor = UIColor.clear.cgColor
@@ -756,12 +780,39 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
+    @objc private func handlePremiumButtonTap(_ sender: UIButton) {
+        let coverPageData = currentDataSource[sender.tag]
+        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
+        premiumVC.setItemIDToUnlock(coverPageData.itemID)
+        premiumVC.modalTransitionStyle = .crossDissolve
+        premiumVC.modalPresentationStyle = .overCurrentContext
+        present(premiumVC, animated: true, completion: nil)
+    }
+
+    @objc private func handleDoneButtonTap(_ sender: UIButton) {
+        let selectedChipTitle = chipSelector.getSelectedChipTitle()
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as? LanguageVC {
+            if selectedChipTitle == "Add cover image 📸" {
+                let customCover = customCovers[sender.tag]
+                vc.coverImageUrl = customCover.imageUrl
+                vc.coverimageName = "Custom Cover image"
+                vc.buttonType = buttonType
+            } else {
+                let coverPageData = currentDataSource[sender.tag]
+                vc.coverImageUrl = coverPageData.coverURL
+                vc.coverimageName = coverPageData.coverName
+                vc.buttonType = buttonType
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == emojiCoverSlideCollectionview {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             
             if selectedChipTitle == "Add cover image 📸" {
-                if customCoverImages.isEmpty {
+                if customCovers.isEmpty {
                     
                     return
                 }
@@ -889,7 +940,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         let selectedChipTitle = chipSelector.getSelectedChipTitle()
         
         if selectedChipTitle == "Add cover image 📸" {
-            guard currentPage >= 0 && currentPage < customCoverImages.count else { return }
+            guard currentPage >= 0 && currentPage < customCovers.count else { return }
         } else {
             guard currentPage >= 0 && currentPage < currentDataSource.count else { return }
         }
@@ -1038,59 +1089,95 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         snackbar.show(in: self.view, duration: 5.0)
     }
     
-    // MARK: - UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
-            ImageProcessingManager.shared.processImage(selectedImage) { [weak self] result in
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let compressedImage):
-                    self.customCoverImages.insert(compressedImage, at: 0)
-                    self.selectedCoverIndex = 0
-                    self.saveImages()
+            // First save the image to documents directory and get URL
+            if let imageUrl = saveImageToDocuments(image: selectedImage) {
+                ImageProcessingManager.shared.processImage(selectedImage) { [weak self] result in
+                    guard let self = self else { return }
                     
-                    DispatchQueue.main.async {
-                        self.emojiCoverSlideCollectionview.reloadData()
-                        self.emojiCoverAllCollectionView.reloadData()
-                        let indexPath = IndexPath(item: 0, section: 0)
-                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.selectedCustomCoverIndex = indexPath
-                        self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    switch result {
+                    case .success(let compressedImage):
+                        // Create CustomCover with both compressed image and URL
+                        let customCover = CustomCover(image: compressedImage, imageUrl: imageUrl)
+                        self.customCovers.insert(customCover, at: 0)
+                        self.selectedCoverIndex = 0
+                        self.saveCovers()
+                        
+                        DispatchQueue.main.async {
+                            self.emojiCoverSlideCollectionview.reloadData()
+                            self.emojiCoverAllCollectionView.reloadData()
+                            let indexPath = IndexPath(item: 0, section: 0)
+                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.selectedCustomCoverIndex = indexPath
+                            self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                            self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        }
+                        
+                    case .failure(let error):
+                        let snackbar = Snackbar(message: error.message, backgroundColor: .snackbar)
+                        snackbar.show(in: self.view, duration: 3.0)
                     }
-                    
-                case .failure(let error):
-                    let snackbar = Snackbar(message: error.message, backgroundColor: .snackbar)
-                    snackbar.show(in: self.view, duration: 3.0)
                 }
             }
         }
         dismiss(animated: true, completion: nil)
+    }
+    
+    // Helper function to save image and get URL
+    private func saveImageToDocuments(image: UIImage) -> String? {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fileName = UUID().uuidv4 + ".jpg"
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        
+        // Convert image to JPEG data
+        guard let imageData = image.jpegData(compressionQuality: 1.0) else { return nil }
+        
+        do {
+            // Write the image data to the file URL
+            try imageData.write(to: fileURL)
+            return fileURL.path
+        } catch {
+            print("Error saving image: \(error)")
+            return nil
+        }
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
     
-    func loadSavedImages() {
-        if let savedImagesData = UserDefaults.standard.object(forKey: ConstantValue.is_UserCoverImages) as? Data {
+    func saveCovers() {
+        let coversData = customCovers.map { cover in
+            [
+                "image": cover.image,
+                "url": cover.imageUrl ?? ""
+            ]
+        }
+        
+        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: coversData, requiringSecureCoding: false) {
+            UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserCoverImages)
+        }
+    }
+    
+    func loadSavedCovers() {
+        if let savedData = UserDefaults.standard.object(forKey: ConstantValue.is_UserCoverImages) as? Data {
             do {
-                if let decodedImages = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [UIImage] {
-                    customCoverImages = decodedImages
+                if let decodedData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedData) as? [[String: Any]] {
+                    customCovers = decodedData.compactMap { dict in
+                        if let image = dict["image"] as? UIImage {
+                            let url = dict["url"] as? String
+                            return CustomCover(image: image, imageUrl: url)
+                        }
+                        return nil
+                    }
                     emojiCoverSlideCollectionview.reloadData()
                     emojiCoverAllCollectionView.reloadData()
                 }
             } catch {
-                print("Error decoding saved images: \(error)")
+                print("Error decoding saved covers: \(error)")
             }
-        }
-    }
-    
-    func saveImages() {
-        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customCoverImages, requiringSecureCoding: false) {
-            UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserCoverImages)
         }
     }
 }
@@ -1176,33 +1263,10 @@ extension CoverPrankVC: UITextFieldDelegate {
     }
 }
 
-@available(iOS 15.0, *)
-extension CoverPrankVC: emojiCoverAllCollectionViewCellDelegate {
-    
-    func didTapPremiumIcon(for coverpageData: CoverPageData) {
-        presentPremiumViewController(for: coverpageData)
-    }
-    
-    private func presentPremiumViewController(for coverPageData: CoverPageData) {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
-        premiumVC.setItemIDToUnlock(coverPageData.itemID)
-        premiumVC.modalTransitionStyle = .crossDissolve
-        premiumVC.modalPresentationStyle = .overCurrentContext
-        present(premiumVC, animated: true, completion: nil)
-    }
-    
-    func didTapDoneButton(for coverPageData: CoverPageData) {
-        let selectedChipTitle = chipSelector.getSelectedChipTitle()
-        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as? LanguageVC {
-            if selectedChipTitle == "Add cover image 📸" {
-                vc.buttonType = buttonType
-                self.navigationController?.pushViewController(vc, animated: true)
-            } else {
-                vc.coverImageUrl = coverPageData.coverURL
-                vc.coverimageName = coverPageData.coverName
-                vc.buttonType = buttonType
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
-        }
+
+// Extension to generate UUID string
+extension UUID {
+    var uuidv4: String {
+        return self.uuidString.lowercased()
     }
 }

@@ -9,11 +9,6 @@ import UIKit
 import SDWebImage
 import Alamofire
 
-protocol ImageCharacterAllCollectionViewCellDelegate: AnyObject {
-    func didTapPremiumIcon(for categoryAllData: CategoryAllData)
-    func didTapDoneButton(for categoryAllData: CategoryAllData)
-}
-
 @available(iOS 15.0, *)
 class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     
@@ -23,7 +18,6 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var blurImageView: UIImageView!
     
-    weak var delegate: ImageCharacterAllCollectionViewCellDelegate?
     private var coverPageData: CategoryAllData?
     var originalImage: UIImage?
     var premiumActionButton: UIButton!
@@ -59,8 +53,6 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
             premiumActionButton.widthAnchor.constraint(equalToConstant: 80),
             premiumActionButton.heightAnchor.constraint(equalToConstant: 80)
         ])
-        
-        premiumActionButton.addTarget(self, action: #selector(premiumButtonClicked), for: .touchUpInside)
     }
     
     private func setupUI() {
@@ -84,7 +76,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
         DoneButton.layer.masksToBounds = false
         
         // Adding blur effect to imageName label background
-        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialLight)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.clipsToBounds = true
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
@@ -134,7 +126,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
             self.adContainerView.isHidden = true
             
             let displayName = coverPageData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.name
-            self.imageName.text = "  \(displayName)  "
+            self.imageName.text = " \(displayName) "
             self.imageName.sizeToFit()
             
             if let imageURL = URL(string: coverPageData.file ?? "") {
@@ -204,17 +196,6 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     
     func removeBlurEffect() {
         imageView.image = originalImage
-    }
-    
-    // MARK: - Action Methods
-    @objc private func premiumButtonClicked() {
-        guard let coverPageData = coverPageData else { return }
-        delegate?.didTapPremiumIcon(for: coverPageData)
-    }
-    
-    @IBAction func doneButtonClicked(_ sender: UIButton) {
-        guard let coverPageData = coverPageData else { return }
-        delegate?.didTapDoneButton(for: coverPageData)
     }
 }
 

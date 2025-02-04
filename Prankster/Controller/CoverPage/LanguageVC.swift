@@ -34,9 +34,9 @@ class LanguageVC: UIViewController {
     @IBOutlet var imageWidthConstraints: [NSLayoutConstraint]!
     @IBOutlet var languageLabel: [UILabel]!
     
-    var selectedCoverImage: UIImage?
     var coverImageUrl: String?
     var coverimageName: String?
+    var coverImageFile: Data?
     
     private var selectedLanguageId: Int?
     
@@ -54,6 +54,7 @@ class LanguageVC: UIViewController {
         setupAds()
         
         print("CoverImage URL :- \(coverImageUrl ?? "")")
+        print("CoverImage URL :- \(coverImageFile ?? Data())")
     }
     
     private func setupUI() {
@@ -172,16 +173,25 @@ class LanguageVC: UIViewController {
         case .audio:
             if let VC = self.storyboard?.instantiateViewController(withIdentifier: "AudioPrankVC") as? AudioPrankVC {
                 VC.languageid = selectedLanguageId ?? 1
+                VC.selectedCoverImageURL = self.coverImageUrl
+                VC.selectedCoverImageName = self.coverimageName
+                VC.selectedCoverImageFile = self.coverImageFile
                 self.navigationController?.pushViewController(VC, animated: true)
             }
         case .video:
             if let VC = self.storyboard?.instantiateViewController(withIdentifier: "VideoPrankVC") as? VideoPrankVC {
                 VC.languageid = selectedLanguageId ?? 1
+                VC.selectedCoverImageURL = self.coverImageUrl
+                VC.selectedCoverImageName = self.coverimageName
+                VC.selectedCoverImageFile = self.coverImageFile
                 self.navigationController?.pushViewController(VC, animated: true)
             }
         case .image:
             if let VC = self.storyboard?.instantiateViewController(withIdentifier: "ImagePrankVC") as? ImagePrankVC {
                 VC.languageid = selectedLanguageId ?? 1
+                VC.selectedCoverImageURL = self.coverImageUrl
+                VC.selectedCoverImageName = self.coverimageName
+                VC.selectedCoverImageFile = self.coverImageFile
                 self.navigationController?.pushViewController(VC, animated: true)
             }
         case .none:

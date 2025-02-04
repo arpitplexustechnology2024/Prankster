@@ -11,11 +11,6 @@ import SDWebImage
 import GoogleMobileAds
 import Alamofire
 
-protocol emojiCoverAllCollectionViewCellDelegate: AnyObject {
-    func didTapPremiumIcon(for coverPageData: CoverPageData)
-    func didTapDoneButton(for coverPageData: CoverPageData)
-}
-
 @available(iOS 15.0, *)
 class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     
@@ -29,7 +24,6 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     // MARK: - Properties
     private var coverPageData: CoverPageData?
     var premiumActionButton: UIButton!
-    weak var delegate: emojiCoverAllCollectionViewCellDelegate?
     var originalImage: UIImage?
     
     @IBOutlet weak var adContainerView: UIView!
@@ -64,13 +58,6 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
             premiumActionButton.widthAnchor.constraint(equalToConstant: 80),
             premiumActionButton.heightAnchor.constraint(equalToConstant: 80)
         ])
-        
-        premiumActionButton.addTarget(self, action: #selector(premiumButtonClicked), for: .touchUpInside)
-    }
-    
-    @IBAction func doneButtonClicked(_ sender: UIButton) {
-        guard let coverPageData = coverPageData else { return }
-        delegate?.didTapDoneButton(for: coverPageData)
     }
 
     
@@ -95,7 +82,7 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
         DoneButton.layer.masksToBounds = false
         
         // ImageName Label Blur Effect
-        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialLight)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.clipsToBounds = true
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
@@ -144,7 +131,7 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
             self.adContainerView.isHidden = true
             
             let displayName = coverPageData.coverName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.coverName
-            self.imageName.text = "  \(displayName)  "
+            self.imageName.text = " \(displayName) "
             self.imageName.sizeToFit()
             
             if let imageURL = URL(string: coverPageData.coverURL) {
@@ -214,12 +201,6 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     
     func removeBlurEffect() {
         imageView.image = originalImage
-    }
-    
-    // MARK: - Action Methods
-    @objc private func premiumButtonClicked() {
-        guard let coverPageData = coverPageData else { return }
-        delegate?.didTapPremiumIcon(for: coverPageData)
     }
 }
 

@@ -25,7 +25,7 @@ struct CustomAudio: Codable {
 
 @available(iOS 15.0, *)
 class AudioPrankVC: UIViewController {
-
+    
     @IBOutlet weak var audioCharacterAllCollectionView: UICollectionView!
     @IBOutlet weak var audioCharacterSlideCollectionview: UICollectionView!
     
@@ -617,6 +617,7 @@ class AudioPrankVC: UIViewController {
     }
     
     @IBAction func btnAddCoverImageTapped(_ sender: UIButton) {
+        AudioPlaybackManager.shared.stopCurrentPlayback()
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
         let hasInternet = isConnectedToInternet()
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
@@ -752,7 +753,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else {
             
             if isLoading {
-                return 8
+                return 4
             }
             
             return currentDataSource.count
@@ -772,6 +773,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     // Configure cell for custom audio
                     if customAudios.isEmpty {
                         cell.imageView.loadGif(name: "CoverGIF")
+                        cell.audioLabel.text = " Tutorial "
                         cell.imageView.contentMode = .scaleAspectFill
                         cell.applyBackgroundBlurEffect()
                         cell.playPauseImageView.isHidden = true
@@ -780,6 +782,10 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         let customAudio = customAudios[indexPath.row]
                         cell.imageView.contentMode = .scaleAspectFit
                         cell.configure(with: nil, customAudio: customAudio, at: indexPath)
+                        
+                        // Configure Done button action
+                        cell.DoneButton.tag = indexPath.row
+                        cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                     }
                 } else {
                     // Configure cell for API data
@@ -787,6 +793,14 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         let audioData = currentDataSource[indexPath.row]
                         cell.imageView.contentMode = .scaleAspectFit
                         cell.configure(with: audioData, customAudio: nil, at: indexPath)
+                        
+                        // Configure Premium button action
+                        cell.premiumActionButton.tag = indexPath.row
+                        cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
+                        
+                        // Configure Done button action
+                        cell.DoneButton.tag = indexPath.row
+                        cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                     }
                 }
                 cell.delegate = self
@@ -861,9 +875,49 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
+    @objc private func handlePremiumButtonTap(_ sender: UIButton) {
+        let coverPageData = currentDataSource[sender.tag]
+        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
+        premiumVC.setItemIDToUnlock(coverPageData.itemID)
+        premiumVC.modalTransitionStyle = .crossDissolve
+        premiumVC.modalPresentationStyle = .overCurrentContext
+        present(premiumVC, animated: true, completion: nil)
+    }
+    
+    @objc private func handleDoneButtonTap(_ sender: UIButton) {
+        AudioPlaybackManager.shared.stopCurrentPlayback()
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
+            if currentCategoryId == 0 {
+                
+                let customImages = customAudios[sender.tag]
+                if let fileData = try? Data(contentsOf: customImages.url) {
+                    vc.selectedFile = fileData
+                    vc.selectedImage = customImages.imageURL
+                    vc.selectedName = selectedCoverImageName
+                    vc.selectedCoverURL = selectedCoverImageURL
+                    vc.selectedCoverFile = selectedCoverImageFile
+                    vc.selectedPranktype = "audio"
+                    vc.selectedFileType = "mp3"
+                    vc.sharePrank = true
+                }
+            } else {
+                let categoryAllData = currentDataSource[sender.tag]
+                vc.selectedURL = categoryAllData.file
+                vc.selectedImage = categoryAllData.image
+                vc.selectedName = selectedCoverImageName
+                vc.selectedCoverURL = selectedCoverImageURL
+                vc.selectedCoverFile = selectedCoverImageFile
+                vc.selectedPranktype = "audio"
+                vc.selectedFileType = "mp3"
+                vc.sharePrank = true
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == audioCharacterAllCollectionView {
-
+            
         } else if collectionView == audioCharacterSlideCollectionview {
             if currentCategoryId == 0 {
                 // Handle custom audio selection
@@ -1056,9 +1110,6 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
 // MARK: - AudioAllCollectionViewCellDelegate
 @available(iOS 15.0, *)
 extension AudioPrankVC: AudioAllCollectionViewCellDelegate {
-    func didTapPremiumIcon(for categoryAllData: CategoryAllData) {
-        presentPremiumViewController(for: categoryAllData)
-    }
     
     func didTapAudioPlayback(at indexPath: IndexPath) {
         guard let cell = audioCharacterAllCollectionView.cellForItem(at: indexPath) as? AudioCharacterAllCollectionViewCell else {
@@ -1072,25 +1123,6 @@ extension AudioPrankVC: AudioAllCollectionViewCellDelegate {
         } else {
             cell.playAudio()
         }
-    }
-    
-    func didTapDoneButton(for categoryAllData: CategoryAllData) {
-        AudioPlaybackManager.shared.stopCurrentPlayback()
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as! LanguageVC
-        if currentCategoryId == 0 {
-            self.navigationController?.pushViewController(vc, animated: true)
-        } else {
-            vc.coverImageUrl = categoryAllData.file
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
-    }
-    
-    private func presentPremiumViewController(for categoryAllData: CategoryAllData) {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
-        premiumVC.setItemIDToUnlock(categoryAllData.itemID)
-        premiumVC.modalTransitionStyle = .crossDissolve
-        premiumVC.modalPresentationStyle = .overCurrentContext
-        present(premiumVC, animated: true, completion: nil)
     }
 }
 

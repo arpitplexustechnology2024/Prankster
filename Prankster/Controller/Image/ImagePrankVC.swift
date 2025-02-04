@@ -11,6 +11,16 @@ import AVFoundation
 import Photos
 import GoogleMobileAds
 
+struct CustomImages {
+    let image: UIImage
+    let imageUrl: String?
+    
+    init(image: UIImage, imageUrl: String? = nil) {
+        self.image = image
+        self.imageUrl = imageUrl
+    }
+}
+
 @available(iOS 15.0, *)
 class ImagePrankVC: UIViewController {
     
@@ -38,6 +48,10 @@ class ImagePrankVC: UIViewController {
     
     private var suggestions: [String] = []
     
+    var selectedCoverImageURL: String?
+    var selectedCoverImageFile: Data?
+    var selectedCoverImageName: String?
+    
     private var tagViewModule : TagViewModule!
     let interstitialAdUtility = InterstitialAdUtility()
     private let adsViewModel = AdsViewModel()
@@ -53,9 +67,9 @@ class ImagePrankVC: UIViewController {
     }
     
     var viewType: CoverViewType = .audio
-    private var selectedCoverIndex: Int?
-    var customImages: [UIImage] = []
-    var selectedCustomCoverIndex: IndexPath?
+    private var selectedImageIndex: Int?
+    var customImages: [CustomImages] = []
+    var selectedCustomImageIndex: IndexPath?
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
     private let viewModel = CategoryAllViewModel()
@@ -73,7 +87,7 @@ class ImagePrankVC: UIViewController {
     private var isScrollingFromSliderSelection = false
     private var nativeMediumAdUtility: NativeMediumAdUtility?
     var preloadedNativeAdView: GADNativeAdView?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.loadSavedImages()
@@ -170,7 +184,7 @@ class ImagePrankVC: UIViewController {
             ]
             searchBar.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
         }
-
+        
     }
     
     private func preloadNativeAd() {
@@ -502,8 +516,9 @@ class ImagePrankVC: UIViewController {
                     guard let self = self else { return }
                     
                     if let image = downloadedImage {
-                        self.customImages.insert(image, at: 0)
-                        self.selectedCoverIndex = 0
+                        let customCover = CustomImages(image: image, imageUrl: imageUrl)
+                        self.customImages.insert(customCover, at: 0)
+                        self.selectedImageIndex = 0
                         self.saveImages()
                         
                         DispatchQueue.main.async {
@@ -513,7 +528,7 @@ class ImagePrankVC: UIViewController {
                             let indexPath = IndexPath(item: 0, section: 0)
                             self.imageSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                             self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.selectedCustomCoverIndex = indexPath
+                            self.selectedCustomImageIndex = indexPath
                             self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                             self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         }
@@ -551,8 +566,9 @@ class ImagePrankVC: UIViewController {
                         guard let self = self else { return }
                         
                         if let image = downloadedImage {
-                            self.customImages.insert(image, at: 0)
-                            self.selectedCoverIndex = 0
+                            let customCover = CustomImages(image: image, imageUrl: imageUrl)
+                            self.customImages.insert(customCover, at: 0)
+                            self.selectedImageIndex = 0
                             self.saveImages()
                             
                             DispatchQueue.main.async {
@@ -562,7 +578,7 @@ class ImagePrankVC: UIViewController {
                                 let indexPath = IndexPath(item: 0, section: 0)
                                 self.imageSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                                 self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                                self.selectedCustomCoverIndex = indexPath
+                                self.selectedCustomImageIndex = indexPath
                                 self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                                 self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                             }
@@ -652,12 +668,12 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if collectionView == suggestionCollectionView {
             return suggestions.count
         }
-
+        
         if currentCategoryId == 0 {
             return (customImages.isEmpty ? 1 : customImages.count)
         } else {
             if isLoading {
-                return 8
+                return 4
             }
             return currentDataSource.count
         }
@@ -667,7 +683,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if collectionView == imageAllCollectionview {
             if currentCategoryId == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
-                cell.imageName.text = customImages.isEmpty ? "  Funny name  " : "  Custom image  "
+                cell.imageName.text = customImages.isEmpty ? " Tutorial " : " Custom image "
                 
                 if customImages.isEmpty {
                     cell.imageView.loadGif(name: "CoverGIF")
@@ -675,12 +691,17 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = true
                 } else {
-                    let image = customImages[indexPath.item]
+                    let customCover = customImages[indexPath.item]
+                    cell.imageView.image = customCover.image
+                    cell.originalImage = customCover.image
                     cell.imageView.contentMode = .scaleAspectFit
-                    cell.imageView.image = image
-                    cell.originalImage = image
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = false
+                    
+                    // Configure Done button action
+                    cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
+                    cell.DoneButton.tag = indexPath.item
+                    
                 }
                 cell.adContainerView.isHidden = true
                 cell.premiumButton.isHidden = true
@@ -701,7 +722,15 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     let categoryAllData = currentDataSource[indexPath.row]
                     cell.configure(with: categoryAllData)
                     cell.imageView.contentMode = .scaleAspectFit
-                    cell.delegate = self
+                    
+                    // Configure Premium button action
+                    cell.premiumActionButton.tag = indexPath.row
+                    cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
+                    
+                    // Configure Done button action
+                    cell.DoneButton.tag = indexPath.row
+                    cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
+                    
                     return cell
                 }
             }
@@ -709,7 +738,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             
             if currentCategoryId == 0 {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterSliderCollectionViewCell", for: indexPath) as! ImageCharacterSliderCollectionViewCell
-                cell.imageView.image = customImages.isEmpty ? UIImage(named: "imageplacholder") : customImages[indexPath.item]
+                cell.imageView.image = customImages.isEmpty ? UIImage(named: "imageplacholder") : customImages[indexPath.item].image
                 cell.premiumIconImageView.isHidden = true
                 if customImages.isEmpty {
                     cell.isSelected = false
@@ -768,9 +797,43 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
+    @objc private func handlePremiumButtonTap(_ sender: UIButton) {
+        let coverPageData = currentDataSource[sender.tag]
+        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
+        premiumVC.setItemIDToUnlock(coverPageData.itemID)
+        premiumVC.modalTransitionStyle = .crossDissolve
+        premiumVC.modalPresentationStyle = .overCurrentContext
+        present(premiumVC, animated: true, completion: nil)
+    }
+    
+    @objc private func handleDoneButtonTap(_ sender: UIButton) {
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
+            if currentCategoryId == 0 {
+                let customImages = customImages[sender.tag]
+                vc.selectedURL = customImages.imageUrl
+                vc.selectedName = selectedCoverImageName
+                vc.selectedCoverURL = selectedCoverImageURL
+                vc.selectedCoverFile = selectedCoverImageFile
+                vc.selectedPranktype = "gallery"
+                vc.selectedFileType = "jpg"
+                vc.sharePrank = true
+            } else {
+                let categoryAllData = currentDataSource[sender.tag]
+                vc.selectedURL = categoryAllData.file
+                vc.selectedName = selectedCoverImageName
+                vc.selectedCoverURL = selectedCoverImageURL
+                vc.selectedCoverFile = selectedCoverImageFile
+                vc.selectedPranktype = "gallery"
+                vc.selectedFileType = "jpg"
+                vc.sharePrank = true
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView == imageAllCollectionview {
-
+            
         } else if collectionView == imageSlideCollectionview {
             
             if currentCategoryId == 0 {
@@ -1031,82 +1094,102 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
     // MARK: - UIImagePickerControllerDelegate
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
-            ImageProcessingManager.shared.processImage(selectedImage) { [weak self] result in
-                guard let self = self else { return }
-                
-                switch result {
-                case .success(let compressedImage):
-                    self.customImages.insert(compressedImage, at: 0)
-                    self.selectedCoverIndex = 0
-                    self.saveImages()
+            if let imageUrl = saveImageToDocuments(image: selectedImage) {
+                ImageProcessingManager.shared.processImage(selectedImage) { [weak self] result in
+                    guard let self = self else { return }
                     
-                    DispatchQueue.main.async {
-                        self.imageSlideCollectionview.reloadData()
-                        self.imageAllCollectionview.reloadData()
-                        let indexPath = IndexPath(item: 0, section: 0)
-                        self.imageSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.selectedCustomCoverIndex = indexPath
-                        self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    switch result {
+                    case .success(let compressedImage):
+                        let customImages = CustomImages(image: compressedImage, imageUrl: imageUrl)
+                        self.customImages.insert(customImages, at: 0)
+                        self.selectedImageIndex = 0
+                        self.saveImages()
+                        
+                        DispatchQueue.main.async {
+                            self.imageSlideCollectionview.reloadData()
+                            self.imageAllCollectionview.reloadData()
+                            let indexPath = IndexPath(item: 0, section: 0)
+                            self.imageSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                            self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.selectedCustomImageIndex = indexPath
+                            self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                            self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        }
+                        
+                    case .failure(let error):
+                        let snackbar = Snackbar(message: error.message, backgroundColor: .snackbar)
+                        snackbar.show(in: self.view, duration: 3.0)
                     }
-                    
-                case .failure(let error):
-                    let snackbar = Snackbar(message: error.message, backgroundColor: .snackbar)
-                    snackbar.show(in: self.view, duration: 3.0)
                 }
             }
         }
         dismiss(animated: true, completion: nil)
+    }
+    
+    private func saveImageToDocuments(image: UIImage) -> String? {
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let fileName = UUID().uuidv4 + ".jpg"
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        guard let imageData = image.jpegData(compressionQuality: 1.0) else { return nil }
+        
+        do {
+            try imageData.write(to: fileURL)
+            return fileURL.path
+        } catch {
+            print("Error saving image: \(error)")
+            return nil
+        }
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         dismiss(animated: true, completion: nil)
     }
     
+    func saveImages() {
+        let imagesData = customImages.map { image in
+            [
+                "image": image.image,
+                "url": image.imageUrl ?? ""
+            ]
+        }
+        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: imagesData, requiringSecureCoding: false) {
+            UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserImages)
+        }
+    }
+    
     func loadSavedImages() {
         if let savedImagesData = UserDefaults.standard.object(forKey: ConstantValue.is_UserImages) as? Data {
             do {
-                if let decodedImages = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [UIImage] {
-                    customImages = decodedImages
-                    imageSlideCollectionview.reloadData()
+                if let decodedData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [[String: Any]] {
+                    customImages = decodedData.compactMap { dict in
+                        if let image = dict["image"] as? UIImage {
+                            let url = dict["url"] as? String
+                            return CustomImages(image: image, imageUrl: url)
+                        }
+                        return nil
+                    }
                     imageAllCollectionview.reloadData()
+                    imageSlideCollectionview.reloadData()
                 }
             } catch {
                 print("Error decoding saved images: \(error)")
             }
         }
     }
-    
-    func saveImages() {
-        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: customImages, requiringSecureCoding: false) {
-            UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserImages)
-        }
-    }
-    
-    
 }
 
 @available(iOS 15.0, *)
 extension ImagePrankVC: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        // Show the hidden UI elements immediately when textfield is tapped
         if isConnectedToInternet() {
             searchMainView.isHidden = false
             popularLabel.isHidden = false
             suggestionCollectionView.isHidden = false
-            
             searchMainViewHeightConstarints.constant = 90
-            
-            // Set corner radius for searchBarView (top corners)
             searchBarView.layer.cornerRadius = 10
             searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            
-            // Set corner radius for searchMainView (bottom corners)
             searchMainView.layer.cornerRadius = 10
             searchMainView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            
-            // Animate the changes
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()
             }
@@ -1118,8 +1201,6 @@ extension ImagePrankVC: UITextFieldDelegate {
         cancelButton.isHidden = false
     }
     
-    
-    
     @IBAction func cancelButtonTapped(_ sender: UIButton) {
         searchBar.text = ""
         searchBar.resignFirstResponder()
@@ -1129,12 +1210,9 @@ extension ImagePrankVC: UITextFieldDelegate {
         popularLabel.isHidden = true
         suggestionCollectionView.isHidden = true
         cancelButton.isHidden = true
-        
-        // Restore corner radius when cancel is tapped
         searchMainView.layer.cornerRadius = 10
         searchBarView.layer.cornerRadius = 10
         searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
@@ -1146,8 +1224,6 @@ extension ImagePrankVC: UITextFieldDelegate {
         searchMainView.isHidden = true
         popularLabel.isHidden = true
         suggestionCollectionView.isHidden = true
-        // cancelButton.isHidden = true
-        
         searchMainView.layer.cornerRadius = 10
         searchBarView.layer.cornerRadius = 10
         searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -1166,33 +1242,6 @@ extension ImagePrankVC: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textField.text, text.isEmpty {
             cancelButton.isHidden = true
-        }
-    }
-}
-
-@available(iOS 15.0, *)
-extension ImagePrankVC: ImageCharacterAllCollectionViewCellDelegate {
-    
-    func didTapPremiumIcon(for coverpageData: CategoryAllData) {
-        presentPremiumViewController(for: coverpageData)
-    }
-    
-    private func presentPremiumViewController(for coverPageData: CategoryAllData) {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
-        premiumVC.setItemIDToUnlock(coverPageData.itemID)
-        premiumVC.modalTransitionStyle = .crossDissolve
-        premiumVC.modalPresentationStyle = .overCurrentContext
-        present(premiumVC, animated: true, completion: nil)
-    }
-    
-    func didTapDoneButton(for coverPageData: CategoryAllData) {
-
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as! LanguageVC
-        if currentCategoryId == 0 {
-            self.navigationController?.pushViewController(vc, animated: true)
-        } else {
-            vc.coverImageUrl = coverPageData.image
-            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
 }

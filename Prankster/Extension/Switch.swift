@@ -36,13 +36,10 @@ class CustomSwitch: UIControl {
         self.layer.cornerRadius = switchHeight / 2
         self.clipsToBounds = true
         
-        // Setup gradient layer
-        gradientLayer.frame = self.bounds
-        gradientLayer.colors = [UIColor(red: 250/255, green: 73/255, blue: 87/255, alpha: 1).cgColor,
-                                UIColor(red: 253/255, green: 126/255, blue: 65/255, alpha: 1).cgColor]
-        gradientLayer.cornerRadius = switchHeight / 2
-        backgroundView.layer.insertSublayer(gradientLayer, at: 0)
+        // Setup background color (replacing gradient)
         backgroundView.frame = self.bounds
+        backgroundView.backgroundColor = UIColor(red: 62/255, green: 62/255, blue: 62/255, alpha: 1) // #3E3E3E
+        backgroundView.layer.cornerRadius = switchHeight / 2
         addSubview(backgroundView)
         
         circleView.frame = CGRect(x: 5, y: 5, width: circleSize, height: circleSize)
@@ -69,19 +66,8 @@ class CustomSwitch: UIControl {
         let newCirclePosition = isOn ? switchWidth - circleSize - 5 : 5
         UIView.animate(withDuration: 0.3) {
             self.circleView.frame.origin.x = newCirclePosition
-            self.updateGradientColors()
         }
         sendActions(for: .valueChanged)
-    }
-    
-    private func updateGradientColors() {
-        if isOn {
-            gradientLayer.colors = [UIColor(red: 250/255, green: 73/255, blue: 87/255, alpha: 1).cgColor,
-                                    UIColor(red: 253/255, green: 126/255, blue: 65/255, alpha: 1).cgColor]
-        } else {
-            gradientLayer.colors = [UIColor(red: 250/255, green: 73/255, blue: 87/255, alpha: 1).cgColor,
-                                    UIColor(red: 253/255, green: 126/255, blue: 65/255, alpha: 1).cgColor]
-        }
     }
     
     func setOn(_ on: Bool, animated: Bool) {
@@ -90,11 +76,9 @@ class CustomSwitch: UIControl {
         if animated {
             UIView.animate(withDuration: 0.3) {
                 self.circleView.frame.origin.x = newCirclePosition
-                self.updateGradientColors()
             }
         } else {
             circleView.frame.origin.x = newCirclePosition
-            updateGradientColors()
         }
     }
     

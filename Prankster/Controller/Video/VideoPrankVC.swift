@@ -13,6 +13,16 @@ import GoogleMobileAds
 import MobileCoreServices
 import Photos
 
+struct CustomVideos {
+    let video: URL
+    let videoURL: String?
+    
+    init(video: URL, videoURL: String? = nil) {
+        self.video = video
+        self.videoURL = videoURL
+    }
+}
+
 @available(iOS 15.0, *)
 class VideoPrankVC: UIViewController {
     @IBOutlet weak var videoAllCollectionView: UICollectionView!
@@ -82,10 +92,10 @@ class VideoPrankVC: UIViewController {
         self.tagViewModule = TagViewModule(apiService: TagAPIManger.shared)
     }
     
-    
     private var player: AVPlayer?
     private var selectedVideoIndex: Int?
-    private var customVideos: [URL] = []
+    var customVideos: [CustomVideos] = []
+//    private var customVideos: [URL] = []
     private var shouldAutoPlayVideo = false
     private var playerLayer: AVPlayerLayer?
     private var audioSession: AVAudioSession?
@@ -595,6 +605,7 @@ class VideoPrankVC: UIViewController {
     }
     
     @IBAction func btnAddVideoTapped(_ sender: UIButton) {
+        VideoPlaybackManager.shared.stopCurrentPlayback()
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
         let hasInternet = isConnectedToInternet()
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
@@ -673,45 +684,43 @@ class VideoPrankVC: UIViewController {
     }
     
     private func handleDownloadedVideo(url: URL) {
-        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileName = "\(UUID().uuidString).mp4"
-        let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-        
-        do {
-            // Copy compressed video to final destination
-            try FileManager.default.copyItem(at: url, to: destinationURL)
+        // First compress the video
+        VideoProcessingManager.shared.compressVideo(inputURL: url) { [weak self] result in
+            guard let self = self else { return }
             
-            // Add to custom videos
-            customVideos.insert(destinationURL, at: 0)
-            selectedVideoIndex = 0
-            saveCustomVideoURLs()
-            
-            // Update UI
-            DispatchQueue.main.async {
-                self.videoAllCollectionView.reloadData()
-                self.videoSlideCollectionview.reloadData()
+            switch result {
+            case .success(let compressedURL):
+                let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                let fileName = "\(UUID().uuidString).mp4"
+                let destinationURL = documentsDirectory.appendingPathComponent(fileName)
                 
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                self.videoSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                self.selectedVideoCustomCell = indexPath
+                do {
+                    try FileManager.default.copyItem(at: compressedURL, to: destinationURL)
+                    
+                    let customVideo = CustomVideos(video: destinationURL, videoURL: destinationURL.absoluteString)
+                    customVideos.insert(customVideo, at: 0)
+                    selectedVideoIndex = 0
+                    saveCustomVideoURLs()
+                    
+                    DispatchQueue.main.async {
+                        self.videoAllCollectionView.reloadData()
+                        self.videoSlideCollectionview.reloadData()
+                        
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.videoSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.selectedVideoCustomCell = indexPath
+
+                        self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                    
+                } catch {
+                    print("Error handling compressed video: \(error)")
+                }
                 
-                // Scroll to show new video
-                self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            }
-            
-            // Show success message
-            DispatchQueue.main.async {
-                let snackbar = CustomSnackbar(message: "Video added successfully!", backgroundColor: .snackbar)
-                snackbar.show(in: self.view, duration: 3.0)
-            }
-            
-        } catch {
-            print("Error handling downloaded video: \(error)")
-            DispatchQueue.main.async {
-                let snackbar = CustomSnackbar(message: "Failed to add video", backgroundColor: .snackbar)
-                snackbar.show(in: self.view, duration: 3.0)
+            case .failure(let error):
+                print("Video compression failed: \(error.message)")
             }
         }
     }
@@ -800,7 +809,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else {
             
             if isLoading {
-                return 8
+                return 4
             }
             
             return currentDataSource.count
@@ -819,33 +828,61 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 if currentCategoryId == 0 {
                     // Configure cell for custom audio
                     if customVideos.isEmpty {
-                        cell.imageView.loadGif(name: "CoverGIF")
-                        cell.imageView.contentMode = .scaleAspectFill
+                        cell.gifImageview.isHidden = false
+                        cell.gifImageview.loadGif(name: "CoverGIF")
+                        cell.imageName.text = " Tutorial "
+                        cell.gifImageview.contentMode = .scaleAspectFill
+                        cell.imageView.isHidden = true
+                        cell.blurImageView.isHidden = true
+                        cell.gifImageview.isHidden = false
                         cell.applyBackgroundBlurEffect()
                         cell.playPauseImageView.isHidden = true
+                        cell.premiumButton.isHidden = true
                         cell.DoneButton.isHidden = true
                     } else {
                         if indexPath.row < customVideos.count {
                             let videoURL = customVideos[indexPath.row]
+                            cell.imageView.isHidden = false
+                            cell.blurImageView.isHidden = false
+                            cell.gifImageview.isHidden = true
+                            cell.premiumButton.isHidden = true
                             cell.imageView.contentMode = .scaleAspectFit
                             
                             // વિડિયો URL થી સેલ કન્ફિગર કરો
-                            let dummyData = CategoryAllData(file: videoURL.absoluteString,
-                                                            name: "  Custom Video  ",
+                            let dummyData = CategoryAllData(file: videoURL.video.absoluteString,
+                                                            name: " Custom Video ",
                                                             image: "",
                                                             premium: false,
                                                             itemID: 0, artistName: "")
                             cell.configure(with: dummyData, at: indexPath)
                             cell.configure(with: dummyData)
+                            
+                            // Configure Done button action
+                            cell.DoneButton.tag = indexPath.row
+                            cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                         }
                     }
                 } else {
                     // Configure cell for API data
                     if indexPath.row < currentDataSource.count {
                         let audioData = currentDataSource[indexPath.row]
+                        cell.imageView.isHidden = false
+                        
+                        cell.blurImageView.isHidden = false
+                        cell.gifImageview.isHidden = true
                         cell.imageView.contentMode = .scaleAspectFit
                         cell.configure(with: audioData, at: indexPath)
                         cell.configure(with: audioData)
+                        
+                        
+                        // Configure Premium button action
+                        cell.premiumActionButton.tag = indexPath.row
+                        cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
+                        
+                        // Configure Done button action
+                        cell.DoneButton.tag = indexPath.row
+                        cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
+                        
                     }
                 }
                 cell.delegate = self
@@ -869,7 +906,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         cell.premiumIconImageView.isHidden = true
                         if indexPath.row < customVideos.count {
                             let videoURL = customVideos[indexPath.row]
-                            cell.setThumbnail(for: videoURL)
+                            cell.setThumbnail(for: videoURL.video)
                         }
                     }
                 } else {
@@ -912,6 +949,44 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             cell.layer.cornerRadius = 10
             
             return cell
+        }
+    }
+    
+    @objc private func handlePremiumButtonTap(_ sender: UIButton) {
+        let coverPageData = currentDataSource[sender.tag]
+        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
+        premiumVC.setItemIDToUnlock(coverPageData.itemID)
+        premiumVC.modalTransitionStyle = .crossDissolve
+        premiumVC.modalPresentationStyle = .overCurrentContext
+        present(premiumVC, animated: true, completion: nil)
+    }
+    
+    @objc private func handleDoneButtonTap(_ sender: UIButton) {
+        VideoPlaybackManager.shared.stopCurrentPlayback()
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
+            if currentCategoryId == 0 {
+                
+                let customImages = customVideos[sender.tag]
+             //   if let fileData = try? Data(contentsOf: customImages.video) {
+                vc.selectedURL = customImages.videoURL
+                    vc.selectedName = selectedCoverImageName
+                    vc.selectedCoverURL = selectedCoverImageURL
+                    vc.selectedCoverFile = selectedCoverImageFile
+                    vc.selectedPranktype = "video"
+                    vc.selectedFileType = "mp4"
+                    vc.sharePrank = true
+             //   }
+            } else {
+                let categoryAllData = currentDataSource[sender.tag]
+                vc.selectedURL = categoryAllData.file
+                vc.selectedName = selectedCoverImageName
+                vc.selectedCoverURL = selectedCoverImageURL
+                vc.selectedCoverFile = selectedCoverImageFile
+                vc.selectedPranktype = "video"
+                vc.selectedFileType = "mp4"
+                vc.sharePrank = true
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -1123,31 +1198,6 @@ extension VideoPrankVC: VideoCharacterAllCollectionViewCellDelegate {
             cell.playVideo()
         }
     }
-    
-    func didTapPremiumIcon(for categoryAllData: CategoryAllData) {
-        presentPremiumViewController(for: categoryAllData)
-    }
-    
-    
-    func didTapDoneButton(for categoryAllData: CategoryAllData) {
-        VideoPlaybackManager.shared.stopCurrentPlayback()
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as! LanguageVC
-        if currentCategoryId == 0 {
-            print("Custom Data pass")
-            self.navigationController?.pushViewController(vc, animated: true)
-        } else {
-            vc.coverImageUrl = categoryAllData.file
-            self.navigationController?.pushViewController(vc, animated: true)
-        }
-    }
-    
-    private func presentPremiumViewController(for categoryAllData: CategoryAllData) {
-        let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "PremiumPopupVC") as! PremiumPopupVC
-        premiumVC.setItemIDToUnlock(categoryAllData.itemID)
-        premiumVC.modalTransitionStyle = .crossDissolve
-        premiumVC.modalPresentationStyle = .overCurrentContext
-        present(premiumVC, animated: true, completion: nil)
-    }
 }
 
 @available(iOS 15.0, *)
@@ -1289,6 +1339,14 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         picker.videoQuality = .typeHigh
         picker.allowsEditing = true
         
+        // વીડિયો ટ્રિમિંગ માટેની મર્યાદા સેટ કરવી
+        picker.allowsEditing = true
+        picker.videoMaximumDuration = 15.0 // 15 સેકંડની મહત્તમ મર્યાદા
+        
+        // એડિટિંગ ઓપ્શન્સ સેટ કરવા
+        if #available(iOS 14.0, *) {
+            picker.videoExportPreset = AVAssetExportPresetPassthrough
+        }
         
         present(picker, animated: true)
     }
@@ -1322,8 +1380,8 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         snackbar.show(in: self.view, duration: 5.0)
     }
     
+    // Update imagePickerController to use CustomVideos
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
         guard let videoURL = info[.mediaURL] as? URL else {
             picker.dismiss(animated: true)
             return
@@ -1340,31 +1398,47 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
             return
         }
         
+        // Dismiss picker first
         picker.dismiss(animated: true)
         
-        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileName = "\(UUID().uuidString).mp4"
-        let destinationURL = documentsDirectory.appendingPathComponent(fileName)
-        print("Video URL: \(destinationURL.absoluteString)")
-        
-        do {
-            try FileManager.default.copyItem(at: videoURL, to: destinationURL)
-            customVideos.insert(destinationURL, at: 0)
-            selectedVideoIndex = 0
-            saveCustomVideoURLs()
-            
+        // Process video in background
+        VideoProcessingManager.shared.compressVideo(inputURL: videoURL) { [weak self] result in
             DispatchQueue.main.async {
-                self.videoAllCollectionView.reloadData()
-                self.videoSlideCollectionview.reloadData()
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                self.videoSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                self.selectedVideoCustomCell = indexPath
-                self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let compressedVideoURL):
+                    let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+                    let fileName = "\(UUID().uuidString).mp4"
+                    let destinationURL = documentsDirectory.appendingPathComponent(fileName)
+                    
+                    do {
+                        try FileManager.default.copyItem(at: compressedVideoURL, to: destinationURL)
+                        
+                        // Create CustomVideos object
+                        let customVideo = CustomVideos(video: destinationURL, videoURL: destinationURL.absoluteString)
+                        self.customVideos.insert(customVideo, at: 0)
+                        self.selectedVideoIndex = 0
+                        self.saveCustomVideoURLs()
+                        
+                        // Update UI
+                        self.videoAllCollectionView.reloadData()
+                        self.videoSlideCollectionview.reloadData()
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.videoSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.selectedVideoCustomCell = indexPath
+                        self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        
+                    } catch {
+                        print("Error copying compressed video: \(error)")
+                    }
+                    
+                case .failure(let error):
+                    print("\(error.message)")
+                }
             }
-        } catch {
-            print("Error copying video: \(error)")
         }
     }
     
@@ -1373,7 +1447,7 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
     }
     
     private func saveCustomVideoURLs() {
-        let videoURLStrings = customVideos.map { $0.absoluteString }
+        let videoURLStrings = customVideos.map { $0.video.absoluteString }
         UserDefaults.standard.set(videoURLStrings, forKey: ConstantValue.is_UserVideos)
     }
     
@@ -1387,7 +1461,7 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                   FileManager.default.fileExists(atPath: url.path) else {
                 return nil
             }
-            return url
+            return CustomVideos(video: url, videoURL: urlString)
         }
     }
 }

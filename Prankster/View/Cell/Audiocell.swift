@@ -28,8 +28,6 @@ class AudioPlaybackManager {
 
 // MARK: - Protocols
 protocol AudioAllCollectionViewCellDelegate: AnyObject {
-    func didTapPremiumIcon(for categoryAllData: CategoryAllData)
-    func didTapDoneButton(for categoryAllData: CategoryAllData)
     func didTapAudioPlayback(at indexPath: IndexPath)
 }
 
@@ -89,8 +87,6 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
             premiumActionButton.widthAnchor.constraint(equalToConstant: 80),
             premiumActionButton.heightAnchor.constraint(equalToConstant: 80)
         ])
-        
-        premiumActionButton.addTarget(self, action: #selector(premiumButtonClicked), for: .touchUpInside)
     }
     
     private func setupUI() {
@@ -113,14 +109,12 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         DoneButton.layer.shadowOpacity = 0.3
         DoneButton.layer.masksToBounds = false
         
-        DoneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
-        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(imageViewTapped))
         imageView.isUserInteractionEnabled = true
         imageView.addGestureRecognizer(tapGesture)
         
         // Adding blur effect to imageName label background
-        let blurEffect = UIBlurEffect(style: .light)
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialLight)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
         blurEffectView.clipsToBounds = true
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
@@ -140,28 +134,28 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     }
     
     func configure(with categoryAllData: CategoryAllData?, customAudio: (url: URL, imageURL: String)?, at indexPath: IndexPath) {
-            self.currentIndexPath = indexPath
-            
-            if let customAudio = customAudio {
-                // Configure for custom audio
-                self.audioLabel.text = "  Custom audio  "
-                if let url = URL(string: customAudio.imageURL) {
-                    imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "audioplacholder")) { [weak self] image, _, _, _ in
-                        self?.originalImage = image
-                        self?.applyBackgroundBlurEffect()
-                    }
+        self.currentIndexPath = indexPath
+        
+        if let customAudio = customAudio {
+            // Configure for custom audio
+            self.audioLabel.text = " Custom audio "
+            if let url = URL(string: customAudio.imageURL) {
+                imageView.sd_setImage(with: url, placeholderImage: UIImage(named: "audioplacholder")) { [weak self] image, _, _, _ in
+                    self?.originalImage = image
+                    self?.applyBackgroundBlurEffect()
                 }
-                setupCustomAudioPlayback(with: customAudio.url)
-                self.adContainerView.isHidden = true
-                self.premiumButton.isHidden = true
-                self.premiumActionButton.isHidden = true
-                self.DoneButton.isHidden = false
-                
-            } else if let categoryAllData = categoryAllData {
-                // Existing API data configuration
-                configure(with: categoryAllData, at: indexPath)
             }
+            setupCustomAudioPlayback(with: customAudio.url)
+            self.adContainerView.isHidden = true
+            self.premiumButton.isHidden = true
+            self.premiumActionButton.isHidden = true
+            self.DoneButton.isHidden = false
+            
+        } else if let categoryAllData = categoryAllData {
+            // Existing API data configuration
+            configure(with: categoryAllData, at: indexPath)
         }
+    }
     
     func configure(with categoryAllData: CategoryAllData, at indexPath: IndexPath) {
         self.categoryAllData = categoryAllData
@@ -194,7 +188,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
             self.adContainerView.isHidden = true
             
             let displayName = categoryAllData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : categoryAllData.name
-            self.audioLabel.text = "  \(displayName)  "
+            self.audioLabel.text = " \(displayName) "
             self.audioLabel.sizeToFit()
             
             if let imageURL = URL(string: categoryAllData.image) {
@@ -267,12 +261,6 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         imageView.image = originalImage
     }
     
-    // MARK: - Action Methods
-    @objc private func premiumButtonClicked() {
-        guard let categoryAllData = categoryAllData else { return }
-        delegate?.didTapPremiumIcon(for: categoryAllData)
-    }
-    
     private func setupAudioPlayback(with audioURLString: String?) {
         stopAudio()
         isAudioLoaded = false
@@ -306,18 +294,18 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     }
     
     func setupCustomAudioPlayback(with audioURL: URL) {
-            stopAudio()
-            isAudioLoaded = false
-            
-            do {
-                audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
-                audioPlayer?.delegate = self
-                audioPlayer?.prepareToPlay()
-                isAudioLoaded = true
-            } catch {
-                print("Error setting up custom audio player: \(error)")
-            }
+        stopAudio()
+        isAudioLoaded = false
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
+            audioPlayer?.delegate = self
+            audioPlayer?.prepareToPlay()
+            isAudioLoaded = true
+        } catch {
+            print("Error setting up custom audio player: \(error)")
         }
+    }
     
     func playAudio() {
         
@@ -356,20 +344,12 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         playPauseImageView.isHidden = false
     }
     
-    @objc private func doneButtonTapped() {
-        stopAudio()
-        if let categoryAllData = categoryAllData {
-            delegate?.didTapDoneButton(for: categoryAllData)
-        }
-    }
-    
-    
     override func layoutSubviews() {
         super.layoutSubviews()
     }
     
     @objc private func imageViewTapped() {
-    toggleAudioPlayback()
+        toggleAudioPlayback()
     }
     
     override func prepareForReuse() {

@@ -248,7 +248,7 @@ class AudioChipSelector: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add Audio Prank 🎧", "Tranding sound", "Nonveg sound", "Hot sound", "Funny sound", "Horro sound", "Celebrity sound"]
+        let titles = ["Add Audio Prank 🎧", "Trending sound", "Nonveg sound", "Hot sound", "Funny sound", "Horro sound", "Celebrity sound"]
         
         // Setup fixed chip (custom data chip)
         fixedChip.setTitle(titles[0], for: .normal)
@@ -411,7 +411,7 @@ class ImageChipSelector: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add image Prank 🏞️", "Tranding image", "Nonveg image", "Hot image", "Funny image", "Horror image", "Celebrity image"]
+        let titles = ["Add image Prank 🏞️", "Trending image", "Nonveg image", "Hot image", "Funny image", "Horror image", "Celebrity image"]
         
         // Setup fixed chip (custom data chip)
         fixedChip.setTitle(titles[0], for: .normal)
@@ -573,7 +573,7 @@ class VideoChipSelector: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add Video Prank 🎧", "Tranding video", "Nonveg video", "Hot video", "Funny video", "Horror video", "Celebrity video"]
+        let titles = ["Add Video Prank 🎧", "Trending video", "Nonveg video", "Hot video", "Funny video", "Horror video", "Celebrity video"]
         
         // Setup fixed chip (custom data chip)
         fixedChip.setTitle(titles[0], for: .normal)

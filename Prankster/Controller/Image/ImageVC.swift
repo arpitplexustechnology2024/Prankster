@@ -263,7 +263,7 @@ class ImageVC: UIViewController {
                     nextVC.selectedFile = imageFileToPass
                     nextVC.selectedName = selectedCoverImageName
                     nextVC.selectedCoverURL = selectedCoverImageURL
-                    nextVC.selectedCoverFile = selectedCoverImageFile
+                   // nextVC.selectedCoverFile = selectedCoverImageFile
                     nextVC.selectedPranktype = "gallery"
                     nextVC.selectedFileType = "jpg"
                     nextVC.sharePrank = true
