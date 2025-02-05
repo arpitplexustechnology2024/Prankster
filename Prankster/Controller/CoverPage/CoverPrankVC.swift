@@ -627,6 +627,8 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.imageView.contentMode = .scaleAspectFill
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = true
+                    cell.premiumButton.isHidden = true
+                    cell.premiumActionButton.isHidden = true
                 } else {
                     let customCover = customCovers[indexPath.item]
                     cell.imageView.image = customCover.image
@@ -1075,7 +1077,6 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     
                     switch result {
                     case .success(let compressedImage):
-                        // Create CustomCover with both compressed image and URL
                         let customCover = CustomCover(image: compressedImage, imageUrl: imageUrl)
                         self.customCovers.insert(customCover, at: 0)
                         self.selectedCoverIndex = 0

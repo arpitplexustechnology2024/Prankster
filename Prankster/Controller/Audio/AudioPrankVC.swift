@@ -74,6 +74,8 @@ class AudioPrankVC: UIViewController {
     private var nativeMediumAdUtility: NativeMediumAdUtility?
     var preloadedNativeAdView: GADNativeAdView?
     
+    private var shouldShowGIF = true
+    
     private let defaultImageURLs = [
         "https://pslink.world/api/public/images/audio1.png",
         "https://pslink.world/api/public/images/audio2.png",
@@ -379,7 +381,7 @@ class AudioPrankVC: UIViewController {
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                     guard let self = self else { return }
-                    if !self.customAudios.isEmpty {
+                    if !self.customAudios.isEmpty && !self.shouldShowGIF {
                         let indexPath = IndexPath(item: 0, section: 0)
                         self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
@@ -538,16 +540,19 @@ class AudioPrankVC: UIViewController {
     }
     
     @IBAction func btnAddCoverImageTapped(_ sender: UIButton) {
+        self.shouldShowGIF = false
         AudioPlaybackManager.shared.stopCurrentPlayback()
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
         let hasInternet = isConnectedToInternet()
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
+            self.shouldShowGIF = false
             self.addAudioClick()
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shouldShowGIF = false
                 self?.addAudioClick()
             }
         }
@@ -653,6 +658,9 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else if collectionView == audioCharacterAllCollectionView {
             
             if currentCategoryId == 0 {
+                if shouldShowGIF {
+                    return 1
+                }
                 return (customAudios.isEmpty ? 1 : customAudios.count)
             } else {
                 if isLoading {
@@ -683,6 +691,19 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 if currentCategoryId == 0 {
                     
+                    if shouldShowGIF {
+                        cell.audioLabel.text = " Tutorial "
+                        cell.imageView.loadGif(name: "audio")
+                        cell.imageView.contentMode = .scaleAspectFill
+                        cell.applyBackgroundBlurEffect()
+                        cell.DoneButton.isHidden = true
+                        cell.adContainerView.isHidden = true
+                        cell.premiumButton.isHidden = true
+                        cell.premiumActionButton.isHidden = true
+                        cell.playPauseImageView.isHidden = true
+                        return cell
+                    }
+                    
                     if customAudios.isEmpty {
                         cell.imageView.loadGif(name: "audio")
                         cell.audioLabel.text = " Tutorial "
@@ -690,6 +711,8 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         cell.applyBackgroundBlurEffect()
                         cell.playPauseImageView.isHidden = true
                         cell.DoneButton.isHidden = true
+                        cell.premiumButton.isHidden = true
+                        cell.premiumActionButton.isHidden = true
                     } else {
                         let customAudio = customAudios[indexPath.row]
                         cell.imageView.contentMode = .scaleAspectFit
@@ -833,9 +856,14 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if collectionView == audioCharacterAllCollectionView {
             
         } else if collectionView == audioCharacterSlideCollectionview {
+            
+            shouldShowGIF = false
+            
             if currentCategoryId == 0 {
                 guard !customAudios.isEmpty else { return }
             }
+            
+            audioCharacterAllCollectionView.reloadData()
             
             audioCharacterAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)

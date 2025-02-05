@@ -41,6 +41,8 @@ class ImagePrankVC: UIViewController {
     
     @IBOutlet weak var searchBarView: UIView!
     
+    private var shouldShowGIF = true
+    
     private var currentCategoryId: Int = 0
     private var isFirstLoad: Bool = true
     
@@ -300,7 +302,7 @@ class ImagePrankVC: UIViewController {
                 
                 // Select first item after reload
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    if !self.customImages.isEmpty {
+                    if !self.customImages.isEmpty && !self.shouldShowGIF {
                         let indexPath = IndexPath(item: 0, section: 0)
                         self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
@@ -474,15 +476,18 @@ class ImagePrankVC: UIViewController {
     }
     
     @IBAction func btnAddImageTapped(_ sender: UIButton) {
+        self.shouldShowGIF = false
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
         let hasInternet = isConnectedToInternet()
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
+            self.shouldShowGIF = false
             self.addImageClick()
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shouldShowGIF = false
                 self?.addImageClick()
             }
         }
@@ -609,6 +614,9 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             return suggestions.count
         } else if collectionView == imageAllCollectionview {
             if currentCategoryId == 0 {
+                if shouldShowGIF {
+                    return 1
+                }
                 return (customImages.isEmpty ? 1 : customImages.count)
             } else {
                 if isLoading {
@@ -634,11 +642,25 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
                 cell.imageName.text = customImages.isEmpty ? " Tutorial " : " Custom image "
                 
+                if shouldShowGIF {
+                    cell.imageName.text = " Tutorial "
+                    cell.imageView.loadGif(name: "image")
+                    cell.imageView.contentMode = .scaleAspectFill
+                    cell.applyBackgroundBlurEffect()
+                    cell.DoneButton.isHidden = true
+                    cell.adContainerView.isHidden = true
+                    cell.premiumButton.isHidden = true
+                    cell.premiumActionButton.isHidden = true
+                    return cell
+                }
+                
                 if customImages.isEmpty {
                     cell.imageView.loadGif(name: "image")
                     cell.imageView.contentMode = .scaleAspectFill
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = true
+                    cell.premiumButton.isHidden = true
+                    cell.premiumActionButton.isHidden = true
                 } else {
                     let customCover = customImages[indexPath.item]
                     cell.imageView.image = customCover.image
@@ -647,7 +669,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = false
                     
-                    // Configure Done button action
                     cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                     cell.DoneButton.tag = indexPath.item
                     
@@ -795,11 +816,15 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             
         } else if collectionView == imageSlideCollectionview {
             
+            shouldShowGIF = false
+            
             if currentCategoryId == 0 {
                 // Handle custom audio selection
                 guard !customImages.isEmpty else { return }
                 
             }
+            
+            imageAllCollectionview.reloadData()
             
             imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
             imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)

@@ -45,6 +45,8 @@ class VideoPrankVC: UIViewController {
     var selectedVideoCustomCell: IndexPath?
     var languageid: Int = 0
     
+    private var shouldShowGIF = true
+    
     private var currentCategoryId: Int = 0
     private var isFirstLoad: Bool = true
     
@@ -405,7 +407,7 @@ class VideoPrankVC: UIViewController {
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                     guard let self = self else { return }
-                    if !self.customVideos.isEmpty {
+                    if !self.customVideos.isEmpty && !self.shouldShowGIF {
                         let indexPath = IndexPath(item: 0, section: 0)
                         self.videoAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         self.videoSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
@@ -583,16 +585,19 @@ class VideoPrankVC: UIViewController {
     }
     
     @IBAction func btnAddVideoTapped(_ sender: UIButton) {
+        self.shouldShowGIF = false
         VideoPlaybackManager.shared.stopCurrentPlayback()
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
         let hasInternet = isConnectedToInternet()
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
+            self.shouldShowGIF = false
             self.addVideoClick()
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                self?.shouldShowGIF = false
                 self?.addVideoClick()
             }
         }
@@ -764,6 +769,9 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             return suggestions.count
         } else if collectionView == videoAllCollectionView {
             if currentCategoryId == 0 {
+                if shouldShowGIF {
+                    return 1
+                }
                 return (customVideos.isEmpty ? 1 : customVideos.count)
             } else {
                 if isLoading {
@@ -793,6 +801,21 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterAllCollectionViewCell", for: indexPath) as! VideoCharacterAllCollectionViewCell
                 
                 if currentCategoryId == 0 {
+                    
+                    if shouldShowGIF {
+                        cell.gifImageview.isHidden = false
+                        cell.gifImageview.loadGif(name: "Video")
+                        cell.imageName.text = " Tutorial "
+                        cell.gifImageview.contentMode = .scaleAspectFill
+                        cell.imageView.isHidden = true
+                        cell.blurImageView.isHidden = true
+                        cell.gifImageview.isHidden = false
+                        cell.applyBackgroundBlurEffect()
+                        cell.playPauseImageView.isHidden = true
+                        cell.premiumButton.isHidden = true
+                        cell.DoneButton.isHidden = true
+                        return cell
+                    }
 
                     // Configure cell for custom audio
                     if customVideos.isEmpty {
@@ -979,10 +1002,13 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             
         } else if collectionView == videoSlideCollectionview {
             
+            shouldShowGIF = false
+            
             if currentCategoryId == 0 {
                 // Handle custom audio selection
                 guard !customVideos.isEmpty else { return }
             }
+            
             videoAllCollectionView.reloadData()
             
             videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
