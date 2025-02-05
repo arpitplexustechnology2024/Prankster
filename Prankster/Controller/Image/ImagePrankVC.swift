@@ -83,8 +83,6 @@ class ImagePrankVC: UIViewController {
     private let categoryId: Int = 4
     private var isLoadingMore = false
     private var selectedIndex: Int = 0
-    
-    private var isScrollingFromSliderSelection = false
     private var nativeMediumAdUtility: NativeMediumAdUtility?
     var preloadedNativeAdView: GADNativeAdView?
     
@@ -102,19 +100,6 @@ class ImagePrankVC: UIViewController {
         PremiumManager.shared.clearTemporaryUnlocks()
         
         NotificationCenter.default.addObserver( self, selector: #selector(handlePremiumContentUnlocked), name: NSNotification.Name("PremiumContentUnlocked"), object: nil)
-        
-        self.imageAllCollectionview.reloadData()
-        self.imageSlideCollectionview.reloadData()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            guard let self = self else { return }
-            if !self.customImages.isEmpty {
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                self.imageSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                self.selectedIndex = 0
-            }
-        }
         
         self.addimageView.layer.cornerRadius = 10
         
@@ -494,107 +479,61 @@ class ImagePrankVC: UIViewController {
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
-            let imagePopupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImagePopupVC") as! ImagePopupVC
-            imagePopupVC.modalPresentationStyle = .overCurrentContext
-            imagePopupVC.modalTransitionStyle = .crossDissolve
-            
-            imagePopupVC.cameraCallback = { [weak self] in
-                self?.btnCameraTapped()
-            }
-            
-            imagePopupVC.downloaderCallback = { [weak self] in
-                guard let self = self else { return }
-                // Present ImageDownloaderBottom
-                let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
-                downloaderVC.modalPresentationStyle = .pageSheet
-                
-                if let sheet = downloaderVC.sheetPresentationController {
-                    sheet.detents = [.large()]
-                }
-                
-                downloaderVC.imageDownloadedCallback = { [weak self] (downloadedImage, imageUrl) in
-                    guard let self = self else { return }
-                    
-                    if let image = downloadedImage {
-                        let customCover = CustomImages(image: image, imageUrl: imageUrl)
-                        self.customImages.insert(customCover, at: 0)
-                        self.selectedImageIndex = 0
-                        self.saveImages()
-                        
-                        DispatchQueue.main.async {
-                            self.imageSlideCollectionview.reloadData()
-                            self.imageAllCollectionview.reloadData()
-                            
-                            let indexPath = IndexPath(item: 0, section: 0)
-                            self.imageSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                            self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.selectedCustomImageIndex = indexPath
-                            self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                            self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        }
-                    }
-                }
-                self.present(downloaderVC, animated: true)
-            }
-            
-            imagePopupVC.galleryCallback = { [weak self] in
-                self?.btnGalleryTapped()
-            }
-            present(imagePopupVC, animated: true)
+            self.addImageClick()
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                let imagePopupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImagePopupVC") as! ImagePopupVC
-                imagePopupVC.modalPresentationStyle = .overCurrentContext
-                imagePopupVC.modalTransitionStyle = .crossDissolve
-                
-                imagePopupVC.cameraCallback = { [weak self] in
-                    self?.btnCameraTapped()
-                }
-                
-                imagePopupVC.downloaderCallback = { [weak self] in
-                    guard let self = self else { return }
-                    // Present ImageDownloaderBottom
-                    let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
-                    downloaderVC.modalPresentationStyle = .pageSheet
-                    
-                    if let sheet = downloaderVC.sheetPresentationController {
-                        sheet.detents = [.large()]
-                    }
-                    
-                    downloaderVC.imageDownloadedCallback = { [weak self] (downloadedImage, imageUrl) in
-                        guard let self = self else { return }
-                        
-                        if let image = downloadedImage {
-                            let customCover = CustomImages(image: image, imageUrl: imageUrl)
-                            self.customImages.insert(customCover, at: 0)
-                            self.selectedImageIndex = 0
-                            self.saveImages()
-                            
-                            DispatchQueue.main.async {
-                                self.imageSlideCollectionview.reloadData()
-                                self.imageAllCollectionview.reloadData()
-                                
-                                let indexPath = IndexPath(item: 0, section: 0)
-                                self.imageSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                                self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                                self.selectedCustomImageIndex = indexPath
-                                self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                                self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                            }
-                        }
-                    }
-                    
-                    self.present(downloaderVC, animated: true)
-                }
-                
-                imagePopupVC.galleryCallback = { [weak self] in
-                    self?.btnGalleryTapped()
-                }
-                
-                self?.present(imagePopupVC, animated: true)
+                self?.addImageClick()
             }
         }
+    }
+    
+    private func addImageClick() {
+        let imagePopupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImagePopupVC") as! ImagePopupVC
+        imagePopupVC.modalPresentationStyle = .overCurrentContext
+        imagePopupVC.modalTransitionStyle = .crossDissolve
+        
+        imagePopupVC.cameraCallback = { [weak self] in
+            self?.btnCameraTapped()
+        }
+        
+        imagePopupVC.downloaderCallback = { [weak self] in
+            guard let self = self else { return }
+            let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ImageDownloaderBottom") as! ImageDownloaderBottom
+            downloaderVC.modalPresentationStyle = .pageSheet
+            
+            if let sheet = downloaderVC.sheetPresentationController {
+                sheet.detents = [.large()]
+            }
+            
+            downloaderVC.imageDownloadedCallback = { [weak self] (downloadedImage, imageUrl) in
+                guard let self = self else { return }
+                
+                if let image = downloadedImage {
+                    let customCover = CustomImages(image: image, imageUrl: imageUrl)
+                    self.customImages.insert(customCover, at: 0)
+                    self.selectedImageIndex = 0
+                    self.saveImages()
+                    
+                    DispatchQueue.main.async {
+                        self.imageSlideCollectionview.reloadData()
+                        self.imageAllCollectionview.reloadData()
+                        
+                        let indexPath = IndexPath(item: 0, section: 0)
+                        self.imageSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.selectedCustomImageIndex = indexPath
+                        self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    }
+                }
+            }
+            self.present(downloaderVC, animated: true)
+        }
+        imagePopupVC.galleryCallback = { [weak self] in
+            self?.btnGalleryTapped()
+        }
+        self.present(imagePopupVC, animated: true)
     }
     
     @IBAction func backButtonTapped(_ sender: UIButton) {
@@ -664,18 +603,28 @@ class ImagePrankVC: UIViewController {
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 @available(iOS 15.0, *)
 extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == suggestionCollectionView {
             return suggestions.count
-        }
-        
-        if currentCategoryId == 0 {
-            return (customImages.isEmpty ? 1 : customImages.count)
-        } else {
-            if isLoading {
-                return 4
+        } else if collectionView == imageAllCollectionview {
+            if currentCategoryId == 0 {
+                return (customImages.isEmpty ? 1 : customImages.count)
+            } else {
+                if isLoading {
+                    return 4
+                }
+                return currentDataSource.count
             }
-            return currentDataSource.count
+        } else {
+            if currentCategoryId == 0 {
+                return (customImages.isEmpty ? 4 : customImages.count)
+            } else {
+                if isLoading {
+                    return 4
+                }
+                return currentDataSource.count
+            }
         }
     }
     
@@ -686,7 +635,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 cell.imageName.text = customImages.isEmpty ? " Tutorial " : " Custom image "
                 
                 if customImages.isEmpty {
-                    cell.imageView.loadGif(name: "CoverGIF")
+                    cell.imageView.loadGif(name: "image")
                     cell.imageView.contentMode = .scaleAspectFill
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = true
@@ -766,20 +715,16 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuggestionCell", for: indexPath)
             
-            // Remove existing subviews
             cell.contentView.subviews.forEach { $0.removeFromSuperview() }
             
-            // Create label
             let label = UILabel()
             label.text = suggestions[indexPath.row]
             label.textColor = .white
             label.textAlignment = .center
             label.font = UIFont.systemFont(ofSize: 16)
             
-            // Add label to cell
             cell.contentView.addSubview(label)
             
-            // Setup constraints with minimal padding
             label.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 label.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 4),
@@ -787,7 +732,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
             ])
             
-            // Style cell
             cell.backgroundColor = #colorLiteral(red: 0.1215686275, green: 0.1215686275, blue: 0.1215686275, alpha: 1)
             cell.layer.borderWidth = 1
             cell.layer.borderColor = #colorLiteral(red: 0.3098039216, green: 0.3176470588, blue: 0.3254901961, alpha: 1)
@@ -807,6 +751,21 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     @objc private func handleDoneButtonTap(_ sender: UIButton) {
+        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+        let hasInternet = isConnectedToInternet()
+        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+        
+        if shouldOpenDirectly {
+            self.doneButtonClick(sender)
+        } else {
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = {
+                self.doneButtonClick(sender)
+            }
+        }
+    }
+    
+    private func doneButtonClick(_ sender: UIButton) {
         if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
             if currentCategoryId == 0 {
                 let customImages = customImages[sender.tag]
@@ -842,14 +801,8 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
             }
             
-            isScrollingFromSliderSelection = true
-            
             imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
             imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.isScrollingFromSliderSelection = false
-            }
         } else {
             let selectedSuggestion = suggestions[indexPath.row]
             searchBar.text = selectedSuggestion
@@ -909,7 +862,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // Skip animation if scrolling from slider selection
-        guard scrollView == imageAllCollectionview, !isScrollingFromSliderSelection else { return }
+        guard scrollView == imageAllCollectionview else { return }
         
         let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
         let pageWidth = scrollView.frame.width
@@ -1066,11 +1019,11 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         
         switch feature {
         case "camera":
-            messageKey = "We need access to your camera to set the cover image."
+            messageKey = "We need access to your camera to set the prank image."
         case "photo library":
-            messageKey = "We need access to your photo library to set the cover image."
+            messageKey = "We need access to your photo library to set the prank image."
         default:
-            messageKey = "We need access to your camera to set the cover image."
+            messageKey = "We need access to your camera to set the prank image."
         }
         
         let localizedMessage = NSLocalizedString(messageKey, comment: "")

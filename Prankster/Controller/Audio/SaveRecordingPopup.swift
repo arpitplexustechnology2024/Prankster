@@ -36,6 +36,15 @@ class SaveRecordingPopup: UIViewController, UITextFieldDelegate {
         TextFiled.layer.masksToBounds = true
         cancelButton.layer.cornerRadius = cancelButton.frame.height / 2
         SaveButton.layer.cornerRadius = SaveButton.frame.height / 2
+        TextFiled.placeholder = "Enter recording name"
+        
+        if let searchBar = TextFiled {
+            let placeholderText = "Enter recording name"
+            let attributes: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor.lightGray
+            ]
+            searchBar.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
+        }
     }
     
     @IBAction func btnCancelTapped(_ sender: UIButton) {

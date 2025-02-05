@@ -10,10 +10,6 @@
 		39D557955CA728194C45BFDD /* Pods_Prankster_PranksterUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0555AD96EFBEA4CB450ECEA7 /* Pods_Prankster_PranksterUITests.framework */; };
 		8A14A120C85453A0695CFCAE /* Pods_Prankster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */; };
 		AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */; };
-		BD02C7E22D1C84FF0054E85B /* ImageGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD02C7E02D1C84FF0054E85B /* ImageGIF.gif */; };
-		BD02C7E32D1C84FF0054E85B /* AudioGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD02C7E12D1C84FF0054E85B /* AudioGIF.gif */; };
-		BD02C7E52D1C8AA20054E85B /* VideoGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD02C7E42D1C8AA20054E85B /* VideoGIF.gif */; };
-		BD02C7E72D1C8F710054E85B /* CoverGIF.gif in Resources */ = {isa = PBXBuildFile; fileRef = BD02C7E62D1C8F710054E85B /* CoverGIF.gif */; };
 		BD0EB56D2D1628BB00F47B8E /* NoDataLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0EB5692D1628BB00F47B8E /* NoDataLightView.swift */; };
 		BD0EB56E2D1628BB00F47B8E /* NoInternetLightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */; };
 		BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */; };
@@ -23,7 +19,6 @@
 		BD686C3D2D445CB100B9F03C /* ChipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C3C2D445CB100B9F03C /* ChipButton.swift */; };
 		BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */; };
 		BD7663842D432905007ADD37 /* NativeSmallIpadAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7663832D432905007ADD37 /* NativeSmallIpadAdUtility.swift */; };
-		BD766C682D4D496600D05223 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD766C672D4D496600D05223 /* File.swift */; };
 		BD766C6A2D4D6BAC00D05223 /* TrimmingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD766C692D4D6BAC00D05223 /* TrimmingVC.swift */; };
 		BD766C6C2D4D9D0E00D05223 /* ImagePrankVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD766C6B2D4D9D0E00D05223 /* ImagePrankVC.swift */; };
 		BD7B4BA92D4C1A9200E479EC /* AudioPopupVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD7B4BA82D4C1A9200E479EC /* AudioPopupVC.swift */; };
@@ -154,6 +149,11 @@
 		BDE0912B2D0D31E300C76820 /* PrivacyPolicyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */; };
 		BDE586222D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDE586212D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib */; };
 		BDE586242D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDE586232D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift */; };
+		BDF3619E2D52AD9700B79C01 /* image.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619C2D52AD9700B79C01 /* image.gif */; };
+		BDF3619F2D52AD9700B79C01 /* Video.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619D2D52AD9700B79C01 /* Video.gif */; };
+		BDF361A02D52AD9700B79C01 /* audio.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619A2D52AD9700B79C01 /* audio.gif */; };
+		BDF361A12D52AD9700B79C01 /* cover.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619B2D52AD9700B79C01 /* cover.gif */; };
+		BDF361A32D52F7DA00B79C01 /* cover (2).gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF361A22D52F7DA00B79C01 /* cover (2).gif */; };
 		FC4EF9998A05D8F6312151BD /* Pods_PranksterTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D982D927F0340D60CBA877E /* Pods_PranksterTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -203,10 +203,6 @@
 		28BA78DE7AC84A57E8FB85DC /* Pods-OneSignalPushNotificationExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.release.xcconfig"; sourceTree = "<group>"; };
 		713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalPushNotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
-		BD02C7E02D1C84FF0054E85B /* ImageGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = ImageGIF.gif; sourceTree = "<group>"; };
-		BD02C7E12D1C84FF0054E85B /* AudioGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = AudioGIF.gif; sourceTree = "<group>"; };
-		BD02C7E42D1C8AA20054E85B /* VideoGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = VideoGIF.gif; sourceTree = "<group>"; };
-		BD02C7E62D1C8F710054E85B /* CoverGIF.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = CoverGIF.gif; sourceTree = "<group>"; };
 		BD0EB5692D1628BB00F47B8E /* NoDataLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoDataLightView.swift; sourceTree = "<group>"; };
 		BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoDataLightView.xib; sourceTree = "<group>"; };
 		BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetLightView.swift; sourceTree = "<group>"; };
@@ -216,7 +212,6 @@
 		BD686C3C2D445CB100B9F03C /* ChipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChipButton.swift; sourceTree = "<group>"; };
 		BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIpadAdView.xib; sourceTree = "<group>"; };
 		BD7663832D432905007ADD37 /* NativeSmallIpadAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSmallIpadAdUtility.swift; sourceTree = "<group>"; };
-		BD766C672D4D496600D05223 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		BD766C692D4D6BAC00D05223 /* TrimmingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimmingVC.swift; sourceTree = "<group>"; };
 		BD766C6B2D4D9D0E00D05223 /* ImagePrankVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePrankVC.swift; sourceTree = "<group>"; };
 		BD7B4BA82D4C1A9200E479EC /* AudioPopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPopupVC.swift; sourceTree = "<group>"; };
@@ -353,6 +348,11 @@
 		BDE0912A2D0D31E300C76820 /* PrivacyPolicyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyVC.swift; sourceTree = "<group>"; };
 		BDE586212D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIphoneAdView.xib; sourceTree = "<group>"; };
 		BDE586232D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSmallIphoneAdUtility.swift; sourceTree = "<group>"; };
+		BDF3619A2D52AD9700B79C01 /* audio.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = audio.gif; sourceTree = "<group>"; };
+		BDF3619B2D52AD9700B79C01 /* cover.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = cover.gif; sourceTree = "<group>"; };
+		BDF3619C2D52AD9700B79C01 /* image.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = image.gif; sourceTree = "<group>"; };
+		BDF3619D2D52AD9700B79C01 /* Video.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Video.gif; sourceTree = "<group>"; };
+		BDF361A22D52F7DA00B79C01 /* cover (2).gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "cover (2).gif"; sourceTree = "<group>"; };
 		C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prankster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A7BA264A3D9F5D5F56F594 /* Pods-PranksterTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.release.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.release.xcconfig"; sourceTree = "<group>"; };
 		DBE85015E495927229BA9144 /* Pods-PranksterTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.debug.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -615,10 +615,11 @@
 				BD8454AC2D179D6A00E23DE6 /* Snap3.gif */,
 				BDB339822D0D1A6F001684D8 /* Snap4.gif */,
 				BD8454AD2D179D6A00E23DE6 /* Snap5.gif */,
-				BD02C7E02D1C84FF0054E85B /* ImageGIF.gif */,
-				BD02C7E12D1C84FF0054E85B /* AudioGIF.gif */,
-				BD02C7E62D1C8F710054E85B /* CoverGIF.gif */,
-				BD02C7E42D1C8AA20054E85B /* VideoGIF.gif */,
+				BDF3619A2D52AD9700B79C01 /* audio.gif */,
+				BDF361A22D52F7DA00B79C01 /* cover (2).gif */,
+				BDF3619B2D52AD9700B79C01 /* cover.gif */,
+				BDF3619C2D52AD9700B79C01 /* image.gif */,
+				BDF3619D2D52AD9700B79C01 /* Video.gif */,
 			);
 			path = GIF;
 			sourceTree = "<group>";
@@ -754,7 +755,6 @@
 			isa = PBXGroup;
 			children = (
 				BD7B4BA82D4C1A9200E479EC /* AudioPopupVC.swift */,
-				BD766C672D4D496600D05223 /* File.swift */,
 				BDC68B4C2D0931F800834D9B /* AudioPrankVC.swift */,
 				BDC68B4D2D0931F800834D9B /* AudioVC.swift */,
 				BDC68B4E2D0931F800834D9B /* AudioVisualizer.swift */,
@@ -962,16 +962,17 @@
 				BDC68B972D0931F900834D9B /* NoInternetView.xib in Resources */,
 				BDB3398F2D0D2C1C001684D8 /* Insta1.gif in Resources */,
 				BDC68B982D0931F900834D9B /* NoDataView.xib in Resources */,
-				BD02C7E22D1C84FF0054E85B /* ImageGIF.gif in Resources */,
 				BDE586222D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib in Resources */,
-				BD02C7E32D1C84FF0054E85B /* AudioGIF.gif in Resources */,
 				BDC68B992D0931F900834D9B /* NoInternetBottombarView.xib in Resources */,
+				BDF3619E2D52AD9700B79C01 /* image.gif in Resources */,
+				BDF3619F2D52AD9700B79C01 /* Video.gif in Resources */,
+				BDF361A02D52AD9700B79C01 /* audio.gif in Resources */,
+				BDF361A12D52AD9700B79C01 /* cover.gif in Resources */,
 				BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */,
 				BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */,
 				BDC68B9A2D0931F900834D9B /* ShareView.xib in Resources */,
 				BDC68B9B2D0931F900834D9B /* NoDataBottomBarView.xib in Resources */,
 				BDC68B9C2D0931F900834D9B /* LaunchScreen.storyboard in Resources */,
-				BD02C7E52D1C8AA20054E85B /* VideoGIF.gif in Resources */,
 				BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */,
 				BDC68B9D2D0931F900834D9B /* Main.storyboard in Resources */,
 				BDC68B202D092E4B00834D9B /* Loading.json in Resources */,
@@ -982,7 +983,7 @@
 				BDB339862D0D2564001684D8 /* Snap1.gif in Resources */,
 				BD8454AB2D1799C000E23DE6 /* Insta3.gif in Resources */,
 				BD8454A32D17924200E23DE6 /* Insta4.gif in Resources */,
-				BD02C7E72D1C8F710054E85B /* CoverGIF.gif in Resources */,
+				BDF361A32D52F7DA00B79C01 /* cover (2).gif in Resources */,
 				BDC68B222D092E4B00834D9B /* NoInternet.json in Resources */,
 				BDC68B232D092E4B00834D9B /* LoadData.json in Resources */,
 				BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */,
@@ -1243,7 +1244,6 @@
 				BDC68B6B2D0931F900834D9B /* ViewLinkVC.swift in Sources */,
 				BD7B4BAB2D4C40C000E479EC /* Audiocell.swift in Sources */,
 				BDB904592D4ED918009AA387 /* VideoCell.swift in Sources */,
-				BD766C682D4D496600D05223 /* File.swift in Sources */,
 				BDB9045F2D4F1A23009AA387 /* VideoCompress.swift in Sources */,
 				BDC68B6C2D0931F900834D9B /* VideoVC.swift in Sources */,
 				BD8C71512D4960A900ED2575 /* CoverPopupVC.swift in Sources */,

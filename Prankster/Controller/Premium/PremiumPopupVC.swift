@@ -13,6 +13,13 @@ class PremiumPopupVC: UIViewController {
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var premiumView: UIView!
     @IBOutlet weak var watchAdButton: UIButton!
+    @IBOutlet weak var premiumViewHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var premiumViewWidthConstraints: NSLayoutConstraint!
+    
+    @IBOutlet weak var firstView: UIView!
+    @IBOutlet weak var orLabel: UILabel!
+    @IBOutlet weak var secoundView: UIView!
+    
     let interstitialAdUtility = InterstitialAdUtility()
     private let adsViewModel = AdsViewModel()
     private var itemIDToUnlock: Int?
@@ -27,8 +34,18 @@ class PremiumPopupVC: UIViewController {
             if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
                 print("Interstitial Ad ID: \(interstitialAdID)")
                 interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                self.watchAdButton.isHidden = false
+                self.firstView.isHidden = false
+                self.orLabel.isHidden = false
+                self.secoundView.isHidden = false
+                self.premiumViewHeightConstraints.constant = 365
             } else {
                 print("No Interstitial Ad ID found")
+                self.watchAdButton.isHidden = true
+                self.firstView.isHidden = true
+                self.orLabel.isHidden = true
+                self.secoundView.isHidden = true
+                self.premiumViewHeightConstraints.constant = 293
             }
         }
         interstitialAdUtility.onInterstitialEarned = { [weak self] in

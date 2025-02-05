@@ -43,7 +43,6 @@ class VideoPrankVC: UIViewController {
     private var selectedIndex: Int = 0
     
     var selectedVideoCustomCell: IndexPath?
-    
     var languageid: Int = 0
     
     private var currentCategoryId: Int = 0
@@ -77,8 +76,6 @@ class VideoPrankVC: UIViewController {
     var selectedCoverImageFile: Data?
     var selectedCoverImageName: String?
     private var selectedAudioIndex: Int?
-    
-    private var isScrollingFromSliderSelection = false
     private var nativeMediumAdUtility: NativeMediumAdUtility?
     var preloadedNativeAdView: GADNativeAdView?
     
@@ -95,7 +92,6 @@ class VideoPrankVC: UIViewController {
     private var player: AVPlayer?
     private var selectedVideoIndex: Int?
     var customVideos: [CustomVideos] = []
-//    private var customVideos: [URL] = []
     private var shouldAutoPlayVideo = false
     private var playerLayer: AVPlayerLayer?
     private var audioSession: AVAudioSession?
@@ -122,26 +118,6 @@ class VideoPrankVC: UIViewController {
         )
         
         self.currentCategoryId = 0
-        
-        // Reload collection views with default data
-        self.videoAllCollectionView.reloadData()
-        self.videoSlideCollectionview.reloadData()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            guard let self = self else { return }
-            if !self.customVideos.isEmpty {
-                let indexPath = IndexPath(item: 0, section: 0)
-                self.videoAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                self.videoSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                self.selectedIndex = 0
-                
-                if let cell = self.videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell {
-                    cell.playVideo()
-                    VideoPlaybackManager.shared.currentlyPlayingCell = cell
-                    VideoPlaybackManager.shared.currentlyPlayingIndexPath = indexPath
-                }
-            }
-        }
         
         self.addvideoView.layer.cornerRadius = 10
         
@@ -218,10 +194,10 @@ class VideoPrankVC: UIViewController {
         stopPlayingVideo()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        playVisibleCell()
-    }
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        playVisibleCell()
+//    }
     
     @objc private func appDidEnterBackground() {
         if self.isViewLoaded && self.view.window != nil {
@@ -446,6 +422,8 @@ class VideoPrankVC: UIViewController {
                 }
                 
             } else {
+                
+                VideoPlaybackManager.shared.stopCurrentPlayback()
                 // Reset states for API call
                 self.isLoadingMore = false
                 self.isFirstLoad = false
@@ -611,76 +589,47 @@ class VideoPrankVC: UIViewController {
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
-            let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VideoPopupVC") as! VideoPopupVC
-            popupVC.modalPresentationStyle = .overCurrentContext
-            popupVC.modalTransitionStyle = .crossDissolve
-            
-            popupVC.cameraCallback = { [weak self] in
-                self?.btnCameraTapped()
-            }
-            
-            popupVC.downloaderCallback = { [weak self] in
-                guard let self = self else { return }
-                // Present ImageDownloaderBottom
-                let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VideoDownloaderBottom") as! VideoDownloaderBottom
-                downloaderVC.modalPresentationStyle = .pageSheet
-                
-                if let sheet = downloaderVC.sheetPresentationController {
-                    sheet.detents = [.large()]
-                }
-                
-                downloaderVC.videoDownloadedCallback = { [weak self] (videoURL, stringURL) in
-                    guard let self = self,
-                          let videoURL = videoURL else { return }
-                    
-                    self.handleDownloadedVideo(url: videoURL)
-                }
-                
-                self.present(downloaderVC, animated: true)
-            }
-            
-            popupVC.galleryCallback = { [weak self] in
-                self?.btnGalleryTapped()
-            }
-            present(popupVC, animated: true)
+            self.addVideoClick()
         } else {
             interstitialAdUtility.showInterstitialAd()
             interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VideoPopupVC") as! VideoPopupVC
-                popupVC.modalPresentationStyle = .overCurrentContext
-                popupVC.modalTransitionStyle = .crossDissolve
-                
-                popupVC.cameraCallback = { [weak self] in
-                    self?.btnCameraTapped()
-                }
-                
-                popupVC.downloaderCallback = { [weak self] in
-                    guard let self = self else { return }
-                    // Present ImageDownloaderBottom
-                    let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VideoDownloaderBottom") as! VideoDownloaderBottom
-                    downloaderVC.modalPresentationStyle = .pageSheet
-                    
-                    if let sheet = downloaderVC.sheetPresentationController {
-                        sheet.detents = [.large()]
-                    }
-                    
-                    downloaderVC.videoDownloadedCallback = { [weak self] (videoURL, stringURL) in
-                        guard let self = self,
-                              let videoURL = videoURL else { return }
-                        
-                        self.handleDownloadedVideo(url: videoURL)
-                    }
-                    
-                    self.present(downloaderVC, animated: true)
-                }
-                
-                popupVC.galleryCallback = { [weak self] in
-                    self?.btnGalleryTapped()
-                }
-                
-                self?.present(popupVC, animated: true)
+                self?.addVideoClick()
             }
         }
+    }
+    
+    private func addVideoClick() {
+        VideoPlaybackManager.shared.stopCurrentPlayback()
+        let popupVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VideoPopupVC") as! VideoPopupVC
+        popupVC.modalPresentationStyle = .overCurrentContext
+        popupVC.modalTransitionStyle = .crossDissolve
+        
+        popupVC.cameraCallback = { [weak self] in
+            self?.btnCameraTapped()
+        }
+        
+        popupVC.downloaderCallback = { [weak self] in
+            guard let self = self else { return }
+            let downloaderVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "VideoDownloaderBottom") as! VideoDownloaderBottom
+            downloaderVC.modalPresentationStyle = .pageSheet
+            
+            if let sheet = downloaderVC.sheetPresentationController {
+                sheet.detents = [.large()]
+            }
+            
+            downloaderVC.videoDownloadedCallback = { [weak self] (videoURL, stringURL) in
+                guard let self = self,
+                      let videoURL = videoURL else { return }
+                
+                self.handleDownloadedVideo(url: videoURL)
+            }
+            self.present(downloaderVC, animated: true)
+        }
+        
+        popupVC.galleryCallback = { [weak self] in
+            self?.btnGalleryTapped()
+        }
+        self.present(popupVC, animated: true)
     }
     
     private func handleDownloadedVideo(url: URL) {
@@ -713,6 +662,19 @@ class VideoPrankVC: UIViewController {
 
                         self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        
+                        // Add delay to ensure cell is properly loaded before playing
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                            if let cell = self.videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell {
+                                // Stop any currently playing video
+                                VideoPlaybackManager.shared.stopCurrentPlayback()
+                                
+                                // Play the new video
+                                cell.playVideo()
+                                VideoPlaybackManager.shared.currentlyPlayingCell = cell
+                                VideoPlaybackManager.shared.currentlyPlayingIndexPath = indexPath
+                            }
+                        }
                     }
                     
                 } catch {
@@ -724,7 +686,6 @@ class VideoPrankVC: UIViewController {
             }
         }
     }
-    
     
     @IBAction func backButtonTapped(_ sender: UIButton) {
         navigationController?.popViewController(animated: true)
@@ -741,8 +702,6 @@ class VideoPrankVC: UIViewController {
             self.navigationController?.popViewController(animated: true)
         }
     }
-    
-    
     
     private func filterContent(with searchText: String) {
         isSearchActive = !searchText.isEmpty
@@ -799,20 +758,28 @@ class VideoPrankVC: UIViewController {
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 @available(iOS 15.0, *)
 extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == suggestionCollectionView {
             return suggestions.count
-        }
-        
-        if currentCategoryId == 0 {
-            return (customVideos.isEmpty ? 1 : customVideos.count)
-        } else {
-            
-            if isLoading {
-                return 4
+        } else if collectionView == videoAllCollectionView {
+            if currentCategoryId == 0 {
+                return (customVideos.isEmpty ? 1 : customVideos.count)
+            } else {
+                if isLoading {
+                    return 4
+                }
+                return currentDataSource.count
             }
-            
-            return currentDataSource.count
+        } else {
+            if currentCategoryId == 0 {
+                return (customVideos.isEmpty ? 4 : customVideos.count)
+            } else {
+                if isLoading {
+                    return 4
+                }
+                return currentDataSource.count
+            }
         }
     }
     
@@ -826,10 +793,11 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterAllCollectionViewCell", for: indexPath) as! VideoCharacterAllCollectionViewCell
                 
                 if currentCategoryId == 0 {
+
                     // Configure cell for custom audio
                     if customVideos.isEmpty {
                         cell.gifImageview.isHidden = false
-                        cell.gifImageview.loadGif(name: "CoverGIF")
+                        cell.gifImageview.loadGif(name: "Video")
                         cell.imageName.text = " Tutorial "
                         cell.gifImageview.contentMode = .scaleAspectFill
                         cell.imageView.isHidden = true
@@ -961,7 +929,23 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         present(premiumVC, animated: true, completion: nil)
     }
     
+    
     @objc private func handleDoneButtonTap(_ sender: UIButton) {
+        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+        let hasInternet = isConnectedToInternet()
+        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+        
+        if shouldOpenDirectly {
+            self.doneButtonClick(sender)
+        } else {
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = {
+                self.doneButtonClick(sender)
+            }
+        }
+    }
+    
+    private func doneButtonClick(_ sender: UIButton) {
         VideoPlaybackManager.shared.stopCurrentPlayback()
         if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
             if currentCategoryId == 0 {
@@ -994,18 +978,15 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if collectionView == videoAllCollectionView {
             
         } else if collectionView == videoSlideCollectionview {
+            
             if currentCategoryId == 0 {
                 // Handle custom audio selection
                 guard !customVideos.isEmpty else { return }
             }
-            isScrollingFromSliderSelection = true
+            videoAllCollectionView.reloadData()
             
             videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.isScrollingFromSliderSelection = false
-            }
             
             // Add slight delay to ensure proper playback
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
@@ -1070,7 +1051,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // Skip animation if scrolling from slider selection
-        guard scrollView == videoAllCollectionView, !isScrollingFromSliderSelection else { return }
+        guard scrollView == videoAllCollectionView else { return }
         
         let pageWidth = scrollView.bounds.width
         let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
@@ -1174,6 +1155,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        videoAllCollectionView.reloadData()
         
         if let playingIndexPath = VideoPlaybackManager.shared.currentlyPlayingIndexPath,
            let cell = videoAllCollectionView.cellForItem(at: playingIndexPath) as? VideoCharacterAllCollectionViewCell {
@@ -1430,6 +1412,12 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                         self.selectedVideoCustomCell = indexPath
                         self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                            if let cell = self?.videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell {
+                                cell.playVideo()
+                            }
+                        }
                         
                     } catch {
                         print("Error copying compressed video: \(error)")

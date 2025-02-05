@@ -21,15 +21,12 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var adHeightConstaints: NSLayoutConstraint!
     @IBOutlet weak var CancelButton: UIButton!
     @IBOutlet weak var doneButton: UIButton!
-    
     @IBOutlet weak var customSwitchContainer: UIView!
+    @IBOutlet weak var videoPlayerView: UIView!
+    
     private var customSwitch: CustomSwitch!
-    
-    @IBOutlet weak var videoPlayerView: UIView! // નવો આઉટલેટ
-    
     private var playerLayer: AVPlayerLayer?
     private var player: AVPlayer?
-    
     
     // MARK: - Properties
     var videoDownloadedCallback: ((URL?, String?) -> Void)?
@@ -44,6 +41,30 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     private let adsViewModel = AdsViewModel()
     
     private var socialViewModule: SocialViewModule!
+    
+    // Add new property for tracking current platform
+    private var currentPlatform: SocialPlatform = .instagram
+    
+    // Add enum for social platforms
+    private enum SocialPlatform {
+        case instagram
+        case snapchat
+        
+        var sliderImages: [DownloadGIFModel] {
+            switch self {
+            case .instagram:
+                return [
+                    DownloadGIFModel(image: UIImage(named: "DownloadImage01")),
+                    DownloadGIFModel(image: UIImage(named: "DownloadImage02"))
+                ]
+            case .snapchat:
+                return [
+                    DownloadGIFModel(image: UIImage(named: "DownloadImage03")),
+                    DownloadGIFModel(image: UIImage(named: "DownloadImage02"))
+                ]
+            }
+        }
+    }
     
     private var gifSlider: [DownloadGIFModel] = []
     private var currentPage = 0 {
@@ -99,6 +120,11 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
         self.searchTextField.delegate = self
         self.searchTextField.returnKeyType = .done
         
+        setupAds()
+        startAutoScrolling()
+    }
+    
+    private func setupAds() {
         if UIDevice.current.userInterfaceIdiom == .pad {
             self.adHeightConstaints.constant = 150
             if isConnectedToInternet() {
@@ -146,8 +172,6 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
                 }
             }
         }
-        
-        startAutoScrolling()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -167,11 +191,8 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     }
     
     private func setupUI() {
-        gifSlider = [
-            DownloadGIFModel(image: UIImage(named: "DownloadImage01")),
-            DownloadGIFModel(image: UIImage(named: "DownloadImage02"))
-        ]
-        
+        // Update gifSlider with default platform (Instagram)
+        gifSlider = currentPlatform.sliderImages
         pageControl.numberOfPages = gifSlider.count
     }
     
@@ -208,10 +229,28 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     
     @objc func switchValueChanged(sender: CustomSwitch) {
         if sender.isSwitchOn {
-            
+            // Switch is ON (Snapchat)
+            currentPlatform = .snapchat
         } else {
-            
+            // Switch is OFF (Instagram - default)
+            currentPlatform = .instagram
         }
+        
+        // Update the slider images
+        gifSlider = currentPlatform.sliderImages
+        
+        // Reset to first page
+        currentPage = 0
+        
+        // Reload collection view
+        collectionView.reloadData()
+        
+        // Update page control
+        pageControl.numberOfPages = gifSlider.count
+        updateCurrentPage()
+        
+        // Scroll to first item
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: true)
     }
     
     private func setupLoadingIndicator() {
@@ -270,10 +309,8 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     }
     
     private func setupVideoPlayer(with url: URL) {
-        // પહેલાનો પ્લેયર રિમૂવ કરો
         playerLayer?.removeFromSuperlayer()
         
-        // નવો પ્લેયર સેટઅપ કરો
         player = AVPlayer(url: url)
         playerLayer = AVPlayerLayer(player: player)
         playerLayer?.frame = videoPlayerView.bounds
@@ -283,17 +320,14 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
             videoPlayerView.layer.addSublayer(playerLayer)
         }
         
-        // UI અપડેટ કરો
         collectionView.isHidden = true
         pageControl.isHidden = true
         videoPlayerView.isHidden = false
         doneButton.isHidden = false
         
-        // વીડિયો પ્લે કરો
         player?.play()
         stopLoading()
     }
-    
     
     @objc private func doneButtonTapped() {
         if let videoURL = downloadedVideoURL {
@@ -316,6 +350,7 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
             print("No text found in clipboard.")
         }
     }
+    
     
     @IBAction func btnDownloadTapped(_ sender: UIButton) {
         startLoading()

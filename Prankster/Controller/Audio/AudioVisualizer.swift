@@ -148,7 +148,7 @@ class AudioVisualizer: UIView {
         let cornerRadius: CGFloat = 1.5
         let centerX = bounds.width / 2
         
-        let visualizerColor: UIColor = traitCollection.userInterfaceStyle == .dark ? .white : .black
+        let visualizerColor: UIColor = traitCollection.userInterfaceStyle == .dark ? .white : .white
         context.setFillColor(visualizerColor.cgColor)
         
         for (index, power) in leftPoints.enumerated() {

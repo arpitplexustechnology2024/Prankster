@@ -123,10 +123,6 @@ class ChipSelectorView: UIView {
     }
 }
 
-
-
-
-
 //MARK: - Audio Prank Chip
 class AudioChipButton: UIButton {
     var isChipSelected: Bool = false {
@@ -174,7 +170,7 @@ class AudioChipSelector: UIView {
     private var isSearchBarActive = false
     var onSelectionChanged: ((String) -> Void)?
     
-    private var categoryIDs: [Int] = [0, 1, 2, 3, 4, 5, 6] // First is 0 for custom data
+    private var categoryIDs: [Int] = [0, 1, 2, 3, 4, 5, 6]
     var onCategorySelected: ((Int) -> Void)?
     
     override init(frame: CGRect) {
@@ -190,45 +186,39 @@ class AudioChipSelector: UIView {
     }
     
     private func setupLayout() {
-        // Main horizontal stack view to hold fixed chip and scroll view
         containerStackView = UIStackView()
         containerStackView.axis = .horizontal
         containerStackView.spacing = 12
         containerStackView.alignment = .center
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerStackView)
-        
-        // Setup fixed chip
+
         fixedChip = AudioChipButton()
         fixedChip.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Setup scroll view for remaining chips
+
         scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Setup stack view inside scroll view
+
         scrollableStackView = UIStackView()
         scrollableStackView.axis = .horizontal
         scrollableStackView.spacing = 8
         scrollableStackView.alignment = .center
         scrollableStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Add views to hierarchy
+
         containerStackView.addArrangedSubview(fixedChip)
         containerStackView.addArrangedSubview(scrollView)
         scrollView.addSubview(scrollableStackView)
-        
-        // Setup constraints
+
         NSLayoutConstraint.activate([
-            // Container stack view constraints
             containerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             containerStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             containerStackView.topAnchor.constraint(equalTo: topAnchor),
             containerStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            // Scrollable stack view constraints
+
+            fixedChip.widthAnchor.constraint(equalToConstant: 172),
+
             scrollableStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             scrollableStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             scrollableStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
@@ -238,30 +228,26 @@ class AudioChipSelector: UIView {
     }
     
     func selectDefaultChip() {
-        // Select the first chip (Add Audio Prank)
         fixedChip.isChipSelected = true
         selectedChip = fixedChip
-        
-        // Notify about default selection
+
         onSelectionChanged?(fixedChip.titleLabel?.text ?? "")
         onCategorySelected?(0)
     }
     
     private func setupChips() {
         let titles = ["Add Audio Prank 🎧", "Trending sound", "Nonveg sound", "Hot sound", "Funny sound", "Horro sound", "Celebrity sound"]
-        
-        // Setup fixed chip (custom data chip)
+
         fixedChip.setTitle(titles[0], for: .normal)
         fixedChip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
-        fixedChip.tag = 0  // Set tag for identifying category
+        fixedChip.tag = 0
         fixedChip.isChipSelected = true
         selectedChip = fixedChip
         
-        // Setup scrollable chips with corresponding category IDs
         for (index, title) in titles.dropFirst().enumerated() {
             let chip = AudioChipButton()
             chip.setTitle(title, for: .normal)
-            chip.tag = categoryIDs[index + 1]  // Set tag as category ID
+            chip.tag = categoryIDs[index + 1]
             chip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
             scrollableStackView.addArrangedSubview(chip)
             chips.append(chip)
@@ -277,8 +263,7 @@ class AudioChipSelector: UIView {
         
         let selectedType = sender.titleLabel?.text ?? ""
         onSelectionChanged?(selectedType)
-        
-        // Call new callback with category ID
+
         onCategorySelected?(sender.tag)
     }
     
@@ -337,7 +322,7 @@ class ImageChipSelector: UIView {
     private var isSearchBarActive = false
     var onSelectionChanged: ((String) -> Void)?
     
-    private var categoryIDs: [Int] = [0, 1, 2, 3, 4, 5, 6] // First is 0 for custom data
+    private var categoryIDs: [Int] = [0, 1, 2, 3, 4, 5, 6]
     var onCategorySelected: ((Int) -> Void)?
     
     override init(frame: CGRect) {
@@ -353,45 +338,39 @@ class ImageChipSelector: UIView {
     }
     
     private func setupLayout() {
-        // Main horizontal stack view to hold fixed chip and scroll view
         containerStackView = UIStackView()
         containerStackView.axis = .horizontal
         containerStackView.spacing = 12
         containerStackView.alignment = .center
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerStackView)
-        
-        // Setup fixed chip
+
         fixedChip = ImageChipButton()
         fixedChip.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Setup scroll view for remaining chips
+
         scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Setup stack view inside scroll view
         scrollableStackView = UIStackView()
         scrollableStackView.axis = .horizontal
         scrollableStackView.spacing = 8
         scrollableStackView.alignment = .center
         scrollableStackView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // Add views to hierarchy
+
         containerStackView.addArrangedSubview(fixedChip)
         containerStackView.addArrangedSubview(scrollView)
         scrollView.addSubview(scrollableStackView)
         
-        // Setup constraints
         NSLayoutConstraint.activate([
-            // Container stack view constraints
             containerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             containerStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             containerStackView.topAnchor.constraint(equalTo: topAnchor),
             containerStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            fixedChip.widthAnchor.constraint(equalToConstant: 173),
             
-            // Scrollable stack view constraints
             scrollableStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             scrollableStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             scrollableStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
@@ -401,30 +380,26 @@ class ImageChipSelector: UIView {
     }
     
     func selectDefaultChip() {
-        // Select the first chip (Add Audio Prank)
         fixedChip.isChipSelected = true
         selectedChip = fixedChip
         
-        // Notify about default selection
         onSelectionChanged?(fixedChip.titleLabel?.text ?? "")
         onCategorySelected?(0)
     }
     
     private func setupChips() {
         let titles = ["Add image Prank 🏞️", "Trending image", "Nonveg image", "Hot image", "Funny image", "Horror image", "Celebrity image"]
-        
-        // Setup fixed chip (custom data chip)
+
         fixedChip.setTitle(titles[0], for: .normal)
         fixedChip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
-        fixedChip.tag = 0  // Set tag for identifying category
+        fixedChip.tag = 0
         fixedChip.isChipSelected = true
         selectedChip = fixedChip
         
-        // Setup scrollable chips with corresponding category IDs
         for (index, title) in titles.dropFirst().enumerated() {
             let chip = ImageChipButton()
             chip.setTitle(title, for: .normal)
-            chip.tag = categoryIDs[index + 1]  // Set tag as category ID
+            chip.tag = categoryIDs[index + 1]
             chip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
             scrollableStackView.addArrangedSubview(chip)
             chips.append(chip)
@@ -440,8 +415,7 @@ class ImageChipSelector: UIView {
         
         let selectedType = sender.titleLabel?.text ?? ""
         onSelectionChanged?(selectedType)
-        
-        // Call new callback with category ID
+
         onCategorySelected?(sender.tag)
     }
     
@@ -499,7 +473,7 @@ class VideoChipSelector: UIView {
     private var isSearchBarActive = false
     var onSelectionChanged: ((String) -> Void)?
     
-    private var categoryIDs: [Int] = [0, 1, 2, 3, 4, 5, 6] // First is 0 for custom data
+    private var categoryIDs: [Int] = [0, 1, 2, 3, 4, 5, 6]
     var onCategorySelected: ((Int) -> Void)?
     
     override init(frame: CGRect) {
@@ -515,45 +489,40 @@ class VideoChipSelector: UIView {
     }
     
     private func setupLayout() {
-        // Main horizontal stack view to hold fixed chip and scroll view
+
         containerStackView = UIStackView()
         containerStackView.axis = .horizontal
         containerStackView.spacing = 12
         containerStackView.alignment = .center
         containerStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(containerStackView)
-        
-        // Setup fixed chip
+
         fixedChip = VideoChipButton()
         fixedChip.translatesAutoresizingMaskIntoConstraints = false
         
-        // Setup scroll view for remaining chips
         scrollView = UIScrollView()
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.alwaysBounceHorizontal = true
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Setup stack view inside scroll view
         scrollableStackView = UIStackView()
         scrollableStackView.axis = .horizontal
         scrollableStackView.spacing = 8
         scrollableStackView.alignment = .center
         scrollableStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        // Add views to hierarchy
         containerStackView.addArrangedSubview(fixedChip)
         containerStackView.addArrangedSubview(scrollView)
         scrollView.addSubview(scrollableStackView)
         
-        // Setup constraints
         NSLayoutConstraint.activate([
-            // Container stack view constraints
             containerStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             containerStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             containerStackView.topAnchor.constraint(equalTo: topAnchor),
             containerStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            // Scrollable stack view constraints
+            fixedChip.widthAnchor.constraint(equalToConstant: 172),
+
             scrollableStackView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
             scrollableStackView.trailingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.trailingAnchor),
             scrollableStackView.topAnchor.constraint(equalTo: scrollView.topAnchor),
@@ -563,11 +532,9 @@ class VideoChipSelector: UIView {
     }
     
     func selectDefaultChip() {
-        // Select the first chip (Add Audio Prank)
         fixedChip.isChipSelected = true
         selectedChip = fixedChip
         
-        // Notify about default selection
         onSelectionChanged?(fixedChip.titleLabel?.text ?? "")
         onCategorySelected?(0)
     }
@@ -575,18 +542,16 @@ class VideoChipSelector: UIView {
     private func setupChips() {
         let titles = ["Add Video Prank 🎧", "Trending video", "Nonveg video", "Hot video", "Funny video", "Horror video", "Celebrity video"]
         
-        // Setup fixed chip (custom data chip)
         fixedChip.setTitle(titles[0], for: .normal)
         fixedChip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
-        fixedChip.tag = 0  // Set tag for identifying category
+        fixedChip.tag = 0
         fixedChip.isChipSelected = true
         selectedChip = fixedChip
-        
-        // Setup scrollable chips with corresponding category IDs
+
         for (index, title) in titles.dropFirst().enumerated() {
             let chip = VideoChipButton()
             chip.setTitle(title, for: .normal)
-            chip.tag = categoryIDs[index + 1]  // Set tag as category ID
+            chip.tag = categoryIDs[index + 1]
             chip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
             scrollableStackView.addArrangedSubview(chip)
             chips.append(chip)
@@ -602,8 +567,7 @@ class VideoChipSelector: UIView {
         
         let selectedType = sender.titleLabel?.text ?? ""
         onSelectionChanged?(selectedType)
-        
-        // Call new callback with category ID
+
         onCategorySelected?(sender.tag)
     }
     
