@@ -1389,10 +1389,12 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app requires access to your media library to select audio files.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Prankster use your device's camera to do things like help you take photos, and record videos to create prank.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Prankster uses your device's location for analytics purpose.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Prankster use your device's microphone to do things like help record video and audio to create prank.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Prankster uses access to your gallery's image and video to make a prank.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This helps our ad partners aggregate information about you and provide you with a more personalized ad experience.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -1425,10 +1427,12 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app requires access to your media library to select audio files.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Prankster use your device's camera to do things like help you take photos, and record videos to create prank.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Prankster uses your device's location for analytics purpose.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Prankster use your device's microphone to do things like help record video and audio to create prank.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Prankster uses access to your gallery's image and video to make a prank.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "This helps our ad partners aggregate information about you and provide you with a more personalized ad experience.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

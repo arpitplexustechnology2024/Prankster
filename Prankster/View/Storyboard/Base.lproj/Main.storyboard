@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Ylm-u3-XkJ">
     <device id="retina6_12" orientation="portrait" appearance="dark"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -1702,7 +1701,7 @@ Images, Audio &amp; Videos</string>
                                                                             <rect key="frame" x="0.0" y="0.0" width="125" height="125"/>
                                                                         </imageView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mhc-tq-1V7">
-                                                                            <rect key="frame" x="8" y="52.333333333333336" width="109" height="20.666666666666664"/>
+                                                                            <rect key="frame" x="8" y="50.333333333333336" width="109" height="24.666666666666664"/>
                                                                             <fontDescription key="fontDescription" name="KLEPHONRegular" family="KLEPHON" pointSize="21"/>
                                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             <nil key="highlightedColor"/>
@@ -2026,7 +2025,7 @@ Images, Audio &amp; Videos</string>
                                                                             <rect key="frame" x="0.0" y="0.0" width="115" height="125"/>
                                                                         </imageView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ehC-0x-rVT">
-                                                                            <rect key="frame" x="8" y="52.333333333333336" width="99" height="20.666666666666664"/>
+                                                                            <rect key="frame" x="8" y="50.333333333333336" width="99" height="24.666666666666664"/>
                                                                             <fontDescription key="fontDescription" name="KLEPHONRegular" family="KLEPHON" pointSize="21"/>
                                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             <nil key="highlightedColor"/>
@@ -2324,7 +2323,7 @@ Images, Audio &amp; Videos</string>
                                                                             <rect key="frame" x="0.0" y="0.0" width="115" height="125"/>
                                                                         </imageView>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mad-lS-BS7">
-                                                                            <rect key="frame" x="8" y="52.333333333333336" width="99" height="20.666666666666664"/>
+                                                                            <rect key="frame" x="8" y="50.333333333333336" width="99" height="24.666666666666664"/>
                                                                             <fontDescription key="fontDescription" name="KLEPHONRegular" family="KLEPHON" pointSize="21"/>
                                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                                             <nil key="highlightedColor"/>
@@ -2459,11 +2458,13 @@ Images, Audio &amp; Videos</string>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" navigationBarHidden="YES" id="Ylm-u3-XkJ" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" barStyle="blackTranslucent" id="sed-1J-UU2">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="barTintColor" name="background"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="LqL-Ub-luQ">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </toolbar>
                     <connections>
@@ -5820,7 +5821,7 @@ Images, Audio &amp; Videos</string>
                                                 <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                 <connections>
-                                                    <action selector="btnAddCoverImageTapped:" destination="VXf-TL-o21" eventType="touchUpInside" id="4vO-fF-zdd"/>
+                                                    <action selector="btnAddAudioTapped:" destination="VXf-TL-o21" eventType="touchUpInside" id="4vO-fF-zdd"/>
                                                 </connections>
                                             </button>
                                         </subviews>

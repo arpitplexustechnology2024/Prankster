@@ -539,7 +539,7 @@ class AudioPrankVC: UIViewController {
         return networkManager?.isReachable ?? false
     }
     
-    @IBAction func btnAddCoverImageTapped(_ sender: UIButton) {
+    @IBAction func btnAddAudioTapped(_ sender: UIButton) {
         self.shouldShowGIF = false
         AudioPlaybackManager.shared.stopCurrentPlayback()
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
