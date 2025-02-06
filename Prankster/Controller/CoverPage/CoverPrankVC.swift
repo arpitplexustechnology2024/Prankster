@@ -806,6 +806,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             
             if selectedChipTitle == "Add cover image 📸" {
                 if customCovers.isEmpty {
+                    collectionView.deselectItem(at: indexPath, animated: false)
                     return
                 }
             }

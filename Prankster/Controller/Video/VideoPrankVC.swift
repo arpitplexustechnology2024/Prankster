@@ -1005,8 +1005,10 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             shouldShowGIF = false
             
             if currentCategoryId == 0 {
-                // Handle custom audio selection
-                guard !customVideos.isEmpty else { return }
+                if customVideos.isEmpty {
+                    collectionView.deselectItem(at: indexPath, animated: false)
+                    return
+                }
             }
             
             videoAllCollectionView.reloadData()

@@ -84,9 +84,7 @@
 		BDC68B1D2D092E4B00834D9B /* KLEPHON.otf in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AEB2D092E4B00834D9B /* KLEPHON.otf */; };
 		BDC68B202D092E4B00834D9B /* Loading.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AEF2D092E4B00834D9B /* Loading.json */; };
 		BDC68B212D092E4B00834D9B /* Loader.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AEE2D092E4B00834D9B /* Loader.json */; };
-		BDC68B222D092E4B00834D9B /* NoInternet.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AF12D092E4B00834D9B /* NoInternet.json */; };
 		BDC68B232D092E4B00834D9B /* LoadData.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AED2D092E4B00834D9B /* LoadData.json */; };
-		BDC68B242D092E4B00834D9B /* Nodata.json in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AF02D092E4B00834D9B /* Nodata.json */; };
 		BDC68B272D092E8900834D9B /* Color.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B252D092E8900834D9B /* Color.xcassets */; };
 		BDC68B282D092E8900834D9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B262D092E8900834D9B /* GoogleService-Info.plist */; };
 		BDC68B2B2D092F3600834D9B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BDC68B2A2D092F3600834D9B /* StoreKit.framework */; };
@@ -271,8 +269,6 @@
 		BDC68AED2D092E4B00834D9B /* LoadData.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LoadData.json; sourceTree = "<group>"; };
 		BDC68AEE2D092E4B00834D9B /* Loader.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Loader.json; sourceTree = "<group>"; };
 		BDC68AEF2D092E4B00834D9B /* Loading.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Loading.json; sourceTree = "<group>"; };
-		BDC68AF02D092E4B00834D9B /* Nodata.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Nodata.json; sourceTree = "<group>"; };
-		BDC68AF12D092E4B00834D9B /* NoInternet.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NoInternet.json; sourceTree = "<group>"; };
 		BDC68AF32D092E4B00834D9B /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		BDC68AF52D092E4B00834D9B /* CategoryAllAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAllAPI.swift; sourceTree = "<group>"; };
 		BDC68AF62D092E4B00834D9B /* CategoryAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryAPI.swift; sourceTree = "<group>"; };
@@ -640,8 +636,6 @@
 				BDC68AED2D092E4B00834D9B /* LoadData.json */,
 				BDC68AEE2D092E4B00834D9B /* Loader.json */,
 				BDC68AEF2D092E4B00834D9B /* Loading.json */,
-				BDC68AF02D092E4B00834D9B /* Nodata.json */,
-				BDC68AF12D092E4B00834D9B /* NoInternet.json */,
 			);
 			path = LottieJson;
 			sourceTree = "<group>";
@@ -987,13 +981,11 @@
 				BD8454AB2D1799C000E23DE6 /* Insta3.gif in Resources */,
 				BD8454A32D17924200E23DE6 /* Insta4.gif in Resources */,
 				BDF361A32D52F7DA00B79C01 /* cover (2).gif in Resources */,
-				BDC68B222D092E4B00834D9B /* NoInternet.json in Resources */,
 				BDC68B232D092E4B00834D9B /* LoadData.json in Resources */,
 				BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */,
 				BD0EB5702D1628BB00F47B8E /* NoInternetLightView.xib in Resources */,
 				BDC68B272D092E8900834D9B /* Color.xcassets in Resources */,
 				BDC68B282D092E8900834D9B /* GoogleService-Info.plist in Resources */,
-				BDC68B242D092E4B00834D9B /* Nodata.json in Resources */,
 				BDDF893F2D47FB8400B59EC4 /* NativeMediumAdView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1393,7 +1385,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
-				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app requires access to your media library to select audio files.";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Prankster uses access to your media library's audio to make a prank.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Prankster use your device's camera to do things like help you take photos, and record videos to create prank.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Prankster uses your device's location for analytics purpose.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Prankster use your device's microphone to do things like help record video and audio to create prank.";
@@ -1431,7 +1423,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Prankster/Info.plist;
-				INFOPLIST_KEY_NSAppleMusicUsageDescription = "This app requires access to your media library to select audio files.";
+				INFOPLIST_KEY_NSAppleMusicUsageDescription = "Prankster uses access to your media library's audio to make a prank.";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Prankster use your device's camera to do things like help you take photos, and record videos to create prank.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Prankster uses your device's location for analytics purpose.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Prankster use your device's microphone to do things like help record video and audio to create prank.";

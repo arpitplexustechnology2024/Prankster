@@ -860,7 +860,10 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             shouldShowGIF = false
             
             if currentCategoryId == 0 {
-                guard !customAudios.isEmpty else { return }
+                if customAudios.isEmpty {
+                    collectionView.deselectItem(at: indexPath, animated: false)
+                    return
+                }
             }
             
             audioCharacterAllCollectionView.reloadData()

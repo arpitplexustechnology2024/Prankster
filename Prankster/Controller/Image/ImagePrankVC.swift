@@ -827,9 +827,10 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             shouldShowGIF = false
             
             if currentCategoryId == 0 {
-                // Handle custom audio selection
-                guard !customImages.isEmpty else { return }
-                
+                if customImages.isEmpty {
+                    collectionView.deselectItem(at: indexPath, animated: false)
+                    return
+                }
             }
             
             imageAllCollectionview.reloadData()

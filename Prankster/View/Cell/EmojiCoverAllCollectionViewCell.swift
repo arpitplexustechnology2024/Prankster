@@ -110,6 +110,7 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = true
             
+            
             if let parentVC = self.parentViewController as? CoverPrankVC,
                        let preloadedAdView = parentVC.preloadedNativeAdView {
                         // Remove any existing subviews
@@ -292,6 +293,7 @@ class EmojiCoverSliderCollectionViewCell: UICollectionViewCell {
         }
     }
 }
+
 
 // MARK: - LoadingView.swift
 class LoadingView: UIView {
