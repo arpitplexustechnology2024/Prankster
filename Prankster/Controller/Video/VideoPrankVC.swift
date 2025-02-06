@@ -196,10 +196,10 @@ class VideoPrankVC: UIViewController {
         stopPlayingVideo()
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        playVisibleCell()
-//    }
+    //    override func viewDidAppear(_ animated: Bool) {
+    //        super.viewDidAppear(animated)
+    //        playVisibleCell()
+    //    }
     
     @objc private func appDidEnterBackground() {
         if self.isViewLoaded && self.view.window != nil {
@@ -372,7 +372,7 @@ class VideoPrankVC: UIViewController {
             withReuseIdentifier: LoadingFooterView.reuseIdentifier
         )
         if let layout = videoSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: 16, height: videoSlideCollectionview.frame.height)
+            layout.footerReferenceSize = CGSize(width: 50, height: videoSlideCollectionview.frame.height)
         }
     }
     
@@ -664,7 +664,7 @@ class VideoPrankVC: UIViewController {
                         self.videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                         self.videoSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                         self.selectedVideoCustomCell = indexPath
-
+                        
                         self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         
@@ -816,7 +816,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         cell.DoneButton.isHidden = true
                         return cell
                     }
-
+                    
                     // Configure cell for custom audio
                     if customVideos.isEmpty {
                         cell.gifImageview.isHidden = false
@@ -891,7 +891,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 if currentCategoryId == 0 {
                     // Configure cell for custom audio
                     if customVideos.isEmpty {
-                        cell.imageView.image = UIImage(named: "imageplacholder")
+                        cell.imageView.image = UIImage(named: "videoplacholder")
                         cell.premiumIconImageView.isHidden = true
                     } else {
                         cell.premiumIconImageView.isHidden = true
@@ -974,15 +974,15 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             if currentCategoryId == 0 {
                 
                 let customImages = customVideos[sender.tag]
-             //   if let fileData = try? Data(contentsOf: customImages.video) {
+                //   if let fileData = try? Data(contentsOf: customImages.video) {
                 vc.selectedURL = customImages.videoURL
-                    vc.selectedName = selectedCoverImageName
-                    vc.selectedCoverURL = selectedCoverImageURL
-                    vc.selectedCoverFile = selectedCoverImageFile
-                    vc.selectedPranktype = "video"
-                    vc.selectedFileType = "mp4"
-                    vc.sharePrank = true
-             //   }
+                vc.selectedName = selectedCoverImageName
+                vc.selectedCoverURL = selectedCoverImageURL
+                vc.selectedCoverFile = selectedCoverImageFile
+                vc.selectedPranktype = "video"
+                vc.selectedFileType = "mp4"
+                vc.sharePrank = true
+                //   }
             } else {
                 let categoryAllData = currentDataSource[sender.tag]
                 vc.selectedURL = categoryAllData.file
@@ -1071,8 +1071,34 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
+            //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
             self.fetchAllVideos()
+            //  }
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            let footer = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: LoadingFooterView.reuseIdentifier,
+                for: indexPath
+            ) as! LoadingFooterView
+            
+            if currentCategoryId == 0 {
+                footer.stopAnimating()
+            } else {
+                // બાકીની ચિપ્સ માટે જૂની લોજિક જાળવી રાખો
+                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
+                    footer.startAnimating()
+                } else {
+                    footer.stopAnimating()
+                }
+            }
+            
+            return footer
+        }
+        return UICollectionReusableView()
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -1344,8 +1370,31 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         picker.delegate = self
         picker.sourceType = sourceType
         picker.mediaTypes = [kUTTypeMovie as String]
-        picker.videoQuality = .typeHigh
-        picker.allowsEditing = true
+        
+        // Video quality ne highest par set karyu
+        picker.videoQuality = .typeHigh // Highest quality
+        
+        // Video recording settings
+        if sourceType == .camera {
+            if let cameraDevice = AVCaptureDevice.default(for: .video) {
+                do {
+                    try cameraDevice.lockForConfiguration()
+                    if cameraDevice.isExposureModeSupported(.continuousAutoExposure) {
+                        cameraDevice.exposureMode = .continuousAutoExposure
+                    }
+                    if cameraDevice.isFocusModeSupported(.continuousAutoFocus) {
+                        cameraDevice.focusMode = .continuousAutoFocus
+                    }
+                    // વધારાની સેટિંગ્સ
+                    if cameraDevice.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
+                        cameraDevice.whiteBalanceMode = .continuousAutoWhiteBalance
+                    }
+                    cameraDevice.unlockForConfiguration()
+                } catch {
+                    print("Camera configuration error: \(error)")
+                }
+            }
+        }
         
         // વીડિયો ટ્રિમિંગ માટેની મર્યાદા સેટ કરવી
         picker.allowsEditing = true
@@ -1406,12 +1455,18 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
             return
         }
         
-        // Dismiss picker first
+        let loadingView = UIActivityIndicatorView(style: .large)
+        loadingView.center = self.view.center
+        loadingView.color = .white
+        self.view.addSubview(loadingView)
+        loadingView.startAnimating()
+        
         picker.dismiss(animated: true)
         
-        // Process video in background
-        VideoProcessingManager.shared.compressVideo(inputURL: videoURL) { [weak self] result in
+        VideoProcessingManager.shared.processVideo(inputURL: videoURL) { [weak self] result in
             DispatchQueue.main.async {
+                loadingView.removeFromSuperview()
+                
                 guard let self = self else { return }
                 
                 switch result {
@@ -1423,13 +1478,11 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     do {
                         try FileManager.default.copyItem(at: compressedVideoURL, to: destinationURL)
                         
-                        // Create CustomVideos object
                         let customVideo = CustomVideos(video: destinationURL, videoURL: destinationURL.absoluteString)
                         self.customVideos.insert(customVideo, at: 0)
                         self.selectedVideoIndex = 0
                         self.saveCustomVideoURLs()
                         
-                        // Update UI
                         self.videoAllCollectionView.reloadData()
                         self.videoSlideCollectionview.reloadData()
                         let indexPath = IndexPath(item: 0, section: 0)
@@ -1446,11 +1499,14 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                         }
                         
                     } catch {
-                        print("Error copying compressed video: \(error)")
+                        print("Error copying processed video: \(error)")
+                        let snackbar = CustomSnackbar(message: "Failed to save video", backgroundColor: .snackbar)
+                        snackbar.show(in: self.view, duration: 3.0)
                     }
                     
                 case .failure(let error):
-                    print("\(error.message)")
+                    let snackbar = CustomSnackbar(message: error.message, backgroundColor: .snackbar)
+                    snackbar.show(in: self.view, duration: 3.0)
                 }
             }
         }

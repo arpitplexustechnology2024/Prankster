@@ -32,7 +32,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
     private func setupSkeleton() {
         
         skeletonBackgroundView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
-        skeletonBackgroundView.layer.cornerRadius = 16
+        skeletonBackgroundView.layer.cornerRadius = 12
         skeletonBackgroundView.clipsToBounds = true
         
         skeletonBackgroundView.layer.shadowColor = UIColor.black.cgColor
@@ -44,7 +44,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
         
         ImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
         ImageView.clipsToBounds = true
-        ImageView.layer.cornerRadius = 16
+        ImageView.layer.cornerRadius = 12
         contentView.addSubview(ImageView)
         
         labelImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
@@ -59,7 +59,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
         
         buttonImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
         buttonImageView.clipsToBounds = true
-        buttonImageView.layer.cornerRadius = 20
+        buttonImageView.layer.cornerRadius = 12
         contentView.addSubview(buttonImageView)
         
         skeletonBackgroundView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,38 +71,37 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
         ])
         
         ImageView.translatesAutoresizingMaskIntoConstraints = false
-        let imageViewHeight = UIDevice.current.userInterfaceIdiom == .pad ? 174 : 119
         NSLayoutConstraint.activate([
-            ImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
-            ImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            ImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            ImageView.heightAnchor.constraint(equalToConstant: CGFloat(imageViewHeight))
+            ImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            ImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 10),
+            ImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            ImageView.widthAnchor.constraint(equalToConstant: 84)
         ])
         
         labelImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            labelImageView.topAnchor.constraint(equalTo: ImageView.bottomAnchor, constant: 8),
-            labelImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            labelImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            labelImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 30),
+            labelImageView.leadingAnchor.constraint(equalTo: ImageView.trailingAnchor, constant: 8),
+            labelImageView.trailingAnchor.constraint(equalTo: buttonImageView.leadingAnchor, constant: -8),
             labelImageView.heightAnchor.constraint(equalToConstant: 20)
         ])
         
         label2ImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             label2ImageView.topAnchor.constraint(equalTo: labelImageView.bottomAnchor, constant: 2),
-            label2ImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            label2ImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            label2ImageView.leadingAnchor.constraint(equalTo: ImageView.trailingAnchor, constant: 8),
+            label2ImageView.trailingAnchor.constraint(equalTo: buttonImageView.leadingAnchor, constant: -8),
             label2ImageView.heightAnchor.constraint(equalToConstant: 20)
         ])
         
         buttonImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            buttonImageView.topAnchor.constraint(equalTo: label2ImageView.bottomAnchor, constant: 8),
-            buttonImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            buttonImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            buttonImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -12),
-            buttonImageView.heightAnchor.constraint(equalToConstant: 40)
+            buttonImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -10),
+            buttonImageView.heightAnchor.constraint(equalToConstant: 50),
+            buttonImageView.widthAnchor.constraint(equalToConstant: 50),
+            buttonImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
+
         
         setupGradient(for: ImageView, gradientLayer: gradientLayerImage)
         setupGradient(for: labelImageView, gradientLayer: gradientLayerLabel)

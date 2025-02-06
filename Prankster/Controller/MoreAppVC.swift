@@ -10,17 +10,24 @@ import Alamofire
 
 class MoreAppVC: UIViewController {
     
+    @IBOutlet weak var nativeSmallAds: UIView!
+    @IBOutlet weak var adHeightConstaints: NSLayoutConstraint!
     @IBOutlet weak var navigationbarView: UIView!
     @IBOutlet weak var collectionview: UICollectionView!
-    private var noDataView: NoDataLightView!
-    private var noInternetView: NoInternetLightView!
+    private var noDataView: NoDataView!
+    private var noInternetView: NoInternetView!
     private let viewModel = MoreAppViewModel()
     private var moreDataArray: [MoreData] = []
     
     var isLoading = true
     
+    private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
+    private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
+    private let adsViewModel = AdsViewModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupAds()
         self.setupUI()
         self.setupNoDataView()
         self.setupSwipeGesture()
@@ -47,7 +54,7 @@ class MoreAppVC: UIViewController {
         if let layout = collectionview.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.minimumInteritemSpacing = 16
             layout.minimumLineSpacing = 16
-            layout.sectionInset = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+            layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
     }
     
@@ -85,7 +92,7 @@ class MoreAppVC: UIViewController {
     }
     
     private func setupNoDataView() {
-        noDataView = NoDataLightView()
+        noDataView = NoDataView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
         self.view.addSubview(noDataView)
@@ -100,7 +107,7 @@ class MoreAppVC: UIViewController {
     }
     
     func setupNoInternetView() {
-        noInternetView = NoInternetLightView()
+        noInternetView = NoInternetView()
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
         noInternetView.isHidden = true
         self.view.addSubview(noInternetView)
@@ -159,6 +166,29 @@ class MoreAppVC: UIViewController {
             self.navigationController?.popViewController(animated: true)
         }
     }
+    
+    private func setupAds() {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            adHeightConstaints.constant = 150
+        } else {
+            adHeightConstaints.constant = 120
+        }
+        
+        if isConnectedToInternet(), !PremiumManager.shared.isContentUnlocked(itemID: -1) {
+            if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+                print("Native Ad ID: \(nativeAdID)")
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                } else {
+                    nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                }
+            } else {
+                nativeSmallAds.isHidden = true
+            }
+        } else {
+            nativeSmallAds.isHidden = true
+        }
+    }
 }
 
 extension MoreAppVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -183,12 +213,10 @@ extension MoreAppVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let layout = collectionViewLayout as! UICollectionViewFlowLayout
-        let paddingSpace = layout.sectionInset.left + layout.sectionInset.right + layout.minimumInteritemSpacing * (UIDevice.current.userInterfaceIdiom == .pad ? 2 : 1)
-        let availableWidth = collectionView.frame.width - paddingSpace
-        let widthPerItem = availableWidth / (UIDevice.current.userInterfaceIdiom == .pad ? 3 : 2)
-        let heightPerItem: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 300 : 245
-        
+        let padding: CGFloat = 8 * 2
+        let availableWidth = collectionView.frame.width - padding
+        let widthPerItem = availableWidth
+        let heightPerItem: CGFloat = 100
         return CGSize(width: widthPerItem, height: heightPerItem)
     }
 }

@@ -11,14 +11,20 @@ class ViewLinkCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var shareButton: UIButton!
+    @IBOutlet weak var prankNameLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         
-        self.layer.cornerRadius = 10
+        layoutIfNeeded()
+        
+        self.layer.cornerRadius = 12
         self.clipsToBounds = true
         
-        self.imageView.layer.cornerRadius = 10
+        self.contentView.layer.borderWidth = 1
+        self.contentView.layer.borderColor = UIColor.moreApp.cgColor
+        
+        self.imageView.layer.cornerRadius = 12
         self.imageView.clipsToBounds = true
         
     }

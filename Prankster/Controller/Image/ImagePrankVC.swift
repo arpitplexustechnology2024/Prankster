@@ -217,7 +217,7 @@ class ImagePrankVC: UIViewController {
     
     func checkInternetAndFetchData() {
         if isConnectedToInternet() {
-            fetchAllAudios()
+            fetchAllImages()
             self.fetchTagData()
             self.preloadNativeAd()
             self.noInternetView?.isHidden = true
@@ -270,6 +270,14 @@ class ImagePrankVC: UIViewController {
         self.imageAllCollectionview.isPagingEnabled = true
         self.imageAllCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.imageSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.imageSlideCollectionview.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
+        if let layout = imageSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 50, height: imageSlideCollectionview.frame.height)
+        }
     }
     
     private func setupChipSelector() {
@@ -356,7 +364,7 @@ class ImagePrankVC: UIViewController {
     }
     
     // MARK: - fetchAllAudios
-    func fetchAllAudios() {
+    func fetchAllImages() {
         guard !isLoadingMore else { return }
         isLoadingMore = true
         
@@ -878,10 +886,36 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            let footer = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: LoadingFooterView.reuseIdentifier,
+                for: indexPath
+            ) as! LoadingFooterView
+            
+            if currentCategoryId == 0 {
+                footer.stopAnimating()
+            } else {
+                // બાકીની ચિપ્સ માટે જૂની લોજિક જાળવી રાખો
+                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
+                    footer.startAnimating()
+                } else {
+                    footer.stopAnimating()
+                }
+            }
+            
+            return footer
+        }
+        return UICollectionReusableView()
+    }
+    
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-            self.fetchAllAudios()
+          //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
+                self.fetchAllImages()
+          //  }
         }
     }
     

@@ -15,6 +15,7 @@
 		BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56A2D1628BB00F47B8E /* NoDataLightView.xib */; };
 		BD0EB5702D1628BB00F47B8E /* NoInternetLightView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */; };
 		BD1D1C1B2D4B160F0078B6EC /* ImageCompress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1D1C1A2D4B160F0078B6EC /* ImageCompress.swift */; };
+		BD3788272D54687400680DF6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD3788262D54687400680DF6 /* ViewController.swift */; };
 		BD686C392D44157000B9F03C /* AppOpenAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */; };
 		BD686C3D2D445CB100B9F03C /* ChipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C3C2D445CB100B9F03C /* ChipButton.swift */; };
 		BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */; };
@@ -208,6 +209,7 @@
 		BD0EB56B2D1628BB00F47B8E /* NoInternetLightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetLightView.swift; sourceTree = "<group>"; };
 		BD0EB56C2D1628BB00F47B8E /* NoInternetLightView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoInternetLightView.xib; sourceTree = "<group>"; };
 		BD1D1C1A2D4B160F0078B6EC /* ImageCompress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompress.swift; sourceTree = "<group>"; };
+		BD3788262D54687400680DF6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdUtility.swift; sourceTree = "<group>"; };
 		BD686C3C2D445CB100B9F03C /* ChipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChipButton.swift; sourceTree = "<group>"; };
 		BD7663812D4328FE007ADD37 /* NativeSmallIpadAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIpadAdView.xib; sourceTree = "<group>"; };
@@ -817,6 +819,7 @@
 				BDC68B5C2D0931F800834D9B /* Video */,
 				BDC68B592D0931F800834D9B /* Image */,
 				BD6D3D392D1E17BD00EF045E /* Share */,
+				BD3788262D54687400680DF6 /* ViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -1290,6 +1293,7 @@
 				BDC68B8A2D0931F900834D9B /* SpinnerDataVC.swift in Sources */,
 				BD766C6A2D4D6BAC00D05223 /* TrimmingVC.swift in Sources */,
 				BDC68B8B2D0931F900834D9B /* ShareLinkPopup.swift in Sources */,
+				BD3788272D54687400680DF6 /* ViewController.swift in Sources */,
 				BDC68B8C2D0931F900834D9B /* NoInternetView.swift in Sources */,
 				BDC68B8D2D0931F900834D9B /* MoreAppVC.swift in Sources */,
 				BDB9045B2D4F1468009AA387 /* Switch.swift in Sources */,

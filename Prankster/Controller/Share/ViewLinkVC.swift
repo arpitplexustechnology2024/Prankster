@@ -10,18 +10,53 @@ import Alamofire
 
 class ViewLinkVC: UIViewController {
     
+    @IBOutlet weak var nativeSmallAds: UIView!
+    @IBOutlet weak var adHeightConstaints: NSLayoutConstraint!
     @IBOutlet weak var viewlinkCollectionView: UICollectionView!
     @IBOutlet weak var navigationView: UIView!
     var pranks: [PrankCreateData] = []
-    private var noDataView: NoDataLightView!
+    private var noDataView: NoDataView!
+    
+    private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
+    private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
+    private let adsViewModel = AdsViewModel()
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupAds()
         setupSwipeGesture()
         setupNoDataView()
         setupCollectionView()
         fetchPranksFromUserDefaults()
+    }
+    
+    private func setupAds() {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            adHeightConstaints.constant = 150
+        } else {
+            adHeightConstaints.constant = 120
+        }
+        
+        if isConnectedToInternet(), !PremiumManager.shared.isContentUnlocked(itemID: -1) {
+            if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+                print("Native Ad ID: \(nativeAdID)")
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                } else {
+                    nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                }
+            } else {
+                nativeSmallAds.isHidden = true
+            }
+        } else {
+            nativeSmallAds.isHidden = true
+        }
+    }
+    
+    private func isConnectedToInternet() -> Bool {
+        let networkManager = NetworkReachabilityManager()
+        return networkManager?.isReachable ?? false
     }
     
     func setupCollectionView() {
@@ -37,7 +72,7 @@ class ViewLinkVC: UIViewController {
     }
     
     private func setupNoDataView() {
-        noDataView = NoDataLightView()
+        noDataView = NoDataView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
         self.view.addSubview(noDataView)
@@ -94,6 +129,7 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ViewLinkCollectionViewCell", for: indexPath) as! ViewLinkCollectionViewCell
         
         let prank = pranks[indexPath.item]
+        cell.prankNameLabel.text = prank.name
         
         if let url = URL(string: prank.coverImage) {
             AF.request(url).response { response in

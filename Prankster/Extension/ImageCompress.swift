@@ -14,7 +14,7 @@ enum ImageProcessingError: Error {
     var message: String {
         switch self {
         case .oversizedImage:
-            return "Image size must be less than 5MB"
+            return "Image size must be upto 5MB"
         case .compressionFailed:
             return "Failed to process image"
         }
@@ -27,17 +27,15 @@ extension UIImage {
         var compression: CGFloat = 1.0
         var imageData = self.jpegData(compressionQuality: compression)
         
-        // First try JPEG compression
         while (imageData?.count ?? 0) > bytes && compression > 0.01 {
             compression -= 0.1
             imageData = self.jpegData(compressionQuality: compression)
         }
         
-        // If JPEG compression isn't enough, resize the image
         if (imageData?.count ?? 0) > bytes {
             let ratio = CGFloat(bytes) / CGFloat(imageData?.count ?? 1)
             let size = CGSize(width: self.size.width * sqrt(ratio),
-                            height: self.size.height * sqrt(ratio))
+                              height: self.size.height * sqrt(ratio))
             
             UIGraphicsBeginImageContextWithOptions(size, false, 0)
             self.draw(in: CGRect(origin: .zero, size: size))
@@ -56,16 +54,16 @@ extension UIImage {
     }
 }
 
-// Image Processing Manager
 class ImageProcessingManager {
     static let shared = ImageProcessingManager()
     private let maxSizeMB: Double = 5.0
+    private let compressionQuality: CGFloat = 0.8
     
     private init() {}
     
     func processImage(_ image: UIImage, completion: @escaping (Result<UIImage, ImageProcessingError>) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
-            // Check original image size first
+            // 1. પહેલા image size check કરો
             if image.sizeInMB > self.maxSizeMB {
                 DispatchQueue.main.async {
                     completion(.failure(.oversizedImage))
@@ -73,26 +71,34 @@ class ImageProcessingManager {
                 return
             }
             
-            // Try to compress the image
-            guard let compressedImage = image.compress(targetSizeKB: 500) else {
+            // 2. પહેલા quality reduction થી compression કરો
+            guard let compressedImage = image.jpegData(compressionQuality: self.compressionQuality)
+                .flatMap(UIImage.init) else {
                 DispatchQueue.main.async {
                     completion(.failure(.compressionFailed))
                 }
                 return
             }
             
-            // Verify compressed image size
+            // 3. જો હજી પણ મોટી હોય તો resize કરો
             if compressedImage.sizeInMB > self.maxSizeMB {
-                DispatchQueue.main.async {
-                    completion(.failure(.oversizedImage))
+                guard let resizedImage = compressedImage.compress(targetSizeKB: 500) else {
+                    DispatchQueue.main.async {
+                        completion(.failure(.compressionFailed))
+                    }
+                    return
                 }
-                return
-            }
-            
-            DispatchQueue.main.async {
-                completion(.success(compressedImage))
+                
+                DispatchQueue.main.async {
+                    completion(.success(resizedImage))
+                }
+            } else {
+                DispatchQueue.main.async {
+                    completion(.success(compressedImage))
+                }
             }
         }
     }
 }
+
 

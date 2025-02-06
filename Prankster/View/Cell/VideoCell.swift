@@ -474,7 +474,7 @@ class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
         if categoryAllData.name.lowercased() == "ads" {
             
             if let imageURL = URL(string: categoryAllData.image) {
-                imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "audioplacholder"))
+                imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "videoplacholder"))
                 self.premiumIconImageView.isHidden = true
             }
             

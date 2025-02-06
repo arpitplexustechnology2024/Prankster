@@ -9,7 +9,6 @@ import UIKit
 import AVFoundation
 import AVKit
 
-// 1. પહેલા વીડિયો પ્રોસેસિંગ એરર્સ ડિફાઈન કરીએ
 enum VideoProcessingError: Error {
     case oversizedVideo
     case compressionFailed
@@ -20,7 +19,7 @@ enum VideoProcessingError: Error {
     var message: String {
         switch self {
         case .oversizedVideo:
-            return "Video size must be less than 15MB"
+            return "Video size must be upto 15MB"
         case .compressionFailed:
             return "Failed to compress video"
         case .invalidURL:
@@ -33,20 +32,17 @@ enum VideoProcessingError: Error {
     }
 }
 
-// 2. વીડિયો પ્રોસેસિંગ મેનેજર ક્લાસ
 class VideoProcessingManager {
     static let shared = VideoProcessingManager()
-    private let maxSizeMB: Double = 15.0
+    private let maxSizeMB: Double = 30.0
     private let processingQueue = DispatchQueue(label: "com.app.videoProcessing")
     
     private init() {}
     
-    // વીડિયો ડાઉનલોડ કરવાનું ફંક્શન
     func downloadVideo(from url: URL, completion: @escaping (Result<URL, VideoProcessingError>) -> Void) {
         let documentsPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let destinationURL = documentsPath.appendingPathComponent("downloaded_video.mp4")
         
-        // જો પહેલાથી ફાઈલ એક્ઝિસ્ટ કરતી હોય તો ડિલીટ કરો
         try? FileManager.default.removeItem(at: destinationURL)
         
         let downloadTask = URLSession.shared.downloadTask(with: url) { tempURL, response, error in
@@ -73,11 +69,9 @@ class VideoProcessingManager {
         downloadTask.resume()
     }
     
-    // વીડિયો કમ્પ્રેસ કરવાનું ફંક્શન
     func compressVideo(inputURL: URL, completion: @escaping (Result<URL, VideoProcessingError>) -> Void) {
         let asset = AVAsset(url: inputURL)
         
-        // ચેક કરો કે વીડિયો સાઈઝ 15MB થી વધારે તો નથીને
         let videoSize = try? inputURL.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
         let videoSizeMB = Double(videoSize ?? 0) / (1024 * 1024)
         
@@ -86,25 +80,22 @@ class VideoProcessingManager {
             return
         }
         
-        // કમ્પ્રેશન સેટિંગ્સ
         let compression = [
             AVVideoCodecKey: AVVideoCodecType.h264,
             AVVideoCompressionPropertiesKey: [
-                AVVideoAverageBitRateKey: 4000000,
-                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,  // હાઇ પ્રોફાઈલ વાપરી
-                AVVideoMaxKeyFrameIntervalKey: 30,  // કી-ફ્રેમ ઈન્ટરવલ ઓછો કર્યો
-                AVVideoExpectedSourceFrameRateKey: 30  // ફ્રેમરેટ ફિક્સ કર્યો
-                
+                AVVideoAverageBitRateKey: 2000000,
+                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                AVVideoMaxKeyFrameIntervalKey: 30,
+                AVVideoExpectedSourceFrameRateKey: 30
             ]
         ] as [String: Any]
         
         let outputURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("compressed_video.mp4")
         
-        // જો પહેલાથી ફાઈલ એક્ઝિસ્ટ કરતી હોય તો ડિલીટ કરો
         try? FileManager.default.removeItem(at: outputURL)
         
-        guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetMediumQuality) else {
+        guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {
             completion(.failure(.compressionFailed))
             return
         }
@@ -114,15 +105,98 @@ class VideoProcessingManager {
         exportSession.videoComposition = nil
         exportSession.shouldOptimizeForNetworkUse = true
         
-        // વધારાના કમ્પ્રેશન સેટિંગ્સ
         exportSession.audioTimePitchAlgorithm = .spectral
-        exportSession.videoComposition = nil
         
         exportSession.exportAsynchronously {
             switch exportSession.status {
             case .completed:
                 completion(.success(outputURL))
             default:
+                print("Export failed with error: \(String(describing: exportSession.error))")
+                completion(.failure(.compressionFailed))
+            }
+        }
+    }
+    
+    
+    func processVideo(inputURL: URL, completion: @escaping (Result<URL, VideoProcessingError>) -> Void) {
+        let originalSize = try? inputURL.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+        let originalSizeMB = Double(originalSize ?? 0) / (1024 * 1024)
+        print("Original video size: \(String(format: "%.2f", originalSizeMB)) MB")
+        
+        compresssVideo(inputURL: inputURL) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let compressedURL):
+                let compressedSize = try? compressedURL.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0
+                let compressedSizeMB = Double(compressedSize ?? 0) / (1024 * 1024)
+                print("Compressed video size: \(String(format: "%.2f", compressedSizeMB)) MB")
+                
+                if compressedSizeMB > self.maxSizeMB {
+                    completion(.failure(.oversizedVideo))
+                    try? FileManager.default.removeItem(at: compressedURL)
+                } else {
+                    completion(.success(compressedURL))
+                }
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func compresssVideo(inputURL: URL, completion: @escaping (Result<URL, VideoProcessingError>) -> Void) {
+        let asset = AVAsset(url: inputURL)
+        
+        let compression = [
+            AVVideoCodecKey: AVVideoCodecType.h264,
+            AVVideoCompressionPropertiesKey: [
+                AVVideoAverageBitRateKey: 10000000,
+                AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                AVVideoMaxKeyFrameIntervalKey: 60,
+                AVVideoExpectedSourceFrameRateKey: 60,
+                AVVideoMaxKeyFrameIntervalDurationKey: 1,
+                AVVideoAllowFrameReorderingKey: true,
+                AVVideoH264EntropyModeKey: AVVideoH264EntropyModeCABAC
+            ]
+        ] as [String: Any]
+        
+        let outputURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("compressed_video.mp4")
+        
+        try? FileManager.default.removeItem(at: outputURL)
+        
+        guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetHighestQuality) else {
+            completion(.failure(.compressionFailed))
+            return
+        }
+        
+        exportSession.outputURL = outputURL
+        exportSession.outputFileType = .mp4
+        exportSession.shouldOptimizeForNetworkUse = true
+        
+        if let videoTrack = asset.tracks(withMediaType: .video).first {
+            let composition = AVMutableVideoComposition()
+            composition.renderSize = videoTrack.naturalSize
+            composition.frameDuration = CMTimeMake(value: 1, timescale: 60)
+            composition.renderScale = 1.0
+            
+            let instruction = AVMutableVideoCompositionInstruction()
+            instruction.timeRange = CMTimeRangeMake(start: .zero, duration: asset.duration)
+            
+            let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
+            instruction.layerInstructions = [layerInstruction]
+        }
+        
+        exportSession.audioTimePitchAlgorithm = .spectral
+        
+        exportSession.exportAsynchronously {
+            switch exportSession.status {
+            case .completed:
+                completion(.success(outputURL))
+            default:
+                print("Export failed with error: \(String(describing: exportSession.error))")
                 completion(.failure(.compressionFailed))
             }
         }

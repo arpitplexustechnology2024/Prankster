@@ -353,7 +353,7 @@ class AudioPrankVC: UIViewController {
             withReuseIdentifier: LoadingFooterView.reuseIdentifier
         )
         if let layout = audioCharacterSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: 16, height: audioCharacterSlideCollectionview.frame.height)
+            layout.footerReferenceSize = CGSize(width: 50, height: audioCharacterSlideCollectionview.frame.height)
         }
     }
     
@@ -747,7 +747,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 if currentCategoryId == 0 {
                     if customAudios.isEmpty {
-                        cell.imageView.image = UIImage(named: "imageplacholder")
+                        cell.imageView.image = UIImage(named: "audioplacholder")
                         cell.premiumIconImageView.isHidden = true
                     } else {
                         cell.premiumIconImageView.isHidden = true
@@ -915,8 +915,33 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-            self.fetchAllAudios()
+           // DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
+                self.fetchAllAudios()
+          //  }
         }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionFooter {
+            let footer = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: LoadingFooterView.reuseIdentifier,
+                for: indexPath
+            ) as! LoadingFooterView
+            
+            if currentCategoryId == 0 {
+                footer.stopAnimating()
+            } else {
+                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
+                    footer.startAnimating()
+                } else {
+                    footer.stopAnimating()
+                }
+            }
+            
+            return footer
+        }
+        return UICollectionReusableView()
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

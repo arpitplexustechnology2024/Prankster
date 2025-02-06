@@ -328,6 +328,14 @@ class CoverPrankVC: UIViewController {
         self.emojiCoverAllCollectionView.isPagingEnabled = true
         self.emojiCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.emojiCoverSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
+        self.emojiCoverSlideCollectionview.register(
+            LoadingFooterView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
+            withReuseIdentifier: LoadingFooterView.reuseIdentifier
+        )
+        if let layout = emojiCoverSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 50, height: emojiCoverSlideCollectionview.frame.height)
+        }
     }
     
     func fetchAllCoverPages() {
@@ -685,7 +693,6 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.layer.borderWidth = 0
                     cell.layer.borderColor = UIColor.clear.cgColor
                 }
-                
                 return cell
             } else {
                 if isLoading {
@@ -862,10 +869,13 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.emojiCoverPages.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
+            //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
             fetchAllCoverPages()
+            //   }
         }
     }
     
+    // viewForSupplementaryElementOfKind માં ફેરફાર કરીએ
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionFooter {
             let footer = collectionView.dequeueReusableSupplementaryView(
@@ -873,10 +883,18 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 withReuseIdentifier: LoadingFooterView.reuseIdentifier,
                 for: indexPath
             ) as! LoadingFooterView
-            if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.emojiCoverPages.isEmpty {
-                footer.startAnimating()
-            } else {
+            
+            let selectedChipTitle = chipSelector.getSelectedChipTitle()
+            
+            if selectedChipTitle == "Add cover image 📸" {
                 footer.stopAnimating()
+            } else {
+                // બાકીની ચિપ્સ માટે જૂની લોજિક જાળવી રાખો
+                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.emojiCoverPages.isEmpty {
+                    footer.startAnimating()
+                } else {
+                    footer.stopAnimating()
+                }
             }
             
             return footer
@@ -1127,9 +1145,11 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
     }
     
     func saveCovers() {
-        let coversData = customCovers.map { cover in
-            [
-                "image": cover.image,
+        
+        let coversData: [[String: Any]] = customCovers.compactMap { cover -> [String: Any]? in
+            guard let imageData = cover.image.jpegData(compressionQuality: 0.8) else { return nil }
+            return [
+                "imageData": imageData,
                 "url": cover.imageUrl ?? ""
             ]
         }
@@ -1143,12 +1163,11 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         if let savedData = UserDefaults.standard.object(forKey: ConstantValue.is_UserCoverImages) as? Data {
             do {
                 if let decodedData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedData) as? [[String: Any]] {
-                    customCovers = decodedData.compactMap { dict in
-                        if let image = dict["image"] as? UIImage {
-                            let url = dict["url"] as? String
-                            return CustomCover(image: image, imageUrl: url)
-                        }
-                        return nil
+                    customCovers = decodedData.compactMap { dict -> CustomCover? in
+                        guard let imageData = dict["imageData"] as? Data,
+                              let image = UIImage(data: imageData) else { return nil }
+                        let url = dict["url"] as? String
+                        return CustomCover(image: image, imageUrl: url)
                     }
                     emojiCoverSlideCollectionview.reloadData()
                     emojiCoverAllCollectionView.reloadData()
