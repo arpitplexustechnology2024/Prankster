@@ -59,6 +59,7 @@ class MoreAppVC: UIViewController {
     }
     
     private func fetchMoreData() {
+        self.showSkeletonLoader()
         let packageName = "id6739135275"
         viewModel.fetchMoreData(packageName: packageName) { [weak self] result in
             guard let self = self else { return }
@@ -193,7 +194,7 @@ class MoreAppVC: UIViewController {
 
 extension MoreAppVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isLoading ? 6 : moreDataArray.count
+        return isLoading ? 5 : moreDataArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

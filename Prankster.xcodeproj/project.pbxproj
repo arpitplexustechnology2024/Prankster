@@ -34,6 +34,8 @@
 		BD8C71552D49712900ED2575 /* TagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71542D49712900ED2575 /* TagViewModel.swift */; };
 		BD8C71572D4978C500ED2575 /* LanguageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71562D4978C500ED2575 /* LanguageVC.swift */; };
 		BD8C71592D498EA900ED2575 /* SearchCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8C71582D498EA900ED2575 /* SearchCollectionVC.swift */; };
+		BDA64D4A2D558F8B00C31C61 /* cover.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = BDA64D492D558F8B00C31C61 /* cover.mp4 */; };
+		BDA64D4C2D559D7A00C31C61 /* SpinnerDataShowVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA64D4B2D559D7A00C31C61 /* SpinnerDataShowVC.swift */; };
 		BDADD19B2D11F22E00BDF838 /* AdsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */; };
 		BDADD19D2D11F23C00BDF838 /* AdsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */; };
 		BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDB3397E2D0D070B001684D8 /* Insta2.gif */; };
@@ -151,8 +153,6 @@
 		BDF3619E2D52AD9700B79C01 /* image.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619C2D52AD9700B79C01 /* image.gif */; };
 		BDF3619F2D52AD9700B79C01 /* Video.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619D2D52AD9700B79C01 /* Video.gif */; };
 		BDF361A02D52AD9700B79C01 /* audio.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619A2D52AD9700B79C01 /* audio.gif */; };
-		BDF361A12D52AD9700B79C01 /* cover.gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF3619B2D52AD9700B79C01 /* cover.gif */; };
-		BDF361A32D52F7DA00B79C01 /* cover (2).gif in Resources */ = {isa = PBXBuildFile; fileRef = BDF361A22D52F7DA00B79C01 /* cover (2).gif */; };
 		FC4EF9998A05D8F6312151BD /* Pods_PranksterTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D982D927F0340D60CBA877E /* Pods_PranksterTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -226,6 +226,8 @@
 		BD8C71542D49712900ED2575 /* TagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagViewModel.swift; sourceTree = "<group>"; };
 		BD8C71562D4978C500ED2575 /* LanguageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageVC.swift; sourceTree = "<group>"; };
 		BD8C71582D498EA900ED2575 /* SearchCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionVC.swift; sourceTree = "<group>"; };
+		BDA64D492D558F8B00C31C61 /* cover.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = cover.mp4; sourceTree = "<group>"; };
+		BDA64D4B2D559D7A00C31C61 /* SpinnerDataShowVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerDataShowVC.swift; sourceTree = "<group>"; };
 		BDADD19A2D11F22E00BDF838 /* AdsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsAPI.swift; sourceTree = "<group>"; };
 		BDADD19C2D11F23C00BDF838 /* AdsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsViewModel.swift; sourceTree = "<group>"; };
 		BDB3397E2D0D070B001684D8 /* Insta2.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Insta2.gif; sourceTree = "<group>"; };
@@ -347,10 +349,8 @@
 		BDE586212D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NativeSmallIphoneAdView.xib; sourceTree = "<group>"; };
 		BDE586232D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeSmallIphoneAdUtility.swift; sourceTree = "<group>"; };
 		BDF3619A2D52AD9700B79C01 /* audio.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = audio.gif; sourceTree = "<group>"; };
-		BDF3619B2D52AD9700B79C01 /* cover.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = cover.gif; sourceTree = "<group>"; };
 		BDF3619C2D52AD9700B79C01 /* image.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = image.gif; sourceTree = "<group>"; };
 		BDF3619D2D52AD9700B79C01 /* Video.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Video.gif; sourceTree = "<group>"; };
-		BDF361A22D52F7DA00B79C01 /* cover (2).gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "cover (2).gif"; sourceTree = "<group>"; };
 		C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Prankster.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D5A7BA264A3D9F5D5F56F594 /* Pods-PranksterTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.release.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.release.xcconfig"; sourceTree = "<group>"; };
 		DBE85015E495927229BA9144 /* Pods-PranksterTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PranksterTests.debug.xcconfig"; path = "Target Support Files/Pods-PranksterTests/Pods-PranksterTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -440,6 +440,7 @@
 				BDC68B652D0931F800834D9B /* SpinnerDataVC.swift */,
 				BDC68B662D0931F800834D9B /* SpinnerPreviewVC.swift */,
 				BDCD59F72D1B8D5400DF5330 /* BetterLuckVC.swift */,
+				BDA64D4B2D559D7A00C31C61 /* SpinnerDataShowVC.swift */,
 			);
 			path = Spinner;
 			sourceTree = "<group>";
@@ -614,8 +615,6 @@
 				BDB339822D0D1A6F001684D8 /* Snap4.gif */,
 				BD8454AD2D179D6A00E23DE6 /* Snap5.gif */,
 				BDF3619A2D52AD9700B79C01 /* audio.gif */,
-				BDF361A22D52F7DA00B79C01 /* cover (2).gif */,
-				BDF3619B2D52AD9700B79C01 /* cover.gif */,
 				BDF3619C2D52AD9700B79C01 /* image.gif */,
 				BDF3619D2D52AD9700B79C01 /* Video.gif */,
 			);
@@ -633,6 +632,7 @@
 		BDC68AF22D092E4B00834D9B /* LottieJson */ = {
 			isa = PBXGroup;
 			children = (
+				BDA64D492D558F8B00C31C61 /* cover.mp4 */,
 				BDC68AED2D092E4B00834D9B /* LoadData.json */,
 				BDC68AEE2D092E4B00834D9B /* Loader.json */,
 				BDC68AEF2D092E4B00834D9B /* Loading.json */,
@@ -964,7 +964,6 @@
 				BDF3619E2D52AD9700B79C01 /* image.gif in Resources */,
 				BDF3619F2D52AD9700B79C01 /* Video.gif in Resources */,
 				BDF361A02D52AD9700B79C01 /* audio.gif in Resources */,
-				BDF361A12D52AD9700B79C01 /* cover.gif in Resources */,
 				BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */,
 				BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */,
 				BDC68B9A2D0931F900834D9B /* ShareView.xib in Resources */,
@@ -980,9 +979,9 @@
 				BDB339862D0D2564001684D8 /* Snap1.gif in Resources */,
 				BD8454AB2D1799C000E23DE6 /* Insta3.gif in Resources */,
 				BD8454A32D17924200E23DE6 /* Insta4.gif in Resources */,
-				BDF361A32D52F7DA00B79C01 /* cover (2).gif in Resources */,
 				BDC68B232D092E4B00834D9B /* LoadData.json in Resources */,
 				BD0EB56F2D1628BB00F47B8E /* NoDataLightView.xib in Resources */,
+				BDA64D4A2D558F8B00C31C61 /* cover.mp4 in Resources */,
 				BD0EB5702D1628BB00F47B8E /* NoInternetLightView.xib in Resources */,
 				BDC68B272D092E8900834D9B /* Color.xcassets in Resources */,
 				BDC68B282D092E8900834D9B /* GoogleService-Info.plist in Resources */,
@@ -1214,6 +1213,7 @@
 				BDC68B0B2D092E4B00834D9B /* CategoryViewModel.swift in Sources */,
 				BDC68B0C2D092E4B00834D9B /* UIImage+GIF.swift in Sources */,
 				BDC68B0D2D092E4B00834D9B /* SpinnerAPI.swift in Sources */,
+				BDA64D4C2D559D7A00C31C61 /* SpinnerDataShowVC.swift in Sources */,
 				BDC68B0E2D092E4B00834D9B /* SFWConfiguration.swift in Sources */,
 				BDC68B0F2D092E4B00834D9B /* StaticFunction.swift in Sources */,
 				BDE586242D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift in Sources */,

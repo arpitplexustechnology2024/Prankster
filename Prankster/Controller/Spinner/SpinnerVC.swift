@@ -28,26 +28,23 @@ enum SpinButtonState {
 class SpinnerVC: UIViewController {
     
     // MARK: - IBOutlets
-    
-    @IBOutlet weak var topHeightConstraints: NSLayoutConstraint!
-    @IBOutlet weak var bannerHeightConstraints: NSLayoutConstraint!
     @IBOutlet weak var spinnerWidghConstraints: NSLayoutConstraint!
     @IBOutlet weak var spinnerGeightConstraints: NSLayoutConstraint!
     @IBOutlet weak var spinnerbuttonWidghConstraints: NSLayoutConstraint!
     @IBOutlet weak var spinnerbuttonHeightConstraints: NSLayoutConstraint!
-    @IBOutlet weak var spinTextHeightConstraints: NSLayoutConstraint!
-    @IBOutlet weak var rewardWidthConstraits: NSLayoutConstraint!
-    
-    @IBOutlet weak var rewardShowButton: UIButton!
+    @IBOutlet weak var collectionview: UICollectionView!
+    @IBOutlet weak var spinerDesginHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var spinsecoundLabelHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var topHeightConstraints: NSLayoutConstraint!
     @IBOutlet weak var spinnerCountLabel: UILabel!
-    @IBOutlet weak var spinLabel: UILabel!
-    @IBOutlet weak var spinnerbutton: UIButton!
+    @IBOutlet weak var bottomConstraints: NSLayoutConstraint!
     
     @IBOutlet weak var wheelControl: SwiftFortuneWheel! {
         didSet {
-            wheelControl.configuration = .customColorsConfiguration
+            let wheelSize = CGSize(width: 300, height: 300)
+            wheelControl.configuration = .gradientColorsConfiguration(wheelSize: wheelSize)
             wheelControl.spinImage = "darkBlueCenterImage"
-            wheelControl.isSpinEnabled = false
+            wheelControl.isSpinEnabled = true
             wheelControl.impactFeedbackOn = true
             wheelControl.edgeCollisionDetectionOn = true
         }
@@ -68,7 +65,9 @@ class SpinnerVC: UIViewController {
     private var spinViewModel: SpinnerViewModel!
     private let timerKey = "nextSpinAvailableTime"
     private let rewardAdUtility = RewardAdUtility()
-  //  private let adsViewModel = AdsViewModel()
+    private let adsViewModel = AdsViewModel()
+    var bannerAdUtility = BannerAdUtility()
+    let interstitialAdUtility = InterstitialAdUtility()
     private var currentSpinButtonState: SpinButtonState = .spin
     
     var remainingSpins: Int {
@@ -105,28 +104,85 @@ class SpinnerVC: UIViewController {
         self.loadSavedSpinnerData()
         self.requestNotificationPermission()
         
+        self.collectionview.delegate = self
+        self.collectionview.dataSource = self
+        
         prizes = [
             Spinner(image: "Audio1", value: "1"),
-            Spinner(image: "NextLuck1", value: "4"),
             Spinner(image: "ImageSpin", value: "3"),
-            Spinner(image: "Audio2", value: "1"),
-            Spinner(image: "NextLuck2", value: "4"),
-            Spinner(image: "VideoSpin", value: "2")
+            Spinner(image: "Gift", value: "1"),
+            Spinner(image: "VideoSpin", value: "2"),
         ]
         
         updateSlices()
         setupSwipeGesture()
-        wheelControl.configuration = .customColorsConfiguration
+        
+        wheelControl.onSpinButtonTap = { [self] in
+            guard !isSpinning else { return }
+            
+            if isConnectedToInternet() {
+                switch currentSpinButtonState {
+                case .spin:
+                    if remainingSpins > 0 {
+                        proceedWithSpinning()
+                    }
+                case .watchAd:
+                    rewardAdUtility.showRewardedAd()
+                case .waitingForReset:
+                    break
+                }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
+            }
+        }
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            bottomConstraints.constant = 100
+        } else {
+            bottomConstraints.constant = 75
+        }
+        
+        if isConnectedToInternet() {
+            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                print("Reward Ad ID: \(rewardAdID)")
+                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
+            } else {
+                print("No Reward Ad ID found")
+            }
+            
+            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+                bottomConstraints.constant = 16
+            } else {
+                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+                    print("Banner Ad ID: \(bannerAdID)")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+                } else {
+                    print("No Banner Ad ID found")
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        bottomConstraints.constant = 16
+                    } else {
+                        bottomConstraints.constant = 16
+                    }
+                }
+                
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
+                
+            }
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+        
+        let wheelSize = CGSize(width: 300, height: 300)
+        wheelControl.configuration = .gradientColorsConfiguration(wheelSize: wheelSize)
         updateSpinLabel()
         startTimerLabelUpdate()
-        if isConnectedToInternet() {
-//            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-//                print("Reward Ad ID: \(rewardAdID)")
-                rewardAdUtility.loadRewardedAd(adUnitID: "ca-app-pub-7719542074975419/4831306268", rootViewController: self)
-//            } else {
-//                print("No Reward Ad ID found")
-//            }
-        }
         rewardAdUtility.onRewardEarned = { [weak self] in
             self?.proceedWithSpinning()
         }
@@ -136,19 +192,19 @@ class SpinnerVC: UIViewController {
         if UIDevice.current.userInterfaceIdiom == .phone {
             spinnerbuttonWidghConstraints.constant = 230
             spinnerbuttonHeightConstraints.constant = 110
-            bannerHeightConstraints.constant = 90
-            spinTextHeightConstraints.constant = 56
+            spinsecoundLabelHeightConstraints.constant = 40
+            spinerDesginHeightConstraints.constant = -40
             switch screenHeight {
             case 1334:
-                topHeightConstraints.constant = 10
-                spinnerWidghConstraints.constant = 275
-                spinnerGeightConstraints.constant = 275
+                topHeightConstraints.constant = 25
+                spinnerWidghConstraints.constant = 280
+                spinnerGeightConstraints.constant = 280
             case 1920, 1792:
-                topHeightConstraints.constant = 30
+                topHeightConstraints.constant = 50
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             case 2340:
-                topHeightConstraints.constant = 40
+                topHeightConstraints.constant = 50
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             case 2532, 2556:
@@ -156,34 +212,33 @@ class SpinnerVC: UIViewController {
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             case 2622:
-                topHeightConstraints.constant = 66
+                topHeightConstraints.constant = 70
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             case 2688:
-                topHeightConstraints.constant = 75
+                topHeightConstraints.constant = 70
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             case 2796:
-                topHeightConstraints.constant = 90
+                topHeightConstraints.constant = 70
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             case 2869:
-                topHeightConstraints.constant = 100
+                topHeightConstraints.constant = 70
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             default:
-                topHeightConstraints.constant = 60
+                topHeightConstraints.constant = 40
                 spinnerWidghConstraints.constant = 300
                 spinnerGeightConstraints.constant = 300
             }
         } else {
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 34)
-            spinTextHeightConstraints.constant = 80
-            topHeightConstraints.constant = 150
-            bannerHeightConstraints.constant = 150
+            topHeightConstraints.constant = 170
+            spinsecoundLabelHeightConstraints.constant = 60
+            spinerDesginHeightConstraints.constant = -50
             spinnerGeightConstraints.constant = 400
             spinnerWidghConstraints.constant = 400
-            spinnerbuttonWidghConstraints.constant = 330
+            spinnerbuttonWidghConstraints.constant = 300
             spinnerbuttonHeightConstraints.constant = 150
         }
     }
@@ -195,15 +250,15 @@ class SpinnerVC: UIViewController {
         spinViewModel.onDataUpdate = { [weak self] response in
             guard let response = response else { return }
             DispatchQueue.main.async {
-                self?.rewardShowButton.isEnabled = true
                 self?.updateSpinnerData(with: response.data)
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerPreviewVC") as! SpinnerPreviewVC
-                vc.coverImage = response.data.coverImage
-                vc.name = response.data.name
-                vc.file = response.data.file
-                vc.link = response.data.shareURL
-                vc.type = response.data.type
-                vc.image = response.data.image
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
+                vc.coverImageURL = response.data.coverImage
+                vc.prankName = response.data.name
+                vc.prankDataURL = response.data.file
+                vc.prankLink = response.data.link
+                vc.prankShareURL = response.data.shareURL
+                vc.prankType = response.data.type
+                vc.prankImage = response.data.image
                 vc.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
                 self?.present(vc, animated: true)
@@ -231,10 +286,7 @@ class SpinnerVC: UIViewController {
             let decoder = JSONDecoder()
             if let decodedData = try? decoder.decode([SpinnerData].self, from: savedData) {
                 spinnerResponseData = decodedData
-                rewardShowButton.isEnabled = !spinnerResponseData.isEmpty
             }
-        } else {
-            rewardShowButton.isEnabled = false
         }
     }
     
@@ -242,6 +294,7 @@ class SpinnerVC: UIViewController {
     func updateSpinnerData(with response: SpinnerData) {
         spinnerResponseData.insert(response, at: 0)
         saveSpinnerData()
+        collectionview.reloadData()
     }
     
     // MARK: - Wheel Methods
@@ -296,21 +349,6 @@ class SpinnerVC: UIViewController {
                     self?.updateSpinLabel()
                 }
             }
-        }
-    }
-    
-    private func updateSpinButtonState() {
-        switch currentSpinButtonState {
-        case .spin:
-            spinLabel.text = "Spin"
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 24)
-            spinnerbutton.isEnabled = remainingSpins > 0
-        case .watchAd:
-            spinLabel.text = "🎥 Watch"
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 24)
-            spinnerbutton.isEnabled = true
-        case .waitingForReset:
-            spinnerbutton.isEnabled = true
         }
     }
     
@@ -381,7 +419,6 @@ class SpinnerVC: UIViewController {
             } else {
                 currentSpinButtonState = .watchAd
             }
-            updateSpinButtonState()
         }
     }
     
@@ -392,13 +429,12 @@ class SpinnerVC: UIViewController {
         
         let remainingTime = nextSpinTime.timeIntervalSinceNow
         if remainingTime <= 0 {
-            remainingSpins = 4
-            currentSpinButtonState = .spin
-            updateSpinButtonState()
-            spinLabel.text = "Spin"
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 24)
             UserDefaults.standard.removeObject(forKey: "savedSpinnerData")
             spinnerResponseData.removeAll()
+            collectionview.reloadData()
+            
+            remainingSpins = 4
+            currentSpinButtonState = .spin
             nextSpinAvailableTime = nil
             
             UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
@@ -408,31 +444,8 @@ class SpinnerVC: UIViewController {
             
             let hours = Int(remainingTime) / 3600
             let minutes = (Int(remainingTime) % 3600) / 60
-            spinLabel.text = String(format: "New spin \n%02dh:%02dm", hours, minutes)
-            spinLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
-            
-            updateSpinButtonState()
-        }
-    }
-    
-    // MARK: - IBActions
-    @IBAction func btnSpinnerTapped(_ sender: UIButton) {
-        guard !isSpinning else { return }
-        
-        if isConnectedToInternet() {
-            switch currentSpinButtonState {
-            case .spin:
-                if remainingSpins > 0 {
-                    proceedWithSpinning()
-                }
-            case .watchAd:
-                rewardAdUtility.showRewardedAd()
-            case .waitingForReset:
-                break
-            }
-        } else {
-            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
+            spinnerCountLabel.text = String(format: "New spin %02dh:%02dm", hours, minutes)
+            spinnerCountLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
         }
     }
     
@@ -459,14 +472,6 @@ class SpinnerVC: UIViewController {
         }
     }
     
-    @IBAction func btnShowReward(_ sender: UIButton) {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerDataVC") as! SpinnerDataVC
-        vc.spinnerResponseData = self.spinnerResponseData
-        vc.modalPresentationStyle = .custom
-        vc.transitioningDelegate = self
-        self.present(vc, animated: true)
-    }
-    
     func rateUs() {
         if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
             DispatchQueue.main.async {
@@ -486,5 +491,62 @@ extension SpinnerVC: UIViewControllerTransitioningDelegate {
         )
         customPresentationController.heightPercentage = 0.4
         return customPresentationController
+    }
+}
+
+// MARK: - UICollectionView Delegate & DataSource
+extension SpinnerVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+    // MARK: - UICollectionView Delegate & DataSource Methods
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return spinnerResponseData.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SpinnerCollectionViewCell", for: indexPath) as! SpinnerCollectionViewCell
+        let spinData = spinnerResponseData[indexPath.item]
+        
+        cell.configure(with: spinData) { [weak self] selectedSpinData in
+            guard let self = self, let spinData = selectedSpinData else { return }
+            
+            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+            let hasInternet = isConnectedToInternet()
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+            
+            if shouldOpenDirectly {
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
+                vc.coverImageURL = spinData.coverImage
+                vc.prankName = spinData.name
+                vc.prankDataURL = spinData.file
+                vc.prankLink = spinData.link
+                vc.prankShareURL = spinData.shareURL
+                vc.prankType = spinData.type
+                vc.prankImage = spinData.image
+                vc.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overCurrentContext
+                
+                self.present(vc, animated: true)
+            } else {
+                interstitialAdUtility.showInterstitialAd()
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
+                    vc.coverImageURL = spinData.coverImage
+                    vc.prankName = spinData.name
+                    vc.prankDataURL = spinData.file
+                    vc.prankLink = spinData.link
+                    vc.prankShareURL = spinData.shareURL
+                    vc.prankType = spinData.type
+                    vc.prankImage = spinData.image
+                    vc.modalTransitionStyle = .crossDissolve
+                    vc.modalPresentationStyle = .overCurrentContext
+                    
+                    self?.present(vc, animated: true)
+                }
+            }
+        }
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: 115, height: 128)
     }
 }

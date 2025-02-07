@@ -11,8 +11,6 @@ import SDWebImage
 class SpinnerCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
-    @IBOutlet weak var imageName: UILabel!
-    @IBOutlet weak var previewButton: UIButton!
     @IBOutlet weak var shareButton: UIButton!
     
     var spinnerData: SpinnerData?
@@ -22,18 +20,13 @@ class SpinnerCollectionViewCell: UICollectionViewCell {
         super.awakeFromNib()
         
         self.layer.cornerRadius = 10
+        self.contentView.layer.cornerRadius = 10
         self.clipsToBounds = true
         
         self.imageView.layer.cornerRadius = 6
         self.imageView.clipsToBounds = true
-        
-        self.shareButton.layer.cornerRadius = shareButton.layer.frame.height / 2
-        self.shareButton.clipsToBounds = true
-        
-        self.previewButton.layer.cornerRadius = 6
-        self.previewButton.clipsToBounds = true
 
-        previewButton.addTarget(self, action: #selector(previewButtonTapped), for: .touchUpInside)
+        shareButton.addTarget(self, action: #selector(previewButtonTapped), for: .touchUpInside)
     }
     
     @objc private func previewButtonTapped() {
@@ -46,7 +39,6 @@ class SpinnerCollectionViewCell: UICollectionViewCell {
         if let url = URL(string: spinnerData.coverImage) {
             imageView.sd_setImage(with: url)
         }
-        imageName.text = spinnerData.name
         self.onPreviewTap = previewAction
     }
 }

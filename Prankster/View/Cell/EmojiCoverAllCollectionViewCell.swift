@@ -10,6 +10,7 @@ import UIKit
 import SDWebImage
 import GoogleMobileAds
 import Alamofire
+import AVFoundation
 
 @available(iOS 15.0, *)
 class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
@@ -20,11 +21,16 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageName: UILabel!
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var blurImageView: UIImageView!
+    @IBOutlet weak var tutorialViewShowView: UIView!
     
     // MARK: - Properties
     private var coverPageData: CoverPageData?
     var premiumActionButton: UIButton!
     var originalImage: UIImage?
+    
+    private var playerLayer: AVPlayerLayer?
+    private var player: AVPlayer?
+    private var playerLooper: AVPlayerLooper?
     
     @IBOutlet weak var adContainerView: UIView!
     
@@ -44,6 +50,64 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
         setupPremiumActionButton()
     }
     
+    public func setupTutorialVideo() {
+           playerLayer?.removeFromSuperlayer()
+           player?.pause()
+           playerLayer = nil
+           player = nil
+           playerLooper = nil
+           
+           if let videoPath = Bundle.main.path(forResource: "cover", ofType: "mp4") {
+               print("Video path found: \(videoPath)")
+               
+               let videoURL = URL(fileURLWithPath: videoPath)
+               let playerItem = AVPlayerItem(url: videoURL)
+               
+               let queuePlayer = AVQueuePlayer()
+               player = queuePlayer
+               player?.isMuted = true
+               playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
+               playerLayer = AVPlayerLayer(player: player)
+               playerLayer?.videoGravity = .resizeAspectFill
+
+               if let playerLayer = playerLayer {
+                   tutorialViewShowView.layer.addSublayer(playerLayer)
+                   playerLayer.frame = tutorialViewShowView.bounds
+                   player?.play()
+               }
+           } else {
+               print("Error: Video file 'cover.mp4' not found in bundle")
+           }
+       }
+       
+       // MARK: - Lifecycle Methods
+       override func didMoveToWindow() {
+           super.didMoveToWindow()
+           if window != nil {
+               player?.play()
+           } else {
+               player?.pause()
+           }
+       }
+       
+       override func layoutSubviews() {
+           super.layoutSubviews()
+           playerLayer?.frame = tutorialViewShowView.bounds
+       }
+       
+       override func prepareForReuse() {
+           super.prepareForReuse()
+           player?.pause()
+           playerLooper = nil
+       }
+       
+       deinit {
+           player?.pause()
+           player = nil
+           playerLayer = nil
+           playerLooper = nil
+       }
+    
     // MARK: - Setup Methods
     private func setupPremiumActionButton() {
         premiumActionButton = UIButton(type: .custom)
@@ -59,7 +123,7 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
             premiumActionButton.heightAnchor.constraint(equalToConstant: 80)
         ])
     }
-
+    
     
     private func setupUI() {
         // ImageView Setup
@@ -73,6 +137,10 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
         // BlurImageView Setup
         blurImageView.layer.cornerRadius = 20
         blurImageView.layer.masksToBounds = true
+        
+        
+        tutorialViewShowView.layer.cornerRadius = 20
+        tutorialViewShowView.layer.masksToBounds = true
         
         // DoneButton Setup
         DoneButton.layer.shadowColor = UIColor.black.cgColor
@@ -109,27 +177,29 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
             self.premiumButton.isHidden = true
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             
             if let parentVC = self.parentViewController as? CoverPrankVC,
-                       let preloadedAdView = parentVC.preloadedNativeAdView {
-                        // Remove any existing subviews
-                        adContainerView.subviews.forEach { $0.removeFromSuperview() }
-                        
-                        // Add the preloaded ad view
-                        adContainerView.addSubview(preloadedAdView)
-                        preloadedAdView.translatesAutoresizingMaskIntoConstraints = false
-                        
-                        NSLayoutConstraint.activate([
-                            preloadedAdView.topAnchor.constraint(equalTo: adContainerView.topAnchor),
-                            preloadedAdView.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor),
-                            preloadedAdView.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor),
-                            preloadedAdView.bottomAnchor.constraint(equalTo: adContainerView.bottomAnchor)
-                        ])
-                    }
+               let preloadedAdView = parentVC.preloadedNativeAdView {
+                // Remove any existing subviews
+                adContainerView.subviews.forEach { $0.removeFromSuperview() }
+                
+                // Add the preloaded ad view
+                adContainerView.addSubview(preloadedAdView)
+                preloadedAdView.translatesAutoresizingMaskIntoConstraints = false
+                
+                NSLayoutConstraint.activate([
+                    preloadedAdView.topAnchor.constraint(equalTo: adContainerView.topAnchor),
+                    preloadedAdView.leadingAnchor.constraint(equalTo: adContainerView.leadingAnchor),
+                    preloadedAdView.trailingAnchor.constraint(equalTo: adContainerView.trailingAnchor),
+                    preloadedAdView.bottomAnchor.constraint(equalTo: adContainerView.bottomAnchor)
+                ])
+            }
             
         } else {
             self.adContainerView.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             let displayName = coverPageData.coverName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.coverName
             self.imageName.text = " \(displayName) "

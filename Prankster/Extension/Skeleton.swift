@@ -31,7 +31,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
     
     private func setupSkeleton() {
         
-        skeletonBackgroundView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        skeletonBackgroundView.backgroundColor = UIColor.systemGray.withAlphaComponent(0.9)
         skeletonBackgroundView.layer.cornerRadius = 12
         skeletonBackgroundView.clipsToBounds = true
         
@@ -42,22 +42,22 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
         skeletonBackgroundView.layer.masksToBounds = false
         contentView.addSubview(skeletonBackgroundView)
         
-        ImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
+        ImageView.backgroundColor = UIColor.skeletonsed1.withAlphaComponent(0.5)
         ImageView.clipsToBounds = true
         ImageView.layer.cornerRadius = 12
         contentView.addSubview(ImageView)
         
-        labelImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
+        labelImageView.backgroundColor = UIColor.skeletonsed1.withAlphaComponent(0.5)
         labelImageView.clipsToBounds = true
         labelImageView.layer.cornerRadius = 10
         contentView.addSubview(labelImageView)
         
-        label2ImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
+        label2ImageView.backgroundColor = UIColor.skeletonsed1.withAlphaComponent(0.5)
         label2ImageView.clipsToBounds = true
         label2ImageView.layer.cornerRadius = 10
         contentView.addSubview(label2ImageView)
         
-        buttonImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
+        buttonImageView.backgroundColor = UIColor.skeletonsed1.withAlphaComponent(0.5)
         buttonImageView.clipsToBounds = true
         buttonImageView.layer.cornerRadius = 12
         contentView.addSubview(buttonImageView)
@@ -101,7 +101,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
             buttonImageView.widthAnchor.constraint(equalToConstant: 50),
             buttonImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
-
+        
         
         setupGradient(for: ImageView, gradientLayer: gradientLayerImage)
         setupGradient(for: labelImageView, gradientLayer: gradientLayerLabel)
@@ -111,9 +111,9 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
     
     private func setupGradient(for view: UIView, gradientLayer: CAGradientLayer) {
         gradientLayer.colors = [
-            UIColor.systemGray4.withAlphaComponent(0.5).cgColor,
-            UIColor.systemGray.withAlphaComponent(0.5).cgColor,
-            UIColor.systemGray4.withAlphaComponent(0.5).cgColor
+            UIColor.skeletonsed1.withAlphaComponent(0.5).cgColor,
+            UIColor.skeletonsed2.withAlphaComponent(0.5).cgColor,
+            UIColor.skeletonsed1.withAlphaComponent(0.5).cgColor
         ]
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
@@ -165,7 +165,7 @@ class SkeletonBoxCollectionViewCell: UICollectionViewCell {
     
     private func setupSkeleton() {
         
-        largeImageView.backgroundColor = UIColor.systemGray4.withAlphaComponent(0.5)
+        largeImageView.backgroundColor = UIColor.skeletonsed1.withAlphaComponent(0.5)
         largeImageView.clipsToBounds = true
         largeImageView.layer.cornerRadius = 16
         contentView.addSubview(largeImageView)
@@ -183,9 +183,9 @@ class SkeletonBoxCollectionViewCell: UICollectionViewCell {
     
     private func setupGradient(for view: UIView, gradientLayer: CAGradientLayer) {
         gradientLayer.colors = [
-            UIColor.systemGray4.withAlphaComponent(0.5).cgColor,
-            UIColor.systemGray.withAlphaComponent(0.5).cgColor,
-            UIColor.systemGray4.withAlphaComponent(0.5).cgColor
+            UIColor.skeletonsed1.withAlphaComponent(0.5).cgColor,
+            UIColor.skeletonsed2.withAlphaComponent(0.5).cgColor,
+            UIColor.skeletonsed1.withAlphaComponent(0.5).cgColor
         ]
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)

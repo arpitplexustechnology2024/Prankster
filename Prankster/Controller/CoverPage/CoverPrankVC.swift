@@ -620,24 +620,30 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 if shouldShowGIF {
                     cell.imageName.text = " Tutorial "
-                    cell.imageView.loadGif(name: "cover")
-                    cell.imageView.contentMode = .scaleAspectFill
-                    cell.applyBackgroundBlurEffect()
+                    cell.tutorialViewShowView.isHidden = false
+                    cell.imageView.isHidden = true
                     cell.DoneButton.isHidden = true
                     cell.adContainerView.isHidden = true
                     cell.premiumButton.isHidden = true
                     cell.premiumActionButton.isHidden = true
+                    DispatchQueue.main.async {
+                        cell.setupTutorialVideo()
+                    }
                     return cell
                 }
                 
                 if customCovers.isEmpty {
-                    cell.imageView.loadGif(name: "cover")
-                    cell.imageView.contentMode = .scaleAspectFill
-                    cell.applyBackgroundBlurEffect()
+                    cell.tutorialViewShowView.isHidden = false
+                    cell.imageView.isHidden = true
                     cell.DoneButton.isHidden = true
                     cell.premiumButton.isHidden = true
                     cell.premiumActionButton.isHidden = true
+                    DispatchQueue.main.async {
+                        cell.setupTutorialVideo()
+                    }
                 } else {
+                    cell.tutorialViewShowView.isHidden = true
+                    cell.imageView.isHidden = false
                     let customCover = customCovers[indexPath.item]
                     cell.imageView.image = customCover.image
                     cell.originalImage = customCover.image
@@ -668,6 +674,8 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     let coverPageData = currentDataSource[indexPath.row]
                     cell.configure(with: coverPageData)
                     cell.imageView.contentMode = .scaleAspectFit
+                    cell.tutorialViewShowView.isHidden = true
+                    cell.imageView.isHidden = false
                     
                     // Configure Premium button action
                     cell.premiumActionButton.tag = indexPath.row
