@@ -14,10 +14,12 @@ import GoogleMobileAds
 struct CustomCover {
     let image: UIImage
     let imageUrl: String?
+    let isLocalFile: Bool
     
-    init(image: UIImage, imageUrl: String? = nil) {
+    init(image: UIImage, imageUrl: String?, isLocalFile: Bool = false) {
         self.image = image
         self.imageUrl = imageUrl
+        self.isLocalFile = isLocalFile
     }
 }
 
@@ -768,40 +770,44 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
         
         if shouldOpenDirectly {
-            let selectedChipTitle = chipSelector.getSelectedChipTitle()
-            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as? LanguageVC {
-                if selectedChipTitle == "Add cover image 📸" {
-                    let customCover = customCovers[sender.tag]
-                    vc.coverImageUrl = customCover.imageUrl
-                    vc.coverimageName = "Custom Cover image"
-                    vc.buttonType = buttonType
-                } else {
-                    let coverPageData = currentDataSource[sender.tag]
-                    vc.coverImageUrl = coverPageData.coverURL
-                    vc.coverimageName = coverPageData.coverName
-                    vc.buttonType = buttonType
-                }
-                self.navigationController?.pushViewController(vc, animated: true)
-            }
+            self.doneButtonClick(sender)
         } else {
             interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                let selectedChipTitle = self?.chipSelector.getSelectedChipTitle()
-                if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as? LanguageVC {
-                    if selectedChipTitle == "Add cover image 📸" {
-                        let customCover = self?.customCovers[sender.tag]
-                        vc.coverImageUrl = customCover?.imageUrl
-                        vc.coverimageName = "Custom Cover image"
-                        vc.buttonType = self?.buttonType
-                    } else {
-                        let coverPageData = self?.currentDataSource[sender.tag]
-                        vc.coverImageUrl = coverPageData?.coverURL
-                        vc.coverimageName = coverPageData?.coverName
-                        vc.buttonType = self?.buttonType
-                    }
-                    self?.navigationController?.pushViewController(vc, animated: true)
-                }
+            interstitialAdUtility.onInterstitialEarned = {
+                self.doneButtonClick(sender)
             }
+        }
+    }
+    
+    private func doneButtonClick(_ sender: UIButton) {
+        let selectedChipTitle = chipSelector.getSelectedChipTitle()
+        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "LanguageVC") as? LanguageVC {
+            if selectedChipTitle == "Add cover image 📸" {
+                let customCover = customCovers[sender.tag]
+                
+                if let imageURLString = customCover.imageUrl,
+                   let imageURL = URL(string: imageURLString),
+                   imageURL.scheme?.lowercased() == "http" || imageURL.scheme?.lowercased() == "https" {
+                    vc.coverImageUrl = imageURLString
+                    
+                } else if let localPath = customCover.imageUrl {
+                    let fileURL = URL(fileURLWithPath: localPath)
+                    if let fileData = try? Data(contentsOf: fileURL) {
+                        vc.coverImageFile = fileData
+                    } else {
+                        print("Error loading image data from local path")
+                    }
+                }
+                
+                vc.coverimageName = "Custom Cover image"
+                vc.buttonType = buttonType
+            } else {
+                let coverPageData = currentDataSource[sender.tag]
+                vc.coverImageUrl = coverPageData.coverURL
+                vc.coverimageName = coverPageData.coverName
+                vc.buttonType = buttonType
+            }
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     
@@ -1104,7 +1110,7 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     
                     switch result {
                     case .success(let compressedImage):
-                        let customCover = CustomCover(image: compressedImage, imageUrl: imageUrl)
+                        let customCover = CustomCover(image: selectedImage, imageUrl: imageUrl, isLocalFile: true)
                         self.customCovers.insert(customCover, at: 0)
                         self.selectedCoverIndex = 0
                         self.saveCovers()
@@ -1154,32 +1160,66 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
     }
     
     func saveCovers() {
-        
         let coversData: [[String: Any]] = customCovers.compactMap { cover -> [String: Any]? in
-            guard let imageData = cover.image.jpegData(compressionQuality: 0.8) else { return nil }
             return [
-                "imageData": imageData,
-                "url": cover.imageUrl ?? ""
+                "url": cover.imageUrl ?? "",
+                "isLocalFile": cover.isLocalFile
             ]
         }
         
-        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: coversData, requiringSecureCoding: false) {
-            UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserCoverImages)
+        // JSON એન્કોડિંગનો ઉપયોગ કરો
+        if let jsonData = try? JSONSerialization.data(withJSONObject: coversData) {
+            UserDefaults.standard.set(jsonData, forKey: ConstantValue.is_UserCoverImages)
         }
     }
     
     func loadSavedCovers() {
-        if let savedData = UserDefaults.standard.object(forKey: ConstantValue.is_UserCoverImages) as? Data {
+        if let savedData = UserDefaults.standard.data(forKey: ConstantValue.is_UserCoverImages) {
             do {
-                if let decodedData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedData) as? [[String: Any]] {
-                    customCovers = decodedData.compactMap { dict -> CustomCover? in
-                        guard let imageData = dict["imageData"] as? Data,
-                              let image = UIImage(data: imageData) else { return nil }
-                        let url = dict["url"] as? String
-                        return CustomCover(image: image, imageUrl: url)
+                if let decodedData = try JSONSerialization.jsonObject(with: savedData) as? [[String: Any]] {
+                    let dispatchGroup = DispatchGroup()
+                    var tempCustomCovers: [(index: Int, cover: CustomCover)] = []
+                    
+                    for (index, dict) in decodedData.enumerated() {
+                        guard let url = dict["url"] as? String else { continue }
+                        let isLocalFile = dict["isLocalFile"] as? Bool ?? false
+                        
+                        dispatchGroup.enter()
+                        
+                        if isLocalFile {
+                            // Local file handling
+                            let fileURL = URL(fileURLWithPath: url)
+                            DispatchQueue.global(qos: .background).async {
+                                if let imageData = try? Data(contentsOf: fileURL),
+                                   let image = UIImage(data: imageData) {
+                                    let customImage = CustomCover(image: image, imageUrl: url, isLocalFile: true)
+                                    tempCustomCovers.append((index: index, cover: customImage))
+                                }
+                                dispatchGroup.leave()
+                            }
+                        } else {
+                            // Remote image handling
+                            if let imageURL = URL(string: url) {
+                                URLSession.shared.dataTask(with: imageURL) { (data, response, error) in
+                                    if let data = data, let image = UIImage(data: data) {
+                                        let customImage = CustomCover(image: image, imageUrl: url, isLocalFile: false)
+                                        tempCustomCovers.append((index: index, cover: customImage))
+                                    }
+                                    dispatchGroup.leave()
+                                }.resume()
+                            } else {
+                                dispatchGroup.leave()
+                            }
+                        }
                     }
-                    emojiCoverSlideCollectionview.reloadData()
-                    emojiCoverAllCollectionView.reloadData()
+                    
+                    dispatchGroup.notify(queue: .main) { [weak self] in
+                        // Sort by original index to maintain the order from UserDefaults
+                        let sortedCovers = tempCustomCovers.sorted(by: { $0.index < $1.index })
+                        self?.customCovers = sortedCovers.map { $0.cover }
+                        self?.emojiCoverAllCollectionView.reloadData()
+                        self?.emojiCoverSlideCollectionview.reloadData()
+                    }
                 }
             } catch {
                 print("Error decoding saved covers: \(error)")
@@ -1269,8 +1309,6 @@ extension CoverPrankVC: UITextFieldDelegate {
     }
 }
 
-
-// Extension to generate UUID string
 extension UUID {
     var uuidv4: String {
         return self.uuidString.lowercased()

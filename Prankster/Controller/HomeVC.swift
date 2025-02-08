@@ -319,12 +319,14 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
             
             if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "Premium_VC") as! Premium_VC
+                vc.premiumBack = true
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
                 interstitialAdUtility.showInterstitialAd()
                 interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "Premium_VC") as! Premium_VC
+                    vc.premiumBack = true
                     self?.navigationController?.pushViewController(vc, animated: true)
                 }
             }

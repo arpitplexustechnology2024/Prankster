@@ -8,6 +8,7 @@
 import UIKit
 import SDWebImage
 import Alamofire
+import AVFoundation
 
 @available(iOS 15.0, *)
 class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
@@ -17,12 +18,17 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var imageName: UILabel!
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var blurImageView: UIImageView!
+    @IBOutlet weak var tutorialViewShowView: UIView!
     
     private var coverPageData: CategoryAllData?
     var originalImage: UIImage?
     var premiumActionButton: UIButton!
     
     @IBOutlet weak var adContainerView: UIView!
+    
+    private var playerLayer: AVPlayerLayer?
+    private var player: AVPlayer?
+    private var playerLooper: AVPlayerLooper?
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -37,6 +43,64 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupPremiumActionButton()
+    }
+    
+    public func setupTutorialVideo() {
+           playerLayer?.removeFromSuperlayer()
+           player?.pause()
+           playerLayer = nil
+           player = nil
+           playerLooper = nil
+           
+           if let videoPath = Bundle.main.path(forResource: "image", ofType: "mp4") {
+               print("Video path found: \(videoPath)")
+               
+               let videoURL = URL(fileURLWithPath: videoPath)
+               let playerItem = AVPlayerItem(url: videoURL)
+               
+               let queuePlayer = AVQueuePlayer()
+               player = queuePlayer
+               player?.isMuted = true
+               playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
+               playerLayer = AVPlayerLayer(player: player)
+               playerLayer?.videoGravity = .resizeAspectFill
+
+               if let playerLayer = playerLayer {
+                   tutorialViewShowView.layer.addSublayer(playerLayer)
+                   playerLayer.frame = tutorialViewShowView.bounds
+                   player?.play()
+               }
+           } else {
+               print("Error: Video file 'cover.mp4' not found in bundle")
+           }
+       }
+    
+    // MARK: - Lifecycle Methods
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window != nil {
+            player?.play()
+        } else {
+            player?.pause()
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = tutorialViewShowView.bounds
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        player?.pause()
+        playerLooper = nil
+    }
+    
+    deinit {
+        player?.pause()
+        player = nil
+        playerLayer = nil
+        playerLooper = nil
     }
     
     // MARK: - Setup Methods
@@ -64,6 +128,9 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
         adContainerView.layer.cornerRadius = 20
         adContainerView.layer.masksToBounds = true
         adContainerView.isHidden = true
+        
+        tutorialViewShowView.layer.cornerRadius = 20
+        tutorialViewShowView.layer.masksToBounds = true
         
         // BlurImageView Setup
         blurImageView.layer.cornerRadius = 20
@@ -104,6 +171,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
             self.premiumButton.isHidden = true
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             if let parentVC = self.parentViewController as? ImagePrankVC,
                let preloadedAdView = parentVC.preloadedNativeAdView {
@@ -124,6 +192,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
             
         } else {
             self.adContainerView.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             let displayName = coverPageData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : coverPageData.name
             self.imageName.text = " \(displayName) "

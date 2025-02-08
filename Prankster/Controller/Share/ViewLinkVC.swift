@@ -20,6 +20,7 @@ class ViewLinkVC: UIViewController {
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
     private let adsViewModel = AdsViewModel()
+    let interstitialAdUtility = InterstitialAdUtility()
     
     
     override func viewDidLoad() {
@@ -49,6 +50,13 @@ class ViewLinkVC: UIViewController {
             } else {
                 nativeSmallAds.isHidden = true
             }
+            
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                print("Interstitial Ad ID: \(interstitialAdID)")
+                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+            } else {
+                print("No Interstitial Ad ID found")
+            }
         } else {
             nativeSmallAds.isHidden = true
         }
@@ -63,12 +71,11 @@ class ViewLinkVC: UIViewController {
         viewlinkCollectionView.delegate = self
         viewlinkCollectionView.dataSource = self
         
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.minimumInteritemSpacing = 10
-        layout.minimumLineSpacing = 10
-        layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-        viewlinkCollectionView.collectionViewLayout = layout
+        if let layout = viewlinkCollectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.minimumInteritemSpacing = 16
+            layout.minimumLineSpacing = 16
+            layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        }
     }
     
     private func setupNoDataView() {
@@ -142,7 +149,7 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
                     }
                 case .failure(let error):
                     print("Image load error: \(error)")
-                    cell.imageView.image = UIImage(named: "Pranksters")
+                    cell.imageView.image = UIImage(named: "imageplacholder")
                 }
             }
         }
@@ -154,22 +161,51 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = (collectionView.bounds.width - 30) / 2
-        return CGSize(width: width, height: width * 1.2)
+        let padding: CGFloat = 8 * 2
+        let availableWidth = collectionView.frame.width - padding
+        let widthPerItem = availableWidth
+        let heightPerItem: CGFloat = 100
+        return CGSize(width: widthPerItem, height: heightPerItem)
     }
     
     @objc func shareButtonTapped(_ sender: UIButton) {
         let prank = pranks[sender.tag]
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ShareLinkPopup") as! ShareLinkPopup
-        vc.coverImageURL = prank.coverImage
-        vc.prankName = prank.name
-        vc.prankDataURL = prank.file
-        vc.prankLink = prank.link
-        vc.prankShareURL = prank.shareURL
-        vc.prankType = prank.type
-        vc.prankImage = prank.image
-        vc.modalTransitionStyle = .crossDissolve
-        vc.modalPresentationStyle = .overCurrentContext
-        self.present(vc, animated: true)
+        
+        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+        let hasInternet = isConnectedToInternet()
+        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+        
+        if shouldOpenDirectly {
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
+            vc.coverImageURL = prank.coverImage
+            vc.prankName = prank.name
+            vc.prankDataURL = prank.file
+            vc.prankLink = prank.link
+            vc.prankShareURL = prank.shareURL
+            vc.prankType = prank.type
+            vc.prankImage = prank.image
+            vc.sharePrank = false
+            vc.modalTransitionStyle = .crossDissolve
+            vc.modalPresentationStyle = .overCurrentContext
+            
+            self.present(vc, animated: true)
+        } else {
+            interstitialAdUtility.showInterstitialAd()
+            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
+                vc.coverImageURL = prank.coverImage
+                vc.prankName = prank.name
+                vc.prankDataURL = prank.file
+                vc.prankLink = prank.link
+                vc.prankShareURL = prank.shareURL
+                vc.prankType = prank.type
+                vc.prankImage = prank.image
+                vc.sharePrank = false
+                vc.modalTransitionStyle = .crossDissolve
+                vc.modalPresentationStyle = .overCurrentContext
+                
+                self?.present(vc, animated: true)
+            }
+        }
     }
 }

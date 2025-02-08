@@ -803,39 +803,39 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 if currentCategoryId == 0 {
                     
                     if shouldShowGIF {
-                        cell.gifImageview.isHidden = false
-                        cell.gifImageview.loadGif(name: "Video")
                         cell.imageName.text = " Tutorial "
-                        cell.gifImageview.contentMode = .scaleAspectFill
-                        cell.imageView.isHidden = true
+                        cell.tutorialViewShowView.isHidden = false
                         cell.blurImageView.isHidden = true
-                        cell.gifImageview.isHidden = false
-                        cell.applyBackgroundBlurEffect()
-                        cell.playPauseImageView.isHidden = true
-                        cell.premiumButton.isHidden = true
+                        cell.imageView.isHidden = true
                         cell.DoneButton.isHidden = true
+                        cell.adContainerView.isHidden = true
+                        cell.premiumButton.isHidden = true
+                        cell.premiumActionButton.isHidden = true
+                        cell.playPauseImageView.isHidden = true
+                        DispatchQueue.main.async {
+                            cell.setupTutorialVideo()
+                        }
                         return cell
                     }
                     
                     // Configure cell for custom audio
                     if customVideos.isEmpty {
-                        cell.gifImageview.isHidden = false
-                        cell.gifImageview.loadGif(name: "Video")
-                        cell.imageName.text = " Tutorial "
-                        cell.gifImageview.contentMode = .scaleAspectFill
-                        cell.imageView.isHidden = true
+                        cell.tutorialViewShowView.isHidden = false
                         cell.blurImageView.isHidden = true
-                        cell.gifImageview.isHidden = false
-                        cell.applyBackgroundBlurEffect()
-                        cell.playPauseImageView.isHidden = true
-                        cell.premiumButton.isHidden = true
+                        cell.imageView.isHidden = true
                         cell.DoneButton.isHidden = true
+                        cell.premiumButton.isHidden = true
+                        cell.premiumActionButton.isHidden = true
+                        cell.playPauseImageView.isHidden = true
+                        DispatchQueue.main.async {
+                            cell.setupTutorialVideo()
+                        }
                     } else {
                         if indexPath.row < customVideos.count {
                             let videoURL = customVideos[indexPath.row]
                             cell.imageView.isHidden = false
                             cell.blurImageView.isHidden = false
-                            cell.gifImageview.isHidden = true
+                            cell.tutorialViewShowView.isHidden = true
                             cell.premiumButton.isHidden = true
                             cell.imageView.contentMode = .scaleAspectFit
                             
@@ -857,10 +857,10 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     // Configure cell for API data
                     if indexPath.row < currentDataSource.count {
                         let audioData = currentDataSource[indexPath.row]
-                        cell.imageView.isHidden = false
                         
                         cell.blurImageView.isHidden = false
-                        cell.gifImageview.isHidden = true
+                        cell.tutorialViewShowView.isHidden = true
+                        cell.imageView.isHidden = false
                         cell.imageView.contentMode = .scaleAspectFit
                         cell.configure(with: audioData, at: indexPath)
                         cell.configure(with: audioData)
@@ -972,17 +972,23 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         VideoPlaybackManager.shared.stopCurrentPlayback()
         if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
             if currentCategoryId == 0 {
-                
                 let customImages = customVideos[sender.tag]
-                //   if let fileData = try? Data(contentsOf: customImages.video) {
-                vc.selectedURL = customImages.videoURL
+                
+                if let videoURLString = customImages.videoURL,
+                   let videoURL = URL(string: videoURLString),
+                   videoURL.scheme?.lowercased() == "http" || videoURL.scheme?.lowercased() == "https" {
+                    vc.selectedURL = videoURLString
+                } else {
+                    if let fileData = try? Data(contentsOf: customImages.video) {
+                        vc.selectedFile = fileData
+                    }
+                }
                 vc.selectedName = selectedCoverImageName
                 vc.selectedCoverURL = selectedCoverImageURL
                 vc.selectedCoverFile = selectedCoverImageFile
                 vc.selectedPranktype = "video"
                 vc.selectedFileType = "mp4"
                 vc.sharePrank = true
-                //   }
             } else {
                 let categoryAllData = currentDataSource[sender.tag]
                 vc.selectedURL = categoryAllData.file

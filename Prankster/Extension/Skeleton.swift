@@ -31,7 +31,7 @@ class SkeletonCollectionViewCell: UICollectionViewCell {
     
     private func setupSkeleton() {
         
-        skeletonBackgroundView.backgroundColor = UIColor.systemGray.withAlphaComponent(0.9)
+        skeletonBackgroundView.backgroundColor = UIColor.skeletonbg.withAlphaComponent(0.9)
         skeletonBackgroundView.layer.cornerRadius = 12
         skeletonBackgroundView.clipsToBounds = true
         
@@ -213,8 +213,8 @@ class SkeletonBoxCollectionViewCell: UICollectionViewCell {
 class ShimmerView: UIView {
     // MARK: - Properties
     private let gradientLayer = CAGradientLayer()
-    private let gradientColorOne = UIColor(white: 0.85, alpha: 1.0).cgColor
-    private let gradientColorTwo = UIColor(white: 1.0, alpha: 1.0).cgColor
+    private let gradientColorOne = UIColor.skeletonsed1.cgColor
+    private let gradientColorTwo = UIColor.skeletonsed2.cgColor
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -232,6 +232,7 @@ class ShimmerView: UIView {
         backgroundColor = .clear
         
         gradientLayer.colors = [gradientColorOne, gradientColorTwo, gradientColorOne]
+        gradientLayer.cornerRadius = 8
         gradientLayer.locations = [0.0, 0.5, 1.0]
         gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)

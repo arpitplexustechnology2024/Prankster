@@ -693,27 +693,33 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     
                     if shouldShowGIF {
                         cell.audioLabel.text = " Tutorial "
-                        cell.imageView.loadGif(name: "audio")
-                        cell.imageView.contentMode = .scaleAspectFill
-                        cell.applyBackgroundBlurEffect()
+                        cell.tutorialViewShowView.isHidden = false
+                        cell.imageView.isHidden = true
                         cell.DoneButton.isHidden = true
                         cell.adContainerView.isHidden = true
                         cell.premiumButton.isHidden = true
                         cell.premiumActionButton.isHidden = true
                         cell.playPauseImageView.isHidden = true
+                        DispatchQueue.main.async {
+                            cell.setupTutorialVideo()
+                        }
                         return cell
                     }
                     
                     if customAudios.isEmpty {
-                        cell.imageView.loadGif(name: "audio")
                         cell.audioLabel.text = " Tutorial "
-                        cell.imageView.contentMode = .scaleAspectFill
-                        cell.applyBackgroundBlurEffect()
-                        cell.playPauseImageView.isHidden = true
+                        cell.tutorialViewShowView.isHidden = false
+                        cell.imageView.isHidden = true
                         cell.DoneButton.isHidden = true
                         cell.premiumButton.isHidden = true
                         cell.premiumActionButton.isHidden = true
+                        cell.premiumActionButton.isHidden = true
+                        DispatchQueue.main.async {
+                            cell.setupTutorialVideo()
+                        }
                     } else {
+                        cell.tutorialViewShowView.isHidden = true
+                        cell.imageView.isHidden = false
                         let customAudio = customAudios[indexPath.row]
                         cell.imageView.contentMode = .scaleAspectFit
                         cell.configure(with: nil, customAudio: customAudio, at: indexPath)
@@ -725,6 +731,8 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     if indexPath.row < currentDataSource.count {
                         let audioData = currentDataSource[indexPath.row]
                         cell.imageView.contentMode = .scaleAspectFit
+                        cell.tutorialViewShowView.isHidden = true
+                        cell.imageView.isHidden = false
                         cell.configure(with: audioData, customAudio: nil, at: indexPath)
                         
                         cell.premiumActionButton.tag = indexPath.row

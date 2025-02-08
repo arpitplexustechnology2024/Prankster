@@ -30,6 +30,7 @@ class LanguageVC: UIViewController {
     @IBOutlet weak var gujaratiRadio: UIButton!
     @IBOutlet weak var tamilRadio: UIButton!
     @IBOutlet weak var punjabiRadio: UIButton!
+    
     @IBOutlet var radioConstraints: [NSLayoutConstraint]!
     @IBOutlet var imageWidthConstraints: [NSLayoutConstraint]!
     @IBOutlet var languageLabel: [UILabel]!
@@ -39,9 +40,7 @@ class LanguageVC: UIViewController {
     var coverImageFile: Data?
     
     private var selectedLanguageId: Int?
-    
     var buttonType: HomeVC.ButtonType?
-    
     
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
@@ -52,9 +51,10 @@ class LanguageVC: UIViewController {
         setupSwipeGesture()
         setupUI()
         setupAds()
+        selectLanguage(for: hindiRadio)
         
         print("CoverImage URL :- \(coverImageUrl ?? "")")
-        print("CoverImage URL :- \(coverImageFile ?? Data())")
+        print("CoverImage File :- \(coverImageFile ?? Data())")
     }
     
     private func setupUI() {
@@ -69,6 +69,10 @@ class LanguageVC: UIViewController {
             view?.addGestureRecognizer(tapGesture)
             view?.isUserInteractionEnabled = true
         }
+        
+        selectedLanguageId = 1
+        hindiRadio?.setImage(UIImage(named: "RadioFill"), for: .normal)
+        hindiLanguage?.layer.borderColor = UIColor(hex: "#FBCE22").cgColor
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             for button in radioConstraints {
@@ -111,13 +115,13 @@ class LanguageVC: UIViewController {
     private func selectLanguage(for sender: UIButton?) {
         let languageViews = [hindiLanguage, englishLanguage, marathiLanguage, gujaratiLanguage, tamilLanguage, punjabiLanguage]
         let radioButtons = [hindiRadio, englishRadio, marathiRadio, gujaratiRadio, tamilRadio, punjabiRadio]
-        let languages = [1, 2, 3, 4, 5, 6]  // Changed to Int array
+        let languages = [1, 2, 3, 4, 5, 6]
         
         for (index, button) in radioButtons.enumerated() {
             if button == sender {
                 button?.setImage(UIImage(named: "RadioFill"), for: .normal)
                 languageViews[index]?.layer.borderColor = UIColor(hex: "#FBCE22").cgColor
-                selectedLanguageId = languages[index]  // Now assigning Int to Int
+                selectedLanguageId = languages[index]
                 print("Selected Language: \(languages[index])")
             } else {
                 button?.setImage(UIImage(named: "Radio"), for: .normal)

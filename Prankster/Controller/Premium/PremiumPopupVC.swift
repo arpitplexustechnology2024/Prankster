@@ -73,9 +73,10 @@ class PremiumPopupVC: UIViewController {
     
     @IBAction func btnPremiumTapped(_ sender: UIButton) {
         self.dismiss(animated: false) {
-            let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumBottomVC") as! PremiumBottomVC
-            premiumVC.modalPresentationStyle = .custom
+            let premiumVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "Premium_VC") as! Premium_VC
+            premiumVC.modalPresentationStyle = .fullScreen
             premiumVC.transitioningDelegate = self
+            premiumVC.premiumBack = false
             if let topViewController = UIApplication.shared.windows.first?.rootViewController?.topMostViewController() {
                 topViewController.present(premiumVC, animated: true)
             }

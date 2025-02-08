@@ -14,10 +14,12 @@ import GoogleMobileAds
 struct CustomImages {
     let image: UIImage
     let imageUrl: String?
+    let isLocalFile: Bool
     
-    init(image: UIImage, imageUrl: String? = nil) {
+    init(image: UIImage, imageUrl: String?, isLocalFile: Bool = false) {
         self.image = image
         self.imageUrl = imageUrl
+        self.isLocalFile = isLocalFile
     }
 }
 
@@ -652,24 +654,30 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 if shouldShowGIF {
                     cell.imageName.text = " Tutorial "
-                    cell.imageView.loadGif(name: "image")
-                    cell.imageView.contentMode = .scaleAspectFill
-                    cell.applyBackgroundBlurEffect()
+                    cell.tutorialViewShowView.isHidden = false
+                    cell.imageView.isHidden = true
                     cell.DoneButton.isHidden = true
                     cell.adContainerView.isHidden = true
                     cell.premiumButton.isHidden = true
                     cell.premiumActionButton.isHidden = true
+                    DispatchQueue.main.async {
+                        cell.setupTutorialVideo()
+                    }
                     return cell
                 }
                 
                 if customImages.isEmpty {
-                    cell.imageView.loadGif(name: "image")
-                    cell.imageView.contentMode = .scaleAspectFill
-                    cell.applyBackgroundBlurEffect()
+                    cell.tutorialViewShowView.isHidden = false
+                    cell.imageView.isHidden = true
                     cell.DoneButton.isHidden = true
                     cell.premiumButton.isHidden = true
                     cell.premiumActionButton.isHidden = true
+                    DispatchQueue.main.async {
+                        cell.setupTutorialVideo()
+                    }
                 } else {
+                    cell.tutorialViewShowView.isHidden = true
+                    cell.imageView.isHidden = false
                     let customCover = customImages[indexPath.item]
                     cell.imageView.image = customCover.image
                     cell.originalImage = customCover.image
@@ -700,6 +708,8 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     let categoryAllData = currentDataSource[indexPath.row]
                     cell.configure(with: categoryAllData)
                     cell.imageView.contentMode = .scaleAspectFit
+                    cell.tutorialViewShowView.isHidden = true
+                    cell.imageView.isHidden = false
                     
                     // Configure Premium button action
                     cell.premiumActionButton.tag = indexPath.row
@@ -798,7 +808,20 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
             if currentCategoryId == 0 {
                 let customImages = customImages[sender.tag]
-                vc.selectedURL = customImages.imageUrl
+                if let imageURLString = customImages.imageUrl,
+                   let imageURL = URL(string: imageURLString),
+                   imageURL.scheme?.lowercased() == "http" || imageURL.scheme?.lowercased() == "https" {
+                    vc.selectedURL = imageURLString
+                    
+                } else if let localPath = customImages.imageUrl {
+                    let fileURL = URL(fileURLWithPath: localPath)
+                    if let fileData = try? Data(contentsOf: fileURL) {
+                        vc.selectedFile = fileData
+                    } else {
+                        print("Error loading image data from local path")
+                    }
+                }
+                
                 vc.selectedName = selectedCoverImageName
                 vc.selectedCoverURL = selectedCoverImageURL
                 vc.selectedCoverFile = selectedCoverImageFile
@@ -914,9 +937,9 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-          //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
-                self.fetchAllImages()
-          //  }
+            //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
+            self.fetchAllImages()
+            //  }
         }
     }
     
@@ -1113,7 +1136,7 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     
                     switch result {
                     case .success(let compressedImage):
-                        let customImages = CustomImages(image: compressedImage, imageUrl: imageUrl)
+                        let customImages = CustomImages(image: compressedImage, imageUrl: imageUrl, isLocalFile: true)
                         self.customImages.insert(customImages, at: 0)
                         self.selectedImageIndex = 0
                         self.saveImages()
@@ -1159,33 +1182,69 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
     }
     
     func saveImages() {
-        let imagesData = customImages.map { image in
-            [
-                "image": image.image,
-                "url": image.imageUrl ?? ""
+        let coversData: [[String: Any]] = customImages.compactMap { cover -> [String: Any]? in
+            return [
+                "url": cover.imageUrl ?? "",
+                "isLocalFile": cover.isLocalFile
             ]
         }
-        if let encodedData = try? NSKeyedArchiver.archivedData(withRootObject: imagesData, requiringSecureCoding: false) {
-            UserDefaults.standard.set(encodedData, forKey: ConstantValue.is_UserImages)
+        
+        // JSON એન્કોડિંગનો ઉપયોગ કરો
+        if let jsonData = try? JSONSerialization.data(withJSONObject: coversData) {
+            UserDefaults.standard.set(jsonData, forKey: ConstantValue.is_UserImages)
         }
     }
     
     func loadSavedImages() {
-        if let savedImagesData = UserDefaults.standard.object(forKey: ConstantValue.is_UserImages) as? Data {
+        if let savedData = UserDefaults.standard.data(forKey: ConstantValue.is_UserImages) {
             do {
-                if let decodedData = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(savedImagesData) as? [[String: Any]] {
-                    customImages = decodedData.compactMap { dict in
-                        if let image = dict["image"] as? UIImage {
-                            let url = dict["url"] as? String
-                            return CustomImages(image: image, imageUrl: url)
+                if let decodedData = try JSONSerialization.jsonObject(with: savedData) as? [[String: Any]] {
+                    let dispatchGroup = DispatchGroup()
+                    var tempCustomCovers: [(index: Int, cover: CustomImages)] = []
+                    
+                    for (index, dict) in decodedData.enumerated() {
+                        guard let url = dict["url"] as? String else { continue }
+                        let isLocalFile = dict["isLocalFile"] as? Bool ?? false
+                        
+                        dispatchGroup.enter()
+                        
+                        if isLocalFile {
+                            // Local file handling
+                            let fileURL = URL(fileURLWithPath: url)
+                            DispatchQueue.global(qos: .background).async {
+                                if let imageData = try? Data(contentsOf: fileURL),
+                                   let image = UIImage(data: imageData) {
+                                    let customImage = CustomImages(image: image, imageUrl: url, isLocalFile: true)
+                                    tempCustomCovers.append((index: index, cover: customImage))
+                                }
+                                dispatchGroup.leave()
+                            }
+                        } else {
+                            // Remote image handling
+                            if let imageURL = URL(string: url) {
+                                URLSession.shared.dataTask(with: imageURL) { (data, response, error) in
+                                    if let data = data, let image = UIImage(data: data) {
+                                        let customImage = CustomImages(image: image, imageUrl: url, isLocalFile: false)
+                                        tempCustomCovers.append((index: index, cover: customImage))
+                                    }
+                                    dispatchGroup.leave()
+                                }.resume()
+                            } else {
+                                dispatchGroup.leave()
+                            }
                         }
-                        return nil
                     }
-                    imageAllCollectionview.reloadData()
-                    imageSlideCollectionview.reloadData()
+                    
+                    dispatchGroup.notify(queue: .main) { [weak self] in
+                        // Sort by original index to maintain the order from UserDefaults
+                        let sortedCovers = tempCustomCovers.sorted(by: { $0.index < $1.index })
+                        self?.customImages = sortedCovers.map { $0.cover }
+                        self?.imageAllCollectionview.reloadData()
+                        self?.imageSlideCollectionview.reloadData()
+                    }
                 }
             } catch {
-                print("Error decoding saved images: \(error)")
+                print("Error decoding saved covers: \(error)")
             }
         }
     }

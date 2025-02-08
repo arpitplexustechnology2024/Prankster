@@ -9,16 +9,19 @@ import UIKit
 
 class ShareBottomVC: UIViewController {
     
+    // MARK: - Outlets
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var NextButton: UIButton!
-    @IBOutlet weak var backButton: UIButton!
+    
+    // MARK: - Properties
+    private let stackView = UIStackView()
+    private var numberLabels: [UILabel] = []
+    private var pageNumbers: [String] = []
     
     let instaGIF = ["Insta1", "Insta2", "Insta3", "Insta4"]
     let snapGIF = ["Snap1", "Snap2", "Snap3", "Snap4", "Snap5"]
     
-    var instaCurrentGifIndex = 0
-    var snapCurrentGifIndex = 0
-    
+    var currentPage = 0
     var coverImageURL: String?
     var prankLink: String?
     var prankName: String?
@@ -31,13 +34,19 @@ class ShareBottomVC: UIViewController {
         return indicator
     }()
     
-    
+    // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        setupUI()
+        setupPageControl()
+        loadInitialGif()
+        setupNotifications()
+    }
+    
+    // MARK: - Setup Methods
+    private func setupUI() {
         imageView.layer.cornerRadius = 16
         NextButton.layer.cornerRadius = 13
-        backButton.layer.cornerRadius = 13
         
         NextButton.addSubview(activityIndicator)
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
@@ -45,85 +54,135 @@ class ShareBottomVC: UIViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: NextButton.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: NextButton.centerYAnchor)
         ])
+    }
+    
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appMovedToBackground),
+            name: UIApplication.willResignActiveNotification,
+            object: nil
+        )
+    }
+    
+    private func setupPageControl() {
+        // Stack view setup
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fillEqually
+        stackView.spacing = 16
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stackView)
         
-        backButton.setTitle("Cancel", for: .normal)
+        // Constraints
+        NSLayoutConstraint.activate([
+            stackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stackView.bottomAnchor.constraint(equalTo: imageView.topAnchor, constant: -10),
+            stackView.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        updatePageControlLabels()
+    }
+    
+    private func updatePageControlLabels() {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        numberLabels.removeAll()
+        
+        let totalPages = sharePrank == "Instagram" ? 4 : 5
+        pageNumbers = (1...totalPages).map { String($0) }
+        
+        for (index, number) in pageNumbers.enumerated() {
+            let label = UILabel()
+            label.text = number
+            label.textAlignment = .center
+            label.font = UIFont(name: "Avenir-Heavy", size: 16)
+            label.textColor = .black
+            label.backgroundColor = .customGray
+            label.layer.cornerRadius = 20
+            label.layer.masksToBounds = true
+            label.translatesAutoresizingMaskIntoConstraints = false
+            
+            label.widthAnchor.constraint(equalToConstant: 40).isActive = true
+            label.heightAnchor.constraint(equalToConstant: 40).isActive = true
+            
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handlePageControlTap(_:)))
+            label.isUserInteractionEnabled = true
+            label.tag = index
+            label.addGestureRecognizer(tapGesture)
+            
+            numberLabels.append(label)
+            stackView.addArrangedSubview(label)
+        }
+        
+        updateSelectedPage(0)
+    }
+    
+    private func updateSelectedPage(_ pageIndex: Int) {
+        numberLabels.enumerated().forEach { (index, label) in
+            if index == pageIndex {
+                label.backgroundColor = #colorLiteral(red: 1, green: 0.8470588235, blue: 0, alpha: 1)
+                label.textColor = .black
+            } else {
+                label.backgroundColor = .customGray
+                label.textColor = .black
+            }
+        }
+    }
+    
+    private func loadInitialGif() {
+        if sharePrank == "Instagram" {
+            loadGif(named: instaGIF[0])
+        } else {
+            loadGif(named: snapGIF[0])
+        }
+    }
+    
+    // MARK: - Action Methods
+    @objc private func handlePageControlTap(_ gesture: UITapGestureRecognizer) {
+        guard let label = gesture.view as? UILabel else { return }
+        currentPage = label.tag
+        updateSelectedPage(currentPage)
         
         if sharePrank == "Instagram" {
-            loadGif(named: instaGIF[instaCurrentGifIndex])
+            loadGif(named: instaGIF[currentPage])
         } else {
-            loadGif(named: snapGIF[snapCurrentGifIndex])
-        }
-        
-         NotificationCenter.default.addObserver(self, selector: #selector(appMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
-    }
-    
-    @objc func appMovedToBackground() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
-             UIPasteboard.general.string = self.prankLink
-        }
-    }
-    
-    func loadGif(named gifName: String) {
-        if let gifURL = Bundle.main.url(forResource: gifName, withExtension: "gif"),
-           let gifData = try? Data(contentsOf: gifURL),
-           let image = UIImage.gif(data: gifData) {
-            imageView.image = image
+            loadGif(named: snapGIF[currentPage])
         }
     }
     
     @IBAction func btnNextTapped(_ sender: UIButton) {
-        if sharePrank == "Instagram" {
-            instaCurrentGifIndex += 1
-            if instaCurrentGifIndex < instaGIF.count {
-                loadGif(named: instaGIF[instaCurrentGifIndex])
-                backButton.setTitle("Back", for: .normal)
+        let maxPages = sharePrank == "Instagram" ? instaGIF.count : snapGIF.count
+        
+        if currentPage < maxPages - 1 {
+            currentPage += 1
+            updateSelectedPage(currentPage)
+            
+            if sharePrank == "Instagram" {
+                loadGif(named: instaGIF[currentPage])
             } else {
-                shareInstagramStory()
+                loadGif(named: snapGIF[currentPage])
             }
         } else {
-            snapCurrentGifIndex += 1
-            if snapCurrentGifIndex < snapGIF.count {
-                loadGif(named: snapGIF[snapCurrentGifIndex])
-                backButton.setTitle("Back", for: .normal)
+            if sharePrank == "Instagram" {
+                shareInstagramStory()
             } else {
                 shareToSnapchat()
             }
         }
     }
     
-    @IBAction func btnBackTapped(_ sender: UIButton) {
-        if sharePrank == "Instagram" {
-            instaCurrentGifIndex -= 1
-            if instaCurrentGifIndex < 0 && instaGIF[0] == "Insta1" {
-                instaCurrentGifIndex = 0
-                dismiss(animated: true, completion: nil)
-                return
-            }
-            if instaCurrentGifIndex >= 0 {
-                loadGif(named: instaGIF[instaCurrentGifIndex])
-                if instaGIF[instaCurrentGifIndex] == "Insta1" {
-                    backButton.setTitle("Cancel", for: .normal)
-                }
-            } else {
-                instaCurrentGifIndex = instaGIF.count - 1
-                loadGif(named: instaGIF[instaCurrentGifIndex])
-            }
-        } else {
-            snapCurrentGifIndex -= 1
-            if snapCurrentGifIndex < 0 && snapGIF[0] == "Snap1" {
-                snapCurrentGifIndex = 0
-                dismiss(animated: true, completion: nil)
-                return
-            }
-            if snapCurrentGifIndex >= 0 {
-                loadGif(named: snapGIF[snapCurrentGifIndex])
-                if snapGIF[snapCurrentGifIndex] == "Snap1" {
-                    backButton.setTitle("Cancel", for: .normal)
-                }
-            } else {
-                snapCurrentGifIndex = snapGIF.count - 1
-                loadGif(named: snapGIF[snapCurrentGifIndex])
-            }
+    @objc func appMovedToBackground() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.75) {
+            UIPasteboard.general.string = self.prankLink
+        }
+    }
+    
+    // MARK: - Helper Methods
+    func loadGif(named gifName: String) {
+        if let gifURL = Bundle.main.url(forResource: gifName, withExtension: "gif"),
+           let gifData = try? Data(contentsOf: gifURL),
+           let image = UIImage.gif(data: gifData) {
+            imageView.image = image
         }
     }
     

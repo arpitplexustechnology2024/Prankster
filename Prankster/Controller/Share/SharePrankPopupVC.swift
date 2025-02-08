@@ -7,23 +7,61 @@
 
 import UIKit
 
-class SharePrankPopupVC: UIViewController {
-
+class SharePrankPopupVC: UIViewController, UITextFieldDelegate {
+    
+    @IBOutlet weak var savePrankNamePopupView: UIView!
+    @IBOutlet weak var TextFiled: UITextField!
+    @IBOutlet weak var cancelButton: UIButton!
+    @IBOutlet weak var SaveButton: UIButton!
+    
+    var currentPrankName: String?
+    var onSave: ((String) -> Void)?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        self.setupUI()
+        
+        TextFiled.text = currentPrankName
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
+    private func setupUI() {
+        TextFiled.delegate = self
+        TextFiled.returnKeyType = .done
+        hideKeyboardTappedAround()
+        savePrankNamePopupView.layer.cornerRadius = 25
+        TextFiled.layer.cornerRadius = 5
+        TextFiled.layer.masksToBounds = true
+        cancelButton.layer.cornerRadius = cancelButton.frame.height / 2
+        SaveButton.layer.cornerRadius = SaveButton.frame.height / 2
+        TextFiled.placeholder = "Enter prank name"
+        
+        if let searchBar = TextFiled {
+            let placeholderText = "Enter prank name"
+            let attributes: [NSAttributedString.Key: Any] = [
+                .foregroundColor: UIColor.lightGray
+            ]
+            searchBar.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
+        }
     }
-    */
-
+    
+    @IBAction func btnCancelTapped(_ sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    @IBAction func btnSaveTapped(_ sender: UIButton) {
+        guard let newName = TextFiled.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !newName.isEmpty else {
+            let snackbar = CustomSnackbar(message: "Please enter a name!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+            return
+        }
+        
+        onSave?(newName)
+        dismiss(animated: true)
+    }
 }

@@ -40,7 +40,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var prankAudioImage: String?
     var prankShareURL: String?
     var sharePrank: Bool = false
-    //  private let adsViewModel = AdsViewModel()
+    private let adsViewModel = AdsViewModel()
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
@@ -69,7 +69,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.setupSwipeGesture()
         self.setupNoInternetView()
         self.addContentToStackView()
-        self.setupKeyboardObservers()
         
         print(selectedURL)
         print(selectedFile)
@@ -93,6 +92,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.nameChangeButton.layer.cornerRadius = nameChangeButton.frame.height / 2
         self.playPauseImageView.image = UIImage(named: "PlayButton")
         self.playPauseImageView.isUserInteractionEnabled = true
+        self.playPauseImageView.isHidden = true
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
         self.prankImageView.isUserInteractionEnabled = true
@@ -128,23 +128,23 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     bottomConstraints.constant = 16
                 }
             } else {
-                //                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
-                //                    print("Banner Ad ID: \(bannerAdID)")
-                bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-7719542074975419/5604529555")
-                //                } else {
-                //                    print("No Banner Ad ID found")
-                //                    if UIDevice.current.userInterfaceIdiom == .pad {
-                //                        bottomConstraints.constant = 16
-                //                    } else {
-                //                        bottomConstraints.constant = 16
-                //                    }
-                //                }
-                //                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                //                    print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
-                //                } else {
-                //                    print("No Interstitial Ad ID found")
-                //                }
+                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+                    print("Banner Ad ID: \(bannerAdID)")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-7719542074975419/5604529555")
+                } else {
+                    print("No Banner Ad ID found")
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        bottomConstraints.constant = 16
+                    } else {
+                        bottomConstraints.constant = 16
+                    }
+                }
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -230,6 +230,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     
                     self.playPauseImageView.image = UIImage(named: "PlayButton")
                     self.playPauseImageView.isUserInteractionEnabled = true
+                    self.playPauseImageView.isHidden = false
                     
                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
                     self.prankImageView.isUserInteractionEnabled = true
@@ -447,23 +448,23 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     bottomConstraints.constant = 16
                 }
             } else {
-                //                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
-                //                    print("Banner Ad ID: \(bannerAdID)")
-                bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-7719542074975419/5604529555")
-                //                } else {
-                //                    print("No Banner Ad ID found")
-                //                    if UIDevice.current.userInterfaceIdiom == .pad {
-                //                        bottomConstraints.constant = 16
-                //                    } else {
-                //                        bottomConstraints.constant = 16
-                //                    }
-                //                }
-                //                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                //                    print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
-                //                } else {
-                //                    print("No Interstitial Ad ID found")
-                //                }
+                if let bannerAdID = adsViewModel.getAdID(type: .banner) {
+                    print("Banner Ad ID: \(bannerAdID)")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
+                } else {
+                    print("No Banner Ad ID found")
+                    if UIDevice.current.userInterfaceIdiom == .pad {
+                        bottomConstraints.constant = 16
+                    } else {
+                        bottomConstraints.constant = 16
+                    }
+                }
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -580,8 +581,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
         
-        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) /* ||
-                                                                                       adsViewModel.getAdID(type: .interstitial) == nil */
+        let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
+        adsViewModel.getAdID(type: .interstitial) == nil || sharePrank == false
         
         switch tappedView.tag {
         case 0: // Copy link
@@ -591,58 +592,88 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 snackbar.show(in: self.view, duration: 3.0)
             }
         case 1:  // WhatsApp Message
-            if shouldShareDirectly {
-                self.shareWhatsAppMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareWhatsAppMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareWhatsAppMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareWhatsAppMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 2:  // Instagram Message
-            if shouldShareDirectly {
-                self.shareInstagramMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareInstagramMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareInstagramMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareInstagramMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 3:  // Instagram Story
-            if shouldShareDirectly {
-                self.NavigateToShareSnapchat(sharePrank: "Instagram")
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.NavigateToShareSnapchat(sharePrank: "Instagram")
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 4:   // Snapchat Story
-            if shouldShareDirectly {
-                self.NavigateToShareSnapchat(sharePrank: "Snapchat")
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 5:    // Telegram Message
-            if shouldShareDirectly {
-                self.shareTelegramMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareTelegramMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareTelegramMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareTelegramMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 6:  // More
-            if shouldShareDirectly {
-                self.shareMoreMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareMoreMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareMoreMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareMoreMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         default:
             break
@@ -664,8 +695,15 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             bottomSheetVC.modalPresentationStyle = .formSheet
             bottomSheetVC.preferredContentSize = CGSize(width: 540, height: 540)
         } else {
-            bottomSheetVC.modalPresentationStyle = .custom
-            bottomSheetVC.transitioningDelegate = self
+            if #available(iOS 15.0, *) {
+                if let sheet = bottomSheetVC.sheetPresentationController {
+                    sheet.detents = [.medium()]
+                    sheet.prefersGrabberVisible = true
+                }
+            } else {
+                bottomSheetVC.modalPresentationStyle = .custom
+                bottomSheetVC.transitioningDelegate = self
+            }
         }
         present(bottomSheetVC, animated: true, completion: nil)
     }
@@ -746,83 +784,45 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     
     // MARK: - btnNameChangeTapped
     @IBAction func btnNameChangeTapped(_ sender: UIButton) {
-        if prankNameLabel.isEditable {
-            prankNameLabel.resignFirstResponder()
-            prankNameLabel.isEditable = false
-        } else if isConnectedToInternet() {
-            prankNameLabel.isEditable = true
-            prankNameLabel.becomeFirstResponder()
+        if isConnectedToInternet() {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let popupVC = storyboard.instantiateViewController(withIdentifier: "SharePrankPopupVC") as! SharePrankPopupVC
+            popupVC.currentPrankName = self.prankName
+            popupVC.onSave = { [weak self] newName in
+                self?.updatePrankName(newName: newName)
+            }
+            popupVC.modalPresentationStyle = .overCurrentContext
+            popupVC.modalTransitionStyle = .crossDissolve
+            present(popupVC, animated: true)
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if text == "\n" {
-            textView.resignFirstResponder()
-            textView.isEditable = false
-            guard let updatedName = prankNameLabel.text?.trimmingCharacters(in: .whitespacesAndNewlines),
-                  !updatedName.isEmpty else {
-                print("Name cannot be empty")
-                return false
-            }
-            
-            guard let prankID = viewModel.createPrankID else {
-                print("Prank ID not available")
-                return false
-            }
-            
-            viewModel.updatePrankName(id: prankID, name: updatedName) { result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success(let success):
-                        print(success.message)
-                        self.prankName = updatedName
-                        UserDefaults.standard.set(updatedName, forKey: "Name")
-                    case .failure(let failure):
-                        print(failure.localizedDescription)
-                        self.prankNameLabel.text = self.viewModel.createPrankName
-                    }
-                }
-            }
-            return false
-        }
-        return true
-    }
-    
-    // MARK: - Keyboard Handling
-    private func setupKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    @objc private func keyboardWillShow(_ notification: Notification) {
-        guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else {
+    private func updatePrankName(newName: String) {
+        guard let prankID = viewModel.createPrankID else {
+            print("Prank ID not available")
             return
         }
         
-        let keyboardHeight = keyboardFrame.height
-        let textViewBottomY = prankNameLabel.convert(prankNameLabel.bounds, to: view).maxY
-        let overlap = textViewBottomY - (view.frame.height - keyboardHeight)
-        
-        let additionalSpace: CGFloat = 50
-        
-        if overlap > 0 {
-            UIView.animate(withDuration: 0.3) {
-                self.view.frame.origin.y = -(overlap + additionalSpace)
+        viewModel.updatePrankName(id: prankID, name: newName) { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let success):
+                    print(success.message)
+                    self.prankName = newName
+                    self.prankNameLabel.text = newName
+                    UserDefaults.standard.set(newName, forKey: "Name")
+                    
+                case .failure(let failure):
+                    print(failure.localizedDescription)
+                    self.prankNameLabel.text = self.viewModel.createPrankName
+                }
             }
         }
-    }
-    
-    @objc private func keyboardWillHide(_ notification: Notification) {
-        UIView.animate(withDuration: 0.3) {
-            self.view.frame.origin.y = 0
-        }
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self)
     }
     
     // MARK: - btnBackTapped

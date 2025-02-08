@@ -84,7 +84,7 @@ class PrankAPIManager: PrankAPIProtocol {
     }
     
     func updatePrankName(id: String, name: String, completion: @escaping (Result<PrankNameUpdate, Error>) -> Void) {
-        let url = "https://pslink.world/api/prank/update"
+        let url = "https://pslink.world/api/prank/update/changes"
         
         let parameters: [String: String] = [
             "Id": id,

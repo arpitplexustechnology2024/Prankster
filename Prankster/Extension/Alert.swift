@@ -37,9 +37,7 @@ class CustomAlertViewController: UIViewController {
     
     private func setupContainerView() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.backgroundColor = UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? .systemGray6 : .white
-        }
+        containerView.backgroundColor = UIColor.alert
         containerView.layer.cornerRadius = 16
         containerView.layer.masksToBounds = true
         view.addSubview(containerView)
@@ -73,9 +71,7 @@ class CustomAlertViewController: UIViewController {
         messageLabel.text = message
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
-        messageLabel.textColor = UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? .white : .black
-        }
+        messageLabel.textColor = UIColor.white
         messageLabel.font = UIFont(name: "Avenir-Heavy", size: 18)
         containerView.addSubview(messageLabel)
         
@@ -152,9 +148,7 @@ class AlertViewController: UIViewController {
     
     private func setupContainerView() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.backgroundColor = UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? .systemGray6 : .white
-        }
+        containerView.backgroundColor = UIColor.alert
         containerView.layer.cornerRadius = 16
         containerView.layer.masksToBounds = true
         view.addSubview(containerView)
@@ -188,9 +182,7 @@ class AlertViewController: UIViewController {
         messageLabel.text = message
         messageLabel.numberOfLines = 0
         messageLabel.textAlignment = .center
-        messageLabel.textColor = UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? .white : .black
-        }
+        messageLabel.textColor = UIColor.white
         messageLabel.font = UIFont(name: "Avenir-Heavy", size: 18)
         containerView.addSubview(messageLabel)
         
@@ -207,7 +199,7 @@ class AlertViewController: UIViewController {
         linkLabel.text = link
         linkLabel.numberOfLines = 0
         linkLabel.textAlignment = .center
-        linkLabel.font = UIFont(name: "Avenir-Heavy", size: 18)
+        linkLabel.font = UIFont(name: "Avenir-Heavy", size: 16)
         linkLabel.textColor = UIColor.gray
         containerView.addSubview(linkLabel)
         
@@ -237,5 +229,3 @@ class AlertViewController: UIViewController {
         }
     }
 }
-
-

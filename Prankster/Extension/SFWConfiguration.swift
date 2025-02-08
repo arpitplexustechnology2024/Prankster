@@ -11,22 +11,21 @@ import SwiftFortuneWheel
 
 // MARK: - Configuration Extension
 private let blackColor = UIColor(white: 51.0 / 255.0, alpha: 1.0)
-private let borderColor = UIColor(hex: "35417C")  // નવો બૉર્ડર કલર
-private let circleStrokeWidth: CGFloat = 3  // બૉર્ડરની જાડાઈ
+private let borderColor = UIColor(hex: "35417C")
+private let circleStrokeWidth: CGFloat = 3
 private let _position: SFWConfiguration.Position = .top
 
 extension UIColor {
     static let gradientPairs: [(start: String, end: String)] = [
-        ("30BEFF", "30BEFF"), // Blue gradient
-        ("FF7BCA", "FF7BCA"), // Pink gradient
-        ("54CE0D", "54CE0D"), // Orange gradient
-        ("CD14CE", "CD14CE"), // Green gradient
+        ("30BEFF", "30BEFF"),
+        ("FF7BCA", "FF7BCA"),
+        ("54CE0D", "54CE0D"),
+        ("CD14CE", "CD14CE"),
     ]
     
     convenience init(hex: String) {
-        // જો hex string ખાલી હોય તો clear color રીટર્ન કરો
         if hex.isEmpty {
-            self.init(white: 0, alpha: 0)  // Clear color
+            self.init(white: 0, alpha: 0)
             return
         }
         
@@ -57,24 +56,26 @@ extension UIColor {
 
 extension SFWConfiguration {
     static func gradientColorsConfiguration(wheelSize: CGSize) -> SFWConfiguration {
-        let spin = SFWConfiguration.SpinButtonPreferences(size: CGSize(width: 80, height: 80))
+        let spinButtonSize: CGSize = UIDevice.current.userInterfaceIdiom == .pad
+            ? CGSize(width: 110, height: 110)
+            : CGSize(width: 85, height: 85)
+            
+        let spin = SFWConfiguration.SpinButtonPreferences(size: spinButtonSize)
         
         let gradientColors = UIColor.getGradientColors(size: wheelSize)
         let sliceColorType = SFWConfiguration.ColorType.customPatternColors(colors: gradientColors, defaultColor: .clear)
         
-        // સ્લાઇસ વચ્ચેની લાઇન (બૉર્ડર) સેટ કરવી
         let slicePreferences = SFWConfiguration.SlicePreferences(
             backgroundColorType: sliceColorType,
-            strokeWidth: 3,  // સ્લાઇસ વચ્ચેની લાઇનની જાડાઈ
-            strokeColor: borderColor  // સ્લાઇસ વચ્ચેની લાઇનનો કલર
+            strokeWidth: 3,
+            strokeColor: borderColor
         )
         
         let anchorImage = SFWConfiguration.AnchorImage(imageName: "anchorImage", size: CGSize(width: 8, height: 8), verticalOffset: -10)
         
-        // બહારની રિંગ (સર્કલ) માટેની પ્રેફરન્સ
         let circlePreferences = SFWConfiguration.CirclePreferences(
-            strokeWidth: circleStrokeWidth,  // બહારની રિંગની જાડાઈ
-            strokeColor: borderColor  // બહારની રિંગનો કલર
+            strokeWidth: circleStrokeWidth,
+            strokeColor: borderColor
         )
         
         var wheelPreferences = SFWConfiguration.WheelPreferences(
@@ -94,8 +95,14 @@ extension SFWConfiguration {
 // MARK: - Preferences Extensions
 extension ImagePreferences {
     static var prizeImagePreferences: ImagePreferences {
-        let preferences = ImagePreferences(preferredSize: CGSize(width: 65, height: 65),
-                                       verticalOffset: 15)
+        let imageSize: CGSize = UIDevice.current.userInterfaceIdiom == .pad
+            ? CGSize(width: 80, height: 80)
+            : CGSize(width: 65, height: 65)
+            
+        let preferences = ImagePreferences(
+            preferredSize: imageSize,
+            verticalOffset: 15
+        )
         return preferences
     }
 }

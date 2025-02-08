@@ -42,7 +42,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var blurImageView: UIImageView!
     
-    @IBOutlet weak var gifImageview: UIImageView!
+    @IBOutlet weak var tutorialViewShowView: UIView!
     @IBOutlet weak var adContainerView: UIView!
     
     // MARK: - Properties
@@ -58,6 +58,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     
     var premiumActionButton: UIButton!
     var originalImage: UIImage?
+    private var playerLooper: AVPlayerLooper?
     
     private var currentVideoURL: URL?
     
@@ -77,6 +78,47 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         super.init(coder: coder)
         setupPremiumActionButton()
     }
+    
+    public func setupTutorialVideo() {
+           playerLayer?.removeFromSuperlayer()
+           player?.pause()
+           playerLayer = nil
+           player = nil
+           playerLooper = nil
+           
+           if let videoPath = Bundle.main.path(forResource: "video", ofType: "mp4") {
+               print("Video path found: \(videoPath)")
+               
+               let videoURL = URL(fileURLWithPath: videoPath)
+               let playerItem = AVPlayerItem(url: videoURL)
+               
+               let queuePlayer = AVQueuePlayer()
+               player = queuePlayer
+               player?.isMuted = true
+               playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
+               playerLayer = AVPlayerLayer(player: player)
+               playerLayer?.videoGravity = .resizeAspectFill
+
+               if let playerLayer = playerLayer {
+                   tutorialViewShowView.layer.addSublayer(playerLayer)
+                   playerLayer.frame = tutorialViewShowView.bounds
+                   player?.play()
+               }
+           } else {
+               print("Error: Video file 'cover.mp4' not found in bundle")
+           }
+       }
+       
+       // MARK: - Lifecycle Methods
+       override func didMoveToWindow() {
+           super.didMoveToWindow()
+           if window != nil {
+               player?.play()
+           } else {
+               player?.pause()
+           }
+       }
+       
     
     // MARK: - Setup Methods
     private func setupPremiumActionButton() {
@@ -105,9 +147,8 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         blurImageView.layer.cornerRadius = 20
         blurImageView.layer.masksToBounds = true
         
-        // BlurImageView Setup
-        gifImageview.layer.cornerRadius = 20
-        blurImageView.layer.masksToBounds = true
+        tutorialViewShowView.layer.cornerRadius = 20
+        tutorialViewShowView.layer.masksToBounds = true
         
         adContainerView.layer.cornerRadius = 20
         adContainerView.layer.masksToBounds = true
@@ -197,6 +238,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
             self.premiumButton.isHidden = true
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             if let parentVC = self.parentViewController as? VideoPrankVC,
                let preloadedAdView = parentVC.preloadedNativeAdView {
@@ -217,6 +259,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
             
         } else {
             self.adContainerView.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             let displayName = categoryAllData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : categoryAllData.name
             self.imageName.text = " \(displayName) "
@@ -381,6 +424,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer?.frame = imageView.bounds
+        playerLayer?.frame = tutorialViewShowView.bounds
     }
     
     
@@ -395,6 +439,15 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         playerLayer = nil
         isVideoLoaded = false
         lastPausedTime = nil
+        player?.pause()
+        playerLooper = nil
+    }
+    
+    deinit {
+        player?.pause()
+        player = nil
+        playerLayer = nil
+        playerLooper = nil
     }
 }
 

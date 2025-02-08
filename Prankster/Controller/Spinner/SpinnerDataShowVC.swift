@@ -17,6 +17,7 @@ class SpinnerDataShowVC: UIViewController {
     @IBOutlet weak var shareView: UIView!
     @IBOutlet weak var playPauseImageView: UIImageView!
     
+    var sharePrank: Bool = false
     var coverImageURL: String?
     var prankDataURL: String?
     var prankName: String?
@@ -62,16 +63,20 @@ class SpinnerDataShowVC: UIViewController {
         let viewTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.viewClickDissmiss))
         self.view.addGestureRecognizer(viewTapGesture)
         
-        if isConnectedToInternet() {
-            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+        if sharePrank {
+            if isConnectedToInternet() {
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    print("Interstitial Ad ID: \(interstitialAdID)")
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                } else {
+                    print("No Interstitial Ad ID found")
+                }
             } else {
-                print("No Interstitial Ad ID found")
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         } else {
-            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
+            
         }
     }
     
@@ -313,7 +318,7 @@ class SpinnerDataShowVC: UIViewController {
             
             let label = UILabel()
             label.text = item.title
-            label.textColor = .icon
+            label.textColor = .white
             label.font = UIFont.systemFont(ofSize: 12)
             label.translatesAutoresizingMaskIntoConstraints = false
             verticalStackView.addArrangedSubview(imageView)
@@ -344,7 +349,7 @@ class SpinnerDataShowVC: UIViewController {
         guard let tappedView = gesture.view else { return }
         
         let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
-        adsViewModel.getAdID(type: .interstitial) == nil
+        adsViewModel.getAdID(type: .interstitial) == nil || sharePrank == false
         
         switch tappedView.tag {
         case 0: // Copy link
@@ -354,58 +359,88 @@ class SpinnerDataShowVC: UIViewController {
                 snackbar.show(in: self.view, duration: 3.0)
             }
         case 1:  // WhatsApp Message
-            if shouldShareDirectly {
-                self.shareWhatsAppMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareWhatsAppMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareWhatsAppMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareWhatsAppMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 2:  // Instagram Message
-            if shouldShareDirectly {
-                self.shareInstagramMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareInstagramMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareInstagramMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareInstagramMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 3:  // Instagram Story
-            if shouldShareDirectly {
-                self.NavigateToShareSnapchat(sharePrank: "Instagram")
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.NavigateToShareSnapchat(sharePrank: "Instagram")
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 4:   // Snapchat Story
-            if shouldShareDirectly {
-                self.NavigateToShareSnapchat(sharePrank: "Snapchat")
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 5:    // Telegram Message
-            if shouldShareDirectly {
-                self.shareTelegramMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareTelegramMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareTelegramMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareTelegramMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         case 6:  // More
-            if shouldShareDirectly {
-                self.shareMoreMessage()
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.shareMoreMessage()
+            if isConnectedToInternet() {
+                if shouldShareDirectly {
+                    self.shareMoreMessage()
+                } else {
+                    interstitialAdUtility.showInterstitialAd()
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.shareMoreMessage()
+                    }
                 }
+            } else {
+                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                snackbar.show(in: self.view, duration: 3.0)
             }
         default:
             break
@@ -427,8 +462,15 @@ class SpinnerDataShowVC: UIViewController {
             bottomSheetVC.modalPresentationStyle = .formSheet
             bottomSheetVC.preferredContentSize = CGSize(width: 540, height: 540)
         } else {
-            bottomSheetVC.modalPresentationStyle = .custom
-            bottomSheetVC.transitioningDelegate = self
+            if #available(iOS 15.0, *) {
+                if let sheet = bottomSheetVC.sheetPresentationController {
+                    sheet.detents = [.medium()]
+                    sheet.prefersGrabberVisible = true
+                }
+            } else {
+                bottomSheetVC.modalPresentationStyle = .custom
+                bottomSheetVC.transitioningDelegate = self
+            }
         }
         present(bottomSheetVC, animated: true, completion: nil)
     }

@@ -38,6 +38,7 @@ class SpinnerVC: UIViewController {
     @IBOutlet weak var topHeightConstraints: NSLayoutConstraint!
     @IBOutlet weak var spinnerCountLabel: UILabel!
     @IBOutlet weak var bottomConstraints: NSLayoutConstraint!
+    @IBOutlet weak var showDataHeightConstraints: NSLayoutConstraint!
     
     @IBOutlet weak var wheelControl: SwiftFortuneWheel! {
         didSet {
@@ -108,10 +109,10 @@ class SpinnerVC: UIViewController {
         self.collectionview.dataSource = self
         
         prizes = [
-            Spinner(image: "Audio1", value: "1"),
-            Spinner(image: "ImageSpin", value: "3"),
-            Spinner(image: "Gift", value: "1"),
-            Spinner(image: "VideoSpin", value: "2"),
+            Spinner(image: "Audio1", value: "1"),     // Audio માટે fixed value 1
+            Spinner(image: "ImageSpin", value: "3"),   // Image માટે fixed value 3
+            Spinner(image: "Gift", value: String(Int.random(in: 1...3))),  // Gift માટે random value 1-3
+            Spinner(image: "VideoSpin", value: "2"),   // Video માટે fixed value 2
         ]
         
         updateSlices()
@@ -190,10 +191,12 @@ class SpinnerVC: UIViewController {
         
         let screenHeight = UIScreen.main.nativeBounds.height
         if UIDevice.current.userInterfaceIdiom == .phone {
+            spinnerCountLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
             spinnerbuttonWidghConstraints.constant = 230
             spinnerbuttonHeightConstraints.constant = 110
             spinsecoundLabelHeightConstraints.constant = 40
             spinerDesginHeightConstraints.constant = -40
+            showDataHeightConstraints.constant = 130
             switch screenHeight {
             case 1334:
                 topHeightConstraints.constant = 25
@@ -233,13 +236,15 @@ class SpinnerVC: UIViewController {
                 spinnerGeightConstraints.constant = 300
             }
         } else {
-            topHeightConstraints.constant = 170
+            spinnerCountLabel.font = UIFont(name: "Avenir-Heavy", size: 30)
+            topHeightConstraints.constant = 160
             spinsecoundLabelHeightConstraints.constant = 60
             spinerDesginHeightConstraints.constant = -50
             spinnerGeightConstraints.constant = 400
             spinnerWidghConstraints.constant = 400
             spinnerbuttonWidghConstraints.constant = 300
             spinnerbuttonHeightConstraints.constant = 150
+            showDataHeightConstraints.constant = 160
         }
     }
     
@@ -259,6 +264,7 @@ class SpinnerVC: UIViewController {
                 vc.prankShareURL = response.data.shareURL
                 vc.prankType = response.data.type
                 vc.prankImage = response.data.image
+                vc.sharePrank = true
                 vc.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
                 self?.present(vc, animated: true)
@@ -319,6 +325,7 @@ class SpinnerVC: UIViewController {
     }
     
     // MARK: - Spin Processing Methods
+    // 2. જ્યારે spin થાય ત્યારે API call કરવા માટેનો updated code
     private func proceedWithSpinning() {
         guard remainingSpins > 0 else { return }
         
@@ -332,6 +339,8 @@ class SpinnerVC: UIViewController {
         if remainingSpins == 2 {
             self.rateUs()
         }
+        
+        prizes[2].value = String(Int.random(in: 1...3))
         
         let finalIdx = finishIndex
         wheelControl.startRotationAnimation(finishIndex: finalIdx, continuousRotationTime: 1) { [weak self] finished in
@@ -445,7 +454,6 @@ class SpinnerVC: UIViewController {
             let hours = Int(remainingTime) / 3600
             let minutes = (Int(remainingTime) % 3600) / 60
             spinnerCountLabel.text = String(format: "New spin %02dh:%02dm", hours, minutes)
-            spinnerCountLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
         }
     }
     
@@ -521,6 +529,7 @@ extension SpinnerVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
                 vc.prankShareURL = spinData.shareURL
                 vc.prankType = spinData.type
                 vc.prankImage = spinData.image
+                vc.sharePrank = false
                 vc.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
                 
@@ -536,6 +545,7 @@ extension SpinnerVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
                     vc.prankShareURL = spinData.shareURL
                     vc.prankType = spinData.type
                     vc.prankImage = spinData.image
+                    vc.sharePrank = false
                     vc.modalTransitionStyle = .crossDissolve
                     vc.modalPresentationStyle = .overCurrentContext
                     
@@ -547,6 +557,10 @@ extension SpinnerVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 115, height: 128)
+        let cellSize: CGSize = UIDevice.current.userInterfaceIdiom == .pad
+        ? CGSize(width: 145, height: 160)
+        : CGSize(width: 115, height: 128)
+        
+        return cellSize
     }
 }

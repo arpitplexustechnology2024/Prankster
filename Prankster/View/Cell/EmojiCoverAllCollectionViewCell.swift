@@ -51,62 +51,62 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     }
     
     public func setupTutorialVideo() {
-           playerLayer?.removeFromSuperlayer()
-           player?.pause()
-           playerLayer = nil
-           player = nil
-           playerLooper = nil
-           
-           if let videoPath = Bundle.main.path(forResource: "cover", ofType: "mp4") {
-               print("Video path found: \(videoPath)")
-               
-               let videoURL = URL(fileURLWithPath: videoPath)
-               let playerItem = AVPlayerItem(url: videoURL)
-               
-               let queuePlayer = AVQueuePlayer()
-               player = queuePlayer
-               player?.isMuted = true
-               playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
-               playerLayer = AVPlayerLayer(player: player)
-               playerLayer?.videoGravity = .resizeAspectFill
-
-               if let playerLayer = playerLayer {
-                   tutorialViewShowView.layer.addSublayer(playerLayer)
-                   playerLayer.frame = tutorialViewShowView.bounds
-                   player?.play()
-               }
-           } else {
-               print("Error: Video file 'cover.mp4' not found in bundle")
-           }
-       }
-       
-       // MARK: - Lifecycle Methods
-       override func didMoveToWindow() {
-           super.didMoveToWindow()
-           if window != nil {
-               player?.play()
-           } else {
-               player?.pause()
-           }
-       }
-       
-       override func layoutSubviews() {
-           super.layoutSubviews()
-           playerLayer?.frame = tutorialViewShowView.bounds
-       }
-       
-       override func prepareForReuse() {
-           super.prepareForReuse()
-           player?.pause()
-           playerLooper = nil
-       }
-       
-       deinit {
-           player?.pause()
-           player = nil
-           playerLayer = nil
-           playerLooper = nil
-       }
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+        playerLayer = nil
+        player = nil
+        playerLooper = nil
+        
+        if let videoPath = Bundle.main.path(forResource: "cover", ofType: "mp4") {
+            print("Video path found: \(videoPath)")
+            
+            let videoURL = URL(fileURLWithPath: videoPath)
+            let playerItem = AVPlayerItem(url: videoURL)
+            
+            let queuePlayer = AVQueuePlayer()
+            player = queuePlayer
+            player?.isMuted = true
+            playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer?.videoGravity = .resizeAspectFill
+            
+            if let playerLayer = playerLayer {
+                tutorialViewShowView.layer.addSublayer(playerLayer)
+                playerLayer.frame = tutorialViewShowView.bounds
+                player?.play()
+            }
+        } else {
+            print("Error: Video file 'cover.mp4' not found in bundle")
+        }
+    }
+    
+    // MARK: - Lifecycle Methods
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window != nil {
+            player?.play()
+        } else {
+            player?.pause()
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        playerLayer?.frame = tutorialViewShowView.bounds
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        player?.pause()
+        playerLooper = nil
+    }
+    
+    deinit {
+        player?.pause()
+        player = nil
+        playerLayer = nil
+        playerLooper = nil
+    }
     
     // MARK: - Setup Methods
     private func setupPremiumActionButton() {

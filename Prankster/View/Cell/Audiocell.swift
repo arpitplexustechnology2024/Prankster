@@ -42,6 +42,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var audioLabel: UILabel!
     @IBOutlet weak var premiumButton: UIButton!
     @IBOutlet weak var blurImageView: UIImageView!
+    @IBOutlet weak var tutorialViewShowView: UIView!
     
     @IBOutlet weak var adContainerView: UIView!
     
@@ -57,6 +58,10 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     var premiumActionButton: UIButton!
     var originalImage: UIImage?
     
+    private var playerLayer: AVPlayerLayer?
+    private var player: AVPlayer?
+    private var playerLooper: AVPlayerLooper?
+    
     // MARK: - Lifecycle Methods
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -71,6 +76,46 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupPremiumActionButton()
+    }
+    
+    public func setupTutorialVideo() {
+        playerLayer?.removeFromSuperlayer()
+        player?.pause()
+        playerLayer = nil
+        player = nil
+        playerLooper = nil
+        
+        if let videoPath = Bundle.main.path(forResource: "audio", ofType: "mp4") {
+            print("Video path found: \(videoPath)")
+            
+            let videoURL = URL(fileURLWithPath: videoPath)
+            let playerItem = AVPlayerItem(url: videoURL)
+            
+            let queuePlayer = AVQueuePlayer()
+            player = queuePlayer
+            player?.isMuted = true
+            playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: playerItem)
+            playerLayer = AVPlayerLayer(player: player)
+            playerLayer?.videoGravity = .resizeAspectFill
+            
+            if let playerLayer = playerLayer {
+                tutorialViewShowView.layer.addSublayer(playerLayer)
+                playerLayer.frame = tutorialViewShowView.bounds
+                player?.play()
+            }
+        } else {
+            print("Error: Video file 'cover.mp4' not found in bundle")
+        }
+    }
+    
+    // MARK: - Lifecycle Methods
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        if window != nil {
+            player?.play()
+        } else {
+            player?.pause()
+        }
     }
     
     // MARK: - Setup Methods
@@ -94,6 +139,9 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         imageView.layer.masksToBounds = false
         imageView.layer.cornerRadius = 20
         imageView.layer.masksToBounds = true
+        
+        tutorialViewShowView.layer.cornerRadius = 20
+        tutorialViewShowView.layer.masksToBounds = true
         
         // BlurImageView Setup
         blurImageView.layer.cornerRadius = 20
@@ -150,6 +198,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
             self.premiumButton.isHidden = true
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = false
+            self.tutorialViewShowView.isHidden = true
             
         } else if let categoryAllData = categoryAllData {
             // Existing API data configuration
@@ -166,6 +215,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
             self.premiumButton.isHidden = true
             self.premiumActionButton.isHidden = true
             self.DoneButton.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             if let parentVC = self.parentViewController as? AudioPrankVC,
                let preloadedAdView = parentVC.preloadedNativeAdView {
@@ -186,6 +236,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
             
         } else {
             self.adContainerView.isHidden = true
+            self.tutorialViewShowView.isHidden = true
             
             let displayName = categoryAllData.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "---" : categoryAllData.name
             self.audioLabel.text = " \(displayName) "
@@ -346,6 +397,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        playerLayer?.frame = tutorialViewShowView.bounds
     }
     
     @objc private func imageViewTapped() {
@@ -359,6 +411,15 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         audioDownloadTask = nil
         audioPlayer = nil
         isAudioLoaded = false
+        player?.pause()
+        playerLooper = nil
+    }
+    
+    deinit {
+        player?.pause()
+        player = nil
+        playerLayer = nil
+        playerLooper = nil
     }
 }
 
