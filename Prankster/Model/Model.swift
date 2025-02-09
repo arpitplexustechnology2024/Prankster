@@ -114,7 +114,7 @@ struct PrankCreateData: Codable {
     let id: String
     let link: String
     let coverImage, shareURL, file, image: String
-    let type, name: String
+    var type, name: String
     
     enum CodingKeys: String, CodingKey {
         case id

@@ -218,7 +218,7 @@ class CoverPageVC: UIViewController {
     // MARK: - Emoji Cover Page API Call
     func fetchEmojiCoverPages() {
         emojiViewModel.resetPagination()
-        emojiViewModel.fetchEmojiCoverPages { [weak self] success in
+        emojiViewModel.fetchEmojiCoverPages(ispremium: "true") { [weak self] success in
             guard let self = self else { return }
             if success {
                 self.hideSkeletonLoader()

@@ -130,7 +130,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             } else {
                 if let bannerAdID = adsViewModel.getAdID(type: .banner) {
                     print("Banner Ad ID: \(bannerAdID)")
-                    bannerAdUtility.setupBannerAd(in: self, adUnitID: "ca-app-pub-7719542074975419/5604529555")
+                    bannerAdUtility.setupBannerAd(in: self, adUnitID: bannerAdID)
                 } else {
                     print("No Banner Ad ID found")
                     if UIDevice.current.userInterfaceIdiom == .pad {
@@ -141,7 +141,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 }
                 if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
                     print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: "ca-app-pub-7719542074975419/3492267881", rootViewController: self)
+                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
                 } else {
                     print("No Interstitial Ad ID found")
                 }
@@ -815,7 +815,18 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     print(success.message)
                     self.prankName = newName
                     self.prankNameLabel.text = newName
-                    UserDefaults.standard.set(newName, forKey: "Name")
+                    
+                    // Update name in UserDefaults
+                    if var savedPranks = self.fetchSavedPrank() {
+                        if let index = savedPranks.firstIndex(where: { $0.id == prankID }) {
+                            savedPranks[index].name = newName
+                            
+                            // Save updated pranks array back to UserDefaults
+                            if let encodedData = try? JSONEncoder().encode(savedPranks) {
+                                UserDefaults.standard.set(encodedData, forKey: "SavedPranks")
+                            }
+                        }
+                    }
                     
                 case .failure(let failure):
                     print(failure.localizedDescription)
@@ -824,6 +835,14 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             }
         }
     }
+    
+    func fetchSavedPrank() -> [PrankCreateData]? {
+            if let savedPranksData = UserDefaults.standard.data(forKey: "SavedPranks"),
+               let savedPranks = try? JSONDecoder().decode([PrankCreateData].self, from: savedPranksData) {
+                return savedPranks
+            }
+            return nil
+        }
     
     // MARK: - btnBackTapped
     @IBAction func btnBackTapped(_ sender: UIButton) {

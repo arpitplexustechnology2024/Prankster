@@ -7094,9 +7094,9 @@ Images, Audio &amp; Videos</string>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L2w-YQ-9Dt">
-                                        <rect key="frame" x="321.33333333333331" y="7.6666666666666714" width="72.666666666666686" height="34.666666666666664"/>
+                                        <rect key="frame" x="317.66666666666669" y="7.6666666666666714" width="76.333333333333314" height="34.666666666666664"/>
                                         <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="restore">
+                                        <buttonConfiguration key="configuration" style="plain" title="Restore">
                                             <fontDescription key="titleFontDescription" name="Avenir-Medium" family="Avenir" pointSize="15"/>
                                             <color key="baseForegroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         </buttonConfiguration>
@@ -7143,13 +7143,13 @@ Images, Audio &amp; Videos</string>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Prankster+" translatesAutoresizingMaskIntoConstraints="NO" id="ecR-cn-i2S">
-                                <rect key="frame" x="16" y="112" width="370" height="200"/>
+                                <rect key="frame" x="16" y="112" width="370" height="180"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="200" id="ocZ-g0-61e"/>
+                                    <constraint firstAttribute="height" constant="180" id="ocZ-g0-61e"/>
                                 </constraints>
                             </imageView>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pxB-Q9-y9p">
-                                <rect key="frame" x="16" y="402" width="370" height="282"/>
+                                <rect key="frame" x="16" y="397" width="370" height="287"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xyd-7U-WTj">
                                         <rect key="frame" x="0.0" y="0.0" width="370" height="258"/>
@@ -7185,8 +7185,8 @@ Images, Audio &amp; Videos</string>
                                                                     <constraint firstAttribute="width" constant="20" id="hbK-Ne-wAR"/>
                                                                 </constraints>
                                                             </imageView>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹19.99" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CzB-NL-KBq">
-                                                                <rect key="frame" x="299.33333333333331" y="35.333333333333314" width="38.666666666666686" height="16.666666666666671"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹19.99/-" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CzB-NL-KBq">
+                                                                <rect key="frame" x="290.66666666666669" y="35.333333333333314" width="47.333333333333314" height="16.666666666666671"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                 <color key="textColor" red="0.5725490196078431" green="0.58823529411764708" blue="0.62352941176470589" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <nil key="highlightedColor"/>
@@ -7228,8 +7228,8 @@ Images, Audio &amp; Videos</string>
                                                                 <color key="textColor" red="0.99607843139999996" green="0.85098039219999999" blue="0.4941176471" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹99.99" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dgd-o9-osl">
-                                                                <rect key="frame" x="299.33333333333331" y="35.333333333333371" width="38.666666666666686" height="16.666666666666671"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹99.99/-" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dgd-o9-osl">
+                                                                <rect key="frame" x="290.66666666666669" y="35.333333333333371" width="47.333333333333314" height="16.666666666666671"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                 <color key="textColor" red="0.57254901960000004" green="0.58823529409999997" blue="0.62352941179999999" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <nil key="highlightedColor"/>
@@ -7278,8 +7278,8 @@ Images, Audio &amp; Videos</string>
                                                                 <color key="textColor" red="0.99607843139999996" green="0.85098039219999999" blue="0.4941176471" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <nil key="highlightedColor"/>
                                                             </label>
-                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹999.99" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dik-f6-eTc">
-                                                                <rect key="frame" x="292" y="35.333333333333371" width="46" height="16.666666666666671"/>
+                                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="₹999.99/-" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Dik-f6-eTc">
+                                                                <rect key="frame" x="283.66666666666669" y="35.333333333333371" width="54.333333333333314" height="16.666666666666671"/>
                                                                 <fontDescription key="fontDescription" name="Avenir-Heavy" family="Avenir" pointSize="12"/>
                                                                 <color key="textColor" red="0.57254901960000004" green="0.58823529409999997" blue="0.62352941179999999" alpha="1" colorSpace="calibratedRGB"/>
                                                                 <nil key="highlightedColor"/>
@@ -7330,17 +7330,17 @@ Images, Audio &amp; Videos</string>
                                 </constraints>
                             </scrollView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2x1-qk-qmU">
-                                <rect key="frame" x="2" y="317" width="398" height="85"/>
+                                <rect key="frame" x="0.0" y="297" width="402" height="100"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="85" id="4o6-D6-3DI"/>
+                                    <constraint firstAttribute="height" constant="100" id="4o6-D6-3DI"/>
                                 </constraints>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="hD8-5X-0ha"/>
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="2x1-qk-qmU" firstAttribute="leading" secondItem="hD8-5X-0ha" secondAttribute="leading" constant="2" id="6TR-wf-bCb"/>
+                            <constraint firstItem="2x1-qk-qmU" firstAttribute="leading" secondItem="hD8-5X-0ha" secondAttribute="leading" id="6TR-wf-bCb"/>
                             <constraint firstItem="V5U-2K-T04" firstAttribute="leading" secondItem="hD8-5X-0ha" secondAttribute="leading" id="8gs-UJ-KpB"/>
                             <constraint firstItem="pxB-Q9-y9p" firstAttribute="leading" secondItem="hD8-5X-0ha" secondAttribute="leading" constant="16" id="8uX-Qm-Eaz"/>
                             <constraint firstItem="qQQ-2N-35c" firstAttribute="leading" secondItem="hD8-5X-0ha" secondAttribute="leading" constant="16" id="9cJ-gE-3Gm"/>
@@ -7352,7 +7352,7 @@ Images, Audio &amp; Videos</string>
                             <constraint firstItem="hD8-5X-0ha" firstAttribute="trailing" secondItem="LJC-wY-CaL" secondAttribute="trailing" constant="16" id="NDe-Gv-hsV"/>
                             <constraint firstItem="pxB-Q9-y9p" firstAttribute="top" secondItem="2x1-qk-qmU" secondAttribute="bottom" id="NYl-Ab-hyA"/>
                             <constraint firstItem="ecR-cn-i2S" firstAttribute="top" secondItem="V5U-2K-T04" secondAttribute="bottom" id="WYb-pN-GD6"/>
-                            <constraint firstItem="hD8-5X-0ha" firstAttribute="trailing" secondItem="2x1-qk-qmU" secondAttribute="trailing" constant="2" id="XCx-Y5-QmL"/>
+                            <constraint firstItem="hD8-5X-0ha" firstAttribute="trailing" secondItem="2x1-qk-qmU" secondAttribute="trailing" id="XCx-Y5-QmL"/>
                             <constraint firstItem="LJC-wY-CaL" firstAttribute="top" secondItem="pxB-Q9-y9p" secondAttribute="bottom" constant="16" id="Yqh-gH-jcU"/>
                             <constraint firstItem="V5U-2K-T04" firstAttribute="trailing" secondItem="hD8-5X-0ha" secondAttribute="trailing" id="azH-1O-eQG"/>
                             <constraint firstItem="LJC-wY-CaL" firstAttribute="leading" secondItem="hD8-5X-0ha" secondAttribute="leading" constant="16" id="cwY-yC-TKn"/>

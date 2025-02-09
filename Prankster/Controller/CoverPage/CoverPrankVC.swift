@@ -92,7 +92,6 @@ class CoverPrankVC: UIViewController {
         self.setupNoInternetView()
         self.setupCollectionView()
         self.hideKeyboardTappedAround()
-        self.checkInternetAndFetchData()
         self.filteredEmojiCoverPages = viewModel.emojiCoverPages
         PremiumManager.shared.clearTemporaryUnlocks()
         
@@ -226,6 +225,8 @@ class CoverPrankVC: UIViewController {
             } else {
                 // બીજી chip select થાય ત્યારે internet check કરો
                 if self.isConnectedToInternet() {
+                    
+                    self.checkInternetAndFetchData()
                     // Internet છે તો normal flow
                     self.addcoverView.isHidden = true
                     self.searchBarView.isHidden = false
@@ -343,7 +344,10 @@ class CoverPrankVC: UIViewController {
     func fetchAllCoverPages() {
         guard !isLoadingMore else { return }
         isLoadingMore = true
-        viewModel.fetchEmojiCoverPages { [weak self] success in
+        
+        let isPremiumContent = PremiumManager.shared.isContentUnlocked(itemID: -1) ? "true" : "false"
+        
+        viewModel.fetchEmojiCoverPages(ispremium: isPremiumContent) { [weak self] success in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.isLoadingMore = false

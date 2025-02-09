@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - Audio API Protocol
 protocol CategoryAllAPIServiceProtocol {
-    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, completion: @escaping (Result<CategoryAllResponse, Error>) -> Void)
+    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, ispremium: String, completion: @escaping (Result<CategoryAllResponse, Error>) -> Void)
 }
 
 // MARK: - Audio API Service
@@ -18,15 +18,15 @@ class CategoryAllAPIService: CategoryAllAPIServiceProtocol {
     static let shared = CategoryAllAPIService()
     private init() {}
     
-    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, completion: @escaping (Result<CategoryAllResponse, Error>) -> Void) {
+    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, ispremium: String, completion: @escaping (Result<CategoryAllResponse, Error>) -> Void) {
         let url = "https://pslink.world/api/category/all/changes"
         
         let parameters: [String: Any] = [
             "prankid": prankid,
             "categoryid": categoryId,
             "languageid": languageid,
-            "page": page
-
+            "page": page,
+            "ispremium": ispremium
         ]
         
         AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default)

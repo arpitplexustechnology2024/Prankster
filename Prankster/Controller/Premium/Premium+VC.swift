@@ -22,7 +22,7 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
     private let images = ["Premium01", "Premium02", "Premium03", "Premium04"]
     private var itemSize: CGSize {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return CGSize(width: 114, height: 85)
+            return CGSize(width: 160, height: 100)
         } else {
             return CGSize(width: 164, height: 125)
         }
@@ -64,27 +64,39 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
         didSet {
             let attributedString = NSAttributedString(
                 string: weekStrikethrought.text ?? "",
-                attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue, .strikethroughColor: UIColor.gray]
+                attributes: [
+                    .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+                    .strikethroughColor: UIColor.gray,
+                    .font: UIFont.boldSystemFont(ofSize: weekStrikethrought.font.pointSize) // Bold માટે
+                ]
             )
             weekStrikethrought.attributedText = attributedString
         }
     }
-    
+
     @IBOutlet weak var monthlyStrikethrought: UILabel! {
         didSet {
             let attributedString = NSAttributedString(
                 string: monthlyStrikethrought.text ?? "",
-                attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue, .strikethroughColor: UIColor.gray]
+                attributes: [
+                    .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+                    .strikethroughColor: UIColor.gray,
+                    .font: UIFont.boldSystemFont(ofSize: monthlyStrikethrought.font.pointSize) // Bold માટે
+                ]
             )
             monthlyStrikethrought.attributedText = attributedString
         }
     }
-    
+
     @IBOutlet weak var yealyStrikethrounght: UILabel! {
         didSet {
             let attributedString = NSAttributedString(
                 string: yealyStrikethrounght.text ?? "",
-                attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue, .strikethroughColor: UIColor.gray]
+                attributes: [
+                    .strikethroughStyle: NSUnderlineStyle.single.rawValue,
+                    .strikethroughColor: UIColor.gray,
+                    .font: UIFont.boldSystemFont(ofSize: yealyStrikethrounght.font.pointSize) // Bold માટે
+                ]
             )
             yealyStrikethrounght.attributedText = attributedString
         }
@@ -140,9 +152,6 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
         collectionView = UICollectionView(frame: sliderView.bounds, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
-        
-        collectionView.isUserInteractionEnabled = false
-        collectionView.isScrollEnabled = false
         
         collectionView.register(ImageCell.self, forCellWithReuseIdentifier: "ImageCell")
         
@@ -614,7 +623,7 @@ extension Premium_VC {
             doneImageConstraints.forEach { $0.constant = 20 }
             labelLeftConstraints.forEach { $0.constant = 42 }
             scrollViewHeightConstraints.constant = 258
-            sliderHeightConstarints.constant = 85
+            sliderHeightConstarints.constant = 100
             self.bestOfferLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
             self.topRatedLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
             self.populareLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
@@ -632,13 +641,13 @@ extension Premium_VC {
             self.yearlyPriceLabel.font = UIFont(name: "Avenir-Heavy", size: 20)
             switch screenHeight {
             case 1334, 1920, 2340, 1792:
-                self.pranksterImageHeightConstraints.constant = 170
+                self.pranksterImageHeightConstraints.constant = 160
             case 2532, 2556, 2436, 2622:
-                self.pranksterImageHeightConstraints.constant = 200
+                self.pranksterImageHeightConstraints.constant = 180
             case 2688, 2886, 2796, 2778, 2868, 2869:
-                self.pranksterImageHeightConstraints.constant = 230
+                self.pranksterImageHeightConstraints.constant = 220
             default:
-                self.pranksterImageHeightConstraints.constant = 170
+                self.pranksterImageHeightConstraints.constant = 160
             }
         } else {
             
@@ -677,6 +686,15 @@ extension Premium_VC: UICollectionViewDelegate, UICollectionViewDataSource {
         let imageIndex = indexPath.item % images.count
         cell.imageView.image = UIImage(named: images[imageIndex])
         return cell
+    }
+    
+    // User scroll handling
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        displayLink?.isPaused = true  // Pause auto-scroll when user scrolls
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        displayLink?.isPaused = false  // Resume auto-scroll after user stops scrolling
     }
 }
 

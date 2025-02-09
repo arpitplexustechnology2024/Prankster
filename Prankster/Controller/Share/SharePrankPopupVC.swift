@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class SharePrankPopupVC: UIViewController, UITextFieldDelegate {
     
@@ -53,11 +54,23 @@ class SharePrankPopupVC: UIViewController, UITextFieldDelegate {
         return true
     }
     
+    private func isConnectedToInternet() -> Bool {
+        let networkManager = NetworkReachabilityManager()
+        return networkManager?.isReachable ?? false
+    }
+    
     @IBAction func btnSaveTapped(_ sender: UIButton) {
         guard let newName = TextFiled.text?.trimmingCharacters(in: .whitespacesAndNewlines),
               !newName.isEmpty else {
             let snackbar = CustomSnackbar(message: "Please enter a name!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
+            return
+        }
+        
+        if !isConnectedToInternet() {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+            dismiss(animated: true)
             return
         }
         

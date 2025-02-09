@@ -27,14 +27,14 @@
                     <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                 </imageView>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="InstagramLink" translatesAutoresizingMaskIntoConstraints="NO" id="LNU-za-g7Y">
-                    <rect key="frame" x="116.66666666666669" y="515" width="160" height="100"/>
+                    <rect key="frame" x="116.66666666666669" y="545" width="160" height="100"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="100" id="1Yn-Mz-3Lp"/>
                         <constraint firstAttribute="width" constant="160" id="Pio-zw-06V"/>
                     </constraints>
                 </imageView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GL1-6i-7QK">
-                    <rect key="frame" x="16" y="89" width="361" height="400"/>
+                    <rect key="frame" x="16" y="119" width="361" height="400"/>
                     <subviews>
                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7wy-73-gdJ">
                             <rect key="frame" x="16" y="16" width="329" height="332.66666666666669"/>
@@ -71,7 +71,7 @@
                 <constraint firstItem="Cuc-iG-MUp" firstAttribute="trailing" secondItem="GL1-6i-7QK" secondAttribute="trailing" constant="16" id="Ace-7M-l7k"/>
                 <constraint firstItem="Mfi-gv-83q" firstAttribute="top" secondItem="d9p-gL-Idv" secondAttribute="top" id="Dts-ei-TQZ"/>
                 <constraint firstItem="GL1-6i-7QK" firstAttribute="leading" secondItem="Cuc-iG-MUp" secondAttribute="leading" constant="16" id="Uj6-x8-l1Q"/>
-                <constraint firstItem="GL1-6i-7QK" firstAttribute="top" secondItem="Cuc-iG-MUp" secondAttribute="top" constant="30" id="etu-fx-5tU"/>
+                <constraint firstItem="GL1-6i-7QK" firstAttribute="top" secondItem="Cuc-iG-MUp" secondAttribute="top" constant="60" id="etu-fx-5tU"/>
                 <constraint firstItem="LNU-za-g7Y" firstAttribute="top" secondItem="GL1-6i-7QK" secondAttribute="bottom" constant="26" id="sLA-o3-zWs"/>
                 <constraint firstItem="Mfi-gv-83q" firstAttribute="leading" secondItem="Cuc-iG-MUp" secondAttribute="leading" id="tkX-lN-cTk"/>
             </constraints>

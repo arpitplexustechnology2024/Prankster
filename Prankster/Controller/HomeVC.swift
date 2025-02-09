@@ -87,11 +87,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
         self.setupUI()
         self.seupViewAction()
         self.requestNotificationPermission()
-        
-        // MARK: - App Open Ads Show
-        AppOpenAdManager.shared.appOpenAdManagerDelegate = self
-        startGoogleMobileAdsSDK()
-        countdownTimer = Timer.scheduledTimer(timeInterval: 0.3,target: self,selector: #selector(HomeVC.decrementCounter),userInfo: nil,repeats: true)
     }
     
     // MARK: - App Open Ads code
@@ -157,6 +152,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             if isConnectedToInternet() {
                 if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                     nativeSmallAd.isHidden = true
+                    scrollViewHeightConstraint.constant = 1000
                 } else {
                     if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
                         print("Native Ad ID: \(nativeAdID)")
@@ -200,6 +196,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             if isConnectedToInternet() {
                 if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                     nativeSmallAd.isHidden = true
+                    scrollViewHeightConstraint.constant = 850
                 } else {
                     if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
                         print("Native Ad ID: \(nativeAdID)")
@@ -226,6 +223,11 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
                 } else {
                     print("No Interstitial Ad ID found")
                 }
+                
+                // MARK: - App Open Ads Show
+                AppOpenAdManager.shared.appOpenAdManagerDelegate = self
+                startGoogleMobileAdsSDK()
+                countdownTimer = Timer.scheduledTimer(timeInterval: 0.3,target: self,selector: #selector(HomeVC.decrementCounter),userInfo: nil,repeats: true)
             }
         }
     }
@@ -314,22 +316,9 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
         if isDropdownVisible {
             hideDropdown()
         } else {
-            let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
-            let hasInternet = isConnectedToInternet()
-            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
-            
-            if shouldOpenDirectly {
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "Premium_VC") as! Premium_VC
-                vc.premiumBack = true
-                self.navigationController?.pushViewController(vc, animated: true)
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "Premium_VC") as! Premium_VC
-                    vc.premiumBack = true
-                    self?.navigationController?.pushViewController(vc, animated: true)
-                }
-            }
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "Premium_VC") as! Premium_VC
+            vc.premiumBack = true
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     

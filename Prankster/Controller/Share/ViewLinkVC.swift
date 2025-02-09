@@ -16,11 +16,12 @@ class ViewLinkVC: UIViewController {
     @IBOutlet weak var navigationView: UIView!
     var pranks: [PrankCreateData] = []
     private var noDataView: NoDataView!
-    
+    private var noInternetView: NoInternetView!
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
     private let adsViewModel = AdsViewModel()
     let interstitialAdUtility = InterstitialAdUtility()
+    private let rewardAdUtility = RewardAdUtility()
     
     
     override func viewDidLoad() {
@@ -29,7 +30,18 @@ class ViewLinkVC: UIViewController {
         setupSwipeGesture()
         setupNoDataView()
         setupCollectionView()
-        fetchPranksFromUserDefaults()
+        self.setupNoInternetView()
+        self.checkInternetAndFetchData()
+    }
+    
+    // MARK: - checkInternetAndFetchData
+    func checkInternetAndFetchData() {
+        if isConnectedToInternet() {
+            fetchPranksFromUserDefaults()
+            self.noInternetView?.isHidden = true
+        } else {
+            self.noInternetView?.isHidden = false
+        }
     }
     
     private func setupAds() {
@@ -51,11 +63,11 @@ class ViewLinkVC: UIViewController {
                 nativeSmallAds.isHidden = true
             }
             
-            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                print("Reward Ad ID: \(rewardAdID)")
+                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
             } else {
-                print("No Interstitial Ad ID found")
+                print("No Reward Ad ID found")
             }
         } else {
             nativeSmallAds.isHidden = true
@@ -90,6 +102,42 @@ class ViewLinkVC: UIViewController {
             noDataView.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
             noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    // MARK: - setupNoInternetView
+    func setupNoInternetView() {
+        noInternetView = NoInternetView()
+        noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
+        noInternetView.isHidden = true
+        self.view.addSubview(noInternetView)
+        noInternetView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            noInternetView.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
+            noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    // MARK: - retryButtonTapped
+    @objc func retryButtonTapped() {
+        if isConnectedToInternet() {
+            noInternetView.isHidden = true
+            self.checkInternetAndFetchData()
+            if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+                print("Native Ad ID: \(nativeAdID)")
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                } else {
+                    nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                }
+            } else {
+                nativeSmallAds.isHidden = true
+            }
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
     }
     
     func fetchPranksFromUserDefaults() {
@@ -173,7 +221,7 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
         
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
         let hasInternet = isConnectedToInternet()
-        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .reward) == nil || !hasInternet)
         
         if shouldOpenDirectly {
             let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
@@ -190,8 +238,8 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
             
             self.present(vc, animated: true)
         } else {
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
+            rewardAdUtility.showRewardedAd()
+            rewardAdUtility.onRewardEarned = { [weak self] in
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
                 vc.coverImageURL = prank.coverImage
                 vc.prankName = prank.name

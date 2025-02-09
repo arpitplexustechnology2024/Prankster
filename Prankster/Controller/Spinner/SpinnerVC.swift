@@ -145,13 +145,6 @@ class SpinnerVC: UIViewController {
         }
         
         if isConnectedToInternet() {
-            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                print("Reward Ad ID: \(rewardAdID)")
-                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-            } else {
-                print("No Reward Ad ID found")
-            }
-            
             if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                 bottomConstraints.constant = 16
             } else {
@@ -172,6 +165,13 @@ class SpinnerVC: UIViewController {
                     interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
                 } else {
                     print("No Interstitial Ad ID found")
+                }
+                
+                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                    print("Reward Ad ID: \(rewardAdID)")
+                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
+                } else {
+                    print("No Reward Ad ID found")
                 }
                 
             }
@@ -453,7 +453,7 @@ class SpinnerVC: UIViewController {
             
             let hours = Int(remainingTime) / 3600
             let minutes = (Int(remainingTime) % 3600) / 60
-            spinnerCountLabel.text = String(format: "New spin %02dh:%02dm", hours, minutes)
+            spinnerCountLabel.text = String(format: "%02dh:%02dm left", hours, minutes)
         }
     }
     

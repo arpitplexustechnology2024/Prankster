@@ -19,7 +19,7 @@ class EmojiViewModel {
         self.apiService = apiService
     }
     
-    func fetchEmojiCoverPages(completion: @escaping (Bool) -> Void) {
+    func fetchEmojiCoverPages(ispremium: String, completion: @escaping (Bool) -> Void) {
         guard !isLoading && hasMorePages else {
             completion(false)
             return
@@ -27,7 +27,7 @@ class EmojiViewModel {
         
         isLoading = true
         
-        apiService.fetchCoverPages(page: currentPage) { [weak self] result in
+        apiService.fetchCoverPages(page: currentPage, ispremium: ispremium) { [weak self] result in
             guard let self = self else { return }
             self.isLoading = false
             
@@ -53,6 +53,17 @@ class EmojiViewModel {
         hasMorePages = true
     }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 class RealisticViewModel {
     private let apiService: RealisticAPIServiceProtocol

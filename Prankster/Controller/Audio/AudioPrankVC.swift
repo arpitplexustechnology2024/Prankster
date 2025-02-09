@@ -421,7 +421,9 @@ class AudioPrankVC: UIViewController {
         guard !isLoadingMore else { return }
         isLoadingMore = true
         
-        viewModel.fetchAudioData(prankid: 1, categoryId: currentCategoryId, languageid: languageid) { [weak self] success in
+        let isPremiumContent = PremiumManager.shared.isContentUnlocked(itemID: -1) ? "true" : "false"
+        
+        viewModel.fetchAudioData(prankid: 1, categoryId: currentCategoryId, languageid: languageid, ispremium: isPremiumContent) { [weak self] success in
             guard let self = self else { return }
             
             DispatchQueue.main.async {
