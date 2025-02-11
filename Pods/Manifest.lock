@@ -1,5 +1,8 @@
 PODS:
   - Alamofire (5.10.1)
+  - AppsFlyerFramework (6.15.3):
+    - AppsFlyerFramework/Main (= 6.15.3)
+  - AppsFlyerFramework/Main (6.15.3)
   - FBAEMKit (17.4.0):
     - FBSDKCoreKit_Basics (= 17.4.0)
   - FBSDKCoreKit (17.4.0):
@@ -206,6 +209,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire
+  - AppsFlyerFramework
   - FBSDKCoreKit
   - Firebase/Analytics
   - Firebase/Core
@@ -221,6 +225,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - AppsFlyerFramework
     - FBAEMKit
     - FBSDKCoreKit
     - FBSDKCoreKit_Basics
@@ -255,6 +260,7 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: 840d2a1ad82355b536ec6ba5f97e5bfa54600ca3
+  AppsFlyerFramework: ad7ff0d22aa36c7f8cc4f71a5424e19b89ccb8ae
   FBAEMKit: 58cb5f302cdd715a56d4c1d0dfdd2e423ac1421a
   FBSDKCoreKit: 94d7461d0cecf441b1ba7c41acfff41daa8ccd41
   FBSDKCoreKit_Basics: 151b43db8b834d3f0e02f95d36a44ffd36265e45
@@ -287,6 +293,6 @@ SPEC CHECKSUMS:
   SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
   SwiftFortuneWheel: f69e99359cdef05bad3aa3d1db297bd3da8d324c
 
-PODFILE CHECKSUM: 706a07770894659d13175998ecf51a78d5d1453b
+PODFILE CHECKSUM: 550de653f7ecef436c94f767f385b62df9e053f7
 
 COCOAPODS: 1.15.2

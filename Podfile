@@ -27,6 +27,7 @@ target 'Prankster' do
   pod 'Firebase/InAppMessaging'
   pod 'FBSDKCoreKit'
   pod 'OneSignal'
+  pod 'AppsFlyerFramework'
 
   target 'PranksterTests' do
     inherit! :search_paths

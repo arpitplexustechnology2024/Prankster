@@ -15,6 +15,7 @@ import FBSDKCoreKit
 import AppTrackingTransparency
 import AdSupport
 import GoogleMobileAds
+import AppsFlyerLib
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -37,10 +38,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Onesignal
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         OneSignal.initialize("d8e64d76-dc16-444f-af2d-1bb802f7bc44", withLaunchOptions: launchOptions)
+        
+        AppsFlyerLib.shared().appsFlyerDevKey = "YwFmSnDNyUSqZNcNUJUi4H"
+        AppsFlyerLib.shared().appleAppID = "6739135275"
+        NotificationCenter.default.addObserver(self, selector: NSSelectorFromString("sendLaunch"), name: UIApplication.didBecomeActiveNotification, object: nil)
         // function call
         checkNotificationAuthorization()
         
         return true
+    }
+    
+    @objc func sendLaunch() {
+        AppsFlyerLib.shared().start()
     }
     
     deinit {
@@ -196,6 +205,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidBecomeActive(_ application: UIApplication) {
         checkNotificationAuthorization()
         checkForUpdate()
+        AppsFlyerLib.shared().start()
         Settings.shared.isAutoLogAppEventsEnabled = true
         AppOpenAdManager.shared.showAdIfAvailable()
     }
