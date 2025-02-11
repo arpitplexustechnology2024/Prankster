@@ -66,7 +66,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         super.viewDidLoad()
         setupSkeletonView()
         self.setupUI()
-        self.rateUs()
         self.setupNoDataView()
         self.setupScrollView()
         self.setupSwipeGesture()
@@ -245,13 +244,16 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             DispatchQueue.main.async {
                 if success {
                     self.savePrankToUserDefaults()
-                    
                     self.skeletonLoadingView?.stopAnimating()
                     self.skeletonLoadingView?.isHidden = true
                     self.prankImageView.isHidden = false
                     self.playPauseImageView.isHidden = false
                     self.prankNameLabel.isHidden = false
                     self.scrollViewView.isHidden = false
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        self.rateUs()
+                    }
                     
                     print("Prank Link :- \(self.viewModel.createPrankShareURL ?? "")")
                     print("Prank Data :- \(self.viewModel.createPrankData ?? "")")
@@ -872,13 +874,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     print(success.message)
                     self.prankName = newName
                     self.prankNameLabel.text = newName
-                    
-                    // Update name in UserDefaults
+
                     if var savedPranks = self.fetchSavedPrank() {
                         if let index = savedPranks.firstIndex(where: { $0.id == prankID }) {
                             savedPranks[index].name = newName
                             
-                            // Save updated pranks array back to UserDefaults
                             if let encodedData = try? JSONEncoder().encode(savedPranks) {
                                 UserDefaults.standard.set(encodedData, forKey: "SavedPranks")
                             }

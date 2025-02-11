@@ -329,7 +329,6 @@ class SpinnerVC: UIViewController {
     }
     
     // MARK: - Spin Processing Methods
-    // 2. જ્યારે spin થાય ત્યારે API call કરવા માટેનો updated code
     private func proceedWithSpinning() {
         guard remainingSpins > 0 else { return }
         
@@ -338,10 +337,6 @@ class SpinnerVC: UIViewController {
         
         if remainingSpins == 0 {
             startTimerForNextSpins()
-        }
-        
-        if remainingSpins == 2 {
-            self.rateUs()
         }
         
         prizes[2].value = String(Int.random(in: 1...3))
@@ -360,6 +355,11 @@ class SpinnerVC: UIViewController {
                         snackbar.show(in: self?.view ?? UIView(), duration: 3.0)
                     }
                     self?.updateSpinLabel()
+                    
+                    // બીજો સ્પિન પૂરો થયા પછી રેટ અસ બતાવવા માટે
+                    if self?.remainingSpins == 2 {
+                        self?.rateUs()
+                    }
                 }
             }
         }
