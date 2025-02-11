@@ -16,13 +16,25 @@ class MoreAppVC: UIViewController {
     @IBOutlet weak var collectionview: UICollectionView!
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
-    private let viewModel = MoreAppViewModel()
+    private var viewModel: MoreAppViewModel!
     private var moreDataArray: [MoreData] = []
     private var skeletonLoadingView: SkeletonMoreappLoadingView?
     
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
+    
+    init(viewModel: MoreAppViewModel, adViewModule: AdsViewModel) {
+        self.viewModel = viewModel
+        self.adsViewModel = adViewModule
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.viewModel = MoreAppViewModel(apiService: MoreAppAPIManger.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

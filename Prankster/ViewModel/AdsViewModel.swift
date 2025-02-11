@@ -22,7 +22,7 @@ class AdsViewModel {
     private let apiService: AdsAPIProtocol
     private var isAdsEnabled: Bool = false
     
-    init(apiService: AdsAPIProtocol = AdsAPIManger.shared) {
+    init(apiService: AdsAPIProtocol) {
         self.apiService = apiService
         self.isAdsEnabled = UserDefaults.standard.bool(forKey: "isAdsEnabled")
     }
@@ -31,7 +31,6 @@ class AdsViewModel {
         apiService.fetchAds { [weak self] result in
             switch result {
             case .success(let adsResponse):
-                // Store the ads status
                 self?.isAdsEnabled = adsResponse.adsStatus
                 UserDefaults.standard.set(adsResponse.adsStatus, forKey: "isAdsEnabled")
                 
@@ -47,15 +46,11 @@ class AdsViewModel {
                 
             case .failure(let error):
                 print("Ads Fetch Error: \(error.localizedDescription)")
-                // On failure, keep the existing ads status and data
-                // Don't remove anything from UserDefaults
-                // Just return false to indicate fetch failed
                 completion(false)
             }
         }
     }
     
-    // Check if ads should be shown
     func shouldShowAds() -> Bool {
         return isAdsEnabled && UserDefaults.standard.bool(forKey: "isAdsEnabled")
     }
@@ -111,12 +106,10 @@ class AdsViewModel {
     // MARK: - Remove All Ads
     func removeAdsFromUserDefaults() {
         let defaults = UserDefaults.standard
-        
-        // Remove saved names and IDs
+
         defaults.removeObject(forKey: "savedAdsNames")
         defaults.removeObject(forKey: "savedAdsIDs")
         
-        // Remove specific ad type IDs
         defaults.removeObject(forKey: AdType.banner.rawValue)
         defaults.removeObject(forKey: AdType.interstitial.rawValue)
         defaults.removeObject(forKey: AdType.reward.rawValue)

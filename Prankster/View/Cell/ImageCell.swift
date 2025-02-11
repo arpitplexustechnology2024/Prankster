@@ -11,7 +11,7 @@ import Alamofire
 import AVFoundation
 
 @available(iOS 15.0, *)
-class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
+class ImageAllCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var DoneButton: UIButton!
@@ -20,7 +20,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var blurImageView: UIImageView!
     @IBOutlet weak var tutorialViewShowView: UIView!
     
-    private var coverPageData: CategoryAllData?
+    private var coverPageData: CharacterAllData?
     var originalImage: UIImage?
     var premiumActionButton: UIButton!
     
@@ -163,7 +163,7 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Configuration
-    func configure(with coverPageData: CategoryAllData) {
+    func configure(with coverPageData: CharacterAllData) {
         self.coverPageData = coverPageData
         
         if coverPageData.name.lowercased() == "ads" {
@@ -268,10 +268,10 @@ class ImageCharacterAllCollectionViewCell: UICollectionViewCell {
     }
 }
 
-class ImageCharacterSliderCollectionViewCell: UICollectionViewCell {
+class ImageSliderCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
-    private var coverPageData: CategoryAllData?
+    private var coverPageData: CharacterAllData?
     var premiumIconImageView: UIImageView!
     
     private var originalImage: UIImage?
@@ -312,7 +312,7 @@ class ImageCharacterSliderCollectionViewCell: UICollectionViewCell {
         contentView.layer.masksToBounds = true
     }
     
-    func configure(with coverPageData: CategoryAllData) {
+    func configure(with coverPageData: CharacterAllData) {
         self.coverPageData = coverPageData
         if let imageURL = URL(string: coverPageData.file ?? "") {
             imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "imageplacholder")) { image, _, _, _ in

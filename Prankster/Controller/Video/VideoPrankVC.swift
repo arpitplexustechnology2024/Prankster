@@ -25,78 +25,72 @@ struct CustomVideos {
 
 @available(iOS 15.0, *)
 class VideoPrankVC: UIViewController {
-    @IBOutlet weak var videoAllCollectionView: UICollectionView!
-    @IBOutlet weak var videoSlideCollectionview: UICollectionView!
-    
-    var categoryId: Int = 0
-    private let typeId: Int = 1
-    private var isLoadingMore = false
-    private var isSearchActive = false
-    private var noDataView: NoDataView!
-    private var viewModel = CategoryAllViewModel()
-    private var noInternetView: NoInternetView!
-    private var filteredVideos: [CategoryAllData] = []
-    private var currentDataSource: [CategoryAllData] {
-        return isSearchActive ? filteredVideos : viewModel.audioData
-    }
-    private var selectedIndex: Int = 0
-    
-    var selectedVideoCustomCell: IndexPath?
-    var languageid: Int = 0
-    
-    private var shouldShowGIF = true
-    
-    private var currentCategoryId: Int = 0
-    private var isFirstLoad: Bool = true
-    
-    @IBOutlet weak var chipSelector: VideoChipSelector!
-    @IBOutlet weak var addvideoButton: UIButton!
-    @IBOutlet weak var addvideoView: UIView!
-    @IBOutlet weak var videoPrankLabel: UILabel!
+
     @IBOutlet weak var backButton: UIButton!
-    
+    @IBOutlet weak var addvideoView: UIView!
+    @IBOutlet weak var searchBarView: UIView!
+    @IBOutlet weak var popularLabel: UILabel!
     @IBOutlet weak var searchMainView: UIView!
     @IBOutlet weak var searchBar: UITextField!
     @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
-    @IBOutlet weak var popularLabel: UILabel!
+    @IBOutlet weak var videoPrankLabel: UILabel!
+    @IBOutlet weak var addvideoButton: UIButton!
+    @IBOutlet weak var chipSelector: VideoChipSelector!
+    @IBOutlet weak var videoAllCollectionView: UICollectionView!
+    @IBOutlet weak var videoSlideCollectionview: UICollectionView!
     @IBOutlet weak var suggestionCollectionView: UICollectionView!
+    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
     
-    @IBOutlet weak var searchBarView: UIView!
-    
-    private var suggestions: [String] = []
-    
-    private var tagViewModule : TagViewModule!
-    let interstitialAdUtility = InterstitialAdUtility()
-    private let adsViewModel = AdsViewModel()
-    
-    // MARK: - variable
+    var languageid: Int = 0
+    var categoryId: Int = 0
     private var timer: Timer?
+    private let typeId: Int = 1
+    private var player: AVPlayer?
     private var isPlaying = false
+    private var shouldShowGIF = true
+    private var isLoadingMore = false
     var selectedCoverImageURL: String?
     var selectedCoverImageFile: Data?
+    private var selectedIndex: Int = 0
+    private var isSearchActive = false
+    private var noDataView: NoDataView!
     var selectedCoverImageName: String?
     private var selectedAudioIndex: Int?
+    private var isFirstLoad: Bool = true
+    private var selectedVideoIndex: Int?
+    var customVideos: [CustomVideos] = []
+    private var currentCategoryId: Int = 0
+    private var suggestions: [String] = []
+    var selectedVideoCustomCell: IndexPath?
+    private var shouldAutoPlayVideo = false
+    private var playerLayer: AVPlayerLayer?
+    private var audioSession: AVAudioSession?
+    private var adsViewModel: AdsViewModel!
+    private var tagViewModule : TagViewModule!
+    var preloadedNativeAdView: GADNativeAdView?
+    private var noInternetView: NoInternetView!
+    private var viewModel: CategoryAllViewModel!
+    private var filteredVideos: [CharacterAllData] = []
+    let interstitialAdUtility = InterstitialAdUtility()
     private var nativeMediumAdUtility: NativeMediumAdUtility?
     private var skeletonLoadingView: SkeletonDataLoadingView?
-    var preloadedNativeAdView: GADNativeAdView?
+    private var currentDataSource: [CharacterAllData] {
+        return isSearchActive ? filteredVideos : viewModel.audioData
+    }
     
-    init(tagViewModule: TagViewModule) {
+    init(tagViewModule: TagViewModule, viewModule: CategoryAllViewModel, adViewModule: AdsViewModel) {
         self.tagViewModule = tagViewModule
+        self.viewModel = viewModule
+        self.adsViewModel = adViewModule
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.tagViewModule = TagViewModule(apiService: TagAPIManger.shared)
+        self.viewModel = CategoryAllViewModel(apiService: CharacterAllAPIManger.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     }
-    
-    private var player: AVPlayer?
-    private var selectedVideoIndex: Int?
-    var customVideos: [CustomVideos] = []
-    private var shouldAutoPlayVideo = false
-    private var playerLayer: AVPlayerLayer?
-    private var audioSession: AVAudioSession?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -259,7 +253,7 @@ class VideoPrankVC: UIViewController {
             
             if let visibleIndexPath = videoAllCollectionView.indexPathForItem(at: visiblePoint),
                visibleIndexPath.item < customVideos.count {
-                if let cell = videoAllCollectionView.cellForItem(at: visibleIndexPath) as? VideoCharacterAllCollectionViewCell {
+                if let cell = videoAllCollectionView.cellForItem(at: visibleIndexPath) as? VideoAllCollectionViewCell {
                     selectedIndex = visibleIndexPath.item
                     VideoPlaybackManager.shared.stopCurrentPlayback()
                     cell.playVideo()
@@ -284,7 +278,7 @@ class VideoPrankVC: UIViewController {
                     return
                 }
                 
-                if let cell = videoAllCollectionView.cellForItem(at: visibleIndexPath) as? VideoCharacterAllCollectionViewCell {
+                if let cell = videoAllCollectionView.cellForItem(at: visibleIndexPath) as? VideoAllCollectionViewCell {
                     selectedIndex = visibleIndexPath.item
                     VideoPlaybackManager.shared.stopCurrentPlayback()
                     cell.playVideo()
@@ -366,8 +360,6 @@ class VideoPrankVC: UIViewController {
         self.videoSlideCollectionview.delegate = self
         self.videoSlideCollectionview.dataSource = self
         self.videoAllCollectionView.isPagingEnabled = true
-        self.videoAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.videoSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.videoSlideCollectionview.register(
             LoadingFooterView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
@@ -412,7 +404,7 @@ class VideoPrankVC: UIViewController {
                         self.selectedIndex = 0
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                            if let cell = self?.videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell {
+                            if let cell = self?.videoAllCollectionView.cellForItem(at: indexPath) as? VideoAllCollectionViewCell {
                                 cell.playVideo()
                                 VideoPlaybackManager.shared.currentlyPlayingCell = cell
                                 VideoPlaybackManager.shared.currentlyPlayingIndexPath = indexPath
@@ -651,7 +643,7 @@ class VideoPrankVC: UIViewController {
                         self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                            if let cell = self.videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell {
+                            if let cell = self.videoAllCollectionView.cellForItem(at: indexPath) as? VideoAllCollectionViewCell {
                                 VideoPlaybackManager.shared.stopCurrentPlayback()
                                 
                                 cell.playVideo()
@@ -766,7 +758,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == videoAllCollectionView {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterAllCollectionViewCell", for: indexPath) as! VideoCharacterAllCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoAllCollectionViewCell", for: indexPath) as! VideoAllCollectionViewCell
                 
                 if currentCategoryId == 0 {
                     
@@ -806,7 +798,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                             cell.premiumButton.isHidden = true
                             cell.imageView.contentMode = .scaleAspectFit
                             
-                            let dummyData = CategoryAllData(file: videoURL.video.absoluteString,
+                            let dummyData = CharacterAllData(file: videoURL.video.absoluteString,
                                                             name: " Custom Video ",
                                                             image: "",
                                                             premium: false,
@@ -840,7 +832,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 cell.delegate = self
                 return cell
         } else if collectionView == videoSlideCollectionview {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterSliderCollectionViewCell", for: indexPath) as! VideoCharacterSliderCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoSliderCollectionViewCell", for: indexPath) as! VideoSliderCollectionViewCell
                 
                 if currentCategoryId == 0 {
                     if customVideos.isEmpty {
@@ -864,20 +856,16 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuggestionCell", for: indexPath)
             
-            // Remove existing subviews
             cell.contentView.subviews.forEach { $0.removeFromSuperview() }
             
-            // Create label
             let label = UILabel()
             label.text = suggestions[indexPath.row]
             label.textColor = .white
             label.textAlignment = .center
             label.font = UIFont.systemFont(ofSize: 16)
             
-            // Add label to cell
             cell.contentView.addSubview(label)
             
-            // Setup constraints with minimal padding
             label.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 label.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 4),
@@ -885,7 +873,6 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
             ])
             
-            // Style cell
             cell.backgroundColor = #colorLiteral(red: 0.1215686275, green: 0.1215686275, blue: 0.1215686275, alpha: 1)
             cell.layer.borderWidth = 1
             cell.layer.borderColor = #colorLiteral(red: 0.3098039216, green: 0.3176470588, blue: 0.3254901961, alpha: 1)
@@ -1157,7 +1144,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         videoAllCollectionView.reloadData()
         
         if let playingIndexPath = VideoPlaybackManager.shared.currentlyPlayingIndexPath,
-           let cell = videoAllCollectionView.cellForItem(at: playingIndexPath) as? VideoCharacterAllCollectionViewCell {
+           let cell = videoAllCollectionView.cellForItem(at: playingIndexPath) as? VideoAllCollectionViewCell {
             cell.playVideo()
         }
     }
@@ -1165,9 +1152,9 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
 
 // MARK: - AudioAllCollectionViewCellDelegate
 @available(iOS 15.0, *)
-extension VideoPrankVC: VideoCharacterAllCollectionViewCellDelegate {
+extension VideoPrankVC: VideoAllCollectionViewCellDelegate {
     func didTapVideoPlayback(at indexPath: IndexPath) {
-        guard let cell = videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell else {
+        guard let cell = videoAllCollectionView.cellForItem(at: indexPath) as? VideoAllCollectionViewCell else {
             return
         }
         
@@ -1429,7 +1416,7 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                         self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                            if let cell = self?.videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell {
+                            if let cell = self?.videoAllCollectionView.cellForItem(at: indexPath) as? VideoAllCollectionViewCell {
                                 cell.playVideo()
                             }
                         }

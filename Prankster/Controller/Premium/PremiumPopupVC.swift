@@ -21,8 +21,18 @@ class PremiumPopupVC: UIViewController {
     @IBOutlet weak var secoundView: UIView!
     
     let interstitialAdUtility = InterstitialAdUtility()
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
     private var itemIDToUnlock: Int?
+    
+    init(adViewModule: AdsViewModel) {
+        self.adsViewModel = adViewModule
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

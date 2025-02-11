@@ -16,9 +16,19 @@ class LaunchVC: UIViewController {
     
     @IBOutlet weak var launchImageView: UIImageView!
     @IBOutlet weak var loadingActivityIndicator: UIActivityIndicatorView!
-    private let adsViewModel = AdsViewModel()
-    
+    private var adsViewModel: AdsViewModel!
     var passedActionKey: String?
+    
+    init(adViewModule: AdsViewModel) {
+        self.adsViewModel = adViewModule
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()

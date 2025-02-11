@@ -13,9 +13,9 @@ protocol EmojiAPIServiceProtocol {
 }
 
 // MARK: - EmojiAPIService
-class EmojiAPIService: EmojiAPIServiceProtocol {
+class CoverAPIManger: EmojiAPIServiceProtocol {
     
-    static let shared = EmojiAPIService()
+    static let shared = CoverAPIManger()
     private init() {}
     
     func fetchCoverPages(page: Int,  ispremium: String, completion: @escaping (Result<CoverPage, Error>) -> Void) {

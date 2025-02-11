@@ -32,9 +32,19 @@ class SpinnerDataShowVC: UIViewController {
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     private var blurEffectView: UIVisualEffectView!
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
     private var loadingAlert: LoadingAlertView?
     private let rewardAdUtility = RewardAdUtility()
+    
+    init(adViewModule: AdsViewModel) {
+        self.adsViewModel = adViewModule
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

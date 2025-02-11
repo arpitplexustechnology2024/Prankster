@@ -11,7 +11,7 @@ class MoreAppViewModel {
     private let apiService: MoreAppApiServiceProtocol
     var moreApp: MoreApp?
     
-    init(apiService: MoreAppApiServiceProtocol = MoreAppAPIService.shared) {
+    init(apiService: MoreAppApiServiceProtocol) {
         self.apiService = apiService
     }
     

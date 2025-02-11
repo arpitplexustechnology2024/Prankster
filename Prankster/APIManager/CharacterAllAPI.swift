@@ -9,16 +9,16 @@ import Alamofire
 import UIKit
 
 // MARK: - Audio API Protocol
-protocol CategoryAllAPIServiceProtocol {
-    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, ispremium: String, completion: @escaping (Result<CategoryAllResponse, Error>) -> Void)
+protocol CharacterAllAPIServiceProtocol {
+    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, ispremium: String, completion: @escaping (Result<CharacterAllResponse, Error>) -> Void)
 }
 
 // MARK: - Audio API Service
-class CategoryAllAPIManger: CategoryAllAPIServiceProtocol {
-    static let shared = CategoryAllAPIManger()
+class CharacterAllAPIManger: CharacterAllAPIServiceProtocol {
+    static let shared = CharacterAllAPIManger()
     private init() {}
     
-    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, ispremium: String, completion: @escaping (Result<CategoryAllResponse, Error>) -> Void) {
+    func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, ispremium: String, completion: @escaping (Result<CharacterAllResponse, Error>) -> Void) {
         let url = "https://pslink.world/api/category/all/changes"
         
         let parameters: [String: Any] = [
@@ -30,7 +30,7 @@ class CategoryAllAPIManger: CategoryAllAPIServiceProtocol {
         ]
         
         AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default)
-        .responseDecodable(of: CategoryAllResponse.self) { response in
+        .responseDecodable(of: CharacterAllResponse.self) { response in
             switch response.result {
             case .success(let audioResponse):
                 completion(.success(audioResponse))

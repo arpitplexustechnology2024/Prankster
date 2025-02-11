@@ -66,7 +66,7 @@ class SpinnerVC: UIViewController {
     private var spinViewModel: SpinnerViewModel!
     private let timerKey = "nextSpinAvailableTime"
     private let rewardAdUtility = RewardAdUtility()
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
     var bannerAdUtility = BannerAdUtility()
     private var currentSpinButtonState: SpinButtonState = .spin
     
@@ -95,6 +95,16 @@ class SpinnerVC: UIViewController {
     }
     
     private var isSpinning = false
+    
+    init(adViewModule: AdsViewModel) {
+        self.adsViewModel = adViewModule
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
+    }
     
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {

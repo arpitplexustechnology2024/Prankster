@@ -40,12 +40,12 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var prankAudioImage: String?
     var prankShareURL: String?
     var sharePrank: Bool = false
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
     private var playerLayer: AVPlayerLayer?
     var bannerAdUtility = BannerAdUtility()
-    private var viewModel = PrankViewModel()
+    private var viewModel: PrankViewModel!
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
     private var loadingAlert: LoadingAlertView?
@@ -60,6 +60,18 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         stack.translatesAutoresizingMaskIntoConstraints = false
         return stack
     }()
+    
+    init(viewModule: PrankViewModel, adsViewModel: AdsViewModel) {
+        self.viewModel = viewModule
+        self.adsViewModel = adsViewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.viewModel = PrankViewModel(apiService: PrankAPIManager.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
+    }
     
     // MARK: - viewDidLoad
     override func viewDidLoad() {

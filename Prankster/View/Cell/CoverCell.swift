@@ -1,11 +1,11 @@
 //
-//  EmojiCoverAllCollectionViewCell.swift
+//  CoverAllCollectionViewCell.swift
 //  Pranksters
 //
 //  Created by Arpit iOS Dev. on 10/10/24.
 //
 
-// MARK: - EmojiCoverAllCollectionViewCell.swift
+// MARK: - CoverAllCollectionViewCell.swift
 import UIKit
 import SDWebImage
 import GoogleMobileAds
@@ -13,7 +13,7 @@ import Alamofire
 import AVFoundation
 
 @available(iOS 15.0, *)
-class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
+class CoverAllCollectionViewCell: UICollectionViewCell {
     
     // MARK: - IBOutlets
     @IBOutlet weak var imageView: UIImageView!
@@ -275,7 +275,7 @@ class EmojiCoverAllCollectionViewCell: UICollectionViewCell {
     }
 }
 
-class EmojiCoverSliderCollectionViewCell: UICollectionViewCell {
+class CoverSliderCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
     private var coverPageData: CoverPageData?

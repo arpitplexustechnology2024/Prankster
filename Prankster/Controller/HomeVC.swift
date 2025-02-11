@@ -67,11 +67,21 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
     let interstitialAdUtility = InterstitialAdUtility()
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
     
     var secondsRemaining: Int = 5
     var countdownTimer: Timer?
     private var isMobileAdsStartCalled = false
+    
+    init(adViewModule: AdsViewModel) {
+        self.adsViewModel = adViewModule
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

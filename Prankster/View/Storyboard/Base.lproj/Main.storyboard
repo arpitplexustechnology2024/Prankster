@@ -213,7 +213,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EmojiCoverAllCollectionViewCell" id="xM6-nk-sbK" customClass="EmojiCoverAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CoverAllCollectionViewCell" id="xM6-nk-sbK" customClass="CoverAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="1" width="401" height="558"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Mpg-z8-Moq">
@@ -358,7 +358,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="EmojiCoverSliderCollectionViewCell" id="CyD-ma-krR" customClass="EmojiCoverSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="CoverSliderCollectionViewCell" id="CyD-ma-krR" customClass="CoverSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="wWf-dh-YcE">
@@ -536,9 +536,9 @@
                         <outlet property="backButton" destination="7uf-ys-Mwf" id="IYR-5d-05V"/>
                         <outlet property="cancelButton" destination="Hwh-7l-ipX" id="4HE-0V-gNj"/>
                         <outlet property="chipSelector" destination="fW1-EL-zmh" id="BFh-Dg-ALg"/>
+                        <outlet property="coverAllCollectionView" destination="tN9-0Z-62t" id="jNf-NO-wF4"/>
                         <outlet property="coverImageLabel" destination="T54-fr-k4O" id="kUR-57-s0f"/>
-                        <outlet property="emojiCoverAllCollectionView" destination="tN9-0Z-62t" id="jNf-NO-wF4"/>
-                        <outlet property="emojiCoverSlideCollectionview" destination="gee-0x-fB9" id="Qyn-7A-aHS"/>
+                        <outlet property="coverSlideCollectionview" destination="gee-0x-fB9" id="Qyn-7A-aHS"/>
                         <outlet property="popularLabel" destination="kC9-sE-L7p" id="bu5-EQ-Sxl"/>
                         <outlet property="searchBar" destination="dIU-9e-8DN" id="KOf-KN-9uz"/>
                         <outlet property="searchBarView" destination="8mn-nn-PQT" id="ngU-9s-UwV"/>
@@ -2729,7 +2729,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AudioCharacterAllCollectionViewCell" id="c8Z-BS-aQe" customClass="AudioCharacterAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AudioAllCollectionViewCell" id="c8Z-BS-aQe" customClass="AudioAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="2" width="394" height="553"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="X83-W5-PtZ">
@@ -2997,7 +2997,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AudioCharacterSliderCollectionViewCell" id="3j5-xC-gId" customClass="AudioCharacterSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="AudioSliderCollectionViewCell" id="3j5-xC-gId" customClass="AudioSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="rhR-KP-BHZ">
@@ -3058,9 +3058,9 @@
                     <connections>
                         <outlet property="addcoverButton" destination="uXy-xa-oT6" id="yZe-cZ-zMB"/>
                         <outlet property="addcoverView" destination="fYI-Td-p88" id="BIh-t2-9EP"/>
-                        <outlet property="audioCharacterAllCollectionView" destination="Ka2-Ne-4oM" id="Oak-fP-NEI"/>
-                        <outlet property="audioCharacterSlideCollectionview" destination="CDR-VN-9hf" id="pHD-dx-WiX"/>
+                        <outlet property="audioAllCollectionView" destination="Ka2-Ne-4oM" id="Oak-fP-NEI"/>
                         <outlet property="audioPrankLabel" destination="btF-uI-cB0" id="ZPc-Fp-eep"/>
+                        <outlet property="audioSlideCollectionview" destination="CDR-VN-9hf" id="pHD-dx-WiX"/>
                         <outlet property="backButton" destination="Xfn-zw-Eg9" id="I8l-IE-R5f"/>
                         <outlet property="cancelButton" destination="ncd-42-HAh" id="sCw-O1-6jR"/>
                         <outlet property="chipSelector" destination="gfb-f9-Vlm" id="G40-bP-wgr"/>
@@ -3101,7 +3101,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCharacterAllCollectionViewCell" id="uRi-tV-Xow" customClass="ImageCharacterAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageAllCollectionViewCell" id="uRi-tV-Xow" customClass="ImageAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="2" width="394" height="553"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="mU2-Cl-78P">
@@ -3359,7 +3359,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageCharacterSliderCollectionViewCell" id="KhW-dj-CWX" customClass="ImageCharacterSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="ImageSliderCollectionViewCell" id="KhW-dj-CWX" customClass="ImageSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="mjH-1x-crt">
@@ -3464,7 +3464,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VideoCharacterAllCollectionViewCell" id="62K-4X-ZM5" customClass="VideoCharacterAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VideoAllCollectionViewCell" id="62K-4X-ZM5" customClass="VideoAllCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="2" width="394" height="553"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Zuc-NH-JTl">
@@ -3732,7 +3732,7 @@
                                             <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         </collectionViewFlowLayout>
                                         <cells>
-                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VideoCharacterSliderCollectionViewCell" id="tfe-b3-Sew" customClass="VideoCharacterSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
+                                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="VideoSliderCollectionViewCell" id="tfe-b3-Sew" customClass="VideoSliderCollectionViewCell" customModule="Prankster" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="3wh-WV-i6Z">

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class EmojiViewModel {
+class CoverViewModel {
     private let apiService: EmojiAPIServiceProtocol
     private(set) var currentPage = 1
     var isLoading = false
@@ -15,7 +15,7 @@ class EmojiViewModel {
     var errorMessage: String?
     var hasMorePages = true
     
-    init(apiService: EmojiAPIServiceProtocol = EmojiAPIService.shared) {
+    init(apiService: EmojiAPIServiceProtocol) {
         self.apiService = apiService
     }
     

@@ -12,8 +12,8 @@ protocol MoreAppApiServiceProtocol {
     func postMoreData(packageName: String, language: String, completion: @escaping (Result<MoreApp, Error>) -> Void)
 }
 
-class MoreAppAPIService: MoreAppApiServiceProtocol {
-    static let shared = MoreAppAPIService()
+class MoreAppAPIManger: MoreAppApiServiceProtocol {
+    static let shared = MoreAppAPIManger()
     
     private init() {}
     

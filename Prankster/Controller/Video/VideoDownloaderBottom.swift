@@ -38,14 +38,12 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
     let interstitialAdUtility = InterstitialAdUtility()
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
     
     private var socialViewModule: SocialViewModule!
     
-    // Add new property for tracking current platform
     private var currentPlatform: SocialPlatform = .instagram
     
-    // Add enum for social platforms
     private enum SocialPlatform {
         case instagram
         case snapchat
@@ -76,14 +74,16 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     private var autoScrollTimer: Timer?
     
     // MARK: - Initialization
-    init(socialViewModule: SocialViewModule) {
+    init(socialViewModule: SocialViewModule, adViewModule: AdsViewModel) {
         self.socialViewModule = socialViewModule
+        self.adsViewModel = adViewModule
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.socialViewModule = SocialViewModule(apiService: SocialAPIManger.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     }
     
     override func viewWillAppear(_ animated: Bool) {

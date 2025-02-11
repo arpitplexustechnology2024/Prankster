@@ -26,21 +26,20 @@ struct CustomAudio: Codable {
 @available(iOS 15.0, *)
 class AudioPrankVC: UIViewController {
     
-    @IBOutlet weak var audioCharacterAllCollectionView: UICollectionView!
-    @IBOutlet weak var audioCharacterSlideCollectionview: UICollectionView!
-    @IBOutlet weak var chipSelector: AudioChipSelector!
-    @IBOutlet weak var addcoverButton: UIButton!
     @IBOutlet weak var addcoverView: UIView!
-    @IBOutlet weak var audioPrankLabel: UILabel!
     @IBOutlet weak var backButton: UIButton!
-    
+    @IBOutlet weak var searchBarView: UIView!
+    @IBOutlet weak var popularLabel: UILabel!
     @IBOutlet weak var searchMainView: UIView!
     @IBOutlet weak var searchBar: UITextField!
     @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
-    @IBOutlet weak var popularLabel: UILabel!
+    @IBOutlet weak var addcoverButton: UIButton!
+    @IBOutlet weak var audioPrankLabel: UILabel!
+    @IBOutlet weak var chipSelector: AudioChipSelector!
+    @IBOutlet weak var audioAllCollectionView: UICollectionView!
     @IBOutlet weak var suggestionCollectionView: UICollectionView!
-    @IBOutlet weak var searchBarView: UIView!
+    @IBOutlet weak var audioSlideCollectionview: UICollectionView!
+    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
     
     // MARK: - properties
     var languageid: Int = 0
@@ -48,6 +47,7 @@ class AudioPrankVC: UIViewController {
     private var timer: Timer?
     private let typeId: Int = 1
     private var isPlaying = false
+    private var shouldShowGIF = true
     var selectedCoverImageFile: Data?
     private var isLoadingMore = false
     var selectedCoverImageURL: String?
@@ -60,21 +60,19 @@ class AudioPrankVC: UIViewController {
     private var suggestions: [String] = []
     private var currentCategoryId: Int = 0
     private var audioPlayer: AVAudioPlayer?
-    private var viewModel = CategoryAllViewModel()
+    private var viewModel: CategoryAllViewModel!
     private var noInternetView: NoInternetView!
-    private var filteredAudios: [CategoryAllData] = []
-    private var currentDataSource: [CategoryAllData] {
+    private var filteredAudios: [CharacterAllData] = []
+    private var currentDataSource: [CharacterAllData] {
         return isSearchActive ? filteredAudios : viewModel.audioData
     }
     
-    private let adsViewModel = AdsViewModel()
+    private var adsViewModel: AdsViewModel!
     private var tagViewModule : TagViewModule!
+    var preloadedNativeAdView: GADNativeAdView?
     let interstitialAdUtility = InterstitialAdUtility()
     private var nativeMediumAdUtility: NativeMediumAdUtility?
     private var skeletonLoadingView: SkeletonDataLoadingView?
-    var preloadedNativeAdView: GADNativeAdView?
-    
-    private var shouldShowGIF = true
     
     private let defaultImageURLs = [
         "https://pslink.world/api/public/images/audio1.png",
@@ -88,20 +86,24 @@ class AudioPrankVC: UIViewController {
         didSet {
             saveAudios()
             if currentCategoryId == 0 {
-                audioCharacterAllCollectionView.reloadData()
-                audioCharacterSlideCollectionview.reloadData()
+                audioAllCollectionView.reloadData()
+                audioSlideCollectionview.reloadData()
             }
         }
     }
     
-    init(tagViewModule: TagViewModule) {
+    init(tagViewModule: TagViewModule, viewModule: CategoryAllViewModel, adViewModule: AdsViewModel) {
         self.tagViewModule = tagViewModule
+        self.viewModel = viewModule
+        self.adsViewModel = adViewModule
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.tagViewModule = TagViewModule(apiService: TagAPIManger.shared)
+        self.viewModel = CategoryAllViewModel(apiService: CharacterAllAPIManger.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     }
     
     override func viewDidLoad() {
@@ -251,27 +253,27 @@ class AudioPrankVC: UIViewController {
         if currentCategoryId == 0 {
             guard !customAudios.isEmpty else { return }
             
-            let visibleRect = CGRect(origin: audioCharacterAllCollectionView.contentOffset, size: audioCharacterAllCollectionView.bounds.size)
+            let visibleRect = CGRect(origin: audioAllCollectionView.contentOffset, size: audioAllCollectionView.bounds.size)
             let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
             
-            if let visibleIndexPath = audioCharacterAllCollectionView.indexPathForItem(at: visiblePoint),
+            if let visibleIndexPath = audioAllCollectionView.indexPathForItem(at: visiblePoint),
                visibleIndexPath.item < customAudios.count {
-                if let cell = audioCharacterAllCollectionView.cellForItem(at: visibleIndexPath) as? AudioCharacterAllCollectionViewCell {
+                if let cell = audioAllCollectionView.cellForItem(at: visibleIndexPath) as? AudioAllCollectionViewCell {
                     selectedIndex = visibleIndexPath.item
                     AudioPlaybackManager.shared.stopCurrentPlayback()
                     cell.playAudio()
                     AudioPlaybackManager.shared.currentlyPlayingCell = cell
                     AudioPlaybackManager.shared.currentlyPlayingIndexPath = visibleIndexPath
                 }
-                audioCharacterSlideCollectionview.selectItem(at: visibleIndexPath, animated: true, scrollPosition: .centeredHorizontally)
+                audioSlideCollectionview.selectItem(at: visibleIndexPath, animated: true, scrollPosition: .centeredHorizontally)
             }
         } else {
             guard !currentDataSource.isEmpty else { return }
             
-            let visibleRect = CGRect(origin: audioCharacterAllCollectionView.contentOffset, size: audioCharacterAllCollectionView.bounds.size)
+            let visibleRect = CGRect(origin: audioAllCollectionView.contentOffset, size: audioAllCollectionView.bounds.size)
             let visiblePoint = CGPoint(x: visibleRect.midX, y: visibleRect.midY)
             
-            if let visibleIndexPath = audioCharacterAllCollectionView.indexPathForItem(at: visiblePoint),
+            if let visibleIndexPath = audioAllCollectionView.indexPathForItem(at: visiblePoint),
                visibleIndexPath.item < currentDataSource.count {
                 let audioData = currentDataSource[visibleIndexPath.item]
                 
@@ -280,14 +282,14 @@ class AudioPrankVC: UIViewController {
                     return
                 }
                 
-                if let cell = audioCharacterAllCollectionView.cellForItem(at: visibleIndexPath) as? AudioCharacterAllCollectionViewCell {
+                if let cell = audioAllCollectionView.cellForItem(at: visibleIndexPath) as? AudioAllCollectionViewCell {
                     selectedIndex = visibleIndexPath.item
                     AudioPlaybackManager.shared.stopCurrentPlayback()
                     cell.playAudio()
                     AudioPlaybackManager.shared.currentlyPlayingCell = cell
                     AudioPlaybackManager.shared.currentlyPlayingIndexPath = visibleIndexPath
                 }
-                audioCharacterSlideCollectionview.selectItem(at: visibleIndexPath, animated: true, scrollPosition: .centeredHorizontally)
+                audioSlideCollectionview.selectItem(at: visibleIndexPath, animated: true, scrollPosition: .centeredHorizontally)
             }
         }
     }
@@ -297,12 +299,12 @@ class AudioPrankVC: UIViewController {
         DispatchQueue.main.async {
             let currentIndex = self.selectedIndex
             
-            self.audioCharacterAllCollectionView.reloadData()
-            self.audioCharacterSlideCollectionview.reloadData()
+            self.audioAllCollectionView.reloadData()
+            self.audioSlideCollectionview.reloadData()
             
             let indexPath = IndexPath(item: currentIndex, section: 0)
-            self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            self.audioAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            self.audioSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
             
             self.selectedIndex = currentIndex
         }
@@ -355,20 +357,18 @@ class AudioPrankVC: UIViewController {
     }
     
     private func setupCollectionView() {
-        self.audioCharacterAllCollectionView.delegate = self
-        self.audioCharacterAllCollectionView.dataSource = self
-        self.audioCharacterSlideCollectionview.delegate = self
-        self.audioCharacterSlideCollectionview.dataSource = self
-        self.audioCharacterAllCollectionView.isPagingEnabled = true
-        self.audioCharacterAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.audioCharacterSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.audioCharacterSlideCollectionview.register(
+        self.audioAllCollectionView.delegate = self
+        self.audioAllCollectionView.dataSource = self
+        self.audioSlideCollectionview.delegate = self
+        self.audioSlideCollectionview.dataSource = self
+        self.audioAllCollectionView.isPagingEnabled = true
+        self.audioSlideCollectionview.register(
             LoadingFooterView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
             withReuseIdentifier: LoadingFooterView.reuseIdentifier
         )
-        if let layout = audioCharacterSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: 50, height: audioCharacterSlideCollectionview.frame.height)
+        if let layout = audioSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 50, height: audioSlideCollectionview.frame.height)
         }
     }
     
@@ -391,19 +391,19 @@ class AudioPrankVC: UIViewController {
                 self.searchBarView.isHidden = true
                 self.audioPrankLabel.isHidden = false
                 
-                audioCharacterAllCollectionView.reloadData()
-                audioCharacterSlideCollectionview.reloadData()
+                audioAllCollectionView.reloadData()
+                audioSlideCollectionview.reloadData()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                     guard let self = self else { return }
                     if !self.customAudios.isEmpty && !self.shouldShowGIF {
                         let indexPath = IndexPath(item: 0, section: 0)
-                        self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.audioAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.audioSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         self.selectedIndex = 0
                         
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                            if let cell = self?.audioCharacterAllCollectionView.cellForItem(at: indexPath) as? AudioCharacterAllCollectionViewCell {
+                            if let cell = self?.audioAllCollectionView.cellForItem(at: indexPath) as? AudioAllCollectionViewCell {
                                 cell.playAudio()
                                 AudioPlaybackManager.shared.currentlyPlayingCell = cell
                                 AudioPlaybackManager.shared.currentlyPlayingIndexPath = indexPath
@@ -421,8 +421,8 @@ class AudioPrankVC: UIViewController {
                 self.audioPrankLabel.isHidden = true
                 self.viewModel.audioData.removeAll()
                 self.filteredAudios.removeAll()
-                self.audioCharacterAllCollectionView.reloadData()
-                self.audioCharacterSlideCollectionview.reloadData()
+                self.audioAllCollectionView.reloadData()
+                self.audioSlideCollectionview.reloadData()
                 self.showSkeletonLoader()
                 self.hideNoDataView()
                 self.checkInternetAndFetchData()
@@ -453,12 +453,12 @@ class AudioPrankVC: UIViewController {
                         self.hideSkeletonLoader()
                         self.hideNoDataView()
                         self.filteredAudios = self.viewModel.audioData
-                        self.audioCharacterAllCollectionView.reloadData()
-                        self.audioCharacterSlideCollectionview.reloadData()
+                        self.audioAllCollectionView.reloadData()
+                        self.audioSlideCollectionview.reloadData()
                         
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.audioSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 self.playVisibleCell()
@@ -478,15 +478,15 @@ class AudioPrankVC: UIViewController {
     func showSkeletonLoader() {
         skeletonLoadingView?.isHidden = false
         skeletonLoadingView?.startAnimating()
-        audioCharacterAllCollectionView.reloadData()
-        audioCharacterSlideCollectionview.reloadData()
+        audioAllCollectionView.reloadData()
+        audioSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
         skeletonLoadingView?.isHidden = true
         skeletonLoadingView?.stopAnimating()
-        audioCharacterAllCollectionView.reloadData()
-        audioCharacterSlideCollectionview.reloadData()
+        audioAllCollectionView.reloadData()
+        audioSlideCollectionview.reloadData()
     }
     
     private func setupNoDataView() {
@@ -632,8 +632,8 @@ class AudioPrankVC: UIViewController {
         DispatchQueue.main.async {
             self.selectedIndex = 0
             
-            self.audioCharacterAllCollectionView.reloadData()
-            self.audioCharacterSlideCollectionview.reloadData()
+            self.audioAllCollectionView.reloadData()
+            self.audioSlideCollectionview.reloadData()
             
             if self.filteredAudios.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()
@@ -647,14 +647,14 @@ class AudioPrankVC: UIViewController {
                 if !self.filteredAudios.isEmpty {
                     let indexPath = IndexPath(item: 0, section: 0)
                     
-                    if self.audioCharacterAllCollectionView.numberOfItems(inSection: 0) > 0 {
-                        self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.audioAllCollectionView.numberOfItems(inSection: 0) > 0 {
+                        self.audioAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.audioAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                     
-                    if self.audioCharacterSlideCollectionview.numberOfItems(inSection: 0) > 0 {
-                        self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.audioSlideCollectionview.numberOfItems(inSection: 0) > 0 {
+                        self.audioSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.audioSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                     
                     if !self.filteredAudios.isEmpty {
@@ -674,7 +674,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == suggestionCollectionView {
             return suggestions.count
-        } else if collectionView == audioCharacterAllCollectionView {
+        } else if collectionView == audioAllCollectionView {
             
             if currentCategoryId == 0 {
                 if shouldShowGIF {
@@ -694,8 +694,8 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == audioCharacterAllCollectionView {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterAllCollectionViewCell", for: indexPath) as! AudioCharacterAllCollectionViewCell
+        if collectionView == audioAllCollectionView {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioAllCollectionViewCell", for: indexPath) as! AudioAllCollectionViewCell
                 
                 if currentCategoryId == 0 {
                     
@@ -752,8 +752,8 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 cell.delegate = self
                 return cell
-        } else if collectionView == audioCharacterSlideCollectionview {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterSliderCollectionViewCell", for: indexPath) as! AudioCharacterSliderCollectionViewCell
+        } else if collectionView == audioSlideCollectionview {
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioSliderCollectionViewCell", for: indexPath) as! AudioSliderCollectionViewCell
                 
                 if currentCategoryId == 0 {
                     if customAudios.isEmpty {
@@ -867,9 +867,9 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == audioCharacterAllCollectionView {
+        if collectionView == audioAllCollectionView {
             
-        } else if collectionView == audioCharacterSlideCollectionview {
+        } else if collectionView == audioSlideCollectionview {
             
             shouldShowGIF = false
             
@@ -880,10 +880,10 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
             }
             
-            audioCharacterAllCollectionView.reloadData()
+            audioAllCollectionView.reloadData()
             
-            audioCharacterAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-            audioCharacterAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+            audioAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            audioAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 self?.playVisibleCell()
@@ -913,9 +913,9 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         let width: CGFloat = 90
         let height: CGFloat = 90
         
-        if collectionView == audioCharacterAllCollectionView {
+        if collectionView == audioAllCollectionView {
             return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-        } else if collectionView == audioCharacterSlideCollectionview {
+        } else if collectionView == audioSlideCollectionview {
             return CGSize(width: width, height: height)
         } else {
             let suggestion = suggestions[indexPath.row]
@@ -960,12 +960,12 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView == audioCharacterAllCollectionView else { return }
+        guard scrollView == audioAllCollectionView else { return }
         
         let pageWidth = scrollView.bounds.width
         let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
         
-        for cell in audioCharacterAllCollectionView.visibleCells {
+        for cell in audioAllCollectionView.visibleCells {
             let cellCenterX = cell.center.x
             let distanceFromCenter = centerX - cellCenterX
             
@@ -1006,13 +1006,13 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             DispatchQueue.main.async {
                 if self.currentCategoryId == 0 {
                     if currentPage < self.customAudios.count {
-                        self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.audioSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.audioSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                 } else {
                     if currentPage < self.currentDataSource.count {
-                        self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.audioCharacterSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.audioSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.audioSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                 }
             }
@@ -1020,21 +1020,21 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        guard scrollView == audioCharacterAllCollectionView else { return }
+        guard scrollView == audioAllCollectionView else { return }
         
         UIView.animate(withDuration: 0.3) {
-            for cell in self.audioCharacterAllCollectionView.visibleCells {
+            for cell in self.audioAllCollectionView.visibleCells {
                 cell.transform = .identity
             }
         }
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard scrollView == audioCharacterAllCollectionView else { return }
+        guard scrollView == audioAllCollectionView else { return }
         
         if !decelerate {
             UIView.animate(withDuration: 0.3) {
-                for cell in self.audioCharacterAllCollectionView.visibleCells {
+                for cell in self.audioAllCollectionView.visibleCells {
                     cell.transform = .identity
                 }
             }
@@ -1042,7 +1042,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        guard scrollView == audioCharacterAllCollectionView else { return }
+        guard scrollView == audioAllCollectionView else { return }
         
         let pageWidth = scrollView.frame.width
         let targetXContentOffset = targetContentOffset.pointee.x
@@ -1058,7 +1058,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let playingIndexPath = AudioPlaybackManager.shared.currentlyPlayingIndexPath,
-           let cell = audioCharacterAllCollectionView.cellForItem(at: playingIndexPath) as? AudioCharacterAllCollectionViewCell {
+           let cell = audioAllCollectionView.cellForItem(at: playingIndexPath) as? AudioAllCollectionViewCell {
             cell.playAudio()
         }
     }
@@ -1069,7 +1069,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
 extension AudioPrankVC: AudioAllCollectionViewCellDelegate {
     
     func didTapAudioPlayback(at indexPath: IndexPath) {
-        guard let cell = audioCharacterAllCollectionView.cellForItem(at: indexPath) as? AudioCharacterAllCollectionViewCell else {
+        guard let cell = audioAllCollectionView.cellForItem(at: indexPath) as? AudioAllCollectionViewCell else {
             return
         }
         
@@ -1186,8 +1186,8 @@ extension AudioPrankVC {
             }
         }
         DispatchQueue.main.async {
-            self.audioCharacterAllCollectionView.reloadData()
-            self.audioCharacterSlideCollectionview.reloadData()
+            self.audioAllCollectionView.reloadData()
+            self.audioSlideCollectionview.reloadData()
         }
     }
     
@@ -1283,15 +1283,15 @@ extension AudioPrankVC: SaveRecordingDelegate {
         
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
-            self.audioCharacterAllCollectionView.reloadData()
-            self.audioCharacterSlideCollectionview.reloadData()
+            self.audioAllCollectionView.reloadData()
+            self.audioSlideCollectionview.reloadData()
             
             let indexPath = IndexPath(item: 0, section: 0)
-            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-            self.audioCharacterAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            self.audioSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+            self.audioAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                if let cell = self?.audioCharacterAllCollectionView.cellForItem(at: indexPath) as? AudioCharacterAllCollectionViewCell {
+                if let cell = self?.audioAllCollectionView.cellForItem(at: indexPath) as? AudioAllCollectionViewCell {
                     cell.playAudio()
                 }
             }

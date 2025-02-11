@@ -44,12 +44,12 @@ struct UserData: Codable {
 }
 
 // MARK: - CategoryAllResponse
-struct CategoryAllResponse: Codable {
+struct CharacterAllResponse: Codable {
     let status: Int
     let message: String
-    let data: [CategoryAllData]
+    let data: [CharacterAllData]
 }
-struct CategoryAllData: Codable {
+struct CharacterAllData: Codable {
     let file: String?
     let name: String
     let image: String

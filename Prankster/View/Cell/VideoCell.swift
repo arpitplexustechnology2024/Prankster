@@ -15,7 +15,7 @@ class VideoPlaybackManager {
     static let shared = VideoPlaybackManager()
     private init() {}
     
-    var currentlyPlayingCell: VideoCharacterAllCollectionViewCell?
+    var currentlyPlayingCell: VideoAllCollectionViewCell?
     var currentlyPlayingIndexPath: IndexPath?
     
     func stopCurrentPlayback() {
@@ -26,13 +26,13 @@ class VideoPlaybackManager {
 }
 
 // MARK: - Protocols
-protocol VideoCharacterAllCollectionViewCellDelegate: AnyObject {
+protocol VideoAllCollectionViewCellDelegate: AnyObject {
     func didTapVideoPlayback(at indexPath: IndexPath)
 }
 
 // MARK: - Collection View Cell
 @available(iOS 15.0, *)
-class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
+class VideoAllCollectionViewCell: UICollectionViewCell {
     
     // MARK: - IBOutlets
     @IBOutlet weak var imageView: UIImageView!
@@ -46,8 +46,8 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var adContainerView: UIView!
     
     // MARK: - Properties
-    weak var delegate: VideoCharacterAllCollectionViewCellDelegate?
-    private var coverPageData: CategoryAllData?
+    weak var delegate: VideoAllCollectionViewCellDelegate?
+    private var coverPageData: CharacterAllData?
     private var imageViewTimer: Timer?
     var currentIndexPath: IndexPath?
     private var playerLayer: AVPlayerLayer?
@@ -184,7 +184,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(with categoryAllData: CategoryAllData) {
+    func configure(with categoryAllData: CharacterAllData) {
         self.coverPageData = categoryAllData
         
         guard let fileURLString = categoryAllData.file,
@@ -229,7 +229,7 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Configuration
-    func configure(with categoryAllData: CategoryAllData, at indexPath: IndexPath) {
+    func configure(with categoryAllData: CharacterAllData, at indexPath: IndexPath) {
         self.coverPageData = categoryAllData
         self.currentIndexPath = indexPath
         
@@ -451,10 +451,10 @@ class VideoCharacterAllCollectionViewCell: UICollectionViewCell {
     }
 }
 
-class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
+class VideoSliderCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
-    private var categoryAllData: CategoryAllData?
+    private var categoryAllData: CharacterAllData?
     var premiumIconImageView: UIImageView!
     private var currentVideoURL: URL?
     
@@ -521,7 +521,7 @@ class VideoCharacterSliderCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(with categoryAllData: CategoryAllData) {
+    func configure(with categoryAllData: CharacterAllData) {
         self.categoryAllData = categoryAllData
         
         if categoryAllData.name.lowercased() == "ads" {

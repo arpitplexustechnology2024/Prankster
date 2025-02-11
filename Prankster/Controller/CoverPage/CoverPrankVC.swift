@@ -37,8 +37,8 @@ class CoverPrankVC: UIViewController {
     @IBOutlet weak var addcoverButton: UIButton!
     @IBOutlet weak var chipSelector: ChipSelectorView!
     @IBOutlet weak var suggestionCollectionView: UICollectionView!
-    @IBOutlet weak var emojiCoverAllCollectionView: UICollectionView!
-    @IBOutlet weak var emojiCoverSlideCollectionview: UICollectionView!
+    @IBOutlet weak var coverAllCollectionView: UICollectionView!
+    @IBOutlet weak var coverSlideCollectionview: UICollectionView!
     @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
     
     private let categoryId: Int = 4
@@ -53,8 +53,8 @@ class CoverPrankVC: UIViewController {
     var customCovers: [CustomCover] = []
     private var suggestions: [String] = []
     var selectedCustomCoverIndex: IndexPath?
-    private let viewModel = EmojiViewModel()
-    private let adsViewModel = AdsViewModel()
+    private var viewModel: CoverViewModel!
+    private var adsViewModel: AdsViewModel!
     private var noInternetView: NoInternetView!
     var preloadedNativeAdView: GADNativeAdView?
     private var tagViewModule : TagViewModule!
@@ -66,14 +66,18 @@ class CoverPrankVC: UIViewController {
         return isSearchActive ? filteredEmojiCoverPages : viewModel.emojiCoverPages
     }
     
-    init(tagViewModule: TagViewModule) {
+    init(tagViewModule: TagViewModule, viewModule: CoverViewModel, adViewModule: AdsViewModel) {
         self.tagViewModule = tagViewModule
+        self.viewModel = viewModule
+        self.adsViewModel = adViewModule
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.tagViewModule = TagViewModule(apiService: TagAPIManger.shared)
+        self.viewModel = CoverViewModel(apiService: CoverAPIManger.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     }
     
     override func viewDidLoad() {
@@ -136,12 +140,12 @@ class CoverPrankVC: UIViewController {
         DispatchQueue.main.async {
             let currentIndex = self.selectedIndex
             
-            self.emojiCoverAllCollectionView.reloadData()
-            self.emojiCoverSlideCollectionview.reloadData()
+            self.coverAllCollectionView.reloadData()
+            self.coverSlideCollectionview.reloadData()
             
             let indexPath = IndexPath(item: currentIndex, section: 0)
-            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            self.coverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+            self.coverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
             
             self.selectedIndex = currentIndex
         }
@@ -211,14 +215,14 @@ class CoverPrankVC: UIViewController {
                 self.coverImageLabel.isHidden = false
                 
                 self.hideSkeletonLoader()
-                emojiCoverAllCollectionView.reloadData()
-                emojiCoverSlideCollectionview.reloadData()
+                coverAllCollectionView.reloadData()
+                coverSlideCollectionview.reloadData()
                 
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if !self.customCovers.isEmpty && !self.shouldShowGIF {
                         let indexPath = IndexPath(item: 0, section: 0)
-                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.coverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                        self.coverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                         self.selectedIndex = 0
                     }
                 }
@@ -232,14 +236,14 @@ class CoverPrankVC: UIViewController {
                     self.searchBarView.isHidden = false
                     self.coverImageLabel.isHidden = true
                     
-                    emojiCoverAllCollectionView.reloadData()
-                    emojiCoverSlideCollectionview.reloadData()
+                    coverAllCollectionView.reloadData()
+                    coverSlideCollectionview.reloadData()
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: 0, section: 0)
-                            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                            self.coverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+                            self.coverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
                             self.selectedIndex = 0
                         }
                     }
@@ -252,8 +256,8 @@ class CoverPrankVC: UIViewController {
                     self.viewModel.emojiCoverPages = []
                     self.filteredEmojiCoverPages = []
                     
-                    emojiCoverAllCollectionView.reloadData()
-                    emojiCoverSlideCollectionview.reloadData()
+                    coverAllCollectionView.reloadData()
+                    coverSlideCollectionview.reloadData()
                 }
             }
         }
@@ -318,18 +322,18 @@ class CoverPrankVC: UIViewController {
     }
     
     private func setupCollectionView() {
-        self.emojiCoverSlideCollectionview.delegate = self
-        self.emojiCoverSlideCollectionview.dataSource = self
-        self.emojiCoverAllCollectionView.delegate = self
-        self.emojiCoverAllCollectionView.dataSource = self
-        self.emojiCoverAllCollectionView.isPagingEnabled = true
-        self.emojiCoverSlideCollectionview.register(
+        self.coverSlideCollectionview.delegate = self
+        self.coverSlideCollectionview.dataSource = self
+        self.coverAllCollectionView.delegate = self
+        self.coverAllCollectionView.dataSource = self
+        self.coverAllCollectionView.isPagingEnabled = true
+        self.coverSlideCollectionview.register(
             LoadingFooterView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
             withReuseIdentifier: LoadingFooterView.reuseIdentifier
         )
-        if let layout = emojiCoverSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
-            layout.footerReferenceSize = CGSize(width: 50, height: emojiCoverSlideCollectionview.frame.height)
+        if let layout = coverSlideCollectionview.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.footerReferenceSize = CGSize(width: 50, height: coverSlideCollectionview.frame.height)
         }
     }
     
@@ -350,12 +354,12 @@ class CoverPrankVC: UIViewController {
                     } else {
                         self.hideSkeletonLoader()
                         self.hideNoDataView()
-                        self.emojiCoverAllCollectionView.reloadData()
-                        self.emojiCoverSlideCollectionview.reloadData()
+                        self.coverAllCollectionView.reloadData()
+                        self.coverSlideCollectionview.reloadData()
                         
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
-                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.coverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
@@ -442,15 +446,15 @@ class CoverPrankVC: UIViewController {
     func showSkeletonLoader() {
         skeletonLoadingView?.isHidden = false
         skeletonLoadingView?.startAnimating()
-        self.emojiCoverAllCollectionView.reloadData()
-        self.emojiCoverSlideCollectionview.reloadData()
+        self.coverAllCollectionView.reloadData()
+        self.coverSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
         skeletonLoadingView?.isHidden = true
         skeletonLoadingView?.stopAnimating()
-        self.emojiCoverAllCollectionView.reloadData()
-        self.emojiCoverSlideCollectionview.reloadData()
+        self.coverAllCollectionView.reloadData()
+        self.coverSlideCollectionview.reloadData()
     }
     
     private func isConnectedToInternet() -> Bool {
@@ -488,8 +492,8 @@ class CoverPrankVC: UIViewController {
         DispatchQueue.main.async {
             self.selectedIndex = 0
             
-            self.emojiCoverAllCollectionView.reloadData()
-            self.emojiCoverSlideCollectionview.reloadData()
+            self.coverAllCollectionView.reloadData()
+            self.coverSlideCollectionview.reloadData()
             
             if self.filteredEmojiCoverPages.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()
@@ -501,14 +505,14 @@ class CoverPrankVC: UIViewController {
                 if !self.filteredEmojiCoverPages.isEmpty {
                     let indexPath = IndexPath(item: 0, section: 0)
                     
-                    if self.emojiCoverAllCollectionView.numberOfItems(inSection: 0) > 0 {
-                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.coverAllCollectionView.numberOfItems(inSection: 0) > 0 {
+                        self.coverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.coverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                     
-                    if self.emojiCoverSlideCollectionview.numberOfItems(inSection: 0) > 0 {
-                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                    if self.coverSlideCollectionview.numberOfItems(inSection: 0) > 0 {
+                        self.coverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.coverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                 }
             }
@@ -561,15 +565,15 @@ class CoverPrankVC: UIViewController {
                     self.saveCovers()
                     
                     DispatchQueue.main.async {
-                        self.emojiCoverSlideCollectionview.reloadData()
-                        self.emojiCoverAllCollectionView.reloadData()
+                        self.coverSlideCollectionview.reloadData()
+                        self.coverAllCollectionView.reloadData()
                         
                         let indexPath = IndexPath(item: 0, section: 0)
-                        self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                        self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        self.coverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                        self.coverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         self.selectedCustomCoverIndex = indexPath
-                        self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                        self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.coverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                        self.coverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                     }
                 }
             }
@@ -586,7 +590,7 @@ class CoverPrankVC: UIViewController {
 @available(iOS 15.0, *)
 extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if collectionView == emojiCoverAllCollectionView {
+        if collectionView == coverAllCollectionView {
             
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             if selectedChipTitle == "Add cover image 📸" {
@@ -598,7 +602,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 return currentDataSource.count
             }
-        } else if collectionView == emojiCoverSlideCollectionview {
+        } else if collectionView == coverSlideCollectionview {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             if selectedChipTitle == "Add cover image 📸" {
                 return (customCovers.isEmpty ? 4 : customCovers.count)
@@ -611,11 +615,11 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == emojiCoverAllCollectionView {
+        if collectionView == coverAllCollectionView {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             
             if selectedChipTitle == "Add cover image 📸" {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CoverAllCollectionViewCell", for: indexPath) as! CoverAllCollectionViewCell
                 cell.imageName.text = customCovers.isEmpty ? " Tutorial " : " Custom image "
                 
                 if shouldShowGIF {
@@ -659,7 +663,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 cell.premiumActionButton.isHidden = true
                 return cell
             } else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CoverAllCollectionViewCell", for: indexPath) as! CoverAllCollectionViewCell
                 
                 guard indexPath.row < currentDataSource.count else {
                     return cell
@@ -679,11 +683,11 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 return cell
             }
-        } else if collectionView == emojiCoverSlideCollectionview {
+        } else if collectionView == coverSlideCollectionview {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             
             if selectedChipTitle == "Add cover image 📸" {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverSliderCollectionViewCell", for: indexPath) as! EmojiCoverSliderCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CoverSliderCollectionViewCell", for: indexPath) as! CoverSliderCollectionViewCell
                 cell.imageView.image = customCovers.isEmpty ? UIImage(named: "imageplacholder") : customCovers[indexPath.item].image
                 cell.premiumIconImageView.isHidden = true
                 
@@ -694,7 +698,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 return cell
             } else {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverSliderCollectionViewCell", for: indexPath) as! EmojiCoverSliderCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CoverSliderCollectionViewCell", for: indexPath) as! CoverSliderCollectionViewCell
                 
                 guard indexPath.row < currentDataSource.count else {
                     return cell
@@ -789,7 +793,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView == emojiCoverSlideCollectionview {
+        if collectionView == coverSlideCollectionview {
             
             shouldShowGIF = false
             
@@ -802,11 +806,11 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
             }
             
-            emojiCoverAllCollectionView.reloadData()
+            coverAllCollectionView.reloadData()
             
-            emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-            emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-        } else if collectionView == emojiCoverAllCollectionView {
+            coverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
+            coverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
+        } else if collectionView == coverAllCollectionView {
             
         } else {
             let selectedSuggestion = suggestions[indexPath.row]
@@ -834,9 +838,9 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         let width: CGFloat = 90
         let height: CGFloat = 90
         
-        if collectionView == emojiCoverAllCollectionView {
+        if collectionView == coverAllCollectionView {
             return CGSize(width: collectionView.frame.width, height: collectionView.frame.height)
-        } else if collectionView == emojiCoverSlideCollectionview {
+        } else if collectionView == coverSlideCollectionview {
             return CGSize(width: width, height: height)
         } else {
             let suggestion = suggestions[indexPath.row]
@@ -886,12 +890,12 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard scrollView == emojiCoverAllCollectionView else { return }
+        guard scrollView == coverAllCollectionView else { return }
         
         let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
         let pageWidth = scrollView.frame.width
         
-        for cell in emojiCoverAllCollectionView.visibleCells {
+        for cell in coverAllCollectionView.visibleCells {
             let cellCenterX = cell.center.x
             let distanceFromCenter = centerX - cellCenterX
             
@@ -923,27 +927,27 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             
             let indexPath = IndexPath(item: currentPage, section: 0)
             DispatchQueue.main.async {
-                self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                self.coverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             }
         }
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        guard scrollView == emojiCoverAllCollectionView else { return }
+        guard scrollView == coverAllCollectionView else { return }
         
         UIView.animate(withDuration: 0.3) {
-            for cell in self.emojiCoverAllCollectionView.visibleCells {
+            for cell in self.coverAllCollectionView.visibleCells {
                 cell.transform = .identity
             }
         }
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        guard scrollView == emojiCoverAllCollectionView else { return }
+        guard scrollView == coverAllCollectionView else { return }
         
         if !decelerate {
             UIView.animate(withDuration: 0.3) {
-                for cell in self.emojiCoverAllCollectionView.visibleCells {
+                for cell in self.coverAllCollectionView.visibleCells {
                     cell.transform = .identity
                 }
             }
@@ -951,7 +955,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-        guard scrollView == emojiCoverAllCollectionView else { return }
+        guard scrollView == coverAllCollectionView else { return }
         
         let pageWidth = scrollView.frame.width
         let targetXContentOffset = targetContentOffset.pointee.x
@@ -1074,14 +1078,14 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                         self.saveCovers()
                         
                         DispatchQueue.main.async {
-                            self.emojiCoverSlideCollectionview.reloadData()
-                            self.emojiCoverAllCollectionView.reloadData()
+                            self.coverSlideCollectionview.reloadData()
+                            self.coverAllCollectionView.reloadData()
                             let indexPath = IndexPath(item: 0, section: 0)
-                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-                            self.emojiCoverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                            self.coverSlideCollectionview.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+                            self.coverAllCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
                             self.selectedCustomCoverIndex = indexPath
-                            self.emojiCoverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                            self.emojiCoverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                            self.coverSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                            self.coverAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         }
                         
                     case .failure(let error):
@@ -1168,8 +1172,8 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     dispatchGroup.notify(queue: .main) { [weak self] in
                         let sortedCovers = tempCustomCovers.sorted(by: { $0.index < $1.index })
                         self?.customCovers = sortedCovers.map { $0.cover }
-                        self?.emojiCoverAllCollectionView.reloadData()
-                        self?.emojiCoverSlideCollectionview.reloadData()
+                        self?.coverAllCollectionView.reloadData()
+                        self?.coverSlideCollectionview.reloadData()
                     }
                 }
             } catch {

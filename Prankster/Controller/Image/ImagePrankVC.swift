@@ -26,69 +26,64 @@ struct CustomImages {
 @available(iOS 15.0, *)
 class ImagePrankVC: UIViewController {
     
-    @IBOutlet weak var chipSelector: ImageChipSelector!
-    @IBOutlet weak var imageAllCollectionview: UICollectionView!
-    @IBOutlet weak var imageSlideCollectionview: UICollectionView!
-    @IBOutlet weak var addimageButton: UIButton!
-    @IBOutlet weak var addimageView: UIView!
     @IBOutlet weak var ImageLabel: UILabel!
+    @IBOutlet weak var addimageView: UIView!
     @IBOutlet weak var backButton: UIButton!
-    
+    @IBOutlet weak var popularLabel: UILabel!
+    @IBOutlet weak var searchBarView: UIView!
     @IBOutlet weak var searchMainView: UIView!
     @IBOutlet weak var searchBar: UITextField!
     @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
-    @IBOutlet weak var popularLabel: UILabel!
+    @IBOutlet weak var addimageButton: UIButton!
+    @IBOutlet weak var chipSelector: ImageChipSelector!
+    @IBOutlet weak var imageAllCollectionview: UICollectionView!
     @IBOutlet weak var suggestionCollectionView: UICollectionView!
-    
-    @IBOutlet weak var searchBarView: UIView!
-    
-    private var shouldShowGIF = true
-    
-    private var currentCategoryId: Int = 0
-    private var isFirstLoad: Bool = true
-    
+    @IBOutlet weak var imageSlideCollectionview: UICollectionView!
+    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
+
     var languageid: Int = 0
-    
-    private var suggestions: [String] = []
-    
-    var selectedCoverImageURL: String?
+    private var shouldShowGIF = true
     var selectedCoverImageFile: Data?
+    var selectedCoverImageURL: String?
     var selectedCoverImageName: String?
-    
+    private var isSearchActive = false
+    private var noDataView: NoDataView!
+    private var isFirstLoad: Bool = true
+    var viewType: CoverViewType = .audio
+    private var selectedImageIndex: Int?
+    var customImages: [CustomImages] = []
+    var selectedCustomImageIndex: IndexPath?
+    private var currentCategoryId: Int = 0
+    private var suggestions: [String] = []
+    private var adsViewModel: AdsViewModel!
     private var tagViewModule : TagViewModule!
+    private var noInternetView: NoInternetView!
+    private var viewModel: CategoryAllViewModel!
+    private var filteredImages: [CharacterAllData] = []
     let interstitialAdUtility = InterstitialAdUtility()
     private var skeletonLoadingView: SkeletonDataLoadingView?
-    private let adsViewModel = AdsViewModel()
+    private var currentDataSource: [CharacterAllData] {
+        return isSearchActive ? filteredImages : viewModel.audioData
+    }
+    private let categoryId: Int = 4
+    private var isLoadingMore = false
+    private var selectedIndex: Int = 0
+    private var nativeMediumAdUtility: NativeMediumAdUtility?
+    var preloadedNativeAdView: GADNativeAdView?
     
-    init(tagViewModule: TagViewModule) {
+    init(tagViewModule: TagViewModule, viewModule: CategoryAllViewModel, adViewModule: AdsViewModel) {
         self.tagViewModule = tagViewModule
+        self.viewModel = viewModule
+        self.adsViewModel = adViewModule
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.tagViewModule = TagViewModule(apiService: TagAPIManger.shared)
+        self.viewModel = CategoryAllViewModel(apiService: CharacterAllAPIManger.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     }
-    
-    var viewType: CoverViewType = .audio
-    private var selectedImageIndex: Int?
-    var customImages: [CustomImages] = []
-    var selectedCustomImageIndex: IndexPath?
-    private var noDataView: NoDataView!
-    private var noInternetView: NoInternetView!
-    private let viewModel = CategoryAllViewModel()
-    private var isSearchActive = false
-    private var filteredImages: [CategoryAllData] = []
-    private var currentDataSource: [CategoryAllData] {
-        return isSearchActive ? filteredImages : viewModel.audioData
-    }
-    
-    private let categoryId: Int = 4
-    private var isLoadingMore = false
-    private var selectedIndex: Int = 0
-    private var nativeMediumAdUtility: NativeMediumAdUtility?
-    var preloadedNativeAdView: GADNativeAdView?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -278,8 +273,6 @@ class ImagePrankVC: UIViewController {
         self.imageSlideCollectionview.delegate = self
         self.imageSlideCollectionview.dataSource = self
         self.imageAllCollectionview.isPagingEnabled = true
-        self.imageAllCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.imageSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.imageSlideCollectionview.register(
             LoadingFooterView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
@@ -568,7 +561,6 @@ class ImagePrankVC: UIViewController {
             self.imageAllCollectionview.reloadData()
             self.imageSlideCollectionview.reloadData()
             
-            // Make sure searchMainView stays on top when showing no data
             if self.filteredImages.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()
                 self.view.bringSubviewToFront(self.searchBarView)
@@ -623,7 +615,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == imageAllCollectionview {
             if currentCategoryId == 0 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageAllCollectionViewCell", for: indexPath) as! ImageAllCollectionViewCell
                 cell.imageName.text = customImages.isEmpty ? " Tutorial " : " Custom image "
                 
                 if shouldShowGIF {
@@ -668,7 +660,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 cell.premiumActionButton.isHidden = true
                 return cell
             } else {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageAllCollectionViewCell", for: indexPath) as! ImageAllCollectionViewCell
                     
                     guard indexPath.row < currentDataSource.count else {
                         return cell
@@ -680,11 +672,9 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.tutorialViewShowView.isHidden = true
                     cell.imageView.isHidden = false
                     
-                    // Configure Premium button action
                     cell.premiumActionButton.tag = indexPath.row
                     cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
                     
-                    // Configure Done button action
                     cell.DoneButton.tag = indexPath.row
                     cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                     
@@ -693,7 +683,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else if collectionView == imageSlideCollectionview {
             
             if currentCategoryId == 0 {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterSliderCollectionViewCell", for: indexPath) as! ImageCharacterSliderCollectionViewCell
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageSliderCollectionViewCell", for: indexPath) as! ImageSliderCollectionViewCell
                 cell.imageView.image = customImages.isEmpty ? UIImage(named: "imageplacholder") : customImages[indexPath.item].image
                 cell.premiumIconImageView.isHidden = true
                 if customImages.isEmpty {
@@ -703,7 +693,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 return cell
             } else {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterSliderCollectionViewCell", for: indexPath) as! ImageCharacterSliderCollectionViewCell
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageSliderCollectionViewCell", for: indexPath) as! ImageSliderCollectionViewCell
                     
                     guard indexPath.row < currentDataSource.count else {
                         return cell
@@ -839,7 +829,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             suggestionCollectionView.isHidden = true
             cancelButton.isHidden = false
             
-            // Reset corner radius when a suggestion is selected
             searchMainView.layer.cornerRadius = 10
             searchBarView.layer.cornerRadius = 10
             searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -859,18 +848,15 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else if collectionView == imageSlideCollectionview {
             return CGSize(width: width, height: height)
         } else {
-            // For suggestion collection view
             let suggestion = suggestions[indexPath.row]
             
-            // Create a temporary label to measure exact text size
             let label = UILabel()
             label.font = UIFont.systemFont(ofSize: 16)
             label.text = suggestion
             
-            // Get exact size needed for text
+
             let labelSize = label.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: 40))
             
-            // Add minimal padding (8 points total - 4 on each side)
             let cellWidth = labelSize.width + 20
             
             return CGSize(width: cellWidth, height: 40)

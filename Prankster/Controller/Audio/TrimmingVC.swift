@@ -19,9 +19,9 @@ class RangeSlider: UIView {
     private var labelHideTimer: Timer?
     private var lastPanLocation: CGPoint?
     private var panStartTime: Date?
-    private var panVelocityThreshold: CGFloat = 200 // Pixels per second threshold
+    private var panVelocityThreshold: CGFloat = 200
     
-    var minimumSelectionDuration: TimeInterval = 5.0 // Minimum 3 seconds selection
+    var minimumSelectionDuration: TimeInterval = 5.0
     
     var minimumValue: Double = 0
     var maximumValue: Double = 1
@@ -65,7 +65,7 @@ class RangeSlider: UIView {
             label.backgroundColor = .white
             label.layer.cornerRadius = 4
             label.layer.masksToBounds = true
-            label.alpha = 0  // Initially transparent
+            label.alpha = 0
             addSubview(label)
         }
         
@@ -198,27 +198,22 @@ class RangeSlider: UIView {
             let deltaX = location.x - initialTouchPoint.x
             let trackWidth = bounds.width - 30
             let proportionalChange = deltaX / trackWidth * (maximumValue - minimumValue)
-            
-            // Calculate current selection duration
+
             let currentDuration = (rightValue - leftValue) * audioDuration
             
             if thumb === leftThumb {
                 var newLeftValue = leftValue + proportionalChange
                 let newDuration = (rightValue - newLeftValue) * audioDuration
                 
-                // Ensure minimum duration of 3 seconds
                 if newDuration < minimumSelectionDuration {
                     newLeftValue = rightValue - (minimumSelectionDuration / audioDuration)
                 }
                 
-                // Check if selection would exceed 15 seconds
                 if newDuration > 15.0 {
-                    // Move both thumbs together maintaining 15 second gap
                     let fifteenSecondsInValue = 15.0 / audioDuration
                     rightValue = min(newLeftValue + fifteenSecondsInValue, maximumValue)
                     leftValue = max(rightValue - fifteenSecondsInValue, minimumValue)
                 } else {
-                    // Normal movement
                     leftValue = max(minimumValue, newLeftValue)
                 }
                 
@@ -226,19 +221,15 @@ class RangeSlider: UIView {
                 var newRightValue = rightValue + proportionalChange
                 let newDuration = (newRightValue - leftValue) * audioDuration
                 
-                // Ensure minimum duration of 3 seconds
                 if newDuration < minimumSelectionDuration {
                     newRightValue = leftValue + (minimumSelectionDuration / audioDuration)
                 }
-                
-                // Check if selection would exceed 15 seconds
+
                 if newDuration > 15.0 {
-                    // Move both thumbs together maintaining 15 second gap
                     let fifteenSecondsInValue = 15.0 / audioDuration
                     leftValue = max(newRightValue - fifteenSecondsInValue, minimumValue)
                     rightValue = min(leftValue + fifteenSecondsInValue, maximumValue)
                 } else {
-                    // Normal movement
                     rightValue = min(maximumValue, newRightValue)
                 }
             }
@@ -375,7 +366,6 @@ class TrimmingVC: UIViewController {
     private func startPlayingTimer() {
         playingTimer?.invalidate()
         playingTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
-            // Timer functionality removed since we don't need to update labels
         }
     }
     

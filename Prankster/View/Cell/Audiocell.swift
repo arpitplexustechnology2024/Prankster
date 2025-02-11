@@ -16,7 +16,7 @@ class AudioPlaybackManager {
     static let shared = AudioPlaybackManager()
     private init() {}
     
-    var currentlyPlayingCell: AudioCharacterAllCollectionViewCell?
+    var currentlyPlayingCell: AudioAllCollectionViewCell?
     var currentlyPlayingIndexPath: IndexPath?
     
     func stopCurrentPlayback() {
@@ -33,7 +33,7 @@ protocol AudioAllCollectionViewCellDelegate: AnyObject {
 
 // MARK: - Collection View Cell
 @available(iOS 15.0, *)
-class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
+class AudioAllCollectionViewCell: UICollectionViewCell {
     
     // MARK: - IBOutlets
     @IBOutlet weak var imageView: UIImageView!
@@ -48,7 +48,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Properties
     weak var delegate: AudioAllCollectionViewCellDelegate?
-    private var categoryAllData: CategoryAllData?
+    private var categoryAllData: CharacterAllData?
     private var audioPlayer: AVAudioPlayer?
     private var imageViewTimer: Timer?
     private var isAudioPlaying = false
@@ -181,7 +181,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(with categoryAllData: CategoryAllData?, customAudio: (url: URL, imageURL: String)?, at indexPath: IndexPath) {
+    func configure(with categoryAllData: CharacterAllData?, customAudio: (url: URL, imageURL: String)?, at indexPath: IndexPath) {
         self.currentIndexPath = indexPath
         
         if let customAudio = customAudio {
@@ -206,7 +206,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    func configure(with categoryAllData: CategoryAllData, at indexPath: IndexPath) {
+    func configure(with categoryAllData: CharacterAllData, at indexPath: IndexPath) {
         self.categoryAllData = categoryAllData
         self.currentIndexPath = indexPath
         
@@ -424,7 +424,7 @@ class AudioCharacterAllCollectionViewCell: UICollectionViewCell {
 }
 
 @available(iOS 15.0, *)
-extension AudioCharacterAllCollectionViewCell: AVAudioPlayerDelegate {
+extension AudioAllCollectionViewCell: AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         DispatchQueue.main.async { [weak self] in
             self?.stopAudio()
@@ -434,10 +434,10 @@ extension AudioCharacterAllCollectionViewCell: AVAudioPlayerDelegate {
 }
 
 
-class AudioCharacterSliderCollectionViewCell: UICollectionViewCell {
+class AudioSliderCollectionViewCell: UICollectionViewCell {
     
     @IBOutlet weak var imageView: UIImageView!
-    private var categoryAllData: CategoryAllData?
+    private var categoryAllData: CharacterAllData?
     var premiumIconImageView: UIImageView!
     
     private var originalImage: UIImage?
@@ -478,7 +478,7 @@ class AudioCharacterSliderCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    func configure(with categoryAllData: CategoryAllData) {
+    func configure(with categoryAllData: CharacterAllData) {
         self.categoryAllData = categoryAllData
         if let imageURL = URL(string: categoryAllData.image) {
             imageView.sd_setImage(with: imageURL, placeholderImage: UIImage(named: "audioplacholder")) { image, _, _, _ in

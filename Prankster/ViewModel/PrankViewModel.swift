@@ -21,7 +21,7 @@ class PrankViewModel {
     var createPrankImage: String?
     var createPrankResponse: PrankCreateResponse?
     
-    init(apiService: PrankAPIProtocol = PrankAPIManager.shared) {
+    init(apiService: PrankAPIProtocol) {
         self.apiService = apiService
     }
     

@@ -21,9 +21,9 @@ class AppOpenAdManager: NSObject {
     var isLoadingAd = false
     var isShowingAd = false
     var loadTime: Date?
-    private let adsViewModel = AdsViewModel()
+    private let adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     
-    static let shared = AppOpenAdManager()
+    static var shared = AppOpenAdManager()
     
     private func wasLoadTimeLessThanNHoursAgo(timeoutInterval: TimeInterval) -> Bool {
         if let loadTime = loadTime {
