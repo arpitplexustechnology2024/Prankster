@@ -10,14 +10,14 @@ import UIKit
 
 // MARK: - CategoryAll ViewModel
 class CategoryAllViewModel {
-    private let apiService: CategoryAllAPIServiceProtocol
-    var audioData: [CategoryAllData] = []
+    private let apiService: CharacterAllAPIServiceProtocol
+    var audioData: [CharacterAllData] = []
     var isLoading = false
     var hasMorePages = true
     private(set) var currentPage = 1
     var errorMessage: String?
     
-    init(apiService: CategoryAllAPIServiceProtocol = CategoryAllAPIService.shared) {
+    init(apiService: CharacterAllAPIServiceProtocol) {
         self.apiService = apiService
     }
     

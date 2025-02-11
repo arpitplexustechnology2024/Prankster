@@ -14,8 +14,8 @@ protocol CategoryAllAPIServiceProtocol {
 }
 
 // MARK: - Audio API Service
-class CategoryAllAPIService: CategoryAllAPIServiceProtocol {
-    static let shared = CategoryAllAPIService()
+class CategoryAllAPIManger: CategoryAllAPIServiceProtocol {
+    static let shared = CategoryAllAPIManger()
     private init() {}
     
     func fetchAudioData(prankid: Int, categoryId: Int, languageid: Int, page: Int, ispremium: String, completion: @escaping (Result<CategoryAllResponse, Error>) -> Void) {
