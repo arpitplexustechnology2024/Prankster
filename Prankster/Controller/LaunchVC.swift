@@ -12,28 +12,18 @@ import WebKit
 import FirebaseAnalytics
 import GoogleMobileAds
 
-class LaunchVC: UIViewController/*, AppOpenAdManagerDelegate*/ {
+class LaunchVC: UIViewController {
     
     @IBOutlet weak var launchImageView: UIImageView!
     @IBOutlet weak var loadingActivityIndicator: UIActivityIndicatorView!
     private let adsViewModel = AdsViewModel()
     
     var passedActionKey: String?
-    
-//    var secondsRemaining: Int = 5
-//    var countdownTimer: Timer?
-//    private var isMobileAdsStartCalled = false
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
         self.trackAppInstall()
         self.loadAds()
-        
-        // MARK: - App Open Ads Show
-//        AppOpenAdManager.shared.appOpenAdManagerDelegate = self
-//        startGoogleMobileAdsSDK()
-//        countdownTimer = Timer.scheduledTimer(timeInterval: 0.5,target: self,selector: #selector(LaunchVC.decrementCounter),userInfo: nil,repeats: true)
     }
     
     private func trackAppInstall() {
@@ -76,7 +66,6 @@ class LaunchVC: UIViewController/*, AppOpenAdManagerDelegate*/ {
             if !success {
                 print("Ads fetch failed, using existing ads if available")
             }
-            // Check if we can show ads (either new or existing)
             if self?.adsViewModel.shouldShowAds() == true {
                 let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
                 print("Using Ads - Names: \(savedNames)")
@@ -126,30 +115,4 @@ class LaunchVC: UIViewController/*, AppOpenAdManagerDelegate*/ {
             }
         }
     }
-//    
-//    // MARK: - App Open Ads code
-//    @objc func decrementCounter() {
-//        secondsRemaining -= 1
-//        guard secondsRemaining <= 0 else {
-//            return
-//        }
-//        countdownTimer?.invalidate()
-//        AppOpenAdManager.shared.showAdIfAvailable()
-//    }
-//    
-//    private func startGoogleMobileAdsSDK() {
-//        DispatchQueue.main.async {
-//            guard !self.isMobileAdsStartCalled else { return }
-//            self.isMobileAdsStartCalled = true
-//            GADMobileAds.sharedInstance().start()
-//            Task {
-//                await AppOpenAdManager.shared.loadAd()
-//            }
-//        }
-//    }
-//    
-//    // MARK: AppOpenAdManagerDelegate
-//    func appOpenAdManagerAdDidComplete(_ appOpenAdManager: AppOpenAdManager) {
-//        print("App open Ads Show")
-//    }
 }

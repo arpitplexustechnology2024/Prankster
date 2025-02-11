@@ -28,7 +28,6 @@ class VideoPrankVC: UIViewController {
     @IBOutlet weak var videoAllCollectionView: UICollectionView!
     @IBOutlet weak var videoSlideCollectionview: UICollectionView!
     
-    var isLoading = true
     var categoryId: Int = 0
     private let typeId: Int = 1
     private var isLoadingMore = false
@@ -79,6 +78,7 @@ class VideoPrankVC: UIViewController {
     var selectedCoverImageName: String?
     private var selectedAudioIndex: Int?
     private var nativeMediumAdUtility: NativeMediumAdUtility?
+    private var skeletonLoadingView: SkeletonDataLoadingView?
     var preloadedNativeAdView: GADNativeAdView?
     
     init(tagViewModule: TagViewModule) {
@@ -100,9 +100,10 @@ class VideoPrankVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupUI()
+        self.setupSkeletonView()
         self.setupNoDataView()
         self.setupSwipeGesture()
-        self.showSkeletonLoader()
         self.setupNoInternetView()
         self.setupCollectionView()
         self.hideKeyboardTappedAround()
@@ -118,7 +119,9 @@ class VideoPrankVC: UIViewController {
             name: NSNotification.Name("PremiumContentUnlocked"),
             object: nil
         )
-        
+    }
+    
+    func setupUI() {
         self.currentCategoryId = 0
         
         self.addvideoView.layer.cornerRadius = 10
@@ -157,24 +160,20 @@ class VideoPrankVC: UIViewController {
             }
         }
         
-        // Configure the collection view layout for horizontal scrolling
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal  // Horizontal scrolling
-        layout.minimumInteritemSpacing = 10  // Space between items
-        layout.minimumLineSpacing = 10      // Space between rows
-        
-        // Add padding to the left side of the collection view
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
+
         layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         
         suggestionCollectionView.collectionViewLayout = layout
         
         suggestionCollectionView.setCollectionViewLayout(layout, animated: true)
-        
-        // Set CollectionView delegate and datasource
+
         suggestionCollectionView.delegate = self
         suggestionCollectionView.dataSource = self
-        
-        // Register the custom UICollectionViewCell class or Nib
+
         suggestionCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "SuggestionCell")
         
         searchBar.delegate = self
@@ -191,15 +190,27 @@ class VideoPrankVC: UIViewController {
         }
     }
     
+    private func setupSkeletonView() {
+        skeletonLoadingView = SkeletonDataLoadingView()
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let skeletonView = skeletonLoadingView {
+            view.addSubview(skeletonView)
+            
+            NSLayoutConstraint.activate([
+                skeletonView.topAnchor.constraint(equalTo: chipSelector.bottomAnchor, constant: 3),
+                skeletonView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                skeletonView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                skeletonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopPlayingVideo()
     }
-    
-    //    override func viewDidAppear(_ animated: Bool) {
-    //        super.viewDidAppear(animated)
-    //        playVisibleCell()
-    //    }
     
     @objc private func appDidEnterBackground() {
         if self.isViewLoaded && self.view.window != nil {
@@ -219,7 +230,6 @@ class VideoPrankVC: UIViewController {
     private func preloadNativeAd() {
         if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
             print("Preloading Native Ad with ID: \(nativeAdID)")
-            // Create a temporary container for preloading
             let tempAdContainer = UIView(frame: .zero)
             
             nativeMediumAdUtility = NativeMediumAdUtility(
@@ -228,7 +238,6 @@ class VideoPrankVC: UIViewController {
                 nativeAdPlaceholder: tempAdContainer
             ) { [weak self] success in
                 if success {
-                    // Store the preloaded ad view
                     if let adView = self?.nativeMediumAdUtility?.nativeAdView {
                         self?.preloadedNativeAdView = adView
                     }
@@ -243,7 +252,6 @@ class VideoPrankVC: UIViewController {
     
     private func playVisibleCell() {
         if currentCategoryId == 0 {
-            // Handle custom audio playback
             guard !customVideos.isEmpty else { return }
             
             let visibleRect = CGRect(origin: videoAllCollectionView.contentOffset, size: videoAllCollectionView.bounds.size)
@@ -262,7 +270,6 @@ class VideoPrankVC: UIViewController {
                 videoSlideCollectionview.selectItem(at: visibleIndexPath, animated: true, scrollPosition: .centeredHorizontally)
             }
         } else {
-            // Handle API data playback
             guard !currentDataSource.isEmpty else { return }
             
             let visibleRect = CGRect(origin: videoAllCollectionView.contentOffset, size: videoAllCollectionView.bounds.size)
@@ -318,14 +325,11 @@ class VideoPrankVC: UIViewController {
             self.preloadNativeAd()
             self.noInternetView?.isHidden = true
             self.hideNoDataView()
-            // Ensure search views stay on top
             self.view.bringSubviewToFront(self.searchBarView)
             self.view.bringSubviewToFront(self.searchMainView)
         } else {
             self.showNoInternetView()
             self.hideSkeletonLoader()
-            
-            // Ensure search views stay on top
             self.view.bringSubviewToFront(self.searchBarView)
             self.view.bringSubviewToFront(self.searchMainView)
         }
@@ -335,12 +339,10 @@ class VideoPrankVC: UIViewController {
         tagViewModule.fetchTag(id: "2") { [weak self] result in
             switch result {
             case .success(let tagResponse):
-                // Use the array directly
                 self?.suggestions = tagResponse.data
                 self?.suggestionCollectionView.reloadData()
             case .failure(let error):
                 print("Error fetching tags: \(error.localizedDescription)")
-                // Handle error appropriately
                 self?.searchMainViewHeightConstarints.constant = 0
                 self?.searchMainView.isHidden = true
                 self?.popularLabel.isHidden = true
@@ -379,18 +381,14 @@ class VideoPrankVC: UIViewController {
     private func setupChipSelector() {
         chipSelector.onCategorySelected = { [weak self] categoryId in
             guard let self = self else { return }
-            
-            // Update current category ID
             self.currentCategoryId = categoryId
-            
-            // Reset selected index to 0 whenever changing categories
+
             self.selectedIndex = 0
             
             if categoryId == 0 {
                 
                 self.hideSkeletonLoader()
-                
-                // Add cover image વાળી chip માટેનો existing code
+   
                 self.popularLabel.isHidden = true
                 self.suggestionCollectionView.isHidden = true
                 self.cancelButton.isHidden = true
@@ -424,37 +422,22 @@ class VideoPrankVC: UIViewController {
                 }
                 
             } else {
-                
                 VideoPlaybackManager.shared.stopCurrentPlayback()
-                // Reset states for API call
                 self.isLoadingMore = false
                 self.isFirstLoad = false
                 self.viewModel.resetPagination()
-                
                 self.addvideoView.isHidden = true
                 self.searchBarView.isHidden = false
                 self.videoPrankLabel.isHidden = true
-                
-                // Clear existing data
                 self.viewModel.audioData.removeAll()
                 self.filteredVideos.removeAll()
-                
-                // Reset collection views
                 self.videoAllCollectionView.reloadData()
                 self.videoSlideCollectionview.reloadData()
-                
-                // Show loader
                 self.showSkeletonLoader()
-                
-                // Hide no data view before fetching
                 self.hideNoDataView()
-                
-                // Fetch new data
                 self.checkInternetAndFetchData()
             }
         }
-        
-        // Trigger default chip selection
         chipSelector.selectDefaultChip()
     }
     
@@ -503,13 +486,15 @@ class VideoPrankVC: UIViewController {
     }
     
     func showSkeletonLoader() {
-        isLoading = true
+        skeletonLoadingView?.isHidden = false
+        skeletonLoadingView?.startAnimating()
         videoAllCollectionView.reloadData()
         videoSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
-        isLoading = false
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.stopAnimating()
         videoAllCollectionView.reloadData()
         videoSlideCollectionview.reloadData()
     }
@@ -518,15 +503,13 @@ class VideoPrankVC: UIViewController {
         noDataView = NoDataView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
-        
-        // Insert noDataView below searchMainView
+
         if let index = view.subviews.firstIndex(of: searchMainView) {
             self.view.insertSubview(noDataView, belowSubview: searchMainView)
         } else {
             self.view.addSubview(noDataView)
         }
-        
-        //        self.view.addSubview(noDataView)
+
         noDataView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -541,14 +524,12 @@ class VideoPrankVC: UIViewController {
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
         noInternetView.isHidden = true
         
-        // Insert noInternetView below searchMainView
         if let index = view.subviews.firstIndex(of: searchMainView) {
             self.view.insertSubview(noInternetView, belowSubview: searchMainView)
         } else {
             self.view.addSubview(noInternetView)
         }
         
-        //  self.view.addSubview(noInternetView)
         noInternetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -640,7 +621,6 @@ class VideoPrankVC: UIViewController {
     }
     
     private func handleDownloadedVideo(url: URL) {
-        // First compress the video
         VideoProcessingManager.shared.compressVideo(inputURL: url) { [weak self] result in
             guard let self = self else { return }
             
@@ -670,13 +650,10 @@ class VideoPrankVC: UIViewController {
                         self.videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         self.videoSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
                         
-                        // Add delay to ensure cell is properly loaded before playing
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                             if let cell = self.videoAllCollectionView.cellForItem(at: indexPath) as? VideoCharacterAllCollectionViewCell {
-                                // Stop any currently playing video
                                 VideoPlaybackManager.shared.stopCurrentPlayback()
                                 
-                                // Play the new video
                                 cell.playVideo()
                                 VideoPlaybackManager.shared.currentlyPlayingCell = cell
                                 VideoPlaybackManager.shared.currentlyPlayingIndexPath = indexPath
@@ -776,18 +753,12 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 return (customVideos.isEmpty ? 1 : customVideos.count)
             } else {
-                if isLoading {
-                    return 4
-                }
                 return currentDataSource.count
             }
         } else {
             if currentCategoryId == 0 {
                 return (customVideos.isEmpty ? 4 : customVideos.count)
             } else {
-                if isLoading {
-                    return 4
-                }
                 return currentDataSource.count
             }
         }
@@ -795,11 +766,6 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == videoAllCollectionView {
-            if isLoading {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                cell.isUserInteractionEnabled = false
-                return cell
-            } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterAllCollectionViewCell", for: indexPath) as! VideoCharacterAllCollectionViewCell
                 
                 if currentCategoryId == 0 {
@@ -820,7 +786,6 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         return cell
                     }
                     
-                    // Configure cell for custom audio
                     if customVideos.isEmpty {
                         cell.tutorialViewShowView.isHidden = false
                         cell.blurImageView.isHidden = true
@@ -841,7 +806,6 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                             cell.premiumButton.isHidden = true
                             cell.imageView.contentMode = .scaleAspectFit
                             
-                            // વિડિયો URL થી સેલ કન્ફિગર કરો
                             let dummyData = CategoryAllData(file: videoURL.video.absoluteString,
                                                             name: " Custom Video ",
                                                             image: "",
@@ -850,13 +814,11 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                             cell.configure(with: dummyData, at: indexPath)
                             cell.configure(with: dummyData)
                             
-                            // Configure Done button action
                             cell.DoneButton.tag = indexPath.row
                             cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                         }
                     }
                 } else {
-                    // Configure cell for API data
                     if indexPath.row < currentDataSource.count {
                         let audioData = currentDataSource[indexPath.row]
                         
@@ -867,12 +829,9 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                         cell.configure(with: audioData, at: indexPath)
                         cell.configure(with: audioData)
                         
-                        
-                        // Configure Premium button action
                         cell.premiumActionButton.tag = indexPath.row
                         cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
                         
-                        // Configure Done button action
                         cell.DoneButton.tag = indexPath.row
                         cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                         
@@ -880,18 +839,10 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 cell.delegate = self
                 return cell
-            }
         } else if collectionView == videoSlideCollectionview {
-            // Similar logic for slide collection view...
-            if isLoading {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                cell.isUserInteractionEnabled = false
-                return cell
-            } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "VideoCharacterSliderCollectionViewCell", for: indexPath) as! VideoCharacterSliderCollectionViewCell
                 
                 if currentCategoryId == 0 {
-                    // Configure cell for custom audio
                     if customVideos.isEmpty {
                         cell.imageView.image = UIImage(named: "videoplacholder")
                         cell.premiumIconImageView.isHidden = true
@@ -910,7 +861,6 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 cell.isSelected = indexPath.item == selectedIndex
                 return cell
-            }
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuggestionCell", for: indexPath)
             
@@ -972,36 +922,41 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     private func doneButtonClick(_ sender: UIButton) {
         VideoPlaybackManager.shared.stopCurrentPlayback()
-        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
-            if currentCategoryId == 0 {
-                let customImages = customVideos[sender.tag]
-                
-                if let videoURLString = customImages.videoURL,
-                   let videoURL = URL(string: videoURLString),
-                   videoURL.scheme?.lowercased() == "http" || videoURL.scheme?.lowercased() == "https" {
-                    vc.selectedURL = videoURLString
-                } else {
-                    if let fileData = try? Data(contentsOf: customImages.video) {
-                        vc.selectedFile = fileData
+        if isConnectedToInternet() {
+            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
+                if currentCategoryId == 0 {
+                    let customImages = customVideos[sender.tag]
+                    
+                    if let videoURLString = customImages.videoURL,
+                       let videoURL = URL(string: videoURLString),
+                       videoURL.scheme?.lowercased() == "http" || videoURL.scheme?.lowercased() == "https" {
+                        vc.selectedURL = videoURLString
+                    } else {
+                        if let fileData = try? Data(contentsOf: customImages.video) {
+                            vc.selectedFile = fileData
+                        }
                     }
+                    vc.selectedName = selectedCoverImageName
+                    vc.selectedCoverURL = selectedCoverImageURL
+                    vc.selectedCoverFile = selectedCoverImageFile
+                    vc.selectedPranktype = "video"
+                    vc.selectedFileType = "mp4"
+                    vc.sharePrank = true
+                } else {
+                    let categoryAllData = currentDataSource[sender.tag]
+                    vc.selectedURL = categoryAllData.file
+                    vc.selectedName = selectedCoverImageName
+                    vc.selectedCoverURL = selectedCoverImageURL
+                    vc.selectedCoverFile = selectedCoverImageFile
+                    vc.selectedPranktype = "video"
+                    vc.selectedFileType = "mp4"
+                    vc.sharePrank = true
                 }
-                vc.selectedName = selectedCoverImageName
-                vc.selectedCoverURL = selectedCoverImageURL
-                vc.selectedCoverFile = selectedCoverImageFile
-                vc.selectedPranktype = "video"
-                vc.selectedFileType = "mp4"
-                vc.sharePrank = true
-            } else {
-                let categoryAllData = currentDataSource[sender.tag]
-                vc.selectedURL = categoryAllData.file
-                vc.selectedName = selectedCoverImageName
-                vc.selectedCoverURL = selectedCoverImageURL
-                vc.selectedCoverFile = selectedCoverImageFile
-                vc.selectedPranktype = "video"
-                vc.selectedFileType = "mp4"
-                vc.sharePrank = true
+                self.navigationController?.pushViewController(vc, animated: true)
             }
-            self.navigationController?.pushViewController(vc, animated: true)
+        }  else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
@@ -1023,8 +978,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             
             videoAllCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
             videoAllCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-            
-            // Add slight delay to ensure proper playback
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
                 self?.playVisibleCell()
             }
@@ -1039,8 +993,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             popularLabel.isHidden = true
             suggestionCollectionView.isHidden = true
             cancelButton.isHidden = false
-            
-            // Reset corner radius when a suggestion is selected
+
             searchMainView.layer.cornerRadius = 10
             searchBarView.layer.cornerRadius = 10
             searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -1060,18 +1013,13 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else if collectionView == videoSlideCollectionview {
             return CGSize(width: width, height: height)
         } else {
-            // For suggestion collection view
             let suggestion = suggestions[indexPath.row]
-            
-            // Create a temporary label to measure exact text size
+
             let label = UILabel()
             label.font = UIFont.systemFont(ofSize: 16)
             label.text = suggestion
-            
-            // Get exact size needed for text
+
             let labelSize = label.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: 40))
-            
-            // Add minimal padding (8 points total - 4 on each side)
             let cellWidth = labelSize.width + 20
             
             return CGSize(width: cellWidth, height: 40)
@@ -1081,9 +1029,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-            //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
             self.fetchAllVideos()
-            //  }
         }
     }
     
@@ -1098,8 +1044,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             if currentCategoryId == 0 {
                 footer.stopAnimating()
             } else {
-                // બાકીની ચિપ્સ માટે જૂની લોજિક જાળવી રાખો
-                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
+                if !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
                     footer.startAnimating()
                 } else {
                     footer.stopAnimating()
@@ -1112,31 +1057,25 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Skip animation if scrolling from slider selection
         guard scrollView == videoAllCollectionView else { return }
         
         let pageWidth = scrollView.bounds.width
         let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
         
-        // Apply diagonal swipe animation only for user-initiated scrolling
         for cell in videoAllCollectionView.visibleCells {
             let cellCenterX = cell.center.x
             let distanceFromCenter = centerX - cellCenterX
             
-            // Calculate how far we've moved from center as a percentage
             let swipeProgress = distanceFromCenter / pageWidth
             
-            // Calculate translation and rotation
             let translationX = -distanceFromCenter
             let translationY = abs(distanceFromCenter) * 0.3
             let rotation = swipeProgress * (CGFloat.pi / 8)
-            
-            // Combine transforms
+
             var transform = CGAffineTransform.identity
             transform = transform.translatedBy(x: translationX, y: translationY)
             transform = transform.rotated(by: rotation)
             
-            // Apply transform
             cell.transform = transform
         }
         
@@ -1176,8 +1115,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             }
         }
     }
-    
-    // Reset animation when scrolling ends
+
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard scrollView == videoAllCollectionView else { return }
         
@@ -1199,8 +1137,7 @@ extension VideoPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             }
         }
     }
-    
-    // For smooth page snapping
+
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         guard scrollView == videoAllCollectionView else { return }
         
@@ -1247,7 +1184,6 @@ extension VideoPrankVC: VideoCharacterAllCollectionViewCellDelegate {
 @available(iOS 15.0, *)
 extension VideoPrankVC: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        // Show the hidden UI elements immediately when textfield is tapped
         if isConnectedToInternet() {
             searchMainView.isHidden = false
             popularLabel.isHidden = false
@@ -1255,15 +1191,12 @@ extension VideoPrankVC: UITextFieldDelegate {
             
             searchMainViewHeightConstarints.constant = 90
             
-            // Set corner radius for searchBarView (top corners)
             searchBarView.layer.cornerRadius = 10
             searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
             
-            // Set corner radius for searchMainView (bottom corners)
             searchMainView.layer.cornerRadius = 10
             searchMainView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-            
-            // Animate the changes
+
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()
             }
@@ -1285,7 +1218,6 @@ extension VideoPrankVC: UITextFieldDelegate {
         suggestionCollectionView.isHidden = true
         cancelButton.isHidden = true
         
-        // Restore corner radius when cancel is tapped
         searchMainView.layer.cornerRadius = 10
         searchBarView.layer.cornerRadius = 10
         searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -1380,11 +1312,9 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         picker.delegate = self
         picker.sourceType = sourceType
         picker.mediaTypes = [kUTTypeMovie as String]
-        
-        // Video quality ne highest par set karyu
-        picker.videoQuality = .typeHigh // Highest quality
-        
-        // Video recording settings
+
+        picker.videoQuality = .typeHigh
+
         if sourceType == .camera {
             if let cameraDevice = AVCaptureDevice.default(for: .video) {
                 do {
@@ -1395,7 +1325,6 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     if cameraDevice.isFocusModeSupported(.continuousAutoFocus) {
                         cameraDevice.focusMode = .continuousAutoFocus
                     }
-                    // વધારાની સેટિંગ્સ
                     if cameraDevice.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
                         cameraDevice.whiteBalanceMode = .continuousAutoWhiteBalance
                     }
@@ -1406,11 +1335,9 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
             }
         }
         
-        // વીડિયો ટ્રિમિંગ માટેની મર્યાદા સેટ કરવી
         picker.allowsEditing = true
-        picker.videoMaximumDuration = 15.0 // 15 સેકંડની મહત્તમ મર્યાદા
-        
-        // એડિટિંગ ઓપ્શન્સ સેટ કરવા
+        picker.videoMaximumDuration = 15.0
+
         if #available(iOS 14.0, *) {
             picker.videoExportPreset = AVAssetExportPresetPassthrough
         }
@@ -1446,8 +1373,7 @@ extension VideoPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         }
         snackbar.show(in: self.view, duration: 5.0)
     }
-    
-    // Update imagePickerController to use CustomVideos
+
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         guard let videoURL = info[.mediaURL] as? URL else {
             picker.dismiss(animated: true)

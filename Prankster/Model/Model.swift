@@ -67,24 +67,6 @@ struct CategoryAllData: Codable {
     }
 }
 
-// MARK: - Welcome
-struct CategoryResponse: Codable {
-    let status: Int
-    let message: String
-    let data: [CategoryData]
-}
-struct CategoryData: Codable {
-    let categoryName: String
-    let categoryImage: String
-    let categoryID: Int
-    
-    enum CodingKeys: String, CodingKey {
-        case categoryName = "CategoryName"
-        case categoryImage = "CategoryImage"
-        case categoryID = "CategoryId"
-    }
-}
-
 // MARK: - MoreApp
 struct MoreApp: Codable {
     let status: Int
@@ -178,13 +160,13 @@ struct AdsData: Codable {
 }
 
 
-
+// MARK: - DownloadGIFModel
 struct DownloadGIFModel {
     let image: UIImage?
 }
 
 
-
+// MARK: - Social
 struct Social: Codable {
     let status: Int
     let message: String
@@ -197,7 +179,7 @@ struct Social: Codable {
     }
 }
 
-
+// MARK: - TagName
 struct TagName: Codable {
     let status: Int
     let message: String

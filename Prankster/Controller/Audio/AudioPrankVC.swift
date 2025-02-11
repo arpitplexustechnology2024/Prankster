@@ -43,7 +43,6 @@ class AudioPrankVC: UIViewController {
     @IBOutlet weak var searchBarView: UIView!
     
     // MARK: - properties
-    var isLoading = true
     var languageid: Int = 0
     var categoryId: Int = 0
     private var timer: Timer?
@@ -72,6 +71,7 @@ class AudioPrankVC: UIViewController {
     private var tagViewModule : TagViewModule!
     let interstitialAdUtility = InterstitialAdUtility()
     private var nativeMediumAdUtility: NativeMediumAdUtility?
+    private var skeletonLoadingView: SkeletonDataLoadingView?
     var preloadedNativeAdView: GADNativeAdView?
     
     private var shouldShowGIF = true
@@ -106,9 +106,10 @@ class AudioPrankVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupUI()
+        self.setupSkeletonView()
         self.setupNoDataView()
         self.setupSwipeGesture()
-        self.showSkeletonLoader()
         self.setupNoInternetView()
         self.setupCollectionView()
         self.hideKeyboardTappedAround()
@@ -124,7 +125,9 @@ class AudioPrankVC: UIViewController {
             name: NSNotification.Name("PremiumContentUnlocked"),
             object: nil
         )
-        
+    }
+    
+    func setupUI() {
         self.currentCategoryId = 0
         
         self.addcoverView.layer.cornerRadius = 10
@@ -189,15 +192,27 @@ class AudioPrankVC: UIViewController {
         }
     }
     
+    private func setupSkeletonView() {
+        skeletonLoadingView = SkeletonDataLoadingView()
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let skeletonView = skeletonLoadingView {
+            view.addSubview(skeletonView)
+            
+            NSLayoutConstraint.activate([
+                skeletonView.topAnchor.constraint(equalTo: chipSelector.bottomAnchor, constant: 3),
+                skeletonView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                skeletonView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                skeletonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         stopPlayingAudio()
     }
-    
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        playVisibleCell()
-//    }
     
     @objc private func appDidEnterBackground() {
         if self.isViewLoaded && self.view.window != nil {
@@ -444,7 +459,6 @@ class AudioPrankVC: UIViewController {
                         if !self.currentDataSource.isEmpty {
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
                             self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                            self.audioCharacterSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                                 self.playVisibleCell()
@@ -462,13 +476,15 @@ class AudioPrankVC: UIViewController {
     }
     
     func showSkeletonLoader() {
-        isLoading = true
+        skeletonLoadingView?.isHidden = false
+        skeletonLoadingView?.startAnimating()
         audioCharacterAllCollectionView.reloadData()
         audioCharacterSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
-        isLoading = false
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.stopAnimating()
         audioCharacterAllCollectionView.reloadData()
         audioCharacterSlideCollectionview.reloadData()
     }
@@ -517,6 +533,7 @@ class AudioPrankVC: UIViewController {
         if isConnectedToInternet() {
             noInternetView.isHidden = true
             noDataView.isHidden = true
+            self.showSkeletonLoader()
             checkInternetAndFetchData()
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -665,18 +682,12 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 return (customAudios.isEmpty ? 1 : customAudios.count)
             } else {
-                if isLoading {
-                    return 4
-                }
                 return currentDataSource.count
             }
         } else {
             if currentCategoryId == 0 {
                 return (customAudios.isEmpty ? 4 : customAudios.count)
             } else {
-                if isLoading {
-                    return 4
-                }
                 return currentDataSource.count
             }
         }
@@ -684,11 +695,6 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == audioCharacterAllCollectionView {
-            if isLoading {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                cell.isUserInteractionEnabled = false
-                return cell
-            } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterAllCollectionViewCell", for: indexPath) as! AudioCharacterAllCollectionViewCell
                 
                 if currentCategoryId == 0 {
@@ -746,13 +752,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 cell.delegate = self
                 return cell
-            }
         } else if collectionView == audioCharacterSlideCollectionview {
-            if isLoading {
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                cell.isUserInteractionEnabled = false
-                return cell
-            } else {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "AudioCharacterSliderCollectionViewCell", for: indexPath) as! AudioCharacterSliderCollectionViewCell
                 
                 if currentCategoryId == 0 {
@@ -777,7 +777,6 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 
                 cell.isSelected = indexPath.item == selectedIndex
                 return cell
-            }
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuggestionCell", for: indexPath)
             
@@ -833,13 +832,25 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     
     private func doneButtonClick(_ sender: UIButton) {
         AudioPlaybackManager.shared.stopCurrentPlayback()
-        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
-            if self.currentCategoryId == 0 {
-                
-                let customImages = self.customAudios[sender.tag]
-                if let fileData = try? Data(contentsOf: customImages.url) {
-                    vc.selectedFile = fileData
-                    vc.selectedImage = customImages.imageURL
+        if isConnectedToInternet() {
+            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
+                if self.currentCategoryId == 0 {
+                    
+                    let customImages = self.customAudios[sender.tag]
+                    if let fileData = try? Data(contentsOf: customImages.url) {
+                        vc.selectedFile = fileData
+                        vc.selectedImage = customImages.imageURL
+                        vc.selectedName = self.selectedCoverImageName
+                        vc.selectedCoverURL = self.selectedCoverImageURL
+                        vc.selectedCoverFile = self.selectedCoverImageFile
+                        vc.selectedPranktype = "audio"
+                        vc.selectedFileType = "mp3"
+                        vc.sharePrank = true
+                    }
+                } else {
+                    let categoryAllData = self.currentDataSource[sender.tag]
+                    vc.selectedURL = categoryAllData.file
+                    vc.selectedImage = categoryAllData.image
                     vc.selectedName = self.selectedCoverImageName
                     vc.selectedCoverURL = self.selectedCoverImageURL
                     vc.selectedCoverFile = self.selectedCoverImageFile
@@ -847,18 +858,11 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     vc.selectedFileType = "mp3"
                     vc.sharePrank = true
                 }
-            } else {
-                let categoryAllData = self.currentDataSource[sender.tag]
-                vc.selectedURL = categoryAllData.file
-                vc.selectedImage = categoryAllData.image
-                vc.selectedName = self.selectedCoverImageName
-                vc.selectedCoverURL = self.selectedCoverImageURL
-                vc.selectedCoverFile = self.selectedCoverImageFile
-                vc.selectedPranktype = "audio"
-                vc.selectedFileType = "mp3"
-                vc.sharePrank = true
+                self.navigationController?.pushViewController(vc, animated: true)
             }
-            self.navigationController?.pushViewController(vc, animated: true)
+        } else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
@@ -928,9 +932,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-           // DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
                 self.fetchAllAudios()
-          //  }
         }
     }
     
@@ -945,7 +947,7 @@ extension AudioPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             if currentCategoryId == 0 {
                 footer.stopAnimating()
             } else {
-                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
+                if !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
                     footer.startAnimating()
                 } else {
                     footer.stopAnimating()

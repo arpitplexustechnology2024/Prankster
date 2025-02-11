@@ -15,23 +15,36 @@ class ViewLinkVC: UIViewController {
     @IBOutlet weak var viewlinkCollectionView: UICollectionView!
     @IBOutlet weak var navigationView: UIView!
     var pranks: [PrankCreateData] = []
-    private var noDataView: NoDataView!
+    private var recentPrank: RecentPrank!
     private var noInternetView: NoInternetView!
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
     private let adsViewModel = AdsViewModel()
-    let interstitialAdUtility = InterstitialAdUtility()
     private let rewardAdUtility = RewardAdUtility()
-    
+    private var loadingAlert: LoadingAlertView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupAds()
         setupSwipeGesture()
+        setupLoadingAlert()
         setupNoDataView()
         setupCollectionView()
         self.setupNoInternetView()
         self.checkInternetAndFetchData()
+    }
+    
+    private func setupLoadingAlert() {
+        loadingAlert = LoadingAlertView(frame: view.bounds)
+        loadingAlert.isHidden = true
+        view.addSubview(loadingAlert)
+        loadingAlert.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            loadingAlert.topAnchor.constraint(equalTo: view.topAnchor),
+            loadingAlert.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            loadingAlert.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            loadingAlert.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
     
     // MARK: - checkInternetAndFetchData
@@ -59,15 +72,15 @@ class ViewLinkVC: UIViewController {
                 } else {
                     nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
                 }
+                
+                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                    print("Reward Ad ID: \(rewardAdID)")
+                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
+                } else {
+                    print("No Reward Ad ID found")
+                }
             } else {
                 nativeSmallAds.isHidden = true
-            }
-            
-            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                print("Reward Ad ID: \(rewardAdID)")
-                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-            } else {
-                print("No Reward Ad ID found")
             }
         } else {
             nativeSmallAds.isHidden = true
@@ -91,17 +104,23 @@ class ViewLinkVC: UIViewController {
     }
     
     private func setupNoDataView() {
-        noDataView = NoDataView()
-        noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        noDataView.isHidden = true
-        self.view.addSubview(noDataView)
-        noDataView.translatesAutoresizingMaskIntoConstraints = false
+        recentPrank = RecentPrank()
+        recentPrank.makePrank.addTarget(self, action: #selector(makePrankButtonTapped), for: .touchUpInside)
+        recentPrank.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        recentPrank.isHidden = true
+        self.view.addSubview(recentPrank)
+        recentPrank.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            noDataView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noDataView.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
-            noDataView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            recentPrank.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            recentPrank.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            recentPrank.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
+            recentPrank.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -150)
         ])
+    }
+    
+    // MARK: - makePrankButtonTapped
+    @objc func makePrankButtonTapped() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     // MARK: - setupNoInternetView
@@ -131,6 +150,13 @@ class ViewLinkVC: UIViewController {
                 } else {
                     nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
                 }
+                
+                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                    print("Reward Ad ID: \(rewardAdID)")
+                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
+                } else {
+                    print("No Reward Ad ID found")
+                }
             } else {
                 nativeSmallAds.isHidden = true
             }
@@ -144,10 +170,10 @@ class ViewLinkVC: UIViewController {
         if let savedPranksData = UserDefaults.standard.data(forKey: "SavedPranks"),
            let savedPranks = try? JSONDecoder().decode([PrankCreateData].self, from: savedPranksData) {
             self.pranks = savedPranks.sorted { $0.id > $1.id }
-            noDataView.isHidden = !pranks.isEmpty
+            recentPrank.isHidden = !pranks.isEmpty
             viewlinkCollectionView.reloadData()
         } else {
-            noDataView.isHidden = false
+            recentPrank.isHidden = false
         }
     }
     

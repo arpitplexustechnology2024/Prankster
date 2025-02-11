@@ -58,6 +58,7 @@ class ImagePrankVC: UIViewController {
     
     private var tagViewModule : TagViewModule!
     let interstitialAdUtility = InterstitialAdUtility()
+    private var skeletonLoadingView: SkeletonDataLoadingView?
     private let adsViewModel = AdsViewModel()
     
     init(tagViewModule: TagViewModule) {
@@ -83,7 +84,6 @@ class ImagePrankVC: UIViewController {
         return isSearchActive ? filteredImages : viewModel.audioData
     }
     
-    var isLoading = true
     private let categoryId: Int = 4
     private var isLoadingMore = false
     private var selectedIndex: Int = 0
@@ -92,10 +92,11 @@ class ImagePrankVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupUI()
         self.loadSavedImages()
+        self.setupSkeletonView()
         self.setupNoDataView()
         self.setupSwipeGesture()
-        self.showSkeletonLoader()
         self.setupNoInternetView()
         self.setupCollectionView()
         self.hideKeyboardTappedAround()
@@ -104,7 +105,9 @@ class ImagePrankVC: UIViewController {
         PremiumManager.shared.clearTemporaryUnlocks()
         
         NotificationCenter.default.addObserver( self, selector: #selector(handlePremiumContentUnlocked), name: NSNotification.Name("PremiumContentUnlocked"), object: nil)
-        
+    }
+    
+    func setupUI() {
         self.addimageView.layer.cornerRadius = 10
         
         popularLabel.isHidden = true
@@ -140,25 +143,21 @@ class ImagePrankVC: UIViewController {
                 }
             }
         }
-        
-        // Configure the collection view layout for horizontal scrolling
+
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal  // Horizontal scrolling
-        layout.minimumInteritemSpacing = 10  // Space between items
-        layout.minimumLineSpacing = 10      // Space between rows
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
         
-        // Add padding to the left side of the collection view
         layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         
         suggestionCollectionView.collectionViewLayout = layout
         
         suggestionCollectionView.setCollectionViewLayout(layout, animated: true)
         
-        // Set CollectionView delegate and datasource
         suggestionCollectionView.delegate = self
         suggestionCollectionView.dataSource = self
         
-        // Register the custom UICollectionViewCell class or Nib
         suggestionCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "SuggestionCell")
         
         searchBar.delegate = self
@@ -173,13 +172,28 @@ class ImagePrankVC: UIViewController {
             ]
             searchBar.attributedPlaceholder = NSAttributedString(string: placeholderText, attributes: attributes)
         }
+    }
+    
+    private func setupSkeletonView() {
+        skeletonLoadingView = SkeletonDataLoadingView()
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.translatesAutoresizingMaskIntoConstraints = false
         
+        if let skeletonView = skeletonLoadingView {
+            view.addSubview(skeletonView)
+            
+            NSLayoutConstraint.activate([
+                skeletonView.topAnchor.constraint(equalTo: chipSelector.bottomAnchor, constant: 3),
+                skeletonView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                skeletonView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                skeletonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
     }
     
     private func preloadNativeAd() {
         if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
             print("Preloading Native Ad with ID: \(nativeAdID)")
-            // Create a temporary container for preloading
             let tempAdContainer = UIView(frame: .zero)
             
             nativeMediumAdUtility = NativeMediumAdUtility(
@@ -188,7 +202,6 @@ class ImagePrankVC: UIViewController {
                 nativeAdPlaceholder: tempAdContainer
             ) { [weak self] success in
                 if success {
-                    // Store the preloaded ad view
                     if let adView = self?.nativeMediumAdUtility?.nativeAdView {
                         self?.preloadedNativeAdView = adView
                     }
@@ -224,14 +237,11 @@ class ImagePrankVC: UIViewController {
             self.preloadNativeAd()
             self.noInternetView?.isHidden = true
             self.hideNoDataView()
-            // Ensure search views stay on top
             self.view.bringSubviewToFront(self.searchBarView)
             self.view.bringSubviewToFront(self.searchMainView)
         } else {
             self.showNoInternetView()
             self.hideSkeletonLoader()
-            
-            // Ensure search views stay on top
             self.view.bringSubviewToFront(self.searchBarView)
             self.view.bringSubviewToFront(self.searchMainView)
         }
@@ -241,12 +251,10 @@ class ImagePrankVC: UIViewController {
         tagViewModule.fetchTag(id: "3") { [weak self] result in
             switch result {
             case .success(let tagResponse):
-                // Use the array directly
                 self?.suggestions = tagResponse.data
                 self?.suggestionCollectionView.reloadData()
             case .failure(let error):
                 print("Error fetching tags: \(error.localizedDescription)")
-                // Handle error appropriately
                 self?.searchMainViewHeightConstarints.constant = 0
                 self?.searchMainView.isHidden = true
                 self?.popularLabel.isHidden = true
@@ -286,16 +294,13 @@ class ImagePrankVC: UIViewController {
         chipSelector.onCategorySelected = { [weak self] categoryId in
             guard let self = self else { return }
             
-            // Update current category ID
             self.currentCategoryId = categoryId
-            
-            // Reset selected index to 0 whenever changing categories
+
             self.selectedIndex = 0
             
             if categoryId == 0 {
                 self.hideSkeletonLoader()
-                
-                // Add cover image વાળી chip માટેનો existing code
+
                 self.popularLabel.isHidden = true
                 self.suggestionCollectionView.isHidden = true
                 self.cancelButton.isHidden = true
@@ -310,7 +315,6 @@ class ImagePrankVC: UIViewController {
                 self.imageAllCollectionview.reloadData()
                 self.imageSlideCollectionview.reloadData()
                 
-                // Select first item after reload
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if !self.customImages.isEmpty && !self.shouldShowGIF {
                         let indexPath = IndexPath(item: 0, section: 0)
@@ -322,46 +326,21 @@ class ImagePrankVC: UIViewController {
                 }
                 
             } else {
-                // Reset states for API call
                 self.isLoadingMore = false
                 self.isFirstLoad = false
                 self.viewModel.resetPagination()
-                
                 self.addimageView.isHidden = true
                 self.searchBarView.isHidden = false
                 self.ImageLabel.isHidden = true
-                
-                // Clear existing data
                 self.viewModel.audioData.removeAll()
                 self.filteredImages.removeAll()
-                
-                // Reset collection views and select first item
                 self.imageAllCollectionview.reloadData()
                 self.imageSlideCollectionview.reloadData()
-                
-                // Show loader
                 self.showSkeletonLoader()
-                
-                // Hide no data view before fetching
                 self.hideNoDataView()
-                
-                // Fetch new data
                 self.checkInternetAndFetchData()
-                
-                // After fetching data and reloading, select the first item
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    if !self.currentDataSource.isEmpty {
-                        let indexPath = IndexPath(item: 0, section: 0)
-                        self.imageAllCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
-                        self.imageAllCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-                        self.imageSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: .centeredHorizontally)
-                        self.imageSlideCollectionview.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: false)
-                    }
-                }
             }
         }
-        
-        // Trigger default chip selection
         chipSelector.selectDefaultChip()
     }
     
@@ -404,13 +383,15 @@ class ImagePrankVC: UIViewController {
     }
     
     func showSkeletonLoader() {
-        isLoading = true
+        skeletonLoadingView?.isHidden = false
+        skeletonLoadingView?.startAnimating()
         imageAllCollectionview.reloadData()
         imageSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
-        isLoading = false
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.stopAnimating()
         imageAllCollectionview.reloadData()
         imageSlideCollectionview.reloadData()
     }
@@ -419,15 +400,13 @@ class ImagePrankVC: UIViewController {
         noDataView = NoDataView()
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
-        
-        // Insert noDataView below searchMainView
+
         if let index = view.subviews.firstIndex(of: searchMainView) {
             self.view.insertSubview(noDataView, belowSubview: searchMainView)
         } else {
             self.view.addSubview(noDataView)
         }
-        
-        //        self.view.addSubview(noDataView)
+
         noDataView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -441,15 +420,13 @@ class ImagePrankVC: UIViewController {
         noInternetView = NoInternetView()
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
         noInternetView.isHidden = true
-        
-        // Insert noInternetView below searchMainView
+
         if let index = view.subviews.firstIndex(of: searchMainView) {
             self.view.insertSubview(noInternetView, belowSubview: searchMainView)
         } else {
             self.view.addSubview(noInternetView)
         }
-        
-        //  self.view.addSubview(noInternetView)
+
         noInternetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -463,6 +440,7 @@ class ImagePrankVC: UIViewController {
         if isConnectedToInternet() {
             noInternetView.isHidden = true
             noDataView.isHidden = true
+            self.showSkeletonLoader()
             checkInternetAndFetchData()
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -631,18 +609,12 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 return (customImages.isEmpty ? 1 : customImages.count)
             } else {
-                if isLoading {
-                    return 4
-                }
                 return currentDataSource.count
             }
         } else {
             if currentCategoryId == 0 {
                 return (customImages.isEmpty ? 4 : customImages.count)
             } else {
-                if isLoading {
-                    return 4
-                }
                 return currentDataSource.count
             }
         }
@@ -696,11 +668,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 cell.premiumActionButton.isHidden = true
                 return cell
             } else {
-                if isLoading {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                    cell.isUserInteractionEnabled = false
-                    return cell
-                } else {
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterAllCollectionViewCell", for: indexPath) as! ImageCharacterAllCollectionViewCell
                     
                     guard indexPath.row < currentDataSource.count else {
@@ -722,7 +689,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                     
                     return cell
-                }
             }
         } else if collectionView == imageSlideCollectionview {
             
@@ -737,11 +703,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 return cell
             } else {
-                if isLoading {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                    cell.isUserInteractionEnabled = false
-                    return cell
-                } else {
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCharacterSliderCollectionViewCell", for: indexPath) as! ImageCharacterSliderCollectionViewCell
                     
                     guard indexPath.row < currentDataSource.count else {
@@ -751,7 +712,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.configure(with: categoryAllData)
                     
                     return cell
-                }
             }
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuggestionCell", for: indexPath)
@@ -807,40 +767,45 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     private func doneButtonClick(_ sender: UIButton) {
-        if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
-            if currentCategoryId == 0 {
-                let customImages = customImages[sender.tag]
-                if let imageURLString = customImages.imageUrl,
-                   let imageURL = URL(string: imageURLString),
-                   imageURL.scheme?.lowercased() == "http" || imageURL.scheme?.lowercased() == "https" {
-                    vc.selectedURL = imageURLString
-                    
-                } else if let localPath = customImages.imageUrl {
-                    let fileURL = URL(fileURLWithPath: localPath)
-                    if let fileData = try? Data(contentsOf: fileURL) {
-                        vc.selectedFile = fileData
-                    } else {
-                        print("Error loading image data from local path")
+        if isConnectedToInternet() {
+            if let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ShareLinkVC") as? ShareLinkVC {
+                if currentCategoryId == 0 {
+                    let customImages = customImages[sender.tag]
+                    if let imageURLString = customImages.imageUrl,
+                       let imageURL = URL(string: imageURLString),
+                       imageURL.scheme?.lowercased() == "http" || imageURL.scheme?.lowercased() == "https" {
+                        vc.selectedURL = imageURLString
+                        
+                    } else if let localPath = customImages.imageUrl {
+                        let fileURL = URL(fileURLWithPath: localPath)
+                        if let fileData = try? Data(contentsOf: fileURL) {
+                            vc.selectedFile = fileData
+                        } else {
+                            print("Error loading image data from local path")
+                        }
                     }
+                    
+                    vc.selectedName = selectedCoverImageName
+                    vc.selectedCoverURL = selectedCoverImageURL
+                    vc.selectedCoverFile = selectedCoverImageFile
+                    vc.selectedPranktype = "gallery"
+                    vc.selectedFileType = "jpg"
+                    vc.sharePrank = true
+                } else {
+                    let categoryAllData = currentDataSource[sender.tag]
+                    vc.selectedURL = categoryAllData.file
+                    vc.selectedName = selectedCoverImageName
+                    vc.selectedCoverURL = selectedCoverImageURL
+                    vc.selectedCoverFile = selectedCoverImageFile
+                    vc.selectedPranktype = "gallery"
+                    vc.selectedFileType = "jpg"
+                    vc.sharePrank = true
                 }
-                
-                vc.selectedName = selectedCoverImageName
-                vc.selectedCoverURL = selectedCoverImageURL
-                vc.selectedCoverFile = selectedCoverImageFile
-                vc.selectedPranktype = "gallery"
-                vc.selectedFileType = "jpg"
-                vc.sharePrank = true
-            } else {
-                let categoryAllData = currentDataSource[sender.tag]
-                vc.selectedURL = categoryAllData.file
-                vc.selectedName = selectedCoverImageName
-                vc.selectedCoverURL = selectedCoverImageURL
-                vc.selectedCoverFile = selectedCoverImageFile
-                vc.selectedPranktype = "gallery"
-                vc.selectedFileType = "jpg"
-                vc.sharePrank = true
+                self.navigationController?.pushViewController(vc, animated: true)
             }
-            self.navigationController?.pushViewController(vc, animated: true)
+        }  else {
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
@@ -924,7 +889,7 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 footer.stopAnimating()
             } else {
                 // બાકીની ચિપ્સ માટે જૂની લોજિક જાળવી રાખો
-                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
+                if !isSearchActive && viewModel.hasMorePages && !viewModel.audioData.isEmpty {
                     footer.startAnimating()
                 } else {
                     footer.stopAnimating()
@@ -939,42 +904,33 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.audioData.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-            //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
             self.fetchAllImages()
-            //  }
         }
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Skip animation if scrolling from slider selection
         guard scrollView == imageAllCollectionview else { return }
         
         let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
         let pageWidth = scrollView.frame.width
-        
-        // Apply diagonal swipe animation only for user-initiated scrolling
+
         for cell in imageAllCollectionview.visibleCells {
             let cellCenterX = cell.center.x
             let distanceFromCenter = centerX - cellCenterX
             
-            // Calculate how far we've moved from center as a percentage
             let swipeProgress = distanceFromCenter / pageWidth
             
-            // Calculate translation and rotation
             let translationX = -distanceFromCenter
             let translationY = abs(distanceFromCenter) * 0.3
             let rotation = swipeProgress * (CGFloat.pi / 8)
             
-            // Combine transforms
             var transform = CGAffineTransform.identity
             transform = transform.translatedBy(x: translationX, y: translationY)
             transform = transform.rotated(by: rotation)
-            
-            // Apply transform
+
             cell.transform = transform
         }
-        
-        // Update slider collection view position
+
         let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
         
         if currentCategoryId == 0 {
@@ -994,7 +950,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
-    // Reset animation when scrolling ends
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard scrollView == imageAllCollectionview else { return }
         
@@ -1017,7 +972,6 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
-    // For smooth page snapping
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         guard scrollView == imageAllCollectionview else { return }
         
@@ -1191,7 +1145,6 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
             ]
         }
         
-        // JSON એન્કોડિંગનો ઉપયોગ કરો
         if let jsonData = try? JSONSerialization.data(withJSONObject: coversData) {
             UserDefaults.standard.set(jsonData, forKey: ConstantValue.is_UserImages)
         }
@@ -1211,7 +1164,6 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                         dispatchGroup.enter()
                         
                         if isLocalFile {
-                            // Local file handling
                             let fileURL = URL(fileURLWithPath: url)
                             DispatchQueue.global(qos: .background).async {
                                 if let imageData = try? Data(contentsOf: fileURL),
@@ -1222,7 +1174,6 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                                 dispatchGroup.leave()
                             }
                         } else {
-                            // Remote image handling
                             if let imageURL = URL(string: url) {
                                 URLSession.shared.dataTask(with: imageURL) { (data, response, error) in
                                     if let data = data, let image = UIImage(data: data) {
@@ -1238,7 +1189,6 @@ extension ImagePrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     }
                     
                     dispatchGroup.notify(queue: .main) { [weak self] in
-                        // Sort by original index to maintain the order from UserDefaults
                         let sortedCovers = tempCustomCovers.sorted(by: { $0.index < $1.index })
                         self?.customImages = sortedCovers.map { $0.cover }
                         self?.imageAllCollectionview.reloadData()

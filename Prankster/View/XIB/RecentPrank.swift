@@ -9,13 +9,14 @@ import Foundation
 import UIKit
 import Lottie
 
-class NoDataView: UIView {
+class RecentPrank: UIView {
     
     @IBOutlet weak var lottieView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var lottieViewTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var labelTopConstraint: NSLayoutConstraint!
-    @IBOutlet weak var lottieViewHeightConstraint: NSLayoutConstraint!
+    @IBOutlet weak var makePrank: UIButton!
+    @IBOutlet weak var imageHeightConsteraints: NSLayoutConstraint!
+    
+    var onRetry: (() -> Void)?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,11 +30,13 @@ class NoDataView: UIView {
     
     private func commonInit() {
         let bundle = Bundle(for: type(of: self))
-        let nib = UINib(nibName: "NoDataView", bundle: bundle)
+        let nib = UINib(nibName: "RecentPrank", bundle: bundle)
         guard let view = nib.instantiate(withOwner: self, options: nil).first as? UIView else { return }
         view.frame = self.bounds
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         addSubview(view)
+        
+        self.makePrank.layer.cornerRadius = 13
         
         adjustConstraints()
     }
@@ -43,26 +46,16 @@ class NoDataView: UIView {
         if UIDevice.current.userInterfaceIdiom == .phone {
             switch screenHeight {
             case 1136, 1334, 1920, 2208:
-                lottieViewHeightConstraint.constant = 225
-                labelTopConstraint.constant = 30
-                lottieViewTopConstraint.constant = 50
+                imageHeightConsteraints.constant = 350
             case 2436, 1792, 2556, 2532:
-                lottieViewHeightConstraint.constant = 287
-                labelTopConstraint.constant = 50
-                lottieViewTopConstraint.constant = 70
+                imageHeightConsteraints.constant = 369
             case 2796, 2778, 2688:
-                lottieViewHeightConstraint.constant = 287
-                labelTopConstraint.constant = 50
-                lottieViewTopConstraint.constant = 70
+                imageHeightConsteraints.constant = 369
             default:
-                lottieViewHeightConstraint.constant = 235
-                labelTopConstraint.constant = 30
-                lottieViewTopConstraint.constant = 50
+                imageHeightConsteraints.constant = 235
             }
         } else {
-            lottieViewHeightConstraint.constant = 400
-            labelTopConstraint.constant = 50
-            lottieViewTopConstraint.constant = 200
+            imageHeightConsteraints.constant = 400
         }
     }
 }

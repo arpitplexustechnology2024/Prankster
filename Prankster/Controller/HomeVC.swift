@@ -73,20 +73,10 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
     var countdownTimer: Timer?
     private var isMobileAdsStartCalled = false
     
-    let notificationMessages = [
-        (title: "Sex Prank", body: "Create sex prank & share it & capture funny moments."),
-        (title: "फाट साउंड प्रैंक", body: "आपका फ्रेंड क्लास मैं है उसके साथ फनी फाट साउंड प्रैंक करो"),
-        (title: "GF prank...👧🏻", body: "Prank with your girlfriend if you are daring.😂"),
-        (title: "Viral prank 🚨", body: "Your prank video has gone viral, and now people are eagerly waiting for your next one 👀"),
-        (title: "चड्डी का कलर 👙", body: "कोनसे कलर की चड्डी पहनी है! #Prankster😜"),
-        (title: "Crush waiting...", body: "Your crush has just viewed your profile picture. This prank do with your friend!")
-    ]
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
         self.seupViewAction()
-        self.requestNotificationPermission()
     }
     
     // MARK: - App Open Ads code
@@ -590,45 +580,5 @@ extension HomeVC {
             popoverController.permittedArrowDirections = []
         }
         self.present(activityVC, animated: true, completion: nil)
-    }
-}
-
-// MARK: - Local Notification
-@available(iOS 15.0, *)
-extension HomeVC {
-    
-    func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { [self] granted, error in
-            if granted {
-                print("Notification permission granted")
-                self.scheduleLocalNotification()
-            } else {
-                print("Notification permission denied")
-            }
-        }
-    }
-    
-    func scheduleLocalNotification() {
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
-        let content = UNMutableNotificationContent()
-        let randomMessage = notificationMessages.randomElement()!
-        content.title = randomMessage.title
-        content.body = randomMessage.body
-        content.sound = UNNotificationSound.default
-        
-        var dateComponents = DateComponents()
-        dateComponents.hour = 10
-        
-        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        
-        let request = UNNotificationRequest(identifier: "5PMDailyReminder", content: content, trigger: trigger)
-        
-        UNUserNotificationCenter.current().add(request) { error in
-            if let error = error {
-                print("Error scheduling notification: \(error.localizedDescription)")
-            } else {
-                print("Notification scheduled for 10:00 AM daily")
-            }
-        }
     }
 }

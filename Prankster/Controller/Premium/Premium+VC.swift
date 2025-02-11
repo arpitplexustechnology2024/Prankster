@@ -24,7 +24,7 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
         if UIDevice.current.userInterfaceIdiom == .phone {
             return CGSize(width: 160, height: 100)
         } else {
-            return CGSize(width: 164, height: 125)
+            return CGSize(width: 180, height: 125)
         }
     }
     

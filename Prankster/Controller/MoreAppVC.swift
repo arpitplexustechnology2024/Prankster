@@ -18,8 +18,7 @@ class MoreAppVC: UIViewController {
     private var noInternetView: NoInternetView!
     private let viewModel = MoreAppViewModel()
     private var moreDataArray: [MoreData] = []
-    
-    var isLoading = true
+    private var skeletonLoadingView: SkeletonMoreappLoadingView?
     
     private var nativeSmallIphoneAdUtility: NativeSmallIphoneAdUtility?
     private var nativeSmallIpadAdUtility: NativeSmallIpadAdUtility?
@@ -29,12 +28,27 @@ class MoreAppVC: UIViewController {
         super.viewDidLoad()
         self.setupAds()
         self.setupUI()
+        self.setupSkeletonView()
         self.setupNoDataView()
         self.setupSwipeGesture()
-        self.showSkeletonLoader()
         self.setupNoInternetView()
         self.checkInternetAndFetchData()
-        self.navigationbarView.addBottomShadow()
+    }
+    
+    private func setupSkeletonView() {
+        skeletonLoadingView = SkeletonMoreappLoadingView()
+        skeletonLoadingView?.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let skeletonView = skeletonLoadingView {
+            view.addSubview(skeletonView)
+            
+            NSLayoutConstraint.activate([
+                skeletonView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor),
+                skeletonView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                skeletonView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                skeletonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
     }
     
     func checkInternetAndFetchData() {
@@ -43,14 +57,12 @@ class MoreAppVC: UIViewController {
             self.noInternetView?.isHidden = true
         } else {
             self.showNoInternetView()
-            self.hideSkeletonLoader()
         }
     }
     
     func setupUI() {
         self.collectionview.delegate = self
         self.collectionview.dataSource = self
-        self.collectionview.register(SkeletonCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         if let layout = collectionview.collectionViewLayout as? UICollectionViewFlowLayout {
             layout.minimumInteritemSpacing = 16
             layout.minimumLineSpacing = 16
@@ -59,7 +71,9 @@ class MoreAppVC: UIViewController {
     }
     
     private func fetchMoreData() {
-        self.showSkeletonLoader()
+        skeletonLoadingView?.startAnimating()
+        collectionview.isHidden = true
+        
         let packageName = "id6739135275"
         viewModel.fetchMoreData(packageName: packageName) { [weak self] result in
             guard let self = self else { return }
@@ -68,13 +82,16 @@ class MoreAppVC: UIViewController {
                 case .success(let moreDataArray):
                     self.moreDataArray = moreDataArray
                     DispatchQueue.main.async {
-                        self.hideSkeletonLoader()
+                        self.skeletonLoadingView?.stopAnimating()
+                        self.skeletonLoadingView?.isHidden = true
+                        self.collectionview.isHidden = false
                         self.noDataView.isHidden = true
                         self.collectionview.reloadData()
                     }
                 case .failure(let error):
                     print("Error: \(error.localizedDescription)")
-                    self.hideSkeletonLoader()
+                    self.skeletonLoadingView?.stopAnimating()
+                    self.collectionview.isHidden = false
                     self.noDataView.isHidden = false
                 }
             }
@@ -133,16 +150,6 @@ class MoreAppVC: UIViewController {
         }
     }
     
-    func showSkeletonLoader() {
-        isLoading = true
-        collectionview.reloadData()
-    }
-    
-    func hideSkeletonLoader() {
-        isLoading = false
-        collectionview.reloadData()
-    }
-    
     func showNoInternetView() {
         self.noInternetView.isHidden = false
     }
@@ -194,15 +201,10 @@ class MoreAppVC: UIViewController {
 
 extension MoreAppVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isLoading ? 5 : moreDataArray.count
+        return moreDataArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if isLoading {
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonCollectionViewCell
-            cell.isUserInteractionEnabled = false
-            return cell
-        } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MoreAppCollectionViewCell", for: indexPath) as! MoreAppCollectionViewCell
             let moreData = moreDataArray[indexPath.item]
             
@@ -210,7 +212,6 @@ extension MoreAppVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
             cell.More_App_DownloadButton.tag = indexPath.item
             cell.More_App_DownloadButton.addTarget(self, action: #selector(appIDButtonClicked(_:)), for: .touchUpInside)
             return cell
-        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

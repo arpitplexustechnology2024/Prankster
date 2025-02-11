@@ -104,37 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        print("----------APP Install Deep Link generate---------)")
-        print("APP Install Deep Link :- \(url.absoluteString)")
-        
-        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true) {
-            for queryItem in components.queryItems ?? [] {
-                if queryItem.name == "utm_source", let source = queryItem.value, source.lowercased() == "snapchat" {
-                    print("App opened from Snapchat")
-                    
-                    if let clickID = components.queryItems?.first(where: { $0.name == "click_id" })?.value, !clickID.isEmpty {
-                        print("Captured Click ID: \(clickID)")
-                        
-                        let hashedIpAddress = "123.456.789.012".sha256()
-                        let userAgent = "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148"
-                        
-                        SnapchatAPIManager.shared.sendConversionEvent(clickID: clickID, userAgent: userAgent, userIPAddress: hashedIpAddress) { success, error in
-                            DispatchQueue.main.async {
-                                if success {
-                                    print("Event sent successfully!")
-                                } else {
-                                    print("Failed to send event: \(error ?? "Unknown error")")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
-        
-        return true
+        return ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
     }
     
     // MARK: UISceneSession Lifecycle
@@ -208,8 +178,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         alert.addAction(UIAlertAction(title: "Update", style: .default, handler: { _ in
             self.openAppStoreForUpdate()
         }))
-        
-        alert.addAction(UIAlertAction(title: "Later", style: .cancel, handler: nil))
         
         if let topController = UIApplication.shared.keyWindow?.rootViewController {
             topController.present(alert, animated: true, completion: nil)

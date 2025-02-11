@@ -26,32 +26,45 @@ struct CustomCover {
 @available(iOS 15.0, *)
 class CoverPrankVC: UIViewController {
     
-    @IBOutlet weak var chipSelector: ChipSelectorView!
-    @IBOutlet weak var emojiCoverAllCollectionView: UICollectionView!
-    @IBOutlet weak var emojiCoverSlideCollectionview: UICollectionView!
-    @IBOutlet weak var addcoverButton: UIButton!
     @IBOutlet weak var addcoverView: UIView!
-    @IBOutlet weak var coverImageLabel: UILabel!
     @IBOutlet weak var backButton: UIButton!
-    
+    @IBOutlet weak var popularLabel: UILabel!
+    @IBOutlet weak var searchBarView: UIView!
     @IBOutlet weak var searchMainView: UIView!
     @IBOutlet weak var searchBar: UITextField!
     @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
-    @IBOutlet weak var popularLabel: UILabel!
+    @IBOutlet weak var coverImageLabel: UILabel!
+    @IBOutlet weak var addcoverButton: UIButton!
+    @IBOutlet weak var chipSelector: ChipSelectorView!
     @IBOutlet weak var suggestionCollectionView: UICollectionView!
+    @IBOutlet weak var emojiCoverAllCollectionView: UICollectionView!
+    @IBOutlet weak var emojiCoverSlideCollectionview: UICollectionView!
+    @IBOutlet weak var searchMainViewHeightConstarints: NSLayoutConstraint!
     
-    @IBOutlet weak var searchBarView: UIView!
-    
-    private var suggestions: [String] = []
-    
+    private let categoryId: Int = 4
     private var shouldShowGIF = true
-    
+    private var isLoadingMore = false
+    private var isSearchActive = false
+    private var selectedIndex: Int = 0
     var buttonType: HomeVC.ButtonType?
-    
+    private var noDataView: NoDataView!
+    var viewType: CoverViewType = .audio
+    private var selectedCoverIndex: Int?
+    var customCovers: [CustomCover] = []
+    private var suggestions: [String] = []
+    var selectedCustomCoverIndex: IndexPath?
+    private let viewModel = EmojiViewModel()
+    private let adsViewModel = AdsViewModel()
+    private var noInternetView: NoInternetView!
+    var preloadedNativeAdView: GADNativeAdView?
     private var tagViewModule : TagViewModule!
     let interstitialAdUtility = InterstitialAdUtility()
-    private let adsViewModel = AdsViewModel()
+    private var nativeMediumAdUtility: NativeMediumAdUtility?
+    private var filteredEmojiCoverPages: [CoverPageData] = []
+    private var skeletonLoadingView: SkeletonDataLoadingView?
+    private var currentDataSource: [CoverPageData] {
+        return isSearchActive ? filteredEmojiCoverPages : viewModel.emojiCoverPages
+    }
     
     init(tagViewModule: TagViewModule) {
         self.tagViewModule = tagViewModule
@@ -63,32 +76,13 @@ class CoverPrankVC: UIViewController {
         self.tagViewModule = TagViewModule(apiService: TagAPIManger.shared)
     }
     
-    var viewType: CoverViewType = .audio
-    private var selectedCoverIndex: Int?
-    var customCovers: [CustomCover] = []
-    var selectedCustomCoverIndex: IndexPath?
-    private var noDataView: NoDataView!
-    private var noInternetView: NoInternetView!
-    private let viewModel = EmojiViewModel()
-    private var isSearchActive = false
-    private var filteredEmojiCoverPages: [CoverPageData] = []
-    private var currentDataSource: [CoverPageData] {
-        return isSearchActive ? filteredEmojiCoverPages : viewModel.emojiCoverPages
-    }
-    var isLoading = true
-    private let categoryId: Int = 4
-    private var isLoadingMore = false
-    private var selectedIndex: Int = 0
-    private var nativeMediumAdUtility: NativeMediumAdUtility?
-    var preloadedNativeAdView: GADNativeAdView?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupUI()
+        self.setupSkeletonView()
         self.loadSavedCovers()
         self.setupNoDataView()
         self.setupSwipeGesture()
-        self.showSkeletonLoader()
         self.setupNoInternetView()
         self.setupCollectionView()
         self.hideKeyboardTappedAround()
@@ -98,10 +92,26 @@ class CoverPrankVC: UIViewController {
         NotificationCenter.default.addObserver( self, selector: #selector(handlePremiumContentUnlocked), name: NSNotification.Name("PremiumContentUnlocked"), object: nil)
     }
     
+    private func setupSkeletonView() {
+        skeletonLoadingView = SkeletonDataLoadingView()
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let skeletonView = skeletonLoadingView {
+            view.addSubview(skeletonView)
+            
+            NSLayoutConstraint.activate([
+                skeletonView.topAnchor.constraint(equalTo: chipSelector.bottomAnchor, constant: 3),
+                skeletonView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                skeletonView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                skeletonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
+    }
+    
     private func preloadNativeAd() {
         if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
             print("Preloading Native Ad with ID: \(nativeAdID)")
-            // Create a temporary container for preloading
             let tempAdContainer = UIView(frame: .zero)
             
             nativeMediumAdUtility = NativeMediumAdUtility(
@@ -110,7 +120,6 @@ class CoverPrankVC: UIViewController {
                 nativeAdPlaceholder: tempAdContainer
             ) { [weak self] success in
                 if success {
-                    // Store the preloaded ad view
                     if let adView = self?.nativeMediumAdUtility?.nativeAdView {
                         self?.preloadedNativeAdView = adView
                     }
@@ -141,7 +150,6 @@ class CoverPrankVC: UIViewController {
     func setupUI() {
         self.addcoverView.layer.cornerRadius = 10
         
-        // Initial setup: Hide certain elements
         popularLabel.isHidden = true
         suggestionCollectionView.isHidden = true
         cancelButton.isHidden = true
@@ -150,14 +158,11 @@ class CoverPrankVC: UIViewController {
         searchBarView.isHidden = true
         self.coverImageLabel.isHidden = false
         
-        // Set the corner radius initially
         searchMainView.layer.cornerRadius = 10
         searchBarView.layer.cornerRadius = 10
         
         view.bringSubviewToFront(searchMainView)
         view.bringSubviewToFront(searchBarView)
-        
-        // Add this to your existing setupUI method
         if let searchMainViewIndex = view.subviews.firstIndex(of: searchMainView) {
             for subview in view.subviews {
                 if subview is NoDataView || subview is NoInternetView {
@@ -166,24 +171,20 @@ class CoverPrankVC: UIViewController {
             }
         }
         
-        // Configure the collection view layout for horizontal scrolling
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal  // Horizontal scrolling
-        layout.minimumInteritemSpacing = 10  // Space between items
-        layout.minimumLineSpacing = 10      // Space between rows
+        layout.scrollDirection = .horizontal
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 10
         
-        // Add padding to the left side of the collection view
         layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         
         suggestionCollectionView.collectionViewLayout = layout
         
         suggestionCollectionView.setCollectionViewLayout(layout, animated: true)
         
-        // Set CollectionView delegate and datasource
         suggestionCollectionView.delegate = self
         suggestionCollectionView.dataSource = self
         
-        // Register the custom UICollectionViewCell class or Nib
         suggestionCollectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "SuggestionCell")
         
         searchBar.delegate = self
@@ -209,10 +210,10 @@ class CoverPrankVC: UIViewController {
                 self.searchBarView.isHidden = true
                 self.coverImageLabel.isHidden = false
                 
+                self.hideSkeletonLoader()
                 emojiCoverAllCollectionView.reloadData()
                 emojiCoverSlideCollectionview.reloadData()
                 
-                // Add the new condition check here
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     if !self.customCovers.isEmpty && !self.shouldShowGIF {
                         let indexPath = IndexPath(item: 0, section: 0)
@@ -223,11 +224,10 @@ class CoverPrankVC: UIViewController {
                 }
                 
             } else {
-                // બીજી chip select થાય ત્યારે internet check કરો
                 if self.isConnectedToInternet() {
-                    
+                    self.isLoadingMore = false
+                    showSkeletonLoader()
                     self.checkInternetAndFetchData()
-                    // Internet છે તો normal flow
                     self.addcoverView.isHidden = true
                     self.searchBarView.isHidden = false
                     self.coverImageLabel.isHidden = true
@@ -244,13 +244,11 @@ class CoverPrankVC: UIViewController {
                         }
                     }
                 } else {
-                    // Internet નથી તો No Internet View બતાવો
                     self.addcoverView.isHidden = true
                     self.searchBarView.isHidden = false
                     self.coverImageLabel.isHidden = true
                     self.showNoInternetView()
-                    
-                    // Empty arrays set કરો જેથી UI crash ન થાય
+                    self.hideSkeletonLoader()
                     self.viewModel.emojiCoverPages = []
                     self.filteredEmojiCoverPages = []
                     
@@ -284,13 +282,11 @@ class CoverPrankVC: UIViewController {
             self.preloadNativeAd()
             self.noInternetView?.isHidden = true
             self.hideNoDataView()
-            // Ensure search views stay on top
             self.view.bringSubviewToFront(self.searchBarView)
             self.view.bringSubviewToFront(self.searchMainView)
         } else {
             self.showNoInternetView()
             self.hideSkeletonLoader()
-            // Ensure search views stay on top
             self.view.bringSubviewToFront(self.searchBarView)
             self.view.bringSubviewToFront(self.searchMainView)
         }
@@ -300,12 +296,10 @@ class CoverPrankVC: UIViewController {
         tagViewModule.fetchTag(id: "4") { [weak self] result in
             switch result {
             case .success(let tagResponse):
-                // Use the array directly
                 self?.suggestions = tagResponse.data
                 self?.suggestionCollectionView.reloadData()
             case .failure(let error):
                 print("Error fetching tags: \(error.localizedDescription)")
-                // Handle error appropriately
                 self?.searchMainViewHeightConstarints.constant = 0
                 self?.searchMainView.isHidden = true
                 self?.popularLabel.isHidden = true
@@ -329,8 +323,6 @@ class CoverPrankVC: UIViewController {
         self.emojiCoverAllCollectionView.delegate = self
         self.emojiCoverAllCollectionView.dataSource = self
         self.emojiCoverAllCollectionView.isPagingEnabled = true
-        self.emojiCoverAllCollectionView.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
-        self.emojiCoverSlideCollectionview.register(SkeletonBoxCollectionViewCell.self, forCellWithReuseIdentifier: "SkeletonCell")
         self.emojiCoverSlideCollectionview.register(
             LoadingFooterView.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter,
@@ -360,6 +352,11 @@ class CoverPrankVC: UIViewController {
                         self.hideNoDataView()
                         self.emojiCoverAllCollectionView.reloadData()
                         self.emojiCoverSlideCollectionview.reloadData()
+                        
+                        if !self.currentDataSource.isEmpty {
+                            let indexPath = IndexPath(item: self.selectedIndex, section: 0)
+                            self.emojiCoverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
+                        }
                     }
                 } else if let errorMessage = self.viewModel.errorMessage {
                     self.hideSkeletonLoader()
@@ -375,14 +372,12 @@ class CoverPrankVC: UIViewController {
         noDataView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         noDataView.isHidden = true
         
-        // Insert noDataView below searchMainView
         if let index = view.subviews.firstIndex(of: searchMainView) {
             self.view.insertSubview(noDataView, belowSubview: searchMainView)
         } else {
             self.view.addSubview(noDataView)
         }
         
-        //        self.view.addSubview(noDataView)
         noDataView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noDataView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -397,14 +392,12 @@ class CoverPrankVC: UIViewController {
         noInternetView.retryButton.addTarget(self, action: #selector(retryButtonTapped), for: .touchUpInside)
         noInternetView.isHidden = true
         
-        // Insert noInternetView below searchMainView
         if let index = view.subviews.firstIndex(of: searchMainView) {
             self.view.insertSubview(noInternetView, belowSubview: searchMainView)
         } else {
             self.view.addSubview(noInternetView)
         }
         
-        //  self.view.addSubview(noInternetView)
         noInternetView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -447,13 +440,15 @@ class CoverPrankVC: UIViewController {
     }
     
     func showSkeletonLoader() {
-        isLoading = true
+        skeletonLoadingView?.isHidden = false
+        skeletonLoadingView?.startAnimating()
         self.emojiCoverAllCollectionView.reloadData()
         self.emojiCoverSlideCollectionview.reloadData()
     }
     
     func hideSkeletonLoader() {
-        isLoading = false
+        skeletonLoadingView?.isHidden = true
+        skeletonLoadingView?.stopAnimating()
         self.emojiCoverAllCollectionView.reloadData()
         self.emojiCoverSlideCollectionview.reloadData()
     }
@@ -496,7 +491,6 @@ class CoverPrankVC: UIViewController {
             self.emojiCoverAllCollectionView.reloadData()
             self.emojiCoverSlideCollectionview.reloadData()
             
-            // Make sure searchMainView stays on top when showing no data
             if self.filteredEmojiCoverPages.isEmpty && !searchText.isEmpty {
                 self.showNoDataView()
                 self.view.bringSubviewToFront(self.searchBarView)
@@ -602,14 +596,14 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 return (customCovers.isEmpty ? 1 : customCovers.count)
             } else {
                 
-                return isLoading ? 4 : currentDataSource.count
+                return currentDataSource.count
             }
         } else if collectionView == emojiCoverSlideCollectionview {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
             if selectedChipTitle == "Add cover image 📸" {
                 return (customCovers.isEmpty ? 4 : customCovers.count)
             } else {
-                return isLoading ? 4 : currentDataSource.count
+                return currentDataSource.count
             }
         } else {
             return suggestions.count
@@ -657,7 +651,6 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                     cell.applyBackgroundBlurEffect()
                     cell.DoneButton.isHidden = false
                     
-                    // Configure Done button action
                     cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
                     cell.DoneButton.tag = indexPath.item
                 }
@@ -666,33 +659,25 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 cell.premiumActionButton.isHidden = true
                 return cell
             } else {
-                if isLoading {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                    cell.isUserInteractionEnabled = false
-                    return cell
-                } else {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
-                    
-                    guard indexPath.row < currentDataSource.count else {
-                        return cell
-                    }
-                    
-                    let coverPageData = currentDataSource[indexPath.row]
-                    cell.configure(with: coverPageData)
-                    cell.imageView.contentMode = .scaleAspectFit
-                    cell.tutorialViewShowView.isHidden = true
-                    cell.imageView.isHidden = false
-                    
-                    // Configure Premium button action
-                    cell.premiumActionButton.tag = indexPath.row
-                    cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
-                    
-                    // Configure Done button action
-                    cell.DoneButton.tag = indexPath.row
-                    cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
-                    
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverAllCollectionViewCell", for: indexPath) as! EmojiCoverAllCollectionViewCell
+                
+                guard indexPath.row < currentDataSource.count else {
                     return cell
                 }
+                
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.configure(with: coverPageData)
+                cell.imageView.contentMode = .scaleAspectFit
+                cell.tutorialViewShowView.isHidden = true
+                cell.imageView.isHidden = false
+                
+                cell.premiumActionButton.tag = indexPath.row
+                cell.premiumActionButton.addTarget(self, action: #selector(handlePremiumButtonTap(_:)), for: .touchUpInside)
+                
+                cell.DoneButton.tag = indexPath.row
+                cell.DoneButton.addTarget(self, action: #selector(handleDoneButtonTap(_:)), for: .touchUpInside)
+                
+                return cell
             }
         } else if collectionView == emojiCoverSlideCollectionview {
             let selectedChipTitle = chipSelector.getSelectedChipTitle()
@@ -709,39 +694,28 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 }
                 return cell
             } else {
-                if isLoading {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SkeletonCell", for: indexPath) as! SkeletonBoxCollectionViewCell
-                    cell.isUserInteractionEnabled = false
-                    return cell
-                } else {
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverSliderCollectionViewCell", for: indexPath) as! EmojiCoverSliderCollectionViewCell
-                    
-                    guard indexPath.row < currentDataSource.count else {
-                        return cell
-                    }
-                    let coverPageData = currentDataSource[indexPath.row]
-                    cell.configure(with: coverPageData)
-                    
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "EmojiCoverSliderCollectionViewCell", for: indexPath) as! EmojiCoverSliderCollectionViewCell
+                
+                guard indexPath.row < currentDataSource.count else {
                     return cell
                 }
+                let coverPageData = currentDataSource[indexPath.row]
+                cell.configure(with: coverPageData)
+                
+                return cell
             }
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SuggestionCell", for: indexPath)
-            
-            // Remove existing subviews
             cell.contentView.subviews.forEach { $0.removeFromSuperview() }
             
-            // Create label
             let label = UILabel()
             label.text = suggestions[indexPath.row]
             label.textColor = .white
             label.textAlignment = .center
             label.font = UIFont.systemFont(ofSize: 16)
             
-            // Add label to cell
             cell.contentView.addSubview(label)
             
-            // Setup constraints with minimal padding
             label.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 label.leadingAnchor.constraint(equalTo: cell.contentView.leadingAnchor, constant: 4),
@@ -749,7 +723,6 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
                 label.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
             ])
             
-            // Style cell
             cell.backgroundColor = #colorLiteral(red: 0.1215686275, green: 0.1215686275, blue: 0.1215686275, alpha: 1)
             cell.layer.borderWidth = 1
             cell.layer.borderColor = #colorLiteral(red: 0.3098039216, green: 0.3176470588, blue: 0.3254901961, alpha: 1)
@@ -847,7 +820,6 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             suggestionCollectionView.isHidden = true
             cancelButton.isHidden = false
             
-            // Reset corner radius when a suggestion is selected
             searchMainView.layer.cornerRadius = 10
             searchBarView.layer.cornerRadius = 10
             searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -867,18 +839,14 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         } else if collectionView == emojiCoverSlideCollectionview {
             return CGSize(width: width, height: height)
         } else {
-            // For suggestion collection view
             let suggestion = suggestions[indexPath.row]
             
-            // Create a temporary label to measure exact text size
             let label = UILabel()
             label.font = UIFont.systemFont(ofSize: 16)
             label.text = suggestion
             
-            // Get exact size needed for text
             let labelSize = label.sizeThatFits(CGSize(width: CGFloat.greatestFiniteMagnitude, height: 40))
             
-            // Add minimal padding (8 points total - 4 on each side)
             let cellWidth = labelSize.width + 20
             
             return CGSize(width: cellWidth, height: 40)
@@ -888,13 +856,10 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         let lastItem = viewModel.emojiCoverPages.count - 1
         if indexPath.item == lastItem && !viewModel.isLoading && viewModel.hasMorePages {
-            //  DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [self] in
             fetchAllCoverPages()
-            //   }
         }
     }
     
-    // viewForSupplementaryElementOfKind માં ફેરફાર કરીએ
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         if kind == UICollectionView.elementKindSectionFooter {
             let footer = collectionView.dequeueReusableSupplementaryView(
@@ -908,8 +873,7 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
             if selectedChipTitle == "Add cover image 📸" {
                 footer.stopAnimating()
             } else {
-                // બાકીની ચિપ્સ માટે જૂની લોજિક જાળવી રાખો
-                if !isLoading && !isSearchActive && viewModel.hasMorePages && !viewModel.emojiCoverPages.isEmpty {
+                if !isSearchActive && viewModel.hasMorePages && !viewModel.emojiCoverPages.isEmpty {
                     footer.startAnimating()
                 } else {
                     footer.stopAnimating()
@@ -922,35 +886,28 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        // Skip animation if scrolling from slider selection
         guard scrollView == emojiCoverAllCollectionView else { return }
         
         let centerX = scrollView.contentOffset.x + (scrollView.frame.width / 2)
         let pageWidth = scrollView.frame.width
         
-        // Apply diagonal swipe animation only for user-initiated scrolling
         for cell in emojiCoverAllCollectionView.visibleCells {
             let cellCenterX = cell.center.x
             let distanceFromCenter = centerX - cellCenterX
             
-            // Calculate how far we've moved from center as a percentage
             let swipeProgress = distanceFromCenter / pageWidth
             
-            // Calculate translation and rotation
             let translationX = -distanceFromCenter
             let translationY = abs(distanceFromCenter) * 0.3
             let rotation = swipeProgress * (CGFloat.pi / 8)
             
-            // Combine transforms
             var transform = CGAffineTransform.identity
             transform = transform.translatedBy(x: translationX, y: translationY)
             transform = transform.rotated(by: rotation)
             
-            // Apply transform
             cell.transform = transform
         }
         
-        // Update slider collection view position
         let currentPage = Int((scrollView.contentOffset.x + pageWidth/2) / pageWidth)
         
         let selectedChipTitle = chipSelector.getSelectedChipTitle()
@@ -971,7 +928,6 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
-    // Reset animation when scrolling ends
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         guard scrollView == emojiCoverAllCollectionView else { return }
         
@@ -994,7 +950,6 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         }
     }
     
-    // For smooth page snapping
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
         guard scrollView == emojiCoverAllCollectionView else { return }
         
@@ -1107,7 +1062,6 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let selectedImage = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage {
-            // First save the image to documents directory and get URL
             if let imageUrl = saveImageToDocuments(image: selectedImage) {
                 ImageProcessingManager.shared.processImage(selectedImage) { [weak self] result in
                     guard let self = self else { return }
@@ -1140,17 +1094,14 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
         dismiss(animated: true, completion: nil)
     }
     
-    // Helper function to save image and get URL
     private func saveImageToDocuments(image: UIImage) -> String? {
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let fileName = UUID().uuidv4 + ".jpg"
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
         
-        // Convert image to JPEG data
         guard let imageData = image.jpegData(compressionQuality: 1.0) else { return nil }
         
         do {
-            // Write the image data to the file URL
             try imageData.write(to: fileURL)
             return fileURL.path
         } catch {
@@ -1171,7 +1122,6 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
             ]
         }
         
-        // JSON એન્કોડિંગનો ઉપયોગ કરો
         if let jsonData = try? JSONSerialization.data(withJSONObject: coversData) {
             UserDefaults.standard.set(jsonData, forKey: ConstantValue.is_UserCoverImages)
         }
@@ -1191,7 +1141,6 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                         dispatchGroup.enter()
                         
                         if isLocalFile {
-                            // Local file handling
                             let fileURL = URL(fileURLWithPath: url)
                             DispatchQueue.global(qos: .background).async {
                                 if let imageData = try? Data(contentsOf: fileURL),
@@ -1202,7 +1151,6 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                                 dispatchGroup.leave()
                             }
                         } else {
-                            // Remote image handling
                             if let imageURL = URL(string: url) {
                                 URLSession.shared.dataTask(with: imageURL) { (data, response, error) in
                                     if let data = data, let image = UIImage(data: data) {
@@ -1218,7 +1166,6 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
                     }
                     
                     dispatchGroup.notify(queue: .main) { [weak self] in
-                        // Sort by original index to maintain the order from UserDefaults
                         let sortedCovers = tempCustomCovers.sorted(by: { $0.index < $1.index })
                         self?.customCovers = sortedCovers.map { $0.cover }
                         self?.emojiCoverAllCollectionView.reloadData()
@@ -1235,23 +1182,16 @@ extension CoverPrankVC: UIImagePickerControllerDelegate, UINavigationControllerD
 @available(iOS 15.0, *)
 extension CoverPrankVC: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
-        // Show the hidden UI elements immediately when textfield is tapped
         if isConnectedToInternet() {
             searchMainView.isHidden = false
             popularLabel.isHidden = false
             suggestionCollectionView.isHidden = false
-            
             searchMainViewHeightConstarints.constant = 90
-            
-            // Set corner radius for searchBarView (top corners)
             searchBarView.layer.cornerRadius = 10
             searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-            
-            // Set corner radius for searchMainView (bottom corners)
             searchMainView.layer.cornerRadius = 10
             searchMainView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             
-            // Animate the changes
             UIView.animate(withDuration: 0.3) {
                 self.view.layoutIfNeeded()
             }
@@ -1273,7 +1213,6 @@ extension CoverPrankVC: UITextFieldDelegate {
         suggestionCollectionView.isHidden = true
         cancelButton.isHidden = true
         
-        // Restore corner radius when cancel is tapped
         searchMainView.layer.cornerRadius = 10
         searchBarView.layer.cornerRadius = 10
         searchBarView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
@@ -1289,7 +1228,6 @@ extension CoverPrankVC: UITextFieldDelegate {
         searchMainView.isHidden = true
         popularLabel.isHidden = true
         suggestionCollectionView.isHidden = true
-        // cancelButton.isHidden = true
         
         searchMainView.layer.cornerRadius = 10
         searchBarView.layer.cornerRadius = 10

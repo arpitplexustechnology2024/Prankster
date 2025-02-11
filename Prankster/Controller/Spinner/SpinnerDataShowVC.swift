@@ -17,6 +17,8 @@ class SpinnerDataShowVC: UIViewController {
     @IBOutlet weak var shareView: UIView!
     @IBOutlet weak var playPauseImageView: UIImageView!
     
+    @IBOutlet weak var cancelButton: UIButton!
+    
     var sharePrank: Bool = false
     var coverImageURL: String?
     var prankDataURL: String?
@@ -31,14 +33,14 @@ class SpinnerDataShowVC: UIViewController {
     private var playerLayer: AVPlayerLayer?
     private var blurEffectView: UIVisualEffectView!
     private let adsViewModel = AdsViewModel()
-    let interstitialAdUtility = InterstitialAdUtility()
+    private var loadingAlert: LoadingAlertView?
+    private let rewardAdUtility = RewardAdUtility()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.shareLinkPopup.layer.cornerRadius = 18
         self.imageView.layer.cornerRadius = 18
         self.setupScrollView()
-        self.setupBlurEffect()
         self.addContentToStackView()
         
         if let coverImageUrl = self.coverImageURL {
@@ -60,16 +62,13 @@ class SpinnerDataShowVC: UIViewController {
         self.playPauseImageView.isUserInteractionEnabled = true
         self.playPauseImageView.addGestureRecognizer(playPauseTapGesture)
         
-        let viewTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.viewClickDissmiss))
-        self.view.addGestureRecognizer(viewTapGesture)
-        
         if sharePrank {
             if isConnectedToInternet() {
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                    print("Reward Ad ID: \(rewardAdID)")
+                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
                 } else {
-                    print("No Interstitial Ad ID found")
+                    print("No Reward Ad ID found")
                 }
             } else {
                 let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -78,19 +77,6 @@ class SpinnerDataShowVC: UIViewController {
         } else {
             
         }
-    }
-    
-    @objc private func viewClickDissmiss() {
-        self.dismiss(animated: true)
-    }
-    
-    private func setupBlurEffect() {
-        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
-        blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.frame = view.bounds
-        blurEffectView.alpha = 0.9
-        blurEffectView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        view.insertSubview(blurEffectView, at: 0)
     }
     
     let stackView: UIStackView = {
@@ -121,21 +107,39 @@ class SpinnerDataShowVC: UIViewController {
         ])
     }
     
-    private func loadImage(from urlString: String, into imageView: UIImageView) {
-        AF.request(urlString).response { response in
+    private func loadImage(from urlString: String, into imageView: UIImageView, completion: (() -> Void)? = nil) {
+        
+        AF.request(urlString).response { [weak self] response in
             switch response.result {
             case .success(let data):
                 if let data = data, let image = UIImage(data: data) {
                     DispatchQueue.main.async {
                         imageView.image = image
+                        completion?()
                     }
                 }
             case .failure(let error):
                 print("Image download error: \(error)")
                 DispatchQueue.main.async {
                     imageView.image = UIImage(named: "placeholder")
+                    completion?()
                 }
             }
+        }
+    }
+    
+    private func showLoadingAlert() {
+        loadingAlert = LoadingAlertView(frame: view.bounds)
+        if let loadingAlert = loadingAlert {
+            view.addSubview(loadingAlert)
+            loadingAlert.startAnimating()
+        }
+    }
+    
+    private func hideLoadingAlert() {
+        DispatchQueue.main.async {
+            self.loadingAlert?.removeFromSuperview()
+            self.loadingAlert = nil
         }
     }
     
@@ -150,9 +154,10 @@ class SpinnerDataShowVC: UIViewController {
                     if audioPlayer == nil {
                         URLSession.shared.dataTask(with: URL(string: prankDataUrl)!) { [weak self] (data, response, error) in
                             guard let self = self, let data = data else {
-                                print("Error loading audio: \(error?.localizedDescription ?? "Unknown error")")
                                 DispatchQueue.main.async {
                                     self?.isPlaying = false
+                                    let snackbar = CustomSnackbar(message: "Failed to load audio!", backgroundColor: .snackbar)
+                                    snackbar.show(in: self?.view ?? UIView(), duration: 3.0)
                                 }
                                 return
                             }
@@ -170,6 +175,8 @@ class SpinnerDataShowVC: UIViewController {
                                 } catch {
                                     print("Error creating audio player: \(error)")
                                     self.isPlaying = false
+                                    let snackbar = CustomSnackbar(message: "Failed to play audio!", backgroundColor: .snackbar)
+                                    snackbar.show(in: self.view, duration: 3.0)
                                 }
                             }
                         }.resume()
@@ -190,12 +197,16 @@ class SpinnerDataShowVC: UIViewController {
                 }
             } else if prankType == "video" {
                 if isPlaying {
+                    showLoadingAlert()
+                    
                     if videoPlayer == nil {
                         URLSession.shared.dataTask(with: URL(string: prankDataUrl)!) { [weak self] (data, response, error) in
                             guard let self = self, let data = data else {
-                                print("Error loading video: \(error?.localizedDescription ?? "Unknown error")")
                                 DispatchQueue.main.async {
                                     self?.isPlaying = false
+                                    self?.hideLoadingAlert()
+                                    let snackbar = CustomSnackbar(message: "Failed to load video!", backgroundColor: .snackbar)
+                                    snackbar.show(in: self?.view ?? UIView(), duration: 3.0)
                                 }
                                 return
                             }
@@ -216,6 +227,7 @@ class SpinnerDataShowVC: UIViewController {
                                         self.imageView.layer.addSublayer(playerLayer)
                                     }
                                     
+                                    self.hideLoadingAlert()
                                     self.videoPlayer?.play()
                                     self.playPauseImageView.isHidden = true
                                     
@@ -230,12 +242,16 @@ class SpinnerDataShowVC: UIViewController {
                                 print("Error saving video: \(error)")
                                 DispatchQueue.main.async {
                                     self.isPlaying = false
+                                    self.hideLoadingAlert()
+                                    let snackbar = CustomSnackbar(message: "Failed to play video!", backgroundColor: .snackbar)
+                                    snackbar.show(in: self.view, duration: 3.0)
                                 }
                             }
                         }.resume()
                     } else {
                         videoPlayer?.play()
                         playPauseImageView.isHidden = true
+                        self.hideLoadingAlert()
                     }
                 } else {
                     videoPlayer?.pause()
@@ -244,15 +260,16 @@ class SpinnerDataShowVC: UIViewController {
                 }
             } else {
                 if isPlaying {
-                    loadImage(from: prankDataUrl, into: imageView)
-                    playPauseImageView.isHidden = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [self] in
-                        if let coverImageUrl = self.coverImageURL {
-                            self.loadImage(from: coverImageUrl, into: self.imageView)
+                    loadImage(from: prankDataUrl, into: imageView) {
+                        self.playPauseImageView.isHidden = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            if let coverImageUrl = self.coverImageURL {
+                                self.loadImage(from: coverImageUrl, into: self.imageView)
+                            }
+                            self.playPauseImageView.image = UIImage(named: "PlayButton")
+                            self.playPauseImageView.isHidden = false
+                            self.isPlaying = false
                         }
-                        playPauseImageView.image = UIImage(named: "PlayButton")
-                        playPauseImageView.isHidden = false
-                        isPlaying = false
                     }
                 }
             }
@@ -275,6 +292,7 @@ class SpinnerDataShowVC: UIViewController {
             self.videoPlayer = nil
             self.playPauseImageView.image = UIImage(named: "PlayButton")
             self.playPauseImageView.isHidden = false
+            self.hideLoadingAlert()
             NotificationCenter.default.removeObserver(
                 self,
                 name: .AVPlayerItemDidPlayToEndTime,
@@ -282,6 +300,11 @@ class SpinnerDataShowVC: UIViewController {
             )
         }
     }
+    
+    @IBAction func btnCancelTapped(_ sender: UIButton) {
+        self.dismiss(animated: true)
+    }
+    
     
     private func isConnectedToInternet() -> Bool {
         let networkManager = NetworkReachabilityManager()
@@ -349,7 +372,7 @@ class SpinnerDataShowVC: UIViewController {
         guard let tappedView = gesture.view else { return }
         
         let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
-        adsViewModel.getAdID(type: .interstitial) == nil || sharePrank == false
+        adsViewModel.getAdID(type: .reward) == nil || sharePrank == false
         
         switch tappedView.tag {
         case 0: // Copy link
@@ -363,8 +386,8 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareWhatsAppMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareWhatsAppMessage()
                     }
                 }
@@ -377,8 +400,8 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareInstagramMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareInstagramMessage()
                     }
                 }
@@ -391,8 +414,8 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Instagram")
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.NavigateToShareSnapchat(sharePrank: "Instagram")
                     }
                 }
@@ -405,8 +428,8 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Snapchat")
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
                     }
                 }
@@ -419,8 +442,8 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareTelegramMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareTelegramMessage()
                     }
                 }
@@ -433,8 +456,8 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareMoreMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareMoreMessage()
                     }
                 }
@@ -572,4 +595,3 @@ extension SpinnerDataShowVC: UIViewControllerTransitioningDelegate {
         return customPresentationController
     }
 }
-

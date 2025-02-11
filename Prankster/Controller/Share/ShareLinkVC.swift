@@ -47,8 +47,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     var bannerAdUtility = BannerAdUtility()
     private var viewModel = PrankViewModel()
     private var noDataView: NoDataView!
-    let interstitialAdUtility = InterstitialAdUtility()
     private var noInternetView: NoInternetView!
+    private var loadingAlert: LoadingAlertView?
+    private let rewardAdUtility = RewardAdUtility()
+    private var skeletonLoadingView: SkeletonShareLoadingView?
     
     let stackView: UIStackView = {
         let stack = UIStackView()
@@ -62,6 +64,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupSkeletonView()
         self.setupUI()
         self.rateUs()
         self.setupNoDataView()
@@ -75,6 +78,22 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         print(selectedImage)
     }
     
+    private func setupSkeletonView() {
+        skeletonLoadingView = SkeletonShareLoadingView()
+        skeletonLoadingView?.translatesAutoresizingMaskIntoConstraints = false
+        
+        if let skeletonView = skeletonLoadingView {
+            view.addSubview(skeletonView)
+            
+            NSLayoutConstraint.activate([
+                skeletonView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor),
+                skeletonView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                skeletonView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                skeletonView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            ])
+        }
+    }
+    
     func rateUs() {
         if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
             DispatchQueue.main.async {
@@ -82,6 +101,21 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             }
         } else {
             print(" - - - - - - Rating view in not present - - - -")
+        }
+    }
+    
+    private func showLoadingAlert() {
+        loadingAlert = LoadingAlertView(frame: view.bounds)
+        if let loadingAlert = loadingAlert {
+            view.addSubview(loadingAlert)
+            loadingAlert.startAnimating()
+        }
+    }
+    
+    private func hideLoadingAlert() {
+        DispatchQueue.main.async {
+            self.loadingAlert?.removeFromSuperview()
+            self.loadingAlert = nil
         }
     }
     
@@ -139,11 +173,12 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                         bottomConstraints.constant = 16
                     }
                 }
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                
+                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                    print("Reward Ad ID: \(rewardAdID)")
+                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
                 } else {
-                    print("No Interstitial Ad ID found")
+                    print("No Reward Ad ID found")
                 }
             }
         } else {
@@ -199,18 +234,24 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         let fileType = selectedFileType ?? ""
         let imageURL = selectedImage ?? ""
         
-        prankImageView.showShimmer()
-        prankNameLabel.showShimmer()
-        nameChangeButton.showShimmer()
+        skeletonLoadingView?.startAnimating()
+        prankImageView.isHidden = true
+        playPauseImageView.isHidden = true
+        prankNameLabel.isHidden = true
+        scrollViewView.isHidden = true
         
         viewModel.createPrank(coverImage: coverImageFile, coverImageURL: coverImageURL, type: type, name: name, file: file, fileURL: fileURL, imageURL: imageURL, fileType: fileType) { [weak self] success in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 if success {
                     self.savePrankToUserDefaults()
-                    self.prankImageView.hideShimmer()
-                    self.prankNameLabel.hideShimmer()
-                    self.nameChangeButton.hideShimmer()
+                    
+                    self.skeletonLoadingView?.stopAnimating()
+                    self.skeletonLoadingView?.isHidden = true
+                    self.prankImageView.isHidden = false
+                    self.playPauseImageView.isHidden = false
+                    self.prankNameLabel.isHidden = false
+                    self.scrollViewView.isHidden = false
                     
                     print("Prank Link :- \(self.viewModel.createPrankShareURL ?? "")")
                     print("Prank Data :- \(self.viewModel.createPrankData ?? "")")
@@ -249,19 +290,22 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         }
     }
     
-    private func loadImage(from urlString: String, into imageView: UIImageView) {
+    private func loadImage(from urlString: String, into imageView: UIImageView, completion: (() -> Void)? = nil) {
+        
         AF.request(urlString).response { response in
             switch response.result {
             case .success(let data):
                 if let data = data, let image = UIImage(data: data) {
                     DispatchQueue.main.async {
                         imageView.image = image
+                        completion?()
                     }
                 }
             case .failure(let error):
                 print("Image download error: \(error)")
                 DispatchQueue.main.async {
-                    imageView.image = UIImage(named: "placeholder")
+                    imageView.image = UIImage(named: "imageplacholder")
+                    completion?()
                 }
             }
         }
@@ -312,13 +356,19 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 }
             } else if selectedPranktype == "video" {
                 if isPlaying {
+                    showLoadingAlert()
+                    
                     if videoPlayer == nil {
                         URLSession.shared.dataTask(with: URL(string: prankDataUrl)!) { [weak self] (data, response, error) in
                             guard let self = self, let data = data else {
                                 print("Error loading video: \(error?.localizedDescription ?? "Unknown error")")
                                 DispatchQueue.main.async {
                                     self?.isPlaying = false
+                                    self?.hideLoadingAlert()
+                                    let snackbar = CustomSnackbar(message: "Failed to load video!", backgroundColor: .snackbar)
+                                    snackbar.show(in: self?.view ?? UIView(), duration: 3.0)
                                 }
+                                
                                 return
                             }
                             
@@ -338,6 +388,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                                         self.prankImageView.layer.addSublayer(playerLayer)
                                     }
                                     
+                                    self.hideLoadingAlert()
                                     self.videoPlayer?.play()
                                     self.playPauseImageView.isHidden = true
                                     
@@ -352,12 +403,16 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                                 print("Error saving video: \(error)")
                                 DispatchQueue.main.async {
                                     self.isPlaying = false
+                                    self.hideLoadingAlert()
+                                    let snackbar = CustomSnackbar(message: "Failed to play video!", backgroundColor: .snackbar)
+                                    snackbar.show(in: self.view, duration: 3.0)
                                 }
                             }
                         }.resume()
                     } else {
                         videoPlayer?.play()
                         playPauseImageView.isHidden = true
+                        self.hideLoadingAlert()
                     }
                 } else {
                     videoPlayer?.pause()
@@ -397,6 +452,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
             self.videoPlayer = nil
             self.playPauseImageView.image = UIImage(named: "PlayButton")
             self.playPauseImageView.isHidden = false
+            self.hideLoadingAlert()
             NotificationCenter.default.removeObserver(
                 self,
                 name: .AVPlayerItemDidPlayToEndTime,
@@ -459,11 +515,12 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                         bottomConstraints.constant = 16
                     }
                 }
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
+                
+                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                    print("Reward Ad ID: \(rewardAdID)")
+                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
                 } else {
-                    print("No Interstitial Ad ID found")
+                    print("No Reward Ad ID found")
                 }
             }
         } else {
@@ -582,7 +639,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         guard let tappedView = gesture.view else { return }
         
         let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
-        adsViewModel.getAdID(type: .interstitial) == nil || sharePrank == false
+        adsViewModel.getAdID(type: .reward) == nil || sharePrank == false
         
         switch tappedView.tag {
         case 0: // Copy link
@@ -596,8 +653,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareWhatsAppMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareWhatsAppMessage()
                     }
                 }
@@ -610,8 +667,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareInstagramMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareInstagramMessage()
                     }
                 }
@@ -624,8 +681,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Instagram")
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.NavigateToShareSnapchat(sharePrank: "Instagram")
                     }
                 }
@@ -638,8 +695,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Snapchat")
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
                     }
                 }
@@ -652,8 +709,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareTelegramMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareTelegramMessage()
                     }
                 }
@@ -666,8 +723,8 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareMoreMessage()
                 } else {
-                    interstitialAdUtility.showInterstitialAd()
-                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    rewardAdUtility.showRewardedAd()
+                    rewardAdUtility.onRewardEarned = { [weak self] in
                         self?.shareMoreMessage()
                     }
                 }
@@ -837,12 +894,12 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     func fetchSavedPrank() -> [PrankCreateData]? {
-            if let savedPranksData = UserDefaults.standard.data(forKey: "SavedPranks"),
-               let savedPranks = try? JSONDecoder().decode([PrankCreateData].self, from: savedPranksData) {
-                return savedPranks
-            }
-            return nil
+        if let savedPranksData = UserDefaults.standard.data(forKey: "SavedPranks"),
+           let savedPranks = try? JSONDecoder().decode([PrankCreateData].self, from: savedPranksData) {
+            return savedPranks
         }
+        return nil
+    }
     
     // MARK: - btnBackTapped
     @IBAction func btnBackTapped(_ sender: UIButton) {

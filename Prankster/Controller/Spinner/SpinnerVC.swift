@@ -68,7 +68,6 @@ class SpinnerVC: UIViewController {
     private let rewardAdUtility = RewardAdUtility()
     private let adsViewModel = AdsViewModel()
     var bannerAdUtility = BannerAdUtility()
-    let interstitialAdUtility = InterstitialAdUtility()
     private var currentSpinButtonState: SpinButtonState = .spin
     
     var remainingSpins: Int {
@@ -109,28 +108,28 @@ class SpinnerVC: UIViewController {
         self.collectionview.dataSource = self
         
         prizes = [
-            Spinner(image: "Audio1", value: "1"),     // Audio માટે fixed value 1
-            Spinner(image: "ImageSpin", value: "3"),   // Image માટે fixed value 3
-            Spinner(image: "Gift", value: String(Int.random(in: 1...3))),  // Gift માટે random value 1-3
-            Spinner(image: "VideoSpin", value: "2"),   // Video માટે fixed value 2
+            Spinner(image: "Audio1", value: "1"),
+            Spinner(image: "ImageSpin", value: "3"),
+            Spinner(image: "Gift", value: String(Int.random(in: 1...3))),
+            Spinner(image: "VideoSpin", value: "2"),
         ]
         
         updateSlices()
         setupSwipeGesture()
         
-        wheelControl.onSpinButtonTap = { [self] in
-            guard !isSpinning else { return }
+        wheelControl.onSpinButtonTap = { [weak self] in
+            guard let self = self, !self.isSpinning else { return }
             
-            if isConnectedToInternet() {
-                switch currentSpinButtonState {
+            if self.isConnectedToInternet() {
+                switch self.currentSpinButtonState {
                 case .spin:
-                    if remainingSpins > 0 {
-                        proceedWithSpinning()
+                    if self.remainingSpins > 0 {
+                        self.proceedWithSpinning()
                     }
                 case .watchAd:
-                    rewardAdUtility.showRewardedAd()
+                    self.rewardAdUtility.showRewardedAd()
                 case .waitingForReset:
-                    break
+                    self.showTimeCountBottomSheet()
                 }
             } else {
                 let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -160,13 +159,6 @@ class SpinnerVC: UIViewController {
                     }
                 }
                 
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
-                
                 if let rewardAdID = adsViewModel.getAdID(type: .reward) {
                     print("Reward Ad ID: \(rewardAdID)")
                     rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
@@ -175,9 +167,6 @@ class SpinnerVC: UIViewController {
                 }
                 
             }
-        } else {
-            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-            snackbar.show(in: self.view, duration: 3.0)
         }
         
         let wheelSize = CGSize(width: 300, height: 300)
@@ -248,6 +237,24 @@ class SpinnerVC: UIViewController {
         }
     }
     
+    private func showTimeCountBottomSheet() {
+        guard let nextSpinTime = nextSpinAvailableTime else { return }
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let timeCountVC = storyboard.instantiateViewController(withIdentifier: "TimeCountVC") as? TimeCountVC else {
+            return
+        }
+        
+        timeCountVC.modalPresentationStyle = .custom
+        timeCountVC.transitioningDelegate = self
+        timeCountVC.nextSpinTime = nextSpinTime
+        
+        // Initial update of labels
+        present(timeCountVC, animated: true) { [weak timeCountVC] in
+            timeCountVC?.updateTimeLabels()
+        }
+    }
+    
     // MARK: - Setup Methods
     private func setupViewModel() {
         spinViewModel = SpinnerViewModel()
@@ -272,10 +279,7 @@ class SpinnerVC: UIViewController {
         }
         
         spinViewModel.onError = { error in
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "BetterLuckVC") as! BetterLuckVC
-            vc.modalTransitionStyle = .crossDissolve
-            vc.modalPresentationStyle = .overCurrentContext
-            self.present(vc, animated: true)
+            print("Error :- \(error)")
         }
     }
     
@@ -392,7 +396,11 @@ class SpinnerVC: UIViewController {
         content.body = NSLocalizedString(randomMessage.body, comment: "")
         content.sound = UNNotificationSound.default
         
+        // Original: 4 hours = 4 * 60 * 60
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 4 * 60 * 60, repeats: false)
+        
+        // Testing: 2 minutes = 2 * 60
+        //  let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2 * 60, repeats: false)
         
         let request = UNNotificationRequest(identifier: "spinnerReset", content: content, trigger: trigger)
         
@@ -407,7 +415,11 @@ class SpinnerVC: UIViewController {
     
     // MARK: - Timer Methods
     func startTimerForNextSpins() {
+        // Original: 4 hours = 4 * 60 * 60
         nextSpinAvailableTime = Date().addingTimeInterval(4 * 60 * 60)
+        
+        // Testing: 2 minutes = 2 * 60
+        // nextSpinAvailableTime = Date().addingTimeInterval(2 * 60)
         checkNotificationPermissionAndSchedule()
     }
     
@@ -497,7 +509,7 @@ extension SpinnerVC: UIViewControllerTransitioningDelegate {
             presentedViewController: presented,
             presenting: presenting
         )
-        customPresentationController.heightPercentage = 0.4
+        customPresentationController.heightPercentage = 0.3
         return customPresentationController
     }
 }
@@ -518,7 +530,7 @@ extension SpinnerVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
             
             let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
             let hasInternet = isConnectedToInternet()
-            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+            let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .reward) == nil || !hasInternet)
             
             if shouldOpenDirectly {
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
@@ -535,8 +547,8 @@ extension SpinnerVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
                 
                 self.present(vc, animated: true)
             } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                rewardAdUtility.showRewardedAd()
+                rewardAdUtility.onRewardEarned = { [weak self] in
                     let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
                     vc.coverImageURL = spinData.coverImage
                     vc.prankName = spinData.name
