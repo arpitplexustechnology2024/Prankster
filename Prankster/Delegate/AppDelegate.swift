@@ -113,7 +113,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        return ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+        // Facebook SDK deeplink handling
+        let handled = ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+        
+        // Custom deeplink source tracking
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+           let queryItems = components.queryItems,
+           let sourceID = queryItems.first(where: { $0.name == "source" })?.value {
+            print("Deeplink Source ID: \(sourceID)")
+        }
+        
+        return handled
     }
     
     // MARK: UISceneSession Lifecycle
