@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import Lottie
 
-class NoDataLightView: UIView {
+class NoDataView: UIView {
     
     @IBOutlet weak var lottieView: UIImageView!
     @IBOutlet weak var titleLabel: UILabel!
@@ -29,7 +29,7 @@ class NoDataLightView: UIView {
     
     private func commonInit() {
         let bundle = Bundle(for: type(of: self))
-        let nib = UINib(nibName: "NoDataLightView", bundle: bundle)
+        let nib = UINib(nibName: "NoDataView", bundle: bundle)
         guard let view = nib.instantiate(withOwner: self, options: nil).first as? UIView else { return }
         view.frame = self.bounds
         view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -37,7 +37,7 @@ class NoDataLightView: UIView {
         
         adjustConstraints()
     }
-
+    
     private func adjustConstraints() {
         let screenHeight = UIScreen.main.nativeBounds.height
         if UIDevice.current.userInterfaceIdiom == .phone {
@@ -60,7 +60,7 @@ class NoDataLightView: UIView {
                 lottieViewTopConstraint.constant = 50
             }
         } else {
-            lottieViewHeightConstraint.constant = 500
+            lottieViewHeightConstraint.constant = 400
             labelTopConstraint.constant = 50
             lottieViewTopConstraint.constant = 200
         }
