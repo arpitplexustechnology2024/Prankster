@@ -16,11 +16,13 @@ import AppTrackingTransparency
 import AdSupport
 import GoogleMobileAds
 import AppsFlyerLib
+import Alamofire
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
+    private var hasCalledInstallAPI = false
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
@@ -39,11 +41,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         OneSignal.Debug.setLogLevel(.LL_VERBOSE)
         OneSignal.initialize("d8e64d76-dc16-444f-af2d-1bb802f7bc44", withLaunchOptions: launchOptions)
         
+        // AppsFlyer
         AppsFlyerLib.shared().appsFlyerDevKey = "YwFmSnDNyUSqZNcNUJUi4H"
         AppsFlyerLib.shared().appleAppID = "6739135275"
         NotificationCenter.default.addObserver(self, selector: NSSelectorFromString("sendLaunch"), name: UIApplication.didBecomeActiveNotification, object: nil)
         // function call
         checkNotificationAuthorization()
+        
+        // DeepLink Analytics
+        if !UserDefaults.standard.bool(forKey: "hasLaunched") {
+            checkInstallSource()
+            UserDefaults.standard.set(true, forKey: "hasLaunched")
+        }
         
         return true
     }
@@ -112,15 +121,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return .all
     }
     
+    private func checkInstallSource() {
+        guard !hasCalledInstallAPI else { return }
+        
+        let installSource = UserDefaults.standard.string(forKey: "InstallSourceID") ?? "organic"
+        
+        let url = "https://pslink.world/api/analytics/install?source=\(installSource)"
+        AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { [weak self] response in
+            guard let self = self else { return }
+            
+            switch response.result {
+            case .success(let analyticsResponse):
+                print("Install API Success - Status: \(analyticsResponse.status)")
+                print("Install API Success - Message: \(analyticsResponse.message)")
+                self.hasCalledInstallAPI = true
+                
+            case .failure(let error):
+                if let data = response.data {
+                    let responseString = String(data: data, encoding: .utf8)
+                    print("Install API Error Response: \(responseString ?? "No response data")")
+                }
+                print("Install API Error: \(error)")
+            }
+        }
+    }
+    
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        // Facebook SDK deeplink handling
         let handled = ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
         
-        // Custom deeplink source tracking
         if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
            let queryItems = components.queryItems,
            let sourceID = queryItems.first(where: { $0.name == "source" })?.value {
-            print("Deeplink Source ID: \(sourceID)")
+            
+            UserDefaults.standard.set(sourceID, forKey: "InstallSourceID")
+            print("Deeplink Source ID saved: \(sourceID)")
         }
         
         return handled

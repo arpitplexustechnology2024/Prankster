@@ -29,20 +29,6 @@ struct CoverPageData: Codable {
     }
 }
 
-// MARK: - UserDataUpload
-struct UserDataUpload: Codable {
-    let status: Int
-    let message: String
-    let data: UserData
-}
-struct UserData: Codable {
-    let coverURL: String
-    
-    enum CodingKeys: String, CodingKey {
-        case coverURL = "CoverURL"
-    }
-}
-
 // MARK: - CategoryAllResponse
 struct CharacterAllResponse: Codable {
     let status: Int
@@ -190,4 +176,11 @@ struct TagName: Codable {
         case message
         case data
     }
+}
+
+
+// MARK: - AnalyticsInstall
+struct AnalyticsInstall: Codable {
+    let status: Int
+    let message: String
 }
