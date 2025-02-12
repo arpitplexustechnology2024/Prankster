@@ -43,7 +43,6 @@ class PremiumPopupVC: UIViewController {
         if isConnectedToInternet() {
             if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
                 print("Interstitial Ad ID: \(interstitialAdID)")
-                interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
                 self.watchAdButton.isHidden = false
                 self.firstView.isHidden = false
                 self.orLabel.isHidden = false
@@ -95,7 +94,17 @@ class PremiumPopupVC: UIViewController {
     
     @IBAction func btnWatchAdTapped(_ sender: UIButton) {
         if isConnectedToInternet() {
-            interstitialAdUtility.showInterstitialAd()
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    if let itemID = self?.itemIDToUnlock {
+                        PremiumManager.shared.temporarilyUnlockContent(itemID: itemID)
+                        self?.dismiss(animated: true) {
+                            NotificationCenter.default.post(name: NSNotification.Name("PremiumContentUnlocked"), object: nil)
+                        }
+                    }
+                }
+                interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
+            }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)

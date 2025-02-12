@@ -608,3 +608,130 @@ class SkeletonDataLoadingView: UIView {
         [topSkeletonView, bottomSkeletonView1, bottomSkeletonView2, bottomSkeletonView3, bottomSkeletonView4].forEach { $0.stopShimmerAnimation() }
     }
 }
+
+class SkeletonCoverLoadingView: UIView {
+    private let containerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .background
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    // Top pair of views
+    private let topSkeletonView1: GradientSkeletonView = {
+        let view = GradientSkeletonView()
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let topSkeletonView2: GradientSkeletonView = {
+        let view = GradientSkeletonView()
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    // Middle pair of views
+    private let middleSkeletonView1: GradientSkeletonView = {
+        let view = GradientSkeletonView()
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let middleSkeletonView2: GradientSkeletonView = {
+        let view = GradientSkeletonView()
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    // Bottom pair of views
+    private let bottomSkeletonView1: GradientSkeletonView = {
+        let view = GradientSkeletonView()
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let bottomSkeletonView2: GradientSkeletonView = {
+        let view = GradientSkeletonView()
+        view.layer.cornerRadius = 10
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupViews()
+    }
+    
+    private func setupViews() {
+        backgroundColor = .background
+        
+        addSubview(containerView)
+        containerView.addSubview(topSkeletonView1)
+        containerView.addSubview(topSkeletonView2)
+        containerView.addSubview(middleSkeletonView1)
+        containerView.addSubview(middleSkeletonView2)
+        containerView.addSubview(bottomSkeletonView1)
+        containerView.addSubview(bottomSkeletonView2)
+        
+        let spacing: CGFloat = 16
+        
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: topAnchor),
+            containerView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            containerView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            containerView.bottomAnchor.constraint(equalTo: bottomAnchor),
+
+            topSkeletonView1.topAnchor.constraint(equalTo: containerView.topAnchor, constant: spacing),
+            topSkeletonView1.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: spacing),
+            topSkeletonView1.heightAnchor.constraint(equalToConstant: 180),
+            
+            topSkeletonView2.topAnchor.constraint(equalTo: containerView.topAnchor, constant: spacing),
+            topSkeletonView2.leadingAnchor.constraint(equalTo: topSkeletonView1.trailingAnchor, constant: spacing),
+            topSkeletonView2.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -spacing),
+            topSkeletonView2.heightAnchor.constraint(equalToConstant: 180),
+            topSkeletonView2.widthAnchor.constraint(equalTo: topSkeletonView1.widthAnchor),
+            
+            middleSkeletonView1.topAnchor.constraint(equalTo: topSkeletonView1.bottomAnchor, constant: spacing),
+            middleSkeletonView1.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: spacing),
+            middleSkeletonView1.heightAnchor.constraint(equalToConstant: 180),
+            
+            middleSkeletonView2.topAnchor.constraint(equalTo: topSkeletonView2.bottomAnchor, constant: spacing),
+            middleSkeletonView2.leadingAnchor.constraint(equalTo: middleSkeletonView1.trailingAnchor, constant: spacing),
+            middleSkeletonView2.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -spacing),
+            middleSkeletonView2.heightAnchor.constraint(equalToConstant: 180),
+            middleSkeletonView2.widthAnchor.constraint(equalTo: middleSkeletonView1.widthAnchor),
+            
+            bottomSkeletonView1.topAnchor.constraint(equalTo: middleSkeletonView1.bottomAnchor, constant: spacing),
+            bottomSkeletonView1.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: spacing),
+            bottomSkeletonView1.heightAnchor.constraint(equalToConstant: 180),
+            
+            bottomSkeletonView2.topAnchor.constraint(equalTo: middleSkeletonView2.bottomAnchor, constant: spacing),
+            bottomSkeletonView2.leadingAnchor.constraint(equalTo: bottomSkeletonView1.trailingAnchor, constant: spacing),
+            bottomSkeletonView2.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -spacing),
+            bottomSkeletonView2.heightAnchor.constraint(equalToConstant: 180),
+            bottomSkeletonView2.widthAnchor.constraint(equalTo: bottomSkeletonView1.widthAnchor),
+        ])
+    }
+    
+    func startAnimating() {
+        [topSkeletonView1, topSkeletonView2,
+         middleSkeletonView1, middleSkeletonView2,
+         bottomSkeletonView1, bottomSkeletonView2].forEach { $0.startShimmerAnimation() }
+    }
+    
+    func stopAnimating() {
+        [topSkeletonView1, topSkeletonView2,
+         middleSkeletonView1, middleSkeletonView2,
+         bottomSkeletonView1, bottomSkeletonView2].forEach { $0.stopShimmerAnimation() }
+    }
+}

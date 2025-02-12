@@ -126,18 +126,6 @@ class ImagePrankVC: UIViewController {
                 }
             }
         }
-        
-        if isConnectedToInternet() {
-            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
-            } else {
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
-            }
-        }
 
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -468,10 +456,12 @@ class ImagePrankVC: UIViewController {
             self.shouldShowGIF = false
             self.addImageClick()
         } else {
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shouldShowGIF = false
-                self?.addImageClick()
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shouldShowGIF = false
+                    self?.addImageClick()
+                }
+                interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
             }
         }
     }
@@ -749,9 +739,11 @@ extension ImagePrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if shouldOpenDirectly {
             self.doneButtonClick(sender)
         } else {
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = {
-                self.doneButtonClick(sender)
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.doneButtonClick(sender)
+                }
+                interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
             }
         }
     }

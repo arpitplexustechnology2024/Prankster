@@ -160,18 +160,6 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
                 nativeSmallAds.isHidden = true
             }
         }
-        
-        if isConnectedToInternet() {
-            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
-            } else {
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
-            }
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -191,7 +179,6 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     }
     
     private func setupUI() {
-        // Update gifSlider with default platform (Instagram)
         gifSlider = currentPlatform.sliderImages
         pageControl.numberOfPages = gifSlider.count
     }
@@ -229,27 +216,20 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     
     @objc func switchValueChanged(sender: CustomSwitch) {
         if sender.isSwitchOn {
-            // Switch is ON (Snapchat)
             currentPlatform = .snapchat
         } else {
-            // Switch is OFF (Instagram - default)
             currentPlatform = .instagram
         }
         
-        // Update the slider images
         gifSlider = currentPlatform.sliderImages
         
-        // Reset to first page
         currentPage = 0
         
-        // Reload collection view
         collectionView.reloadData()
         
-        // Update page control
         pageControl.numberOfPages = gifSlider.count
         updateCurrentPage()
         
-        // Scroll to first item
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .centeredHorizontally, animated: true)
     }
     
@@ -351,9 +331,31 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
         }
     }
     
-    
     @IBAction func btnDownloadTapped(_ sender: UIButton) {
-        startLoading()
+        
+        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+        let shouldShowAd = !isContentUnlocked && adsViewModel.getAdID(type: .interstitial) != nil
+        
+        if isConnectedToInternet() {
+            if shouldShowAd {
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.startLoading()
+                        self?.processDownload()
+                    }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
+                }
+            } else {
+                processDownload()
+            }
+        } else {
+            self.stopLoading()
+            let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    private func processDownload() {
         guard let urlString = searchTextField.text, !urlString.isEmpty,
               let videoURL = URL(string: urlString) else {
             self.stopLoading()
@@ -361,50 +363,21 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
             return
         }
         
-        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
-        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil)
-        
-        if isConnectedToInternet() {
-            if shouldOpenDirectly {
-                self.socialViewModule.fetchSocial(url: urlString) { [weak self] result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let socialResponse):
-                            if let videoURL = URL(string: socialResponse.data) {
-                                self?.handleVideoDownload(videoURL: videoURL)
-                            } else {
-                                self?.stopLoading()
-                                self?.showError("Invalid video URL")
-                            }
-                        case .failure(let error):
-                            self?.stopLoading()
-                            self?.showError("Download Failed")
-                        }
+        self.socialViewModule.fetchSocial(url: urlString) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let socialResponse):
+                    if let videoURL = URL(string: socialResponse.data) {
+                        self.handleVideoDownload(videoURL: videoURL)
+                    } else {
+                        self.stopLoading()
+                        self.showError("Invalid video URL")
                     }
-                }
-            } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.socialViewModule.fetchSocial(url: urlString) { result in
-                        DispatchQueue.main.async {
-                            switch result {
-                            case .success(let socialResponse):
-                                if let videoURL = URL(string: socialResponse.data) {
-                                    self?.handleVideoDownload(videoURL: videoURL)
-                                } else {
-                                    self?.stopLoading()
-                                    self?.showError("Invalid video URL")
-                                }
-                            case .failure(let error):
-                                self?.stopLoading()
-                                self?.showError("Download Failed")
-                            }
-                        }
-                    }
+                case .failure(let error):
+                    self.stopLoading()
+                    self.showError("Download Failed")
                 }
             }
-        } else {
-            showError("Please turn on internet connection!")
         }
     }
     
@@ -419,7 +392,6 @@ class VideoDownloaderBottom: UIViewController, UITextFieldDelegate {
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        // Show the cancel button if there is text
         if let text = textField.text, !text.isEmpty {
             CancelButton.isHidden = false
         } else {

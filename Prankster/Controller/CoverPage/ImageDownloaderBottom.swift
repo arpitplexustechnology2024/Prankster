@@ -126,18 +126,6 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
             }
         }
         
-        if isConnectedToInternet() {
-            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
-            } else {
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
-            }
-        }
-        
         startAutoScrolling()
     }
     
@@ -291,62 +279,49 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func btnDownloadTapped(_ sender: UIButton) {
-        startLoading()
         
         let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
-        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil)
+        let shouldShowAd = !isContentUnlocked && adsViewModel.getAdID(type: .interstitial) != nil
         
         if isConnectedToInternet() {
-            if shouldOpenDirectly {
-                guard let urlToDownload = self.searchTextField.text, !urlToDownload.isEmpty else {
-                    self.stopLoading()
-                    self.showError("Please enter a valid URL")
-                    return
-                }
-                
-                self.socialViewModule.fetchSocial(url: urlToDownload) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let socialResponse):
-                            print("Social Download successfully: \(socialResponse.data)")
-                            self.downloadedImageUrl = socialResponse.data  // Store the URL
-                            self.loadImageFromURL(socialResponse.data)
-                        case .failure(let error):
-                            print("Failed to Social Download: \(error.localizedDescription)")
-                            self.stopLoading()
-                            self.showError("Downloading Failed")
-                        }
+            if shouldShowAd {
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.startLoading()
+                        self?.processDownload()
                     }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    guard let urlToDownload = self?.searchTextField.text, !urlToDownload.isEmpty else {
-                        self?.stopLoading()
-                        self?.showError("Please enter a valid URL")
-                        return
-                    }
-                    
-                    self?.socialViewModule.fetchSocial(url: urlToDownload) { result in
-                        DispatchQueue.main.async {
-                            switch result {
-                            case .success(let socialResponse):
-                                print("Social Download successfully: \(socialResponse.data)")
-                                self?.downloadedImageUrl = socialResponse.data
-                                self?.loadImageFromURL(socialResponse.data)
-                            case .failure(let error):
-                                print("Failed to Social Download: \(error.localizedDescription)")
-                                self?.stopLoading()
-                                self?.showError("Downloading Failed")
-                            }
-                        }
-                    }
-                }
+                processDownload()
             }
         } else {
             self.stopLoading()
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
+        }
+    }
+    
+    private func processDownload() {
+        guard let urlToDownload = self.searchTextField.text, !urlToDownload.isEmpty else {
+            self.stopLoading()
+            self.showError("Please enter a valid URL")
+            return
+        }
+        
+        self.socialViewModule.fetchSocial(url: urlToDownload) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let socialResponse):
+                    print("Social Download successfully: \(socialResponse.data)")
+                    self?.downloadedImageUrl = socialResponse.data
+                    self?.loadImageFromURL(socialResponse.data)
+                case .failure(let error):
+                    print("Failed to Social Download: \(error.localizedDescription)")
+                    self?.stopLoading()
+                    self?.showError("Downloading Failed")
+                }
+            }
         }
     }
     

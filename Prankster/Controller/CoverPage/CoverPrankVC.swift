@@ -261,18 +261,6 @@ class CoverPrankVC: UIViewController {
                 }
             }
         }
-        
-        if isConnectedToInternet() {
-            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
-            } else {
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
-            }
-        }
     }
     
     @IBAction func backButtonTapped(_ sender: UIButton) {
@@ -416,15 +404,6 @@ class CoverPrankVC: UIViewController {
             noInternetView.isHidden = true
             hideNoDataView()
             checkInternetAndFetchData()
-            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
-            } else {
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
-            }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
@@ -529,10 +508,12 @@ class CoverPrankVC: UIViewController {
             self.shouldShowGIF = false
             self.addCoverClick()
         } else {
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                self?.shouldShowGIF = false
-                self?.addCoverClick()
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.shouldShowGIF = false
+                    self?.addCoverClick()
+                }
+                interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
             }
         }
     }
@@ -753,9 +734,11 @@ extension CoverPrankVC: UICollectionViewDelegate, UICollectionViewDataSource, UI
         if shouldOpenDirectly {
             self.doneButtonClick(sender)
         } else {
-            interstitialAdUtility.showInterstitialAd()
-            interstitialAdUtility.onInterstitialEarned = {
-                self.doneButtonClick(sender)
+            if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                    self?.doneButtonClick(sender)
+                }
+                interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
             }
         }
     }

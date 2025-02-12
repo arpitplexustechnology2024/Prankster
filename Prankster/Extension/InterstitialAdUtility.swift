@@ -8,57 +8,60 @@
 import GoogleMobileAds
 import UIKit
 
+// InterstitialAdUtility class માં નીચેના ફેરફારો કરો:
 class InterstitialAdUtility: NSObject, GADFullScreenContentDelegate {
-    
     private var interstitialAd: GADInterstitialAd?
     private weak var rootViewController: UIViewController?
     private var adUnitID: String?
+    private var loadingView: LoadingAlertView?
     
     var onInterstitialEarned: (() -> Void)?
     
-    func loadInterstitialAd(adUnitID: String, rootViewController: UIViewController) {
+    func loadAndShowAd(adUnitID: String, rootViewController: UIViewController) {
         self.rootViewController = rootViewController
         self.adUnitID = adUnitID
+        
+        // Show loading view
+        loadingView = LoadingAlertView(frame: rootViewController.view.bounds)
+        if let loadingView = loadingView {
+            rootViewController.view.addSubview(loadingView)
+            loadingView.startAnimating()
+        }
+        
+        // Load the ad
         GADInterstitialAd.load(withAdUnitID: adUnitID, request: GADRequest()) { [weak self] ad, error in
+            // Hide loading view
+            DispatchQueue.main.async {
+                self?.loadingView?.removeFromSuperview()
+                self?.loadingView = nil
+            }
+            
             if let error = error {
                 print("Rewarded ad failed to load with error: \(error.localizedDescription)")
                 self?.onInterstitialEarned?()
                 return
             }
+            
             self?.interstitialAd = ad
             self?.interstitialAd?.fullScreenContentDelegate = self
-            print("Interstitial ad loaded.")
+            
+            // Show the ad immediately after loading
+            if let rootVC = self?.rootViewController {
+                self?.interstitialAd?.present(fromRootViewController: rootVC)
+            }
         }
     }
     
-    func showInterstitialAd() {
-        guard let interstitialAd = interstitialAd, let rootViewController = rootViewController else {
-            print("Ad wasn't ready.")
-            self.onInterstitialEarned?()
-            return
-        }
-        interstitialAd.present(fromRootViewController: rootViewController)
-    }
+    // Remove the old showInterstitialAd function as we don't need it anymore
     
-    // MARK: - GADFullScreenContentDelegate
-    
+    // Update delegate methods
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         print("Ad did fail to present full screen content: \(error.localizedDescription)")
-        if let adUnitID = adUnitID {
-            loadInterstitialAd(adUnitID: adUnitID, rootViewController: rootViewController!)
-            self.onInterstitialEarned?()
-        }
-    }
-    
-    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        print("Ad will present full screen content.")
+        self.onInterstitialEarned?()
     }
     
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         print("Ad did dismiss full screen content.")
-        if let adUnitID = adUnitID {
-            loadInterstitialAd(adUnitID: adUnitID, rootViewController: rootViewController!)
-            self.onInterstitialEarned?()
-        }
+        self.onInterstitialEarned?()
     }
 }

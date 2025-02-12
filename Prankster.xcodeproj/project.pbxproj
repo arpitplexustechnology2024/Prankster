@@ -10,6 +10,8 @@
 		39D557955CA728194C45BFDD /* Pods_Prankster_PranksterUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0555AD96EFBEA4CB450ECEA7 /* Pods_Prankster_PranksterUITests.framework */; };
 		8A14A120C85453A0695CFCAE /* Pods_Prankster.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C3BDEBA36CFEFFA526F695ED /* Pods_Prankster.framework */; };
 		AF1A7D4501C29FABF7C47C33 /* Pods_OneSignalPushNotificationExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */; };
+		BD1CDE122D5C2A9700790236 /* CoverBottomVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1CDE112D5C2A9700790236 /* CoverBottomVC.swift */; };
+		BD1CDE142D5C2AE800790236 /* CoverBottomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1CDE132D5C2AE800790236 /* CoverBottomCell.swift */; };
 		BD1D1C1B2D4B160F0078B6EC /* ImageCompress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD1D1C1A2D4B160F0078B6EC /* ImageCompress.swift */; };
 		BD686C392D44157000B9F03C /* AppOpenAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */; };
 		BD686C3D2D445CB100B9F03C /* ChipButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD686C3C2D445CB100B9F03C /* ChipButton.swift */; };
@@ -51,6 +53,10 @@
 		BDB9045D2D4F1516009AA387 /* VideoDownloaderBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB9045C2D4F1516009AA387 /* VideoDownloaderBottom.swift */; };
 		BDB9045F2D4F1A23009AA387 /* VideoCompress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB9045E2D4F1A23009AA387 /* VideoCompress.swift */; };
 		BDBDE1CA2D56EF86005E59BC /* Premium+VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBDE1C92D56EF86005E59BC /* Premium+VC.swift */; };
+		BDC106EC2D5BE88700C74727 /* DownloaderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC106EB2D5BE88700C74727 /* DownloaderVC.swift */; };
+		BDC106FB2D5BEC1B00C74727 /* ShareExtensionShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BDC106F12D5BEC1B00C74727 /* ShareExtensionShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BDC107052D5BEC2200C74727 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC107032D5BEC2200C74727 /* ShareViewController.swift */; };
+		BDC107072D5BEC2200C74727 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC107022D5BEC2200C74727 /* MainInterface.storyboard */; };
 		BDC68AB52D092D0C00834D9B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AAB2D092D0C00834D9B /* AppDelegate.swift */; };
 		BDC68AB62D092D0C00834D9B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68AB22D092D0C00834D9B /* SceneDelegate.swift */; };
 		BDC68AB82D092D0C00834D9B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BDC68AAC2D092D0C00834D9B /* Assets.xcassets */; };
@@ -132,6 +138,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BDC106F92D5BEC1B00C74727 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = BDC68A6F2D092D0400834D9B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BDC106F02D5BEC1B00C74727;
+			remoteInfo = ShareExtensionShare;
+		};
 		BDC68A8E2D092D0600834D9B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BDC68A6F2D092D0400834D9B /* Project object */;
@@ -162,6 +175,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				BDC106FB2D5BEC1B00C74727 /* ShareExtensionShare.appex in Embed Foundation Extensions */,
 				BDC68ACF2D092D6400834D9B /* OneSignalPushNotificationExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
@@ -177,6 +191,8 @@
 		28BA78DE7AC84A57E8FB85DC /* Pods-OneSignalPushNotificationExtension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.release.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.release.xcconfig"; sourceTree = "<group>"; };
 		713B8F073A572A4E625F450B /* Pods_OneSignalPushNotificationExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneSignalPushNotificationExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		925B44C92E8FA0AE298ED620 /* Pods-OneSignalPushNotificationExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalPushNotificationExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalPushNotificationExtension/Pods-OneSignalPushNotificationExtension.debug.xcconfig"; sourceTree = "<group>"; };
+		BD1CDE112D5C2A9700790236 /* CoverBottomVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverBottomVC.swift; sourceTree = "<group>"; };
+		BD1CDE132D5C2AE800790236 /* CoverBottomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoverBottomCell.swift; sourceTree = "<group>"; };
 		BD1D1C1A2D4B160F0078B6EC /* ImageCompress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCompress.swift; sourceTree = "<group>"; };
 		BD686C382D44157000B9F03C /* AppOpenAdUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppOpenAdUtility.swift; sourceTree = "<group>"; };
 		BD686C3C2D445CB100B9F03C /* ChipButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChipButton.swift; sourceTree = "<group>"; };
@@ -218,6 +234,12 @@
 		BDB9045C2D4F1516009AA387 /* VideoDownloaderBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDownloaderBottom.swift; sourceTree = "<group>"; };
 		BDB9045E2D4F1A23009AA387 /* VideoCompress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCompress.swift; sourceTree = "<group>"; };
 		BDBDE1C92D56EF86005E59BC /* Premium+VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Premium+VC.swift"; sourceTree = "<group>"; };
+		BDC106EB2D5BE88700C74727 /* DownloaderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloaderVC.swift; sourceTree = "<group>"; };
+		BDC106F12D5BEC1B00C74727 /* ShareExtensionShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtensionShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDC107002D5BEC2200C74727 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BDC107012D5BEC2200C74727 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		BDC107032D5BEC2200C74727 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		BDC107082D5BEDBA00C74727 /* ShareExtensionShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShareExtensionShare.entitlements; sourceTree = "<group>"; };
 		BDC68A772D092D0400834D9B /* Prankster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Prankster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDC68A8D2D092D0600834D9B /* PranksterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PranksterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDC68A972D092D0600834D9B /* PranksterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PranksterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -309,6 +331,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		BDC106EE2D5BEC1B00C74727 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BDC68A742D092D0400834D9B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -438,6 +467,17 @@
 			path = NativeSmallAds;
 			sourceTree = "<group>";
 		};
+		BDC107042D5BEC2200C74727 /* ShareExtensionShare */ = {
+			isa = PBXGroup;
+			children = (
+				BDC107082D5BEDBA00C74727 /* ShareExtensionShare.entitlements */,
+				BDC107002D5BEC2200C74727 /* Info.plist */,
+				BDC107022D5BEC2200C74727 /* MainInterface.storyboard */,
+				BDC107032D5BEC2200C74727 /* ShareViewController.swift */,
+			);
+			path = ShareExtensionShare;
+			sourceTree = "<group>";
+		};
 		BDC68A6E2D092D0400834D9B = {
 			isa = PBXGroup;
 			children = (
@@ -445,6 +485,7 @@
 				BDC68ABD2D092D0F00834D9B /* PranksterTests */,
 				BDC68AC12D092D1200834D9B /* PranksterUITests */,
 				BDC68AD72D092D6800834D9B /* OneSignalPushNotificationExtension */,
+				BDC107042D5BEC2200C74727 /* ShareExtensionShare */,
 				BDC68A782D092D0400834D9B /* Products */,
 				1A47B1172B3348B03F594BA8 /* Pods */,
 				2E60ED9915687723FF522E78 /* Frameworks */,
@@ -458,6 +499,7 @@
 				BDC68A8D2D092D0600834D9B /* PranksterTests.xctest */,
 				BDC68A972D092D0600834D9B /* PranksterUITests.xctest */,
 				BDC68AC82D092D6400834D9B /* OneSignalPushNotificationExtension.appex */,
+				BDC106F12D5BEC1B00C74727 /* ShareExtensionShare.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -633,6 +675,7 @@
 				BDC68B3A2D0931F800834D9B /* SpinnerCell.swift */,
 				BDC68B3D2D0931F800834D9B /* ViewLinkCell.swift */,
 				BDDFC2772D48806100C2A707 /* DownloadCell.swift */,
+				BD1CDE132D5C2AE800790236 /* CoverBottomCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -731,6 +774,8 @@
 				BDC68B5C2D0931F800834D9B /* Video */,
 				BDC68B592D0931F800834D9B /* Image */,
 				BD6D3D392D1E17BD00EF045E /* Share */,
+				BDC106EB2D5BE88700C74727 /* DownloaderVC.swift */,
+				BD1CDE112D5C2A9700790236 /* CoverBottomVC.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -738,6 +783,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		BDC106F02D5BEC1B00C74727 /* ShareExtensionShare */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BDC106FD2D5BEC1B00C74727 /* Build configuration list for PBXNativeTarget "ShareExtensionShare" */;
+			buildPhases = (
+				BDC106ED2D5BEC1B00C74727 /* Sources */,
+				BDC106EE2D5BEC1B00C74727 /* Frameworks */,
+				BDC106EF2D5BEC1B00C74727 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShareExtensionShare;
+			packageProductDependencies = (
+			);
+			productName = ShareExtensionShare;
+			productReference = BDC106F12D5BEC1B00C74727 /* ShareExtensionShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		BDC68A762D092D0400834D9B /* Prankster */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = BDC68AA02D092D0600834D9B /* Build configuration list for PBXNativeTarget "Prankster" */;
@@ -755,6 +819,7 @@
 			);
 			dependencies = (
 				BDC68ACE2D092D6400834D9B /* PBXTargetDependency */,
+				BDC106FA2D5BEC1B00C74727 /* PBXTargetDependency */,
 			);
 			name = Prankster;
 			productName = Prankster;
@@ -826,9 +891,12 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
+				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
+					BDC106F02D5BEC1B00C74727 = {
+						CreatedOnToolsVersion = 16.2;
+					};
 					BDC68A762D092D0400834D9B = {
 						CreatedOnToolsVersion = 16.1;
 					};
@@ -862,11 +930,20 @@
 				BDC68A8C2D092D0600834D9B /* PranksterTests */,
 				BDC68A962D092D0600834D9B /* PranksterUITests */,
 				BDC68AC72D092D6400834D9B /* OneSignalPushNotificationExtension */,
+				BDC106F02D5BEC1B00C74727 /* ShareExtensionShare */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		BDC106EF2D5BEC1B00C74727 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDC107072D5BEC2200C74727 /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BDC68A752D092D0400834D9B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1110,6 +1187,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		BDC106ED2D5BEC1B00C74727 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BDC107052D5BEC2200C74727 /* ShareViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BDC68A732D092D0400834D9B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1129,6 +1214,7 @@
 				BDC68B0D2D092E4B00834D9B /* SpinnerAPI.swift in Sources */,
 				BDA64D4C2D559D7A00C31C61 /* SpinnerDataShowVC.swift in Sources */,
 				BDC68B0E2D092E4B00834D9B /* SFWConfiguration.swift in Sources */,
+				BDC106EC2D5BE88700C74727 /* DownloaderVC.swift in Sources */,
 				BDC68B0F2D092E4B00834D9B /* StaticFunction.swift in Sources */,
 				BDE586242D430C9500CF3F71 /* NativeSmallIphoneAdUtility.swift in Sources */,
 				BDC68B102D092E4B00834D9B /* MoreAppAPI.swift in Sources */,
@@ -1149,6 +1235,7 @@
 				BDC68B1C2D092E4B00834D9B /* RewardAdUtility.swift in Sources */,
 				BDAC12942D5A6BF700D5B310 /* RecentPrank.swift in Sources */,
 				BD7B4BA92D4C1A9200E479EC /* AudioPopupVC.swift in Sources */,
+				BD1CDE142D5C2AE800790236 /* CoverBottomCell.swift in Sources */,
 				BD6EF78A2D568C9B000A5E9E /* SharePrankPopupVC.swift in Sources */,
 				BDC68B6B2D0931F900834D9B /* ViewLinkVC.swift in Sources */,
 				BD7B4BAB2D4C40C000E479EC /* Audiocell.swift in Sources */,
@@ -1160,6 +1247,7 @@
 				BDC68B6F2D0931F900834D9B /* CustomRecoderVC.swift in Sources */,
 				BDC68B702D0931F900834D9B /* AudioVisualizer.swift in Sources */,
 				BDAC12972D5A8A2500D5B310 /* TimeCountVC.swift in Sources */,
+				BD1CDE122D5C2A9700790236 /* CoverBottomVC.swift in Sources */,
 				BDC68B712D0931F900834D9B /* NoInternetBottombarView.swift in Sources */,
 				BDC68B722D0931F900834D9B /* ShareLinkVC.swift in Sources */,
 				BD8C71552D49712900ED2575 /* TagViewModel.swift in Sources */,
@@ -1226,6 +1314,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		BDC106FA2D5BEC1B00C74727 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BDC106F02D5BEC1B00C74727 /* ShareExtensionShare */;
+			targetProxy = BDC106F92D5BEC1B00C74727 /* PBXContainerItemProxy */;
+		};
 		BDC68A8F2D092D0600834D9B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = BDC68A762D092D0400834D9B /* Prankster */;
@@ -1244,6 +1337,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		BDC107022D5BEC2200C74727 /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				BDC107012D5BEC2200C74727 /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		BDC68B2E2D0931F800834D9B /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -1263,6 +1364,60 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		BDC106FE2D5BEC1B00C74727 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtensionShare/ShareExtensionShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 32BBNXD889;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShareExtensionShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShareExtensionShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.ShareExtensionShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BDC106FF2D5BEC1B00C74727 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = ShareExtensionShare/ShareExtensionShare.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 32BBNXD889;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShareExtensionShare/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ShareExtensionShare;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prank.memes.fun.ShareExtensionShare;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		BDC68AA12D092D0600834D9B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DF6DA06B6DF6B11A61EEF855 /* Pods-Prankster.debug.xcconfig */;
@@ -1596,6 +1751,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		BDC106FD2D5BEC1B00C74727 /* Build configuration list for PBXNativeTarget "ShareExtensionShare" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BDC106FE2D5BEC1B00C74727 /* Debug */,
+				BDC106FF2D5BEC1B00C74727 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BDC68A722D092D0400834D9B /* Build configuration list for PBXProject "Prankster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

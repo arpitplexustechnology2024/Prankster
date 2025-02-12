@@ -18,7 +18,7 @@ import GoogleMobileAds
 import AppsFlyerLib
 import Alamofire
 
-@main
+@UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
@@ -146,7 +146,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
-    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         let handled = ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
         
@@ -156,6 +155,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             UserDefaults.standard.set(sourceID, forKey: "InstallSourceID")
             print("Deeplink Source ID saved: \(sourceID)")
+        }
+        
+        if let scheme = url.scheme, scheme.caseInsensitiveCompare("ShareExtension") == .orderedSame, let page = url.host {
+
+            var parameters: [String: String] = [:]
+            URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.forEach {
+                parameters[$0.name] = $0.value
+            }
+
+            print("redirect(to: \(page), with: \(parameters))")
+
+            for parameter in parameters where parameter.key.caseInsensitiveCompare("url") == .orderedSame {
+                UserDefaults().set(parameter.value, forKey: "incomingURL")
+            }
         }
         
         return handled

@@ -12,6 +12,7 @@ import WebKit
 import FirebaseAnalytics
 import GoogleMobileAds
 
+@available(iOS 15.0, *)
 class LaunchVC: UIViewController {
     
     @IBOutlet weak var launchImageView: UIImageView!
@@ -34,6 +35,33 @@ class LaunchVC: UIViewController {
         self.setupUI()
         self.trackAppInstall()
         self.loadAds()
+    }
+    
+    private func checkNavigationFlow() {
+        if let _ = UserDefaults(suiteName: "group.com.prank.memes.fun")?.value(forKey: "incomingURL") as? String {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            if let viewController = storyboard.instantiateViewController(withIdentifier: "DownloaderVC") as? DownloaderVC {
+                self.navigationController?.pushViewController(viewController, animated: true)
+            }
+        } else {
+            self.loadingActivityIndicator.stopAnimating()
+            self.loadingActivityIndicator.isHidden = true
+            
+            if let actionKey = self.passedActionKey {
+                switch actionKey {
+                case "AudioActionKey":
+                    self.navigateToHomeVC()
+                case "VideoActionKey":
+                    self.navigateToHomeVC()
+                case "ImageActionKey":
+                    self.navigateToHomeVC()
+                default:
+                    self.navigateToHomeVC()
+                }
+            } else {
+                self.navigateToHomeVC()
+            }
+        }
     }
     
     private func trackAppInstall() {
@@ -67,7 +95,7 @@ class LaunchVC: UIViewController {
     }
     
     func navigateToHomeVC() {
-        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "HomeVC")
+        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "HomeVC") as! HomeVC
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -80,47 +108,14 @@ class LaunchVC: UIViewController {
                 let (savedNames, savedIDs) = self?.adsViewModel.getSavedAds() ?? ([], [])
                 print("Using Ads - Names: \(savedNames)")
                 print("Using Ads - IDs: \(savedIDs)")
-                
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    self?.loadingActivityIndicator.stopAnimating()
-                    self?.loadingActivityIndicator.isHidden = true
-                    
-                    if let actionKey = self?.passedActionKey {
-                        switch actionKey {
-                        case "AudioActionKey":
-                            self?.navigateToHomeVC()
-                        case "VideoActionKey":
-                            self?.navigateToHomeVC()
-                        case "ImageActionKey":
-                            self?.navigateToHomeVC()
-                        default:
-                            self?.navigateToHomeVC()
-                        }
-                    } else {
-                        self?.navigateToHomeVC()
-                    }
+                    self?.checkNavigationFlow()
                 }
             } else {
                 print("Ads are disabled or failed to load")
                 print("Failed to load ads")
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    self?.loadingActivityIndicator.stopAnimating()
-                    self?.loadingActivityIndicator.isHidden = true
-                    
-                    if let actionKey = self?.passedActionKey {
-                        switch actionKey {
-                        case "AudioActionKey":
-                            self?.navigateToHomeVC()
-                        case "VideoActionKey":
-                            self?.navigateToHomeVC()
-                        case "ImageActionKey":
-                            self?.navigateToHomeVC()
-                        default:
-                            self?.navigateToHomeVC()
-                        }
-                    } else {
-                        self?.navigateToHomeVC()
-                    }
+                    self?.checkNavigationFlow()
                 }
             }
         }

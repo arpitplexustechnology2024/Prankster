@@ -217,13 +217,6 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
         if isConnectedToInternet() {
             if PremiumManager.shared.isContentUnlocked(itemID: -1) {
             } else {
-                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
-                    print("Interstitial Ad ID: \(interstitialAdID)")
-                    interstitialAdUtility.loadInterstitialAd(adUnitID: interstitialAdID, rootViewController: self)
-                } else {
-                    print("No Interstitial Ad ID found")
-                }
-                
                 // MARK: - App Open Ads Show
                 AppOpenAdManager.shared.appOpenAdManagerDelegate = self
                 startGoogleMobileAdsSDK()
@@ -266,9 +259,11 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             if shouldOpenDirectly {
                 self.navigateToCoverPrankVC(buttonType: .audio)
             } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.navigateToCoverPrankVC(buttonType: .audio)
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.navigateToCoverPrankVC(buttonType: .audio)
+                    }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             }
         }
@@ -285,9 +280,11 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             if shouldOpenDirectly {
                 self.navigateToCoverPrankVC(buttonType: .video)
             } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.navigateToCoverPrankVC(buttonType: .video)
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.navigateToCoverPrankVC(buttonType: .video)
+                    }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             }
         }
@@ -304,9 +301,11 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
             if shouldOpenDirectly {
                 self.navigateToCoverPrankVC(buttonType: .image)
             } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    self?.navigateToCoverPrankVC(buttonType: .image)
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.navigateToCoverPrankVC(buttonType: .image)
+                    }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             }
         }
@@ -334,10 +333,12 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
-                    self?.navigationController?.pushViewController(vc, animated: true)
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "ViewLinkVC") as! ViewLinkVC
+                        self?.navigationController?.pushViewController(vc, animated: true)
+                    }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             }
         }
@@ -355,10 +356,12 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
                 let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
                 self.navigationController?.pushViewController(vc, animated: true)
             } else {
-                interstitialAdUtility.showInterstitialAd()
-                interstitialAdUtility.onInterstitialEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
-                    self?.navigationController?.pushViewController(vc, animated: true)
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "SpinnerVC") as! SpinnerVC
+                        self?.navigationController?.pushViewController(vc, animated: true)
+                    }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             }
         }

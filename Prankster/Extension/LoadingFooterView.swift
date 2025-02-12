@@ -60,7 +60,7 @@ class LoadingAlertView: UIView {
     
     private let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
-        indicator.color = .white
+        indicator.color = #colorLiteral(red: 1, green: 0.8470588235, blue: 0, alpha: 1)
         indicator.translatesAutoresizingMaskIntoConstraints = false
         return indicator
     }()
