@@ -45,7 +45,6 @@ class RewardAdUtility: NSObject, GADFullScreenContentDelegate {
             if let rootVC = self?.rootViewController {
                 self?.rewardedAd?.present(fromRootViewController: rootVC) { [weak self] in
                     print("User earned reward")
-                    self?.onRewardEarned?()
                 }
             }
         }

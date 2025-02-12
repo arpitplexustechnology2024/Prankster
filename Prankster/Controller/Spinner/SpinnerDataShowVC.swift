@@ -27,6 +27,7 @@ class SpinnerDataShowVC: UIViewController {
     var prankShareURL: String?
     var prankType: String?
     var prankImage: String?
+    private var isLoading = false
     private var isPlaying = false
     private var audioPlayer: AVAudioPlayer?
     private var videoPlayer: AVPlayer?
@@ -71,6 +72,9 @@ class SpinnerDataShowVC: UIViewController {
         let playPauseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
         self.playPauseImageView.isUserInteractionEnabled = true
         self.playPauseImageView.addGestureRecognizer(playPauseTapGesture)
+        
+        let viewTapGesture = UITapGestureRecognizer(target: self, action: #selector(handleViewTap))
+        self.view.addGestureRecognizer(viewTapGesture)
     }
     
     let stackView: UIStackView = {
@@ -123,6 +127,7 @@ class SpinnerDataShowVC: UIViewController {
     }
     
     private func showLoadingAlert() {
+        isLoading = true
         loadingAlert = LoadingAlertView(frame: view.bounds)
         if let loadingAlert = loadingAlert {
             view.addSubview(loadingAlert)
@@ -132,8 +137,15 @@ class SpinnerDataShowVC: UIViewController {
     
     private func hideLoadingAlert() {
         DispatchQueue.main.async {
+            self.isLoading = false
             self.loadingAlert?.removeFromSuperview()
             self.loadingAlert = nil
+        }
+    }
+    
+    @objc private func handleViewTap() {
+        if !isLoading {
+            self.dismiss(animated: true)
         }
     }
     

@@ -90,6 +90,41 @@ class ViewLinkVC: UIViewController {
         }
     }
     
+    private func setupNoDataView() {
+        if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+            recentPrank = RecentPrank()
+            recentPrank.makePrank.addTarget(self, action: #selector(makePrankButtonTapped), for: .touchUpInside)
+            recentPrank.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            recentPrank.isHidden = true
+            self.view.addSubview(recentPrank)
+            recentPrank.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                recentPrank.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                recentPrank.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                recentPrank.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
+                recentPrank.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -150)
+            ])
+        } else {
+            recentPrank = RecentPrank()
+            recentPrank.makePrank.addTarget(self, action: #selector(makePrankButtonTapped), for: .touchUpInside)
+            recentPrank.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+            recentPrank.isHidden = true
+            self.view.addSubview(recentPrank)
+            recentPrank.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                recentPrank.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                recentPrank.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                recentPrank.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
+                recentPrank.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -50)
+            ])
+        }
+    }
+    
+    // MARK: - makePrankButtonTapped
+    @objc func makePrankButtonTapped() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     private func isConnectedToInternet() -> Bool {
         let networkManager = NetworkReachabilityManager()
         return networkManager?.isReachable ?? false
@@ -104,26 +139,6 @@ class ViewLinkVC: UIViewController {
             layout.minimumLineSpacing = 16
             layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         }
-    }
-    
-    private func setupNoDataView() {
-        recentPrank = RecentPrank()
-        recentPrank.makePrank.addTarget(self, action: #selector(makePrankButtonTapped), for: .touchUpInside)
-        recentPrank.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        recentPrank.isHidden = true
-        self.view.addSubview(recentPrank)
-        recentPrank.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            recentPrank.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            recentPrank.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            recentPrank.topAnchor.constraint(equalTo: navigationView.bottomAnchor),
-            recentPrank.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -150)
-        ])
-    }
-    
-    // MARK: - makePrankButtonTapped
-    @objc func makePrankButtonTapped() {
-        self.navigationController?.popViewController(animated: true)
     }
     
     // MARK: - setupNoInternetView
@@ -152,13 +167,6 @@ class ViewLinkVC: UIViewController {
                     nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
                 } else {
                     nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
-                }
-                
-                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                    print("Reward Ad ID: \(rewardAdID)")
-                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-                } else {
-                    print("No Reward Ad ID found")
                 }
             } else {
                 nativeSmallAds.isHidden = true

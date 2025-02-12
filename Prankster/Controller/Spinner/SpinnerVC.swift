@@ -52,10 +52,11 @@ class SpinnerVC: UIViewController {
     }
     
     let notificationMessages = [
-        (title: "Spin the Wheel! 🎡", body: "Unlock Premium Pranks with every spin!"),
-        (title: "Ready to Spin? 🎯", body: "Spin and grab your Premium Pranks now! ⏰"),
-        (title: "Knock Knock! who's there?", body: "Your true friend Prankster!"),
-        (title: "Spin & Get Rewarded! 🎁", body: "Win Premium Pranks every time you spin! 🔥"),
+        (title: "Prankster", body: "Unlock premium pranks with every spin!"),
+        (title: "Prankster", body: "Spin and grab your premium pranks now! ⏰"),
+        (title: "Prankster", body: "Spin the Wheel! 🎡"),
+        (title: "Prankster", body: "Win Premium Pranks every time you spin! 🔥"),
+        (title: "Prankster", body: "Wait is over! Spinner is waiting..."),
     ]
     
     // MARK: - Properties
@@ -137,15 +138,23 @@ class SpinnerVC: UIViewController {
                         self.proceedWithSpinning()
                     }
                 case .watchAd:
-                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                        rewardAdUtility.onRewardEarned = { [weak self] in
-                            self?.proceedWithSpinning()
+                    let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+                    let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .reward) == nil)
+                    
+                    if shouldOpenDirectly {
+                        self.proceedWithSpinning()
+                    } else {
+                        if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                            rewardAdUtility.onRewardEarned = { [weak self] in
+                                self?.proceedWithSpinning()
+                            }
+                            rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                         }
-                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 case .waitingForReset:
                     self.showTimeCountBottomSheet()
                 }
+                    
             } else {
                 let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)

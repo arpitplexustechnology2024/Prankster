@@ -89,7 +89,7 @@ class MoreAppVC: UIViewController {
         let packageName = "id6739135275"
         viewModel.fetchMoreData(packageName: packageName) { [weak self] result in
             guard let self = self else { return }
-            DispatchQueue.main.async { [self] in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
                 switch result {
                 case .success(let moreDataArray):
                     self.moreDataArray = moreDataArray

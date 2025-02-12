@@ -70,7 +70,6 @@ class SharePrankPopupVC: UIViewController, UITextFieldDelegate {
         if !isConnectedToInternet() {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
             snackbar.show(in: self.view, duration: 3.0)
-            dismiss(animated: true)
             return
         }
         

@@ -38,6 +38,9 @@ class LaunchVC: UIViewController {
     }
     
     private func checkNavigationFlow() {
+        self.loadingActivityIndicator.stopAnimating()
+        self.loadingActivityIndicator.isHidden = true
+        
         if let _ = UserDefaults(suiteName: "group.com.prank.memes.fun")?.value(forKey: "incomingURL") as? String {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             if let viewController = storyboard.instantiateViewController(withIdentifier: "DownloaderVC") as? DownloaderVC {
