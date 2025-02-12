@@ -255,8 +255,14 @@ extension CoverBottomVC: UICollectionViewDelegate, UICollectionViewDataSource, U
         let padding: CGFloat = 32
         let spacing: CGFloat = 16
         let availableWidth = collectionView.bounds.width - padding - spacing
-        let cellWidth = availableWidth / 2
-        return CGSize(width: cellWidth, height: 180)
+        
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            let cellWidth = (availableWidth - (spacing * 3)) / 4
+            return CGSize(width: cellWidth, height: 180)
+        } else {
+            let cellWidth = (availableWidth - spacing) / 2
+            return CGSize(width: cellWidth, height: 180)
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
