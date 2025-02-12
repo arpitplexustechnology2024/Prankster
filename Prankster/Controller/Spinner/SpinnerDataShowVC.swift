@@ -489,7 +489,7 @@ class SpinnerDataShowVC: UIViewController {
     }
     
     private func NavigateToShareSnapchat(sharePrank: String?) {
-        guard let prankLink = prankShareURL,
+        guard let prankLink = prankLink,
               let prankName = prankName,
               let coverImageURL = coverImageURL else { return }
         

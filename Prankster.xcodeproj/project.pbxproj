@@ -52,7 +52,7 @@
 		BDB9045B2D4F1468009AA387 /* Switch.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB9045A2D4F1468009AA387 /* Switch.swift */; };
 		BDB9045D2D4F1516009AA387 /* VideoDownloaderBottom.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB9045C2D4F1516009AA387 /* VideoDownloaderBottom.swift */; };
 		BDB9045F2D4F1A23009AA387 /* VideoCompress.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB9045E2D4F1A23009AA387 /* VideoCompress.swift */; };
-		BDBDE1CA2D56EF86005E59BC /* Premium+VC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBDE1C92D56EF86005E59BC /* Premium+VC.swift */; };
+		BDBDE1CA2D56EF86005E59BC /* PremiumVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDBDE1C92D56EF86005E59BC /* PremiumVC.swift */; };
 		BDC106EC2D5BE88700C74727 /* DownloaderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC106EB2D5BE88700C74727 /* DownloaderVC.swift */; };
 		BDC106FB2D5BEC1B00C74727 /* ShareExtensionShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BDC106F12D5BEC1B00C74727 /* ShareExtensionShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BDC107052D5BEC2200C74727 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC107032D5BEC2200C74727 /* ShareViewController.swift */; };
@@ -233,7 +233,7 @@
 		BDB9045A2D4F1468009AA387 /* Switch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Switch.swift; sourceTree = "<group>"; };
 		BDB9045C2D4F1516009AA387 /* VideoDownloaderBottom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDownloaderBottom.swift; sourceTree = "<group>"; };
 		BDB9045E2D4F1A23009AA387 /* VideoCompress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCompress.swift; sourceTree = "<group>"; };
-		BDBDE1C92D56EF86005E59BC /* Premium+VC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Premium+VC.swift"; sourceTree = "<group>"; };
+		BDBDE1C92D56EF86005E59BC /* PremiumVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumVC.swift; sourceTree = "<group>"; };
 		BDC106EB2D5BE88700C74727 /* DownloaderVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloaderVC.swift; sourceTree = "<group>"; };
 		BDC106F12D5BEC1B00C74727 /* ShareExtensionShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShareExtensionShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BDC107002D5BEC2200C74727 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -415,7 +415,7 @@
 			isa = PBXGroup;
 			children = (
 				BDC68B602D0931F800834D9B /* PremiumPopupVC.swift */,
-				BDBDE1C92D56EF86005E59BC /* Premium+VC.swift */,
+				BDBDE1C92D56EF86005E59BC /* PremiumVC.swift */,
 			);
 			path = Premium;
 			sourceTree = "<group>";
@@ -1254,7 +1254,7 @@
 				BDDFC27A2D48912800C2A707 /* SocialAPI.swift in Sources */,
 				BDC68B732D0931F900834D9B /* HomeVC.swift in Sources */,
 				BDC68B762D0931F900834D9B /* ImageCell.swift in Sources */,
-				BDBDE1CA2D56EF86005E59BC /* Premium+VC.swift in Sources */,
+				BDBDE1CA2D56EF86005E59BC /* PremiumVC.swift in Sources */,
 				BDC68B792D0931F900834D9B /* AudioPrankVC.swift in Sources */,
 				BD7663842D432905007ADD37 /* NativeSmallIpadAdUtility.swift in Sources */,
 				BDC68B7D2D0931F900834D9B /* CoverPrankVC.swift in Sources */,

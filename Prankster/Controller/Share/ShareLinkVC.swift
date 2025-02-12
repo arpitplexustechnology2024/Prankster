@@ -267,7 +267,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     self.coverImageURL = self.viewModel.createPrankCoverImage
                     self.prankDataURL = self.viewModel.createPrankData
                     self.prankName = self.viewModel.createPrankName
-                    self.prankLink = self.viewModel.createPrankShareURL
+                    self.prankLink = self.viewModel.createPrankLink
                     self.prankShareURL = self.viewModel.createPrankShareURL
                     self.prankNameLabel.text = self.prankName
                     self.prankAudioImage = self.viewModel.createPrankImage
@@ -757,7 +757,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     }
     
     private func NavigateToShareSnapchat(sharePrank: String?) {
-        guard let prankLink = prankShareURL,
+        guard let prankLink = prankLink,
               let prankName = prankName,
               let coverImageURL = coverImageURL else { return }
         

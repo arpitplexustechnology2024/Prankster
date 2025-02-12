@@ -11,21 +11,21 @@ import Social
 import CoreServices
 
 class ShareViewController: UIViewController {
-
+    
     private let typeText = String(kUTTypeText)
     private let typeURL = String(kUTTypeURL)
     private let appURL = "ShareExtension://"
     private let groupName = "group.com.prank.memes.fun"
     private let urlDefaultName = "incomingURL"
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         guard let extensionItem = extensionContext?.inputItems.first as? NSExtensionItem,
-            let itemProvider = extensionItem.attachments?.first else {
-                self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
-                return
+              let itemProvider = extensionItem.attachments?.first else {
+            self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
+            return
         }
-
+        
         if itemProvider.hasItemConformingToTypeIdentifier(typeText) {
             handleIncomingText(itemProvider: itemProvider)
         } else if itemProvider.hasItemConformingToTypeIdentifier(typeURL) {
@@ -35,12 +35,12 @@ class ShareViewController: UIViewController {
             self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
         }
     }
-
+    
     private func handleIncomingText(itemProvider: NSItemProvider) {
         itemProvider.loadItem(forTypeIdentifier: typeText, options: nil) { (item, error) in
             if let error = error { print("Text-Error: \(error.localizedDescription)") }
-
-
+            
+            
             if let text = item as? String {
                 do {
                     let detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
@@ -57,33 +57,43 @@ class ShareViewController: UIViewController {
                     print("Do-Try Error: \(error.localizedDescription)")
                 }
             }
-
+            
             self.openMainApp()
         }
     }
-
+    
     private func handleIncomingURL(itemProvider: NSItemProvider) {
         itemProvider.loadItem(forTypeIdentifier: typeURL, options: nil) { (item, error) in
             if let error = error { print("URL-Error: \(error.localizedDescription)") }
-
+            
             if let url = item as? NSURL, let urlString = url.absoluteString {
                 self.saveURLString(urlString)
             }
-
+            
             self.openMainApp()
         }
     }
-
+    
     private func saveURLString(_ urlString: String) {
         UserDefaults(suiteName: self.groupName)?.set(urlString, forKey: self.urlDefaultName)
     }
-
+    
     private func openMainApp() {
-        self.extensionContext?.completeRequest(returningItems: nil, completionHandler: { _ in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             guard let url = URL(string: self.appURL) else { return }
-            _ = self.openURL(url)
-        })
+            var responder: UIResponder? = self
+            while responder != nil {
+                if let application = responder as? UIApplication {
+                    if application.canOpenURL(url) {
+                        application.open(url, options: [:], completionHandler: nil)
+                    }
+                    return
+                }
+                responder = responder?.next
+            }
+        }
     }
+    
     
     @objc private func openURL(_ url: URL) -> Bool {
         var responder: UIResponder? = self

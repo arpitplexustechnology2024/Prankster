@@ -315,7 +315,7 @@ class HomeVC: UIViewController, UIDocumentInteractionControllerDelegate, AppOpen
         if isDropdownVisible {
             hideDropdown()
         } else {
-            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "Premium_VC") as! Premium_VC
+            let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: "PremiumVC") as! PremiumVC
             vc.premiumBack = true
             self.navigationController?.pushViewController(vc, animated: true)
         }

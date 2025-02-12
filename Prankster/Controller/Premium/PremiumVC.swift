@@ -1,5 +1,5 @@
 //
-//  Premium+VC.swift
+//  PremiumVC.swift
 //  Prankster
 //
 //  Created by Arpit iOS Dev. on 07/02/25.
@@ -10,7 +10,7 @@ import StoreKit
 import SafariServices
 import Alamofire
 
-class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequestDelegate, UITextViewDelegate {
+class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsRequestDelegate, UITextViewDelegate {
     
     @IBOutlet weak var pranksterImageHeightConstraints: NSLayoutConstraint!
     @IBOutlet weak var upgradeButton: UIButton!
@@ -20,11 +20,13 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
     @IBOutlet weak var sliderView: UIView!
     private var collectionView: UICollectionView!
     private let images = ["Premium01", "Premium02", "Premium03", "Premium04"]
+    private let imagesIcon = ["PremiumIcon01", "PremiumIcon02", "PremiumIcon03", "PremiumIcon04"]
+    private let features = ["Access premium Prank Images, Audio & Videos", "Get ads-free", "Get ready \n funny pranks", "Unlimited spins"]
     private var itemSize: CGSize {
         if UIDevice.current.userInterfaceIdiom == .phone {
             return CGSize(width: 160, height: 100)
         } else {
-            return CGSize(width: 180, height: 125)
+            return CGSize(width: 180, height: 115)
         }
     }
     
@@ -73,7 +75,7 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
             weekStrikethrought.attributedText = attributedString
         }
     }
-
+    
     @IBOutlet weak var monthlyStrikethrought: UILabel! {
         didSet {
             let attributedString = NSAttributedString(
@@ -87,7 +89,7 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
             monthlyStrikethrought.attributedText = attributedString
         }
     }
-
+    
     @IBOutlet weak var yealyStrikethrounght: UILabel! {
         didSet {
             let attributedString = NSAttributedString(
@@ -599,7 +601,7 @@ class Premium_VC: UIViewController, SKPaymentTransactionObserver, SKProductsRequ
     }
 }
 
-extension Premium_VC {
+extension PremiumVC {
     
     private func setupUI() {
         self.premiumWeeklyView.layer.cornerRadius = 18
@@ -676,7 +678,7 @@ extension Premium_VC {
 }
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource
-extension Premium_VC: UICollectionViewDelegate, UICollectionViewDataSource {
+extension PremiumVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return Int.max
     }
@@ -685,16 +687,17 @@ extension Premium_VC: UICollectionViewDelegate, UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCell", for: indexPath) as! ImageCell
         let imageIndex = indexPath.item % images.count
         cell.imageView.image = UIImage(named: images[imageIndex])
+        cell.imageFeatursView.image = UIImage(named: imagesIcon[imageIndex])
+        cell.featursLabel.text = features[imageIndex]
         return cell
     }
     
-    // User scroll handling
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        displayLink?.isPaused = true  // Pause auto-scroll when user scrolls
+        displayLink?.isPaused = true
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        displayLink?.isPaused = false  // Resume auto-scroll after user stops scrolling
+        displayLink?.isPaused = false
     }
 }
 
@@ -707,6 +710,23 @@ class ImageCell: UICollectionViewCell {
         iv.clipsToBounds = true
         iv.layer.cornerRadius = 6
         return iv
+    }()
+    
+    let imageFeatursView: UIImageView = {
+        let iv = UIImageView()
+        iv.contentMode = .scaleAspectFit
+        iv.clipsToBounds = true
+        return iv
+    }()
+    
+    let featursLabel: UILabel = {
+        let lb = UILabel()
+        lb.numberOfLines = 0
+        lb.textAlignment = .center
+        lb.textColor = UIColor.white
+        lb.font = UIFont(name: "Avenir-Black", size: 13)
+        lb.clipsToBounds = true
+        return lb
     }()
     
     override init(frame: CGRect) {
@@ -726,6 +746,24 @@ class ImageCell: UICollectionViewCell {
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+        
+        imageView.addSubview(imageFeatursView)
+        imageFeatursView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            imageFeatursView.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 8),
+            imageFeatursView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            imageFeatursView.widthAnchor.constraint(equalToConstant: 50),
+            imageFeatursView.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        
+        imageView.addSubview(featursLabel)
+        featursLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            featursLabel.topAnchor.constraint(equalTo: imageFeatursView.bottomAnchor),
+            featursLabel.leadingAnchor.constraint(equalTo: imageView.leadingAnchor, constant: 2),
+            featursLabel.trailingAnchor.constraint(equalTo: imageView.trailingAnchor, constant: -2),
+            featursLabel.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -4)
         ])
     }
 }

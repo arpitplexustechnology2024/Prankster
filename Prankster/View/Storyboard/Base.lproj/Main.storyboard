@@ -5049,7 +5049,7 @@
         <!--PremiumVC-->
         <scene sceneID="B4D-5n-5jH">
             <objects>
-                <viewController storyboardIdentifier="Premium_VC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="AZM-uY-CIC" customClass="Premium_VC" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="PremiumVC" useStoryboardIdentifierAsRestorationIdentifier="YES" id="AZM-uY-CIC" customClass="PremiumVC" customModule="Prankster" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="uvy-Q6-O9r">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -5085,12 +5085,12 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="L2w-YQ-9Dt">
-                                        <rect key="frame" x="328" y="9.6666666666666732" width="66" height="30.666666666666671"/>
-                                        <state key="normal" title="Button"/>
-                                        <buttonConfiguration key="configuration" style="plain" title="Restore">
-                                            <fontDescription key="titleFontDescription" name="Avenir-Medium" family="Avenir" pointSize="12"/>
-                                            <color key="baseForegroundColor" red="0.36862745098039218" green="0.36862745098039218" blue="0.36862745098039218" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                        </buttonConfiguration>
+                                        <rect key="frame" x="330" y="8" width="56" height="34"/>
+                                        <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="16"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" title="Restore">
+                                            <color key="titleColor" red="0.36862745098039218" green="0.36862745098039218" blue="0.36862745098039218" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
                                         <connections>
                                             <action selector="btnRestoreTapped:" destination="AZM-uY-CIC" eventType="touchUpInside" id="hfq-5d-DRc"/>
                                         </connections>
@@ -5100,7 +5100,7 @@
                                 <constraints>
                                     <constraint firstItem="Q1R-lS-6LK" firstAttribute="centerY" secondItem="V5U-2K-T04" secondAttribute="centerY" id="GkP-wP-KFN"/>
                                     <constraint firstItem="L2w-YQ-9Dt" firstAttribute="centerY" secondItem="V5U-2K-T04" secondAttribute="centerY" id="IwR-c6-IaK"/>
-                                    <constraint firstAttribute="trailing" secondItem="L2w-YQ-9Dt" secondAttribute="trailing" constant="8" id="OO9-yk-4B3"/>
+                                    <constraint firstAttribute="trailing" secondItem="L2w-YQ-9Dt" secondAttribute="trailing" constant="16" id="OO9-yk-4B3"/>
                                     <constraint firstAttribute="height" constant="50" id="ZBd-PZ-RT9"/>
                                     <constraint firstItem="oCM-Nv-H23" firstAttribute="leading" secondItem="Q1R-lS-6LK" secondAttribute="trailing" constant="16" id="cQH-u5-9sK"/>
                                     <constraint firstItem="Q1R-lS-6LK" firstAttribute="leading" secondItem="V5U-2K-T04" secondAttribute="leading" constant="16" id="o6X-Dh-s2w"/>
