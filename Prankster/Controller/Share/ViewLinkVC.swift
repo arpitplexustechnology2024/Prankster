@@ -82,13 +82,6 @@ class ViewLinkVC: UIViewController {
                 } else {
                     nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
                 }
-                
-                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                    print("Reward Ad ID: \(rewardAdID)")
-                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-                } else {
-                    print("No Reward Ad ID found")
-                }
             } else {
                 nativeSmallAds.isHidden = true
             }
@@ -274,21 +267,23 @@ extension ViewLinkVC: UICollectionViewDelegate, UICollectionViewDataSource, UICo
             
             self.present(vc, animated: true)
         } else {
-            rewardAdUtility.showRewardedAd()
-            rewardAdUtility.onRewardEarned = { [weak self] in
-                let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
-                vc.coverImageURL = prank.coverImage
-                vc.prankName = prank.name
-                vc.prankDataURL = prank.file
-                vc.prankLink = prank.link
-                vc.prankShareURL = prank.shareURL
-                vc.prankType = prank.type
-                vc.prankImage = prank.image
-                vc.sharePrank = false
-                vc.modalTransitionStyle = .crossDissolve
-                vc.modalPresentationStyle = .overCurrentContext
-                
-                self?.present(vc, animated: true)
+            if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                rewardAdUtility.onRewardEarned = { [weak self] in
+                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
+                    vc.coverImageURL = prank.coverImage
+                    vc.prankName = prank.name
+                    vc.prankDataURL = prank.file
+                    vc.prankLink = prank.link
+                    vc.prankShareURL = prank.shareURL
+                    vc.prankType = prank.type
+                    vc.prankImage = prank.image
+                    vc.sharePrank = false
+                    vc.modalTransitionStyle = .crossDissolve
+                    vc.modalPresentationStyle = .overCurrentContext
+                    
+                    self?.present(vc, animated: true)
+                }
+                rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
             }
         }
     }

@@ -184,13 +184,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                         bottomConstraints.constant = 16
                     }
                 }
-                
-                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                    print("Reward Ad ID: \(rewardAdID)")
-                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-                } else {
-                    print("No Reward Ad ID found")
-                }
             }
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
@@ -667,9 +660,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareWhatsAppMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareWhatsAppMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareWhatsAppMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -681,9 +676,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareInstagramMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareInstagramMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareInstagramMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -695,9 +692,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Instagram")
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -709,9 +708,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Snapchat")
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -723,9 +724,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareTelegramMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareTelegramMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareTelegramMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -737,9 +740,11 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                 if shouldShareDirectly {
                     self.shareMoreMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareMoreMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareMoreMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -886,7 +891,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     print(success.message)
                     self.prankName = newName
                     self.prankNameLabel.text = newName
-
+                    
                     if var savedPranks = self.fetchSavedPrank() {
                         if let index = savedPranks.firstIndex(where: { $0.id == prankID }) {
                             savedPranks[index].name = newName

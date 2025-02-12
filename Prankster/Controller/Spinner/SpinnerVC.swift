@@ -137,7 +137,12 @@ class SpinnerVC: UIViewController {
                         self.proceedWithSpinning()
                     }
                 case .watchAd:
-                    self.rewardAdUtility.showRewardedAd()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.proceedWithSpinning()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
+                    }
                 case .waitingForReset:
                     self.showTimeCountBottomSheet()
                 }
@@ -168,14 +173,6 @@ class SpinnerVC: UIViewController {
                         bottomConstraints.constant = 16
                     }
                 }
-                
-                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                    print("Reward Ad ID: \(rewardAdID)")
-                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-                } else {
-                    print("No Reward Ad ID found")
-                }
-                
             }
         }
         
@@ -183,9 +180,6 @@ class SpinnerVC: UIViewController {
         wheelControl.configuration = .gradientColorsConfiguration(wheelSize: wheelSize)
         updateSpinLabel()
         startTimerLabelUpdate()
-        rewardAdUtility.onRewardEarned = { [weak self] in
-            self?.proceedWithSpinning()
-        }
         updateTimerLabel()
         
         let screenHeight = UIScreen.main.nativeBounds.height
@@ -557,21 +551,23 @@ extension SpinnerVC: UICollectionViewDelegate, UICollectionViewDataSource, UICol
                 
                 self.present(vc, animated: true)
             } else {
-                rewardAdUtility.showRewardedAd()
-                rewardAdUtility.onRewardEarned = { [weak self] in
-                    let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
-                    vc.coverImageURL = spinData.coverImage
-                    vc.prankName = spinData.name
-                    vc.prankDataURL = spinData.file
-                    vc.prankLink = spinData.link
-                    vc.prankShareURL = spinData.shareURL
-                    vc.prankType = spinData.type
-                    vc.prankImage = spinData.image
-                    vc.sharePrank = false
-                    vc.modalTransitionStyle = .crossDissolve
-                    vc.modalPresentationStyle = .overCurrentContext
-                    
-                    self?.present(vc, animated: true)
+                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                    rewardAdUtility.onRewardEarned = { [weak self] in
+                        let vc = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "SpinnerDataShowVC") as! SpinnerDataShowVC
+                        vc.coverImageURL = spinData.coverImage
+                        vc.prankName = spinData.name
+                        vc.prankDataURL = spinData.file
+                        vc.prankLink = spinData.link
+                        vc.prankShareURL = spinData.shareURL
+                        vc.prankType = spinData.type
+                        vc.prankImage = spinData.image
+                        vc.sharePrank = false
+                        vc.modalTransitionStyle = .crossDissolve
+                        vc.modalPresentationStyle = .overCurrentContext
+                        
+                        self?.present(vc, animated: true)
+                    }
+                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                 }
             }
         }

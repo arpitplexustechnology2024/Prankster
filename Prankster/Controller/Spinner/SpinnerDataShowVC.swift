@@ -71,22 +71,6 @@ class SpinnerDataShowVC: UIViewController {
         let playPauseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.togglePlayPause))
         self.playPauseImageView.isUserInteractionEnabled = true
         self.playPauseImageView.addGestureRecognizer(playPauseTapGesture)
-        
-        if sharePrank {
-            if isConnectedToInternet() {
-                if let rewardAdID = adsViewModel.getAdID(type: .reward) {
-                    print("Reward Ad ID: \(rewardAdID)")
-                    rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID, rootViewController: self)
-                } else {
-                    print("No Reward Ad ID found")
-                }
-            } else {
-                let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-                snackbar.show(in: self.view, duration: 3.0)
-            }
-        } else {
-            
-        }
     }
     
     let stackView: UIStackView = {
@@ -396,9 +380,11 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareWhatsAppMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareWhatsAppMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareWhatsAppMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -410,9 +396,11 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareInstagramMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareInstagramMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareInstagramMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -424,9 +412,11 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Instagram")
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.NavigateToShareSnapchat(sharePrank: "Instagram")
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -438,9 +428,11 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.NavigateToShareSnapchat(sharePrank: "Snapchat")
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.NavigateToShareSnapchat(sharePrank: "Snapchat")
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -452,9 +444,11 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareTelegramMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareTelegramMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareTelegramMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
@@ -466,9 +460,11 @@ class SpinnerDataShowVC: UIViewController {
                 if shouldShareDirectly {
                     self.shareMoreMessage()
                 } else {
-                    rewardAdUtility.showRewardedAd()
-                    rewardAdUtility.onRewardEarned = { [weak self] in
-                        self?.shareMoreMessage()
+                    if let rewardAdID = adsViewModel.getAdID(type: .reward) {
+                        rewardAdUtility.onRewardEarned = { [weak self] in
+                            self?.shareMoreMessage()
+                        }
+                        rewardAdUtility.loadRewardedAd(adUnitID: rewardAdID,rootViewController: self)
                     }
                 }
             } else {
