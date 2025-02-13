@@ -293,6 +293,7 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
                     interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             } else {
+                self.startLoading()
                 processDownload()
             }
         } else {

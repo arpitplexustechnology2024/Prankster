@@ -540,7 +540,7 @@ class VideoChipSelector: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add Video Prank 🎧", "Trending video", "Nonveg video", "Hot video", "Funny video", "Horror video", "Celebrity video"]
+        let titles = ["Add Video Prank 🎥", "Trending video", "Nonveg video", "Hot video", "Funny video", "Horror video", "Celebrity video"]
         
         fixedChip.setTitle(titles[0], for: .normal)
         fixedChip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)

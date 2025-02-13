@@ -160,18 +160,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         }
     }
     
-    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        let handled = ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+        print("==== Deep Link Testing ====")
+        print("Received URL: \(url)")
         
-        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-           let queryItems = components.queryItems,
-           let sourceID = queryItems.first(where: { $0.name == "source" })?.value {
+        var sourceID: String?
+        
+        // Handle different URL formats
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true) {
+            // Check for direct source parameter
+            if let directSource = components.queryItems?.first(where: { $0.name == "source" })?.value {
+                sourceID = directSource
+            }
+            // Check for referrer parameter
+            else if let referrer = components.queryItems?.first(where: { $0.name == "referrer" })?.value {
+                // Decode the referrer URL
+                if let decodedReferrer = referrer.removingPercentEncoding,
+                   let referrerComponents = URLComponents(string: decodedReferrer),
+                   let source = referrerComponents.queryItems?.first(where: { $0.name == "source" })?.value {
+                    sourceID = source
+                }
+            }
+        }
+        
+        if let sourceID = sourceID {
+            print("Found Source ID: \(sourceID)")
+            print("Saving to UserDefaults...")
             
             UserDefaults.standard.set(sourceID, forKey: "InstallSourceID")
-            print("Deeplink Source ID saved: \(sourceID)")
+            print("Source ID saved successfully")
             
-            // API call with deeplink source
+            // API call
+            print("Calling Install API...")
             sendInstallAPI(source: sourceID)
         }
         
@@ -188,6 +208,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
                 UserDefaults().set(parameter.value, forKey: "incomingURL")
             }
         }
+        
+        // Handle Facebook SDK
+        let handled = ApplicationDelegate.shared.application(
+            app,
+            open: url,
+            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+        )
         
         return handled
     }
