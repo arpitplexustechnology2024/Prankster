@@ -19,7 +19,7 @@ import AppsFlyerLib
 import Alamofire
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
     
     var window: UIWindow?
     private var hasCalledInstallAPI = false
@@ -44,15 +44,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // AppsFlyer
         AppsFlyerLib.shared().appsFlyerDevKey = "YwFmSnDNyUSqZNcNUJUi4H"
         AppsFlyerLib.shared().appleAppID = "6739135275"
+        AppsFlyerLib.shared().delegate = self
+        AppsFlyerLib.shared().isDebug = true
         NotificationCenter.default.addObserver(self, selector: NSSelectorFromString("sendLaunch"), name: UIApplication.didBecomeActiveNotification, object: nil)
         // function call
         checkNotificationAuthorization()
-        
-        // DeepLink Analytics
-        if !UserDefaults.standard.bool(forKey: "hasLaunched") {
-            checkInstallSource()
-            UserDefaults.standard.set(true, forKey: "hasLaunched")
-        }
         
         return true
     }
@@ -121,20 +117,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return .all
     }
     
-    private func checkInstallSource() {
+    func onConversionDataSuccess(_ data: [AnyHashable: Any]) {
+        print("AppsFlyer Conversion Data: \(data)")
+        
+        if let installType = data["af_status"] as? String {
+            if installType == "Non-organic" {
+                if let source = data["media_source"] as? String {
+                    print(" Non-organic :- \(source)")  // Non-organic source
+                }
+            } else {
+                sendInstallAPI(source: "organic")  // Organic install
+                print("organic")
+            }
+        }
+    }
+    
+    func onConversionDataFail(_ error: Error) {
+        print("AppsFlyer Conversion Data Failed: \(error.localizedDescription)")
+        sendInstallAPI(source: "organic") // Default to organic if no data
+    }
+    
+    private func sendInstallAPI(source: String) {
+        let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
+        
         guard !hasCalledInstallAPI else { return }
         
-        let installSource = UserDefaults.standard.string(forKey: "InstallSourceID") ?? "organic"
-        
-        let url = "https://pslink.world/api/analytics/install?source=\(installSource)"
-        AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { [weak self] response in
-            guard let self = self else { return }
-            
+        let url = "https://pslink.world/api/analytics/install?source=\(source)"
+        AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { response in
             switch response.result {
             case .success(let analyticsResponse):
                 print("Install API Success - Status: \(analyticsResponse.status)")
                 print("Install API Success - Message: \(analyticsResponse.message)")
-                self.hasCalledInstallAPI = true
+                UserDefaults.standard.set(true, forKey: "hasCalledInstallAPI")
                 
             case .failure(let error):
                 if let data = response.data {
@@ -146,6 +160,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
     
+    
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         let handled = ApplicationDelegate.shared.application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
         
@@ -155,17 +170,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
             UserDefaults.standard.set(sourceID, forKey: "InstallSourceID")
             print("Deeplink Source ID saved: \(sourceID)")
+            
+            // API call with deeplink source
+            sendInstallAPI(source: sourceID)
         }
         
         if let scheme = url.scheme, scheme.caseInsensitiveCompare("ShareExtension") == .orderedSame, let page = url.host {
-
+            
             var parameters: [String: String] = [:]
             URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.forEach {
                 parameters[$0.name] = $0.value
             }
-
+            
             print("redirect(to: \(page), with: \(parameters))")
-
+            
             for parameter in parameters where parameter.key.caseInsensitiveCompare("url") == .orderedSame {
                 UserDefaults().set(parameter.value, forKey: "incomingURL")
             }

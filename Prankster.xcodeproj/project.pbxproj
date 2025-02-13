@@ -99,7 +99,6 @@
 		BDC68B6E2D0931F900834D9B /* MoreAppCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B382D0931F800834D9B /* MoreAppCell.swift */; };
 		BDC68B6F2D0931F900834D9B /* CustomRecoderVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B4F2D0931F800834D9B /* CustomRecoderVC.swift */; };
 		BDC68B702D0931F900834D9B /* AudioVisualizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B4E2D0931F800834D9B /* AudioVisualizer.swift */; };
-		BDC68B712D0931F900834D9B /* NoInternetBottombarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B412D0931F800834D9B /* NoInternetBottombarView.swift */; };
 		BDC68B722D0931F900834D9B /* ShareLinkVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B642D0931F800834D9B /* ShareLinkVC.swift */; };
 		BDC68B732D0931F900834D9B /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B5E2D0931F800834D9B /* HomeVC.swift */; };
 		BDC68B762D0931F900834D9B /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B362D0931F800834D9B /* ImageCell.swift */; };
@@ -113,16 +112,13 @@
 		BDC68B8C2D0931F900834D9B /* NoInternetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B462D0931F800834D9B /* NoInternetView.swift */; };
 		BDC68B8D2D0931F900834D9B /* MoreAppVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B5F2D0931F800834D9B /* MoreAppVC.swift */; };
 		BDC68B8E2D0931F900834D9B /* CoverCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B352D0931F800834D9B /* CoverCell.swift */; };
-		BDC68B8F2D0931F900834D9B /* NoDataBottomBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B3F2D0931F800834D9B /* NoDataBottomBarView.swift */; };
 		BDC68B902D0931F900834D9B /* NoDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B442D0931F800834D9B /* NoDataView.swift */; };
 		BDC68B912D0931F900834D9B /* SpinnerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B682D0931F800834D9B /* SpinnerVC.swift */; };
 		BDC68B922D0931F900834D9B /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B482D0931F800834D9B /* ShareView.swift */; };
 		BDC68B952D0931F900834D9B /* ViewLinkCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDC68B3D2D0931F800834D9B /* ViewLinkCell.swift */; };
 		BDC68B972D0931F900834D9B /* NoInternetView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B472D0931F800834D9B /* NoInternetView.xib */; };
 		BDC68B982D0931F900834D9B /* NoDataView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B452D0931F800834D9B /* NoDataView.xib */; };
-		BDC68B992D0931F900834D9B /* NoInternetBottombarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B422D0931F800834D9B /* NoInternetBottombarView.xib */; };
 		BDC68B9A2D0931F900834D9B /* ShareView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B492D0931F800834D9B /* ShareView.xib */; };
-		BDC68B9B2D0931F900834D9B /* NoDataBottomBarView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B402D0931F800834D9B /* NoDataBottomBarView.xib */; };
 		BDC68B9C2D0931F900834D9B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B302D0931F800834D9B /* LaunchScreen.storyboard */; };
 		BDC68B9D2D0931F900834D9B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BDC68B2E2D0931F800834D9B /* Main.storyboard */; };
 		BDDF893D2D47FB5E00B59EC4 /* NativeMediumAdUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDF893C2D47FB5E00B59EC4 /* NativeMediumAdUtility.swift */; };
@@ -291,10 +287,6 @@
 		BDC68B382D0931F800834D9B /* MoreAppCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreAppCell.swift; sourceTree = "<group>"; };
 		BDC68B3A2D0931F800834D9B /* SpinnerCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinnerCell.swift; sourceTree = "<group>"; };
 		BDC68B3D2D0931F800834D9B /* ViewLinkCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewLinkCell.swift; sourceTree = "<group>"; };
-		BDC68B3F2D0931F800834D9B /* NoDataBottomBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoDataBottomBarView.swift; sourceTree = "<group>"; };
-		BDC68B402D0931F800834D9B /* NoDataBottomBarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoDataBottomBarView.xib; sourceTree = "<group>"; };
-		BDC68B412D0931F800834D9B /* NoInternetBottombarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetBottombarView.swift; sourceTree = "<group>"; };
-		BDC68B422D0931F800834D9B /* NoInternetBottombarView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoInternetBottombarView.xib; sourceTree = "<group>"; };
 		BDC68B442D0931F800834D9B /* NoDataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoDataView.swift; sourceTree = "<group>"; };
 		BDC68B452D0931F800834D9B /* NoDataView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NoDataView.xib; sourceTree = "<group>"; };
 		BDC68B462D0931F800834D9B /* NoInternetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInternetView.swift; sourceTree = "<group>"; };
@@ -465,6 +457,15 @@
 				BD7663802D4328D0007ADD37 /* Native + ipad */,
 			);
 			path = NativeSmallAds;
+			sourceTree = "<group>";
+		};
+		BDA0394C2D5D68FB0072F936 /* Direct Instagram */ = {
+			isa = PBXGroup;
+			children = (
+				BDC106EB2D5BE88700C74727 /* DownloaderVC.swift */,
+				BD1CDE112D5C2A9700790236 /* CoverBottomVC.swift */,
+			);
+			path = "Direct Instagram";
 			sourceTree = "<group>";
 		};
 		BDC107042D5BEC2200C74727 /* ShareExtensionShare */ = {
@@ -680,21 +681,9 @@
 			path = Cell;
 			sourceTree = "<group>";
 		};
-		BDC68B432D0931F800834D9B /* BottombarXIB */ = {
-			isa = PBXGroup;
-			children = (
-				BDC68B3F2D0931F800834D9B /* NoDataBottomBarView.swift */,
-				BDC68B402D0931F800834D9B /* NoDataBottomBarView.xib */,
-				BDC68B412D0931F800834D9B /* NoInternetBottombarView.swift */,
-				BDC68B422D0931F800834D9B /* NoInternetBottombarView.xib */,
-			);
-			path = BottombarXIB;
-			sourceTree = "<group>";
-		};
 		BDC68B4A2D0931F800834D9B /* XIB */ = {
 			isa = PBXGroup;
 			children = (
-				BDC68B432D0931F800834D9B /* BottombarXIB */,
 				BDC68B442D0931F800834D9B /* NoDataView.swift */,
 				BDC68B452D0931F800834D9B /* NoDataView.xib */,
 				BDAC12922D5A6BF700D5B310 /* RecentPrank.swift */,
@@ -774,8 +763,7 @@
 				BDC68B5C2D0931F800834D9B /* Video */,
 				BDC68B592D0931F800834D9B /* Image */,
 				BD6D3D392D1E17BD00EF045E /* Share */,
-				BDC106EB2D5BE88700C74727 /* DownloaderVC.swift */,
-				BD1CDE112D5C2A9700790236 /* CoverBottomVC.swift */,
+				BDA0394C2D5D68FB0072F936 /* Direct Instagram */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -954,7 +942,6 @@
 				BDB3398F2D0D2C1C001684D8 /* Insta1.gif in Resources */,
 				BDC68B982D0931F900834D9B /* NoDataView.xib in Resources */,
 				BDE586222D430C8E00CF3F71 /* NativeSmallIphoneAdView.xib in Resources */,
-				BDC68B992D0931F900834D9B /* NoInternetBottombarView.xib in Resources */,
 				BDB3397F2D0D070B001684D8 /* Insta2.gif in Resources */,
 				BDB339832D0D1A6F001684D8 /* Snap4.gif in Resources */,
 				BD6EF78F2D56A99E000A5E9E /* audio.mp4 in Resources */,
@@ -962,7 +949,6 @@
 				BD6EF7912D56A99E000A5E9E /* image.mp4 in Resources */,
 				BD6EF7922D56A99E000A5E9E /* video.mp4 in Resources */,
 				BDC68B9A2D0931F900834D9B /* ShareView.xib in Resources */,
-				BDC68B9B2D0931F900834D9B /* NoDataBottomBarView.xib in Resources */,
 				BDC68B9C2D0931F900834D9B /* LaunchScreen.storyboard in Resources */,
 				BD7663822D4328FE007ADD37 /* NativeSmallIpadAdView.xib in Resources */,
 				BDC68B9D2D0931F900834D9B /* Main.storyboard in Resources */,
@@ -1248,7 +1234,6 @@
 				BDC68B702D0931F900834D9B /* AudioVisualizer.swift in Sources */,
 				BDAC12972D5A8A2500D5B310 /* TimeCountVC.swift in Sources */,
 				BD1CDE122D5C2A9700790236 /* CoverBottomVC.swift in Sources */,
-				BDC68B712D0931F900834D9B /* NoInternetBottombarView.swift in Sources */,
 				BDC68B722D0931F900834D9B /* ShareLinkVC.swift in Sources */,
 				BD8C71552D49712900ED2575 /* TagViewModel.swift in Sources */,
 				BDDFC27A2D48912800C2A707 /* SocialAPI.swift in Sources */,
@@ -1276,7 +1261,6 @@
 				BDC68B8E2D0931F900834D9B /* CoverCell.swift in Sources */,
 				BDDFC2782D48806100C2A707 /* DownloadCell.swift in Sources */,
 				BD1D1C1B2D4B160F0078B6EC /* ImageCompress.swift in Sources */,
-				BDC68B8F2D0931F900834D9B /* NoDataBottomBarView.swift in Sources */,
 				BDC68B902D0931F900834D9B /* NoDataView.swift in Sources */,
 				BDC68B912D0931F900834D9B /* SpinnerVC.swift in Sources */,
 				BDC68B922D0931F900834D9B /* ShareView.swift in Sources */,

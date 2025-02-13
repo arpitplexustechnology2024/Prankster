@@ -22,6 +22,8 @@ class DownloaderVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var videoPlayerView: UIView!
     @IBOutlet weak var topView: UIView!
     
+    @IBOutlet weak var topViewHeightConstraints: NSLayoutConstraint!
+    
     @IBOutlet weak var downloadImageView: UIImageView!
     @IBOutlet weak var instaView: UIView!
     @IBOutlet weak var snapView: UIView!
@@ -97,6 +99,24 @@ class DownloaderVC: UIViewController, UITextFieldDelegate {
             name: UIApplication.didBecomeActiveNotification,
             object: nil
         )
+    }
+    
+    private func setupUIConstraints() {
+        let screenHeight = UIScreen.main.nativeBounds.height
+        if UIDevice.current.userInterfaceIdiom == .phone {
+            switch screenHeight {
+            case 1334, 1920, 1792:
+                self.topViewHeightConstraints.constant = 160
+            case 2532, 2556, 2436, 2622:
+                self.topViewHeightConstraints.constant = 200
+            case 2688, 2886, 2796, 2778, 2868, 2869:
+                self.topViewHeightConstraints.constant = 200
+            default:
+                self.topViewHeightConstraints.constant = 190
+            }
+        } else {
+            self.topViewHeightConstraints.constant = 200
+        }
     }
     
     
@@ -265,7 +285,7 @@ class DownloaderVC: UIViewController, UITextFieldDelegate {
             snackbar.show(in: self.view, duration: 3.0)
         }
     }
-
+    
     
     private func showError(_ message: String) {
         stopLoading()
