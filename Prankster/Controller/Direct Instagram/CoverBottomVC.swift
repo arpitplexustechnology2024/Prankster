@@ -17,16 +17,20 @@ class CoverBottomVC: UIViewController {
     private var noDataView: NoDataView!
     private var noInternetView: NoInternetView!
     private var skeletonLoadingView: SkeletonCoverLoadingView?
+    let interstitialAdUtility = InterstitialAdUtility()
+    private var adsViewModel: AdsViewModel!
     var DownloadURL: String?
     
-    init(viewModule: CoverViewModel) {
+    init(viewModule: CoverViewModel, adViewModule: AdsViewModel) {
         self.viewModel = viewModule
+        self.adsViewModel = adViewModule
         super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.viewModel = CoverViewModel(apiService: CoverAPIManger.shared)
+        self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     }
     
     override func viewDidLoad() {
@@ -225,24 +229,52 @@ extension CoverBottomVC: UICollectionViewDelegate, UICollectionViewDataSource, U
     }
     
     @objc private func handleDoneButtonTap(_ sender: UIButton) {
+        let isContentUnlocked = PremiumManager.shared.isContentUnlocked(itemID: -1)
+        let hasInternet = isConnectedToInternet()
+        let shouldOpenDirectly = (isContentUnlocked || adsViewModel.getAdID(type: .interstitial) == nil || !hasInternet)
+        
+        let index = sender.tag
+        let coverPageData = viewModel.emojiCoverPages[index]
+        print("URL :- \(coverPageData.coverName)")
+        
         if isConnectedToInternet() {
-            let index = sender.tag
-            let coverPageData = viewModel.emojiCoverPages[index]
-            print("URL :- \(coverPageData.coverName)")
-            
-            self.dismiss(animated: true) { [self] in
-                if let window = UIApplication.shared.windows.first {
-                    if let rootViewController = window.rootViewController as? UINavigationController {
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        let shareLinkVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
-                        shareLinkVC.selectedURL = self.DownloadURL
-                        shareLinkVC.selectedName = coverPageData.coverName
-                        shareLinkVC.selectedCoverURL = coverPageData.coverURL
-                        shareLinkVC.selectedPranktype = "video"
-                        shareLinkVC.selectedFileType = "mp4"
-                        shareLinkVC.sharePrank = true
-                        rootViewController.pushViewController(shareLinkVC, animated: true)
+            if shouldOpenDirectly {
+                
+                self.dismiss(animated: true) { [self] in
+                    if let window = UIApplication.shared.windows.first {
+                        if let rootViewController = window.rootViewController as? UINavigationController {
+                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                            let shareLinkVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
+                            shareLinkVC.selectedURL = self.DownloadURL
+                            shareLinkVC.selectedName = coverPageData.coverName
+                            shareLinkVC.selectedCoverURL = coverPageData.coverURL
+                            shareLinkVC.selectedPranktype = "video"
+                            shareLinkVC.selectedFileType = "mp4"
+                            shareLinkVC.sharePrank = true
+                            rootViewController.pushViewController(shareLinkVC, animated: true)
+                        }
                     }
+                }
+            } else {
+                if let interstitialAdID = adsViewModel.getAdID(type: .interstitial) {
+                    interstitialAdUtility.onInterstitialEarned = { [weak self] in
+                        self?.dismiss(animated: true) { [self] in
+                            if let window = UIApplication.shared.windows.first {
+                                if let rootViewController = window.rootViewController as? UINavigationController {
+                                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                                    let shareLinkVC = storyboard.instantiateViewController(withIdentifier: "ShareLinkVC") as! ShareLinkVC
+                                    shareLinkVC.selectedURL = self?.DownloadURL
+                                    shareLinkVC.selectedName = coverPageData.coverName
+                                    shareLinkVC.selectedCoverURL = coverPageData.coverURL
+                                    shareLinkVC.selectedPranktype = "video"
+                                    shareLinkVC.selectedFileType = "mp4"
+                                    shareLinkVC.sharePrank = true
+                                    rootViewController.pushViewController(shareLinkVC, animated: true)
+                                }
+                            }
+                        }
+                    }
+                    interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             }
         } else {

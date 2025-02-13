@@ -39,6 +39,13 @@ class SpinnerVC: UIViewController {
     @IBOutlet weak var spinnerCountLabel: UILabel!
     @IBOutlet weak var bottomConstraints: NSLayoutConstraint!
     @IBOutlet weak var showDataHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var gitBottomConstraints: NSLayoutConstraint!
+    
+    
+    @IBOutlet var giftImage: [UIImageView]!
+    @IBOutlet weak var giftView: UIView!
+    @IBOutlet var widthConstarints: [NSLayoutConstraint]!
+    
     
     @IBOutlet weak var wheelControl: SwiftFortuneWheel! {
         didSet {
@@ -63,7 +70,11 @@ class SpinnerVC: UIViewController {
     var prizes: [Spinner] = []
     var finalValue: String = ""
     private let spinKey = "remainingSpins"
-    var spinnerResponseData: [SpinnerData] = []
+    var spinnerResponseData: [SpinnerData] = [] {
+        didSet {
+            updateGiftViewVisibility()
+        }
+    }
     private var spinViewModel: SpinnerViewModel!
     private let timerKey = "nextSpinAvailableTime"
     private let rewardAdUtility = RewardAdUtility()
@@ -107,6 +118,14 @@ class SpinnerVC: UIViewController {
         self.adsViewModel = AdsViewModel(apiService: AdsAPIManger.shared)
     }
     
+    // MARK: - Private Methods
+    private func updateGiftViewVisibility() {
+        DispatchQueue.main.async {
+            self.giftView.isHidden = !self.spinnerResponseData.isEmpty
+            self.collectionview.reloadData()
+        }
+    }
+    
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,6 +136,12 @@ class SpinnerVC: UIViewController {
         
         self.collectionview.delegate = self
         self.collectionview.dataSource = self
+        
+        for gift in giftImage {
+            gift.layer.cornerRadius = 10
+        }
+        
+        updateGiftViewVisibility()
         
         prizes = [
             Spinner(image: "Audio1", value: "1"),
@@ -154,7 +179,7 @@ class SpinnerVC: UIViewController {
                 case .waitingForReset:
                     self.showTimeCountBottomSheet()
                 }
-                    
+                
             } else {
                 let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
                 snackbar.show(in: self.view, duration: 3.0)
@@ -163,13 +188,16 @@ class SpinnerVC: UIViewController {
         
         if UIDevice.current.userInterfaceIdiom == .pad {
             bottomConstraints.constant = 100
+            gitBottomConstraints.constant = 100
         } else {
             bottomConstraints.constant = 75
+            gitBottomConstraints.constant = 75
         }
         
         if isConnectedToInternet() {
             if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                 bottomConstraints.constant = 16
+                gitBottomConstraints.constant = 16
             } else {
                 if let bannerAdID = adsViewModel.getAdID(type: .banner) {
                     print("Banner Ad ID: \(bannerAdID)")
@@ -178,8 +206,10 @@ class SpinnerVC: UIViewController {
                     print("No Banner Ad ID found")
                     if UIDevice.current.userInterfaceIdiom == .pad {
                         bottomConstraints.constant = 16
+                        gitBottomConstraints.constant = 16
                     } else {
                         bottomConstraints.constant = 16
+                        gitBottomConstraints.constant = 16
                     }
                 }
             }
@@ -199,6 +229,9 @@ class SpinnerVC: UIViewController {
             spinsecoundLabelHeightConstraints.constant = 40
             spinerDesginHeightConstraints.constant = -40
             showDataHeightConstraints.constant = 130
+            for constranits in widthConstarints {
+                constranits.constant = 80
+            }
             switch screenHeight {
             case 1334:
                 topHeightConstraints.constant = 25
@@ -238,6 +271,9 @@ class SpinnerVC: UIViewController {
                 spinnerGeightConstraints.constant = 300
             }
         } else {
+            for constranits in widthConstarints {
+                constranits.constant = 110
+            }
             spinnerCountLabel.font = UIFont(name: "Avenir-Heavy", size: 30)
             topHeightConstraints.constant = 160
             spinsecoundLabelHeightConstraints.constant = 60
@@ -284,6 +320,7 @@ class SpinnerVC: UIViewController {
                 vc.prankShareURL = response.data.shareURL
                 vc.prankType = response.data.type
                 vc.prankImage = response.data.image
+                vc.isFirstSpin = self?.remainingSpins == 3
                 vc.sharePrank = true
                 vc.modalTransitionStyle = .crossDissolve
                 vc.modalPresentationStyle = .overCurrentContext
@@ -311,13 +348,14 @@ class SpinnerVC: UIViewController {
                 spinnerResponseData = decodedData
             }
         }
+        updateGiftViewVisibility()
     }
     
     // MARK: - Spinner Data Management
     func updateSpinnerData(with response: SpinnerData) {
         spinnerResponseData.insert(response, at: 0)
         saveSpinnerData()
-        collectionview.reloadData()
+        updateGiftViewVisibility()
     }
     
     // MARK: - Wheel Methods
@@ -368,11 +406,6 @@ class SpinnerVC: UIViewController {
                         snackbar.show(in: self?.view ?? UIView(), duration: 3.0)
                     }
                     self?.updateSpinLabel()
-                    
-                    // બીજો સ્પિન પૂરો થયા પછી રેટ અસ બતાવવા માટે
-                    if self?.remainingSpins == 2 {
-                        self?.rateUs()
-                    }
                 }
             }
         }
@@ -465,7 +498,7 @@ class SpinnerVC: UIViewController {
         if remainingTime <= 0 {
             UserDefaults.standard.removeObject(forKey: "savedSpinnerData")
             spinnerResponseData.removeAll()
-            collectionview.reloadData()
+            updateGiftViewVisibility()
             
             remainingSpins = 4
             currentSpinButtonState = .spin
@@ -502,16 +535,6 @@ class SpinnerVC: UIViewController {
         guard !isSpinning else { return }
         if gesture.state == .recognized {
             self.navigationController?.popViewController(animated: true)
-        }
-    }
-    
-    func rateUs() {
-        if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
-            DispatchQueue.main.async {
-                SKStoreReviewController.requestReview(in: scene)
-            }
-        } else {
-            print(" - - - - - - Rating view in not present - - - -")
         }
     }
 }

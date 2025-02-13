@@ -256,7 +256,7 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
                     self.prankNameLabel.isHidden = false
                     self.scrollViewView.isHidden = false
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         self.rateUs()
                     }
                     

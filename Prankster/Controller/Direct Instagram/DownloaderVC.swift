@@ -23,6 +23,12 @@ class DownloaderVC: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var topView: UIView!
     
     @IBOutlet weak var topViewHeightConstraints: NSLayoutConstraint!
+    @IBOutlet weak var previewBottomConstranits: NSLayoutConstraint!
+    @IBOutlet weak var doneButtonBottomContrsints: NSLayoutConstraint!
+    @IBOutlet weak var previewTopConstranits: NSLayoutConstraint!
+    
+    @IBOutlet weak var imageTopConstranits: NSLayoutConstraint!
+    @IBOutlet weak var imageBottomContstranits: NSLayoutConstraint!
     
     @IBOutlet weak var downloadImageView: UIImageView!
     @IBOutlet weak var instaView: UIView!
@@ -139,34 +145,74 @@ class DownloaderVC: UIViewController, UITextFieldDelegate {
             if isConnectedToInternet() {
                 if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                     nativeSmallAds.isHidden = true
+                    self.previewTopConstranits.constant = 92
+                    self.imageTopConstranits.constant = 92
+                    self.doneButtonBottomContrsints.constant = 117
+                    self.previewBottomConstranits.constant = 100
+                    self.imageBottomContstranits.constant = 100
                 } else {
                     if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
                         print("Native Ad ID: \(nativeAdID)")
                         nativeSmallIpadAdUtility = NativeSmallIpadAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                        self.previewTopConstranits.constant = 32
+                        self.imageTopConstranits.constant = 32
+                        self.doneButtonBottomContrsints.constant = 177
+                        self.previewBottomConstranits.constant = 160
+                        self.imageBottomContstranits.constant = 160
                     } else {
                         print("No Native Ad ID found")
                         nativeSmallAds.isHidden = true
+                        self.previewTopConstranits.constant = 92
+                        self.imageTopConstranits.constant = 92
+                        self.doneButtonBottomContrsints.constant = 117
+                        self.previewBottomConstranits.constant = 100
+                        self.imageBottomContstranits.constant = 100
                     }
                 }
             } else {
                 nativeSmallAds.isHidden = true
+                self.previewTopConstranits.constant = 92
+                self.imageTopConstranits.constant = 92
+                self.doneButtonBottomContrsints.constant = 117
+                self.previewBottomConstranits.constant = 100
+                self.imageBottomContstranits.constant = 100
             }
         } else {
             self.adHeightConstaints.constant = 120
             if isConnectedToInternet() {
                 if PremiumManager.shared.isContentUnlocked(itemID: -1) {
                     nativeSmallAds.isHidden = true
+                    self.previewTopConstranits.constant = 92
+                    self.imageTopConstranits.constant = 92
+                    self.doneButtonBottomContrsints.constant = 117
+                    self.previewBottomConstranits.constant = 100
+                    self.imageBottomContstranits.constant = 100
                 } else {
                     if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
                         print("Native Ad ID: \(nativeAdID)")
                         nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                        self.previewTopConstranits.constant = 32
+                        self.imageTopConstranits.constant = 32
+                        self.doneButtonBottomContrsints.constant = 177
+                        self.previewBottomConstranits.constant = 160
+                        self.imageBottomContstranits.constant = 160
                     } else {
                         print("No Native Ad ID found")
                         nativeSmallAds.isHidden = true
+                        self.previewTopConstranits.constant = 92
+                        self.imageTopConstranits.constant = 92
+                        self.doneButtonBottomContrsints.constant = 117
+                        self.previewBottomConstranits.constant = 100
+                        self.imageBottomContstranits.constant = 100
                     }
                 }
             } else {
                 nativeSmallAds.isHidden = true
+                self.previewTopConstranits.constant = 92
+                self.imageTopConstranits.constant = 92
+                self.doneButtonBottomContrsints.constant = 117
+                self.previewBottomConstranits.constant = 100
+                self.imageBottomContstranits.constant = 100
             }
         }
     }
@@ -309,7 +355,8 @@ class DownloaderVC: UIViewController, UITextFieldDelegate {
                     interstitialAdUtility.loadAndShowAd(adUnitID: interstitialAdID, rootViewController: self)
                 }
             } else {
-                processDownload()
+                self.startLoading()
+                self.processDownload()
             }
         } else {
             self.stopLoading()

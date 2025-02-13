@@ -9,6 +9,7 @@ import UIKit
 import Alamofire
 import AVFAudio
 import AVFoundation
+import StoreKit
 
 class SpinnerDataShowVC: UIViewController {
     
@@ -18,7 +19,7 @@ class SpinnerDataShowVC: UIViewController {
     @IBOutlet weak var playPauseImageView: UIImageView!
     
     @IBOutlet weak var cancelButton: UIButton!
-    
+    var isFirstSpin: Bool = false  // Add this property in SpinnerDataShowVC
     var sharePrank: Bool = false
     var coverImageURL: String?
     var prankDataURL: String?
@@ -145,6 +146,13 @@ class SpinnerDataShowVC: UIViewController {
     
     @objc private func handleViewTap() {
         if !isLoading {
+            if isFirstSpin {
+                if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                    DispatchQueue.main.async {
+                        SKStoreReviewController.requestReview(in: scene)
+                    }
+                }
+            }
             self.dismiss(animated: true)
         }
     }
@@ -308,6 +316,13 @@ class SpinnerDataShowVC: UIViewController {
     }
     
     @IBAction func btnCancelTapped(_ sender: UIButton) {
+        if isFirstSpin {
+            if let scene = UIApplication.shared.connectedScenes.first(where: { $0.activationState == .foregroundActive }) as? UIWindowScene {
+                DispatchQueue.main.async {
+                    SKStoreReviewController.requestReview(in: scene)
+                }
+            }
+        }
         self.dismiss(animated: true)
     }
     
