@@ -24,9 +24,9 @@ class PremiumVC: UIViewController, SKPaymentTransactionObserver, SKProductsReque
     private let features = ["Access premium Prank Images, Audio & Videos", "Get ads-free", "Get ready \n funny pranks", "Unlimited spins"]
     private var itemSize: CGSize {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            return CGSize(width: 160, height: 100)
+            return CGSize(width: 150, height: 110)
         } else {
-            return CGSize(width: 180, height: 115)
+            return CGSize(width: 150, height: 120)
         }
     }
     
@@ -625,7 +625,7 @@ extension PremiumVC {
             doneImageConstraints.forEach { $0.constant = 20 }
             labelLeftConstraints.forEach { $0.constant = 42 }
             scrollViewHeightConstraints.constant = 258
-            sliderHeightConstarints.constant = 100
+            sliderHeightConstarints.constant = 110
             self.bestOfferLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
             self.topRatedLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
             self.populareLabel.font = UIFont(name: "Avenir-Heavy", size: 17)
@@ -657,7 +657,7 @@ extension PremiumVC {
             labelLeftConstraints.forEach { $0.constant = 52 }
             self.pranksterImageHeightConstraints.constant = 350
             scrollViewHeightConstraints.constant = 358
-            sliderHeightConstarints.constant = 125
+            sliderHeightConstarints.constant = 110
             self.bestOfferLabel.font = UIFont(name: "Avenir-Heavy", size: 23)
             self.topRatedLabel.font = UIFont(name: "Avenir-Heavy", size: 23)
             self.populareLabel.font = UIFont(name: "Avenir-Heavy", size: 23)
@@ -724,7 +724,7 @@ class ImageCell: UICollectionViewCell {
         lb.numberOfLines = 0
         lb.textAlignment = .center
         lb.textColor = UIColor.white
-        lb.font = UIFont(name: "Avenir-Black", size: 13)
+        lb.font = UIFont(name: "Avenir-Black", size: 12)
         lb.clipsToBounds = true
         return lb
     }()
@@ -753,8 +753,8 @@ class ImageCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             imageFeatursView.topAnchor.constraint(equalTo: imageView.topAnchor, constant: 8),
             imageFeatursView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            imageFeatursView.widthAnchor.constraint(equalToConstant: 50),
-            imageFeatursView.heightAnchor.constraint(equalToConstant: 50)
+            imageFeatursView.widthAnchor.constraint(equalToConstant: 55),
+            imageFeatursView.heightAnchor.constraint(equalToConstant: 55)
         ])
         
         imageView.addSubview(featursLabel)
