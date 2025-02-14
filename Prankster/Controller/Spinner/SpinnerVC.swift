@@ -352,6 +352,8 @@ class SpinnerVC: UIViewController {
         
         spinViewModel.onError = { error in
             print("Error :- \(error)")
+            let snackbar = CustomSnackbar(message: "please try again after sometime!", backgroundColor: .snackbar)
+            snackbar.show(in: self.view, duration: 3.0)
         }
     }
     
