@@ -35,6 +35,12 @@ class LaunchVC: UIViewController {
         self.setupUI()
         self.trackAppInstall()
         self.loadAds()
+        
+        let deeplink = UserDefaults.standard.string(forKey: "Univarsal_URL")
+        print("DeepLink :- \(String(describing: deeplink))")
+        let alert = UIAlertController(title: "Alert", message: "\(deeplink ?? "Not Fetch") + Ok", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Click", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
     }
     
     private func checkNavigationFlow() {
@@ -66,6 +72,7 @@ class LaunchVC: UIViewController {
             }
         }
     }
+    
     
     private func trackAppInstall() {
         let defaults = UserDefaults.standard

@@ -30,6 +30,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
+    //SceneDelegate
+    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+        // This will allow us to check if we are coming from a universal link
+        // and get the url with its components
+        
+        // The activity type (NSUserActivityTypeBrowsingWeb) is used
+        // when continuing from a web browsing session to either
+        // a web browser or a native app. Only activities of this
+        // type can be continued from a web browser to a native app.
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+              let url = userActivity.webpageURL,
+              let components = URLComponents(url: url,
+                                             resolvingAgainstBaseURL: true) else {
+            return
+        }
+        
+        // Now that we have the url and its components,
+        // we can use this information to present
+        // appropriate content in the app
+    }
+    
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else {
             return

@@ -79,10 +79,6 @@
             argument = "-FIRDebugEnabled"
             isEnabled = "YES">
          </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-URLToOpen https://apps.apple.com/us/app/prankster-digital-funny-pranks/id6739135275?source=f13fb1ba03"
-            isEnabled = "YES">
-         </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
    <ProfileAction

@@ -126,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
                     print(" Non-organic :- \(source)")  // Non-organic source
                 }
             } else {
-                sendInstallAPI(source: "organic")  // Organic install
+                // sendInstallAPI(source: "organic")  // Organic install
                 print("organic")
             }
         }
@@ -138,9 +138,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
     }
     
     private func sendInstallAPI(source: String) {
-        let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
+        //     let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
         
-        guard !hasCalledInstallAPI else { return }
+        //  guard !hasCalledInstallAPI else { return }
         
         let url = "https://pslink.world/api/analytics/install?source=\(source)"
         AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { response in
@@ -161,40 +161,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        print("==== Deep Link Testing ====")
-        print("Received URL: \(url)")
-        
-        var sourceID: String?
-        
-        // Handle different URL formats
-        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true) {
-            // Check for direct source parameter
-            if let directSource = components.queryItems?.first(where: { $0.name == "source" })?.value {
-                sourceID = directSource
-            }
-            // Check for referrer parameter
-            else if let referrer = components.queryItems?.first(where: { $0.name == "referrer" })?.value {
-                // Decode the referrer URL
-                if let decodedReferrer = referrer.removingPercentEncoding,
-                   let referrerComponents = URLComponents(string: decodedReferrer),
-                   let source = referrerComponents.queryItems?.first(where: { $0.name == "source" })?.value {
-                    sourceID = source
-                }
-            }
-        }
-        
-        if let sourceID = sourceID {
-            print("Found Source ID: \(sourceID)")
-            print("Saving to UserDefaults...")
-            
-            UserDefaults.standard.set(sourceID, forKey: "InstallSourceID")
-            print("Source ID saved successfully")
-            
-            // API call
-            print("Calling Install API...")
-            sendInstallAPI(source: sourceID)
-        }
-        
         if let scheme = url.scheme, scheme.caseInsensitiveCompare("ShareExtension") == .orderedSame, let page = url.host {
             
             var parameters: [String: String] = [:]
@@ -219,6 +185,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         
         return handled
     }
+    
+//    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+//        print("Opend")
+//        guard let url = userActivity.webpageURL else {
+//            return false
+//        }
+//        
+//        print("Opened from Universal Link: \(url.absoluteString)")
+//        UserDefaults().set(url.absoluteString, forKey: "Univarsal_URL")
+//        
+////        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+////           let queryItems = components.queryItems {
+////            for item in queryItems {
+////                if item.name == "source" {
+////                    let sourceID = item.value ?? ""
+////                    print("Extracted Source ID: \(sourceID)")
+////                    sendInstallAPI(source: sourceID)
+////                    UserDefaults().set(sourceID, forKey: "Univarsal_URL")
+////                }
+////            }
+////        }
+//        return true
+//    }
+    
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        print("Opend")
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+           let url = userActivity.webpageURL {
+            print("Opened with Universal Link: \(url.absoluteString)")
+            UserDefaults().set(url.absoluteString, forKey: "Univarsal_URL")
+            return true
+        }
+        return false
+    }
+    
     
     // MARK: UISceneSession Lifecycle
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
