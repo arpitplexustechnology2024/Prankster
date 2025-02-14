@@ -644,6 +644,10 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
     // MARK: - viewTapped
     @objc func viewTapped(_ gesture: UITapGestureRecognizer) {
         guard let tappedView = gesture.view else { return }
+        self.audioPlayer?.pause()
+        self.videoPlayer?.pause()
+        playPauseImageView.image = UIImage(named: "PlayButton")
+        playPauseImageView.isHidden = false
         
         let shouldShareDirectly = PremiumManager.shared.isContentUnlocked(itemID: -1) ||
         adsViewModel.getAdID(type: .reward) == nil || sharePrank == false

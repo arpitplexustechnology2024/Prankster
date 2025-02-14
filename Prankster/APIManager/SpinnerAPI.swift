@@ -17,10 +17,10 @@ protocol SpinnerAPIProtocol {
 // MARK: - SpinService
 class SpinnerAPIManger: SpinnerAPIProtocol {
     func postSpin(typeId: String, completion: @escaping (Result<SpinnerResponse, Error>) -> Void) {
-        let url = "https://pslink.world/api/spin"
+        let url = "https://pslink.world/api/spin/changes"
         
         let parameters: [String: String] = [
-            "TypeId": typeId,
+            "prankid": typeId,
         ]
         
         AF.request(url, method: .post, parameters: parameters, encoding: URLEncoding.default)
