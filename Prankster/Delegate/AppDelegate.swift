@@ -126,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
                     print(" Non-organic :- \(source)")  // Non-organic source
                 }
             } else {
-                // sendInstallAPI(source: "organic")  // Organic install
+                sendInstallAPI(source: "organic")  // Organic install
                 print("organic")
             }
         }
@@ -138,9 +138,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
     }
     
     private func sendInstallAPI(source: String) {
-        //     let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
+        let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
         
-        //  guard !hasCalledInstallAPI else { return }
+        guard !hasCalledInstallAPI else { return }
         
         let url = "https://pslink.world/api/analytics/install?source=\(source)"
         AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { response in
@@ -186,35 +186,34 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         return handled
     }
     
-//    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-//        print("Opend")
-//        guard let url = userActivity.webpageURL else {
-//            return false
-//        }
-//        
-//        print("Opened from Universal Link: \(url.absoluteString)")
-//        UserDefaults().set(url.absoluteString, forKey: "Univarsal_URL")
-//        
-////        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-////           let queryItems = components.queryItems {
-////            for item in queryItems {
-////                if item.name == "source" {
-////                    let sourceID = item.value ?? ""
-////                    print("Extracted Source ID: \(sourceID)")
-////                    sendInstallAPI(source: sourceID)
-////                    UserDefaults().set(sourceID, forKey: "Univarsal_URL")
-////                }
-////            }
-////        }
-//        return true
-//    }
+    //    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    //        print("Opend")
+    //        guard let url = userActivity.webpageURL else {
+    //            return false
+    //        }
+    //
+    //        print("Opened from Universal Link: \(url.absoluteString)")
+    //        UserDefaults().set(url.absoluteString, forKey: "Univarsal_URL")
+    //
+    ////        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+    ////           let queryItems = components.queryItems {
+    ////            for item in queryItems {
+    ////                if item.name == "source" {
+    ////                    let sourceID = item.value ?? ""
+    ////                    print("Extracted Source ID: \(sourceID)")
+    ////                    sendInstallAPI(source: sourceID)
+    ////                    UserDefaults().set(sourceID, forKey: "Univarsal_URL")
+    ////                }
+    ////            }
+    ////        }
+    //        return true
+    //    }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         print("Opend")
         if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
            let url = userActivity.webpageURL {
             print("Opened with Universal Link: \(url.absoluteString)")
-            UserDefaults().set(url.absoluteString, forKey: "Univarsal_URL")
             return true
         }
         return false
