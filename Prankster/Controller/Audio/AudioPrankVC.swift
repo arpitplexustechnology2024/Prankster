@@ -77,9 +77,7 @@ class AudioPrankVC: UIViewController {
     private let defaultImageURLs = [
         "https://pslink.world/api/public/images/audio1.png",
         "https://pslink.world/api/public/images/audio2.png",
-        "https://pslink.world/api/public/images/audio3.png",
-        "https://pslink.world/api/public/images/audio4.png",
-        "https://pslink.world/api/public/images/audio5.png"
+        "https://pslink.world/api/public/images/audio3.png"
     ]
     
     private var customAudios: [(url: URL, imageURL: String)] = [] {

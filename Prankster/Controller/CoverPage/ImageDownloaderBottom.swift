@@ -23,6 +23,9 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
     @IBOutlet weak var previewImageView: UIImageView!
     @IBOutlet weak var doneButton: UIButton!
     
+    
+    @IBOutlet weak var pageControllerBottomConstranits: NSLayoutConstraint!
+    
     var downloadedImageUrl: String?
     
     var imageDownloadedCallback: ((UIImage?, String?) -> Void)?
@@ -108,22 +111,29 @@ class ImageDownloaderBottom: UIViewController, UITextFieldDelegate {
                 nativeSmallAds.isHidden = true
             }
         } else {
-            self.adHeightConstaints.constant = 120
-            if isConnectedToInternet() {
-                if PremiumManager.shared.isContentUnlocked(itemID: -1) {
-                    nativeSmallAds.isHidden = true
-                } else {
-                    if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
-                        print("Native Ad ID: \(nativeAdID)")
-                        nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
-                    } else {
-                        print("No Native Ad ID found")
-                        nativeSmallAds.isHidden = true
-                    }
-                }
-            } else {
-                nativeSmallAds.isHidden = true
+            let screenHeight = UIScreen.main.nativeBounds.height
+            switch screenHeight {
+            case 1334, 1920, 1792, 2340:
+                self.pageControllerBottomConstranits.constant = 35
+            default:
+                self.pageControllerBottomConstranits.constant = 50
             }
+        }
+        self.adHeightConstaints.constant = 120
+        if isConnectedToInternet() {
+            if PremiumManager.shared.isContentUnlocked(itemID: -1) {
+                nativeSmallAds.isHidden = true
+            } else {
+                if let nativeAdID = adsViewModel.getAdID(type: .nativebig) {
+                    print("Native Ad ID: \(nativeAdID)")
+                    nativeSmallIphoneAdUtility = NativeSmallIphoneAdUtility(adUnitID: nativeAdID, rootViewController: self, nativeAdPlaceholder: nativeSmallAds)
+                } else {
+                    print("No Native Ad ID found")
+                    nativeSmallAds.isHidden = true
+                }
+            }
+        } else {
+            nativeSmallAds.isHidden = true
         }
         
         startAutoScrolling()

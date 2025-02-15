@@ -230,7 +230,6 @@ class CoverPrankVC: UIViewController {
             } else {
                 if self.isConnectedToInternet() {
                     self.isLoadingMore = false
-                    showSkeletonLoader()
                     self.checkInternetAndFetchData()
                     self.addcoverView.isHidden = true
                     self.searchBarView.isHidden = false
@@ -326,6 +325,7 @@ class CoverPrankVC: UIViewController {
     }
     
     func fetchAllCoverPages() {
+        showSkeletonLoader()
         guard !isLoadingMore else { return }
         isLoadingMore = true
         
@@ -346,6 +346,7 @@ class CoverPrankVC: UIViewController {
                         self.coverSlideCollectionview.reloadData()
                         
                         if !self.currentDataSource.isEmpty {
+                            self.hideSkeletonLoader()
                             let indexPath = IndexPath(item: self.selectedIndex, section: 0)
                             self.coverSlideCollectionview.selectItem(at: indexPath, animated: false, scrollPosition: [])
                         }

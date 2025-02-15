@@ -46,6 +46,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         AppsFlyerLib.shared().appleAppID = "6739135275"
         AppsFlyerLib.shared().delegate = self
         AppsFlyerLib.shared().isDebug = true
+        
+        // Wait for ATT authorization before starting AppsFlyer
+        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
+        
         NotificationCenter.default.addObserver(self, selector: NSSelectorFromString("sendLaunch"), name: UIApplication.didBecomeActiveNotification, object: nil)
         // function call
         checkNotificationAuthorization()
@@ -53,8 +57,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         return true
     }
     
+    // Updated AppsFlyer Launch Method
     @objc func sendLaunch() {
-        AppsFlyerLib.shared().start()
+        AppsFlyerLib.shared().start(completionHandler: { (dictionary, error) in
+            if let error = error {
+                print("AppsFlyer Start Error: \(error)")
+            } else {
+                print("AppsFlyer Start Success")
+                if let dict = dictionary {
+                    print("AppsFlyer Start Dictionary: \(dict)")
+                }
+            }
+        })
     }
     
     deinit {
@@ -117,27 +131,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         return .all
     }
     
+    //   MARK: - AppsFlyer Delegate Methods
     func onConversionDataSuccess(_ data: [AnyHashable: Any]) {
         print("AppsFlyer Conversion Data: \(data)")
         
         if let installType = data["af_status"] as? String {
-            if installType == "Non-organic" {
-                if let source = data["media_source"] as? String {
-                    print(" Non-organic :- \(source)")  // Non-organic source
-                }
+            if installType == "Organic" {
+                print("Organic installation")
+                sendInstallAPI(source: "organic")
             } else {
-                sendInstallAPI(source: "organic")  // Organic install
-                print("organic")
+                if let source = data["media_source"] as? String {
+                    print("Non-organic installation from source: \(source)")
+                }
             }
         }
     }
     
     func onConversionDataFail(_ error: Error) {
         print("AppsFlyer Conversion Data Failed: \(error.localizedDescription)")
-        sendInstallAPI(source: "organic") // Default to organic if no data
     }
     
-    private func sendInstallAPI(source: String) {
+    func sendInstallAPI(source: String) {
         let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
         
         guard !hasCalledInstallAPI else { return }
@@ -160,9 +174,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         }
     }
     
+    // MARK: - Deep Linking Methods
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        if let scheme = url.scheme, scheme.caseInsensitiveCompare("ShareExtension") == .orderedSame, let page = url.host {
-            
+        AppsFlyerLib.shared().handleOpen(
+            url,
+            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+            withAnnotation: options[UIApplication.OpenURLOptionsKey.annotation]
+        )
+        
+        ApplicationDelegate.shared.application(
+            app,
+            open: url,
+            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+        )
+        
+        if let scheme = url.scheme, scheme.caseInsensitiveCompare("ShareExtension") == .orderedSame,
+           let page = url.host {
             var parameters: [String: String] = [:]
             URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.forEach {
                 parameters[$0.name] = $0.value
@@ -171,52 +199,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
             print("redirect(to: \(page), with: \(parameters))")
             
             for parameter in parameters where parameter.key.caseInsensitiveCompare("url") == .orderedSame {
-                UserDefaults().set(parameter.value, forKey: "incomingURL")
+                UserDefaults.standard.set(parameter.value, forKey: "incomingURL")
             }
         }
         
-        // Handle Facebook SDK
-        let handled = ApplicationDelegate.shared.application(
-            app,
-            open: url,
-            sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-            annotation: options[UIApplication.OpenURLOptionsKey.annotation]
-        )
-        
-        return handled
+        return true
     }
     
-    //    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-    //        print("Opend")
-    //        guard let url = userActivity.webpageURL else {
-    //            return false
-    //        }
-    //
-    //        print("Opened from Universal Link: \(url.absoluteString)")
-    //        UserDefaults().set(url.absoluteString, forKey: "Univarsal_URL")
-    //
-    ////        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-    ////           let queryItems = components.queryItems {
-    ////            for item in queryItems {
-    ////                if item.name == "source" {
-    ////                    let sourceID = item.value ?? ""
-    ////                    print("Extracted Source ID: \(sourceID)")
-    ////                    sendInstallAPI(source: sourceID)
-    ////                    UserDefaults().set(sourceID, forKey: "Univarsal_URL")
-    ////                }
-    ////            }
-    ////        }
-    //        return true
-    //    }
-    
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        print("Opend")
-        if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-           let url = userActivity.webpageURL {
-            print("Opened with Universal Link: \(url.absoluteString)")
-            return true
+        if let url = userActivity.webpageURL {
+            print("🌍 Universal Link Opened: \(url.absoluteString)")
         }
-        return false
+        return true
     }
     
     

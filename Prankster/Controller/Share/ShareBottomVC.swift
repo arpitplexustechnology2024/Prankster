@@ -135,6 +135,8 @@ class ShareBottomVC: UIViewController {
         } else {
             loadGif(named: snapGIF[0])
         }
+        // Add this line to set initial button title
+        updateButtonTitle()
     }
     
     // MARK: - Action Methods
@@ -148,8 +150,22 @@ class ShareBottomVC: UIViewController {
         } else {
             loadGif(named: snapGIF[currentPage])
         }
+        
+        // Add this line to update button title
+        updateButtonTitle()
     }
     
+    // Add this function to update button title
+    private func updateButtonTitle() {
+        let maxPages = sharePrank == "Instagram" ? instaGIF.count : snapGIF.count
+        if currentPage == maxPages - 1 {
+            NextButton.setTitle("Share Link", for: .normal)
+        } else {
+            NextButton.setTitle("Next", for: .normal)
+        }
+    }
+
+    // Modify the btnNextTapped function
     @IBAction func btnNextTapped(_ sender: UIButton) {
         let maxPages = sharePrank == "Instagram" ? instaGIF.count : snapGIF.count
         
@@ -162,6 +178,9 @@ class ShareBottomVC: UIViewController {
             } else {
                 loadGif(named: snapGIF[currentPage])
             }
+            
+            // Update button title after changing page
+            updateButtonTitle()
         } else {
             if sharePrank == "Instagram" {
                 shareInstagramStory()
@@ -248,7 +267,7 @@ class ShareBottomVC: UIViewController {
                         }
                         
                         self.activityIndicator.stopAnimating()
-                        self.NextButton.setTitle("Next", for: .normal)
+                        self.NextButton.setTitle("Share Link", for: .normal)
                         self.NextButton.isEnabled = true
                     }
                 } else {
@@ -265,7 +284,7 @@ class ShareBottomVC: UIViewController {
     private func handleShareFailure() {
         DispatchQueue.main.async { [weak self] in
             self?.activityIndicator.stopAnimating()
-            self?.NextButton.setTitle("Next", for: .normal)
+            self?.NextButton.setTitle("Share Link", for: .normal)
             self?.NextButton.isEnabled = true
             
             let snackbar = CustomSnackbar(message: "Failed to load image. Please try again.", backgroundColor: .snackbar)
@@ -328,7 +347,7 @@ class ShareBottomVC: UIViewController {
                         UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.image(_:didFinishSavingWithError:contextInfo:)), nil)
                         
                         self.activityIndicator.stopAnimating()
-                        self.NextButton.setTitle("Next", for: .normal)
+                        self.NextButton.setTitle("Share Link", for: .normal)
                         self.NextButton.isEnabled = true
                         
                         UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -352,3 +371,4 @@ class ShareBottomVC: UIViewController {
         }
     }
 }
+    

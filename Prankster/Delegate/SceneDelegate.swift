@@ -30,25 +30,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
-    //SceneDelegate
     func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        // This will allow us to check if we are coming from a universal link
-        // and get the url with its components
+        guard let url = userActivity.webpageURL else { return }
+        print("Universal Link Opened: \(url)")
         
-        // The activity type (NSUserActivityTypeBrowsingWeb) is used
-        // when continuing from a web browsing session to either
-        // a web browser or a native app. Only activities of this
-        // type can be continued from a web browser to a native app.
-        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-              let url = userActivity.webpageURL,
-              let components = URLComponents(url: url,
-                                             resolvingAgainstBaseURL: true) else {
-            return
+        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+           let queryItems = components.queryItems {
+            for item in queryItems {
+                if item.name == "source" {
+                    let source = item.value ?? "organic"
+                    print("Source ID: \(source)")
+                    
+                    if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+                        appDelegate.sendInstallAPI(source: source)
+                        print("APi call success")
+                    }
+                }
+            }
         }
-        
-        // Now that we have the url and its components,
-        // we can use this information to present
-        // appropriate content in the app
     }
     
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
@@ -61,12 +60,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         ApplicationDelegate.shared.application(UIApplication.shared, open: url, sourceApplication: nil, annotation: [UIApplication.OpenURLOptionsKey.annotation])
     }
     
-    func sceneDidDisconnect(_ scene: UIScene) {
-        // Called as the scene is being released by the system.
-        // This occurs shortly after the scene enters the background, or when its session is discarded.
-        // Release any resources associated with this scene that can be re-created the next time the scene connects.
-        // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
-    }
+    func sceneDidDisconnect(_ scene: UIScene) {}
     
     func sceneDidBecomeActive(_ scene: UIScene) {
         if savedShortCutItem != nil {
@@ -82,21 +76,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         completionHandler(handled)
     }
     
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
+    func sceneWillResignActive(_ scene: UIScene) {}
     
-    func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
-    }
+    func sceneWillEnterForeground(_ scene: UIScene) {}
     
-    func sceneDidEnterBackground(_ scene: UIScene) {
-        // Called as the scene transitions from the foreground to the background.
-        // Use this method to save data, release shared resources, and store enough scene-specific state information
-        // to restore the scene back to its current state.
-    }
+    func sceneDidEnterBackground(_ scene: UIScene) {}
     
     func handleShortCutItem(shortcutItem: UIApplicationShortcutItem) -> Bool {
         if let actionTypeValue = ActionType(rawValue: shortcutItem.type) {

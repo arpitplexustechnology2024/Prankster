@@ -108,6 +108,27 @@ class SpinnerVC: UIViewController {
     
     private var isSpinning = false
     
+    // Add this property at the top with other properties
+    private var overlayView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = true
+        return view
+    }()
+    
+    // Add this method after viewDidLoad
+    private func setupOverlayView() {
+        view.addSubview(overlayView)
+        NSLayoutConstraint.activate([
+            overlayView.topAnchor.constraint(equalTo: view.topAnchor),
+            overlayView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        overlayView.isHidden = true
+    }
+    
     init(adViewModule: AdsViewModel) {
         self.adsViewModel = adViewModule
         super.init(nibName: nil, bundle: nil)
@@ -129,6 +150,7 @@ class SpinnerVC: UIViewController {
     // MARK: - Lifecycle Methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.setupOverlayView()
         self.setupViewModel()
         self.setupInitialSpins()
         self.loadSavedSpinnerData()
@@ -380,36 +402,38 @@ class SpinnerVC: UIViewController {
     }
     
     // MARK: - Spin Processing Methods
-    private func proceedWithSpinning() {
-        guard remainingSpins > 0 else { return }
-        
-        isSpinning = true
-        remainingSpins -= 1
-        
-        if remainingSpins == 0 {
-            startTimerForNextSpins()
-        }
-        
-        prizes[2].value = String(Int.random(in: 1...3))
-        
-        let finalIdx = finishIndex
-        wheelControl.startRotationAnimation(finishIndex: finalIdx, continuousRotationTime: 1) { [weak self] finished in
-            if finished {
-                self?.finalValue = self?.prizes[finalIdx].value ?? ""
-                self?.isSpinning = false
-                
-                if let finalValue = self?.finalValue {
-                    if self?.isConnectedToInternet() == true {
-                        self?.spinViewModel.postSpinData(typeId: finalValue)
-                    } else {
-                        let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
-                        snackbar.show(in: self?.view ?? UIView(), duration: 3.0)
-                    }
-                    self?.updateSpinLabel()
-                }
-            }
-        }
-    }
+       private func proceedWithSpinning() {
+           guard remainingSpins > 0 else { return }
+           
+           isSpinning = true
+           overlayView.isHidden = false // Show overlay when spinning starts
+           remainingSpins -= 1
+           
+           if remainingSpins == 0 {
+               startTimerForNextSpins()
+           }
+           
+           prizes[2].value = String(Int.random(in: 1...3))
+           
+           let finalIdx = finishIndex
+           wheelControl.startRotationAnimation(finishIndex: finalIdx, continuousRotationTime: 1) { [weak self] finished in
+               if finished {
+                   self?.finalValue = self?.prizes[finalIdx].value ?? ""
+                   self?.isSpinning = false
+                   self?.overlayView.isHidden = true // Hide overlay when spinning ends
+                   
+                   if let finalValue = self?.finalValue {
+                       if self?.isConnectedToInternet() == true {
+                           self?.spinViewModel.postSpinData(typeId: finalValue)
+                       } else {
+                           let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)
+                           snackbar.show(in: self?.view ?? UIView(), duration: 3.0)
+                       }
+                       self?.updateSpinLabel()
+                   }
+               }
+           }
+       }
     
     private func checkNotificationPermissionAndSchedule() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in

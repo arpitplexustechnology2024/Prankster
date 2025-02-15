@@ -84,7 +84,6 @@ class MoreAppVC: UIViewController {
     
     private func fetchMoreData() {
         skeletonLoadingView?.startAnimating()
-        collectionview.isHidden = true
         
         let packageName = "id6739135275"
         viewModel.fetchMoreData(packageName: packageName) { [weak self] result in
@@ -96,14 +95,12 @@ class MoreAppVC: UIViewController {
                     DispatchQueue.main.async {
                         self.skeletonLoadingView?.stopAnimating()
                         self.skeletonLoadingView?.isHidden = true
-                        self.collectionview.isHidden = false
                         self.noDataView.isHidden = true
                         self.collectionview.reloadData()
                     }
                 case .failure(let error):
                     print("Error: \(error.localizedDescription)")
                     self.skeletonLoadingView?.stopAnimating()
-                    self.collectionview.isHidden = false
                     self.noDataView.isHidden = false
                 }
             }
@@ -146,7 +143,7 @@ class MoreAppVC: UIViewController {
         NSLayoutConstraint.activate([
             noInternetView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             noInternetView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            noInternetView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor, constant: 30),
+            noInternetView.topAnchor.constraint(equalTo: navigationbarView.bottomAnchor),
             noInternetView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -155,6 +152,7 @@ class MoreAppVC: UIViewController {
         if isConnectedToInternet() {
             noInternetView.isHidden = true
             noDataView.isHidden = true
+            self.setupAds()
             checkInternetAndFetchData()
         } else {
             let snackbar = CustomSnackbar(message: "Please turn on internet connection!", backgroundColor: .snackbar)

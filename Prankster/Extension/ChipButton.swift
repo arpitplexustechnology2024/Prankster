@@ -236,7 +236,7 @@ class AudioChipSelector: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add Audio Prank 🎧", "Trending sound", "Nonveg sound", "Hot sound", "Funny sound", "Horro sound", "Celebrity sound"]
+        let titles = ["Add Audio Prank 🎧", "Trending sound", "Nonveg sound", "Hot sound", "Funny sound", "Horror sound", "Celebrity sound"]
 
         fixedChip.setTitle(titles[0], for: .normal)
         fixedChip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
@@ -388,7 +388,7 @@ class ImageChipSelector: UIView {
     }
     
     private func setupChips() {
-        let titles = ["Add image Prank 🏞️", "Trending image", "Nonveg image", "Hot image", "Funny image", "Horror image", "Celebrity image"]
+        let titles = ["Add Image Prank 🏞️", "Trending image", "Nonveg image", "Hot image", "Funny image", "Horror image", "Celebrity image"]
 
         fixedChip.setTitle(titles[0], for: .normal)
         fixedChip.addTarget(self, action: #selector(chipTapped(_:)), for: .touchUpInside)
