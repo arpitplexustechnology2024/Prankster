@@ -19,7 +19,7 @@ import AppsFlyerLib
 import Alamofire
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
     private var hasCalledInstallAPI = false
@@ -44,7 +44,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         // AppsFlyer
         AppsFlyerLib.shared().appsFlyerDevKey = "YwFmSnDNyUSqZNcNUJUi4H"
         AppsFlyerLib.shared().appleAppID = "6739135275"
-        AppsFlyerLib.shared().delegate = self
         AppsFlyerLib.shared().isDebug = true
         
         // Wait for ATT authorization before starting AppsFlyer
@@ -131,49 +130,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
         return .all
     }
     
-    //   MARK: - AppsFlyer Delegate Methods
-    func onConversionDataSuccess(_ data: [AnyHashable: Any]) {
-        print("AppsFlyer Conversion Data: \(data)")
-        
-        if let installType = data["af_status"] as? String {
-            if installType == "Organic" {
-                print("Organic installation")
-                sendInstallAPI(source: "organic")
-            } else {
-                if let source = data["media_source"] as? String {
-                    print("Non-organic installation from source: \(source)")
-                }
-            }
-        }
-    }
-    
-    func onConversionDataFail(_ error: Error) {
-        print("AppsFlyer Conversion Data Failed: \(error.localizedDescription)")
-    }
-    
-    func sendInstallAPI(source: String) {
-        let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
-        
-        guard !hasCalledInstallAPI else { return }
-        
-        let url = "https://pslink.world/api/analytics/install?source=\(source)"
-        AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { response in
-            switch response.result {
-            case .success(let analyticsResponse):
-                print("Install API Success - Status: \(analyticsResponse.status)")
-                print("Install API Success - Message: \(analyticsResponse.message)")
-                UserDefaults.standard.set(true, forKey: "hasCalledInstallAPI")
-                
-            case .failure(let error):
-                if let data = response.data {
-                    let responseString = String(data: data, encoding: .utf8)
-                    print("Install API Error Response: \(responseString ?? "No response data")")
-                }
-                print("Install API Error: \(error)")
-            }
-        }
-    }
-    
     // MARK: - Deep Linking Methods
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         AppsFlyerLib.shared().handleOpen(
@@ -249,7 +205,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
                 completion(nil)
             }
         }
-        
         task.resume()
     }
     

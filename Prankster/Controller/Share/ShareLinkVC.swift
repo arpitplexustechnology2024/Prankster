@@ -83,10 +83,6 @@ class ShareLinkVC: UIViewController, UITextViewDelegate {
         self.setupSwipeGesture()
         self.setupNoInternetView()
         self.addContentToStackView()
-        
-        print(selectedURL)
-        print(selectedFile)
-        print(selectedImage)
     }
     
     private func setupSkeletonView() {

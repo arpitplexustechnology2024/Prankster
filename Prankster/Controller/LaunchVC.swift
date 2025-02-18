@@ -35,6 +35,7 @@ class LaunchVC: UIViewController {
         self.setupUI()
         self.trackAppInstall()
         self.loadAds()
+        
     }
     
     private func checkNavigationFlow() {
