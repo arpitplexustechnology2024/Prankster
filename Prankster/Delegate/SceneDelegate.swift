@@ -32,44 +32,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
     }
     
-    func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
-        guard let url = userActivity.webpageURL else { return }
-        print("Universal Link Opened: \(url)")
-        if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-           let queryItems = components.queryItems {
-            for item in queryItems {
-                if item.name == "source" {
-                    let source = item.value ?? ""
-                    print("Source ID: \(source)")
-                    self.sendInstallAPI(source: source)
-                }
-            }
-        }
-    }
-    
-    func sendInstallAPI(source: String) {
-        let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
-        
-        guard !hasCalledInstallAPI else { return }
-        
-        let url = "https://pslink.world/api/analytics/install?source=\(source)&platformid=\(2)"
-        AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { response in
-            switch response.result {
-            case .success(let analyticsResponse):
-                print("Install API Success - Status: \(analyticsResponse.status)")
-                print("Install API Success - Message: \(analyticsResponse.message)")
-                UserDefaults.standard.set(true, forKey: "hasCalledInstallAPI")
-                
-            case .failure(let error):
-                if let data = response.data {
-                    let responseString = String(data: data, encoding: .utf8)
-                    print("Install API Error Response: \(responseString ?? "No response data")")
-                }
-                print("Install API Error: \(error)")
-            }
-        }
-    }
-    
     func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let url = URLContexts.first?.url else {
             return

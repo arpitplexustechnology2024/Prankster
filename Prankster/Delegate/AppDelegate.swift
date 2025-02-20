@@ -19,7 +19,7 @@ import AppsFlyerLib
 import Alamofire
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
     
     var window: UIWindow?
     
@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // AppsFlyer
         AppsFlyerLib.shared().appsFlyerDevKey = "YwFmSnDNyUSqZNcNUJUi4H"
         AppsFlyerLib.shared().appleAppID = "6739135275"
+        AppsFlyerLib.shared().delegate = self
         AppsFlyerLib.shared().isDebug = true
         
         // Wait for ATT authorization before starting AppsFlyer
@@ -71,6 +72,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    func onConversionDataSuccess(_ conversionInfo: [AnyHashable : Any]) {
+        guard let status = conversionInfo["af_status"] as? String else { return }
+        if status == "Non-organic" {
+            if let mediaSource = conversionInfo["media_source"] as? String {
+                print("This is a Non-organic install. Media source: \(mediaSource)")
+            }
+        } else if status == "Organic" {
+            print("This is an organic install.")
+            self.sendInstallAPI(source: "organic")
+        }
+        print("Conversion Info: \(conversionInfo)")
+    }
+    
+    func onConversionDataFail(_ error: any Error) {
+        print("Conversion data failed: \(error)")
     }
     
     // MARK: - Notification Authorization
@@ -161,11 +179,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
     
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        if let url = userActivity.webpageURL {
-            print("🌍 Universal Link Opened: \(url.absoluteString)")
+    func sendInstallAPI(source: String) {
+        let hasCalledInstallAPI = UserDefaults.standard.bool(forKey: "hasCalledInstallAPI")
+        
+        guard !hasCalledInstallAPI else {
+            print("Install API already called, skipping request.")
+            return
         }
-        return true
+        
+        let url = "https://pslink.world/api/analytics/install?source=\(source)&platformid=2"
+        
+        AF.request(url, method: .post).responseDecodable(of: AnalyticsInstall.self) { response in
+            switch response.result {
+            case .success(let analyticsResponse):
+                print("✅ Install API Success - Status: \(analyticsResponse.status)")
+                print("✅ Install API Success - Message: \(analyticsResponse.message)")
+                
+                DispatchQueue.main.async {
+                    UserDefaults.standard.set(true, forKey: "hasCalledInstallAPI")
+                }
+                
+            case .failure(let error):
+                if let data = response.data, let responseString = String(data: data, encoding: .utf8) {
+                    print("❌ Install API Error Response: \(responseString)")
+                }
+                print("❌ Install API Error: \(error.localizedDescription)")
+            }
+        }
     }
     
     
