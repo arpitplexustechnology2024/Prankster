@@ -272,7 +272,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
     func promptUserToUpdate() {
         let alert = UIAlertController(
             title: "New version available",
-            message: "There are new features available, please update your app",
+            message: "There are new features available, please update your app.",
             preferredStyle: .alert
         )
         
@@ -280,7 +280,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, AppsFlyerLibDelegate {
             self.openAppStoreForUpdate()
         }))
         
-        if let topController = UIApplication.shared.keyWindow?.rootViewController {
+        alert.addAction(UIAlertAction(title: "Later", style: .cancel, handler: nil))
+        
+        if let topController = UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.rootViewController {
             topController.present(alert, animated: true, completion: nil)
         }
     }
